@@ -1,0 +1,8 @@
+node_modules/
+**/dist/
+**/coverage/
+package-lock.json
+backend/src/generated/
+# Giữ định dạng phần phân tích đã review; chỉ chỉnh có chọn lọc.
+docs/architecture.md
+docs/technology-stack.md

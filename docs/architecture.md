@@ -1,6 +1,6 @@
 # Kiến trúc UniHub
 
-Ngày ghi nhận: **23/10/2026**. Đây là thiết kế cho bước khởi tạo tiếp theo. Hiện repository chỉ có hai tài liệu Markdown; sơ đồ, thư mục và ánh xạ Prisma dưới đây **chưa được triển khai**.
+Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật scaffold **24/10/2026**. Đã có frontend kỹ thuật React gọi health và backend Express. Sơ đồ nghiệp vụ/auth/database dưới đây vẫn là kiến trúc mục tiêu, **chưa được triển khai**; không coi health là kiểm tra MySQL.
 
 Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md). Đối chiếu dữ liệu dùng Chương 4 trang 6–30; quy tắc nghiệp vụ dùng Chương 3. Quyết định mới của nhóm về Google ID token được ưu tiên so với luồng Authorization Code cũ trong Chương 3.
 
@@ -23,7 +23,7 @@ flowchart LR
 - **Backend:** một REST API Express. Middleware kiểm tra phiên, quyền và dữ liệu đầu vào; service xử lý quy tắc, quyền sở hữu, chuyển trạng thái và transaction. Không tin `role`, `user_id`, `author_id` hoặc `admin_id` do frontend tự khai báo để cấp quyền.
 - **Dữ liệu:** chỉ backend sử dụng Prisma và thông tin kết nối MySQL. Prisma không thay thế kiểm tra nghiệp vụ; MySQL chịu trách nhiệm ràng buộc cấu trúc và giao dịch.
 - **Tác vụ nền:** nhắc hạn thuộc backend theo Chương 3, triển khai sau. Chưa chọn thư viện lập lịch, chưa thêm queue, Redis, dịch vụ cron ngoài hoặc tiến trình chạy thật.
-- **Ranh giới API:** frontend dùng JSON qua REST; có thể dùng tiền tố `/api` khi scaffold. Tên endpoint, payload và mã lỗi chi tiết sẽ chốt trong tài liệu API của từng chức năng, chưa xem là hợp đồng đã triển khai.
+- **Ranh giới API:** frontend dùng JSON qua REST. Scaffold đã có `GET /api/health`, 404 và error middleware; các endpoint nghiệp vụ chưa có. Xem [api-conventions.md](api-conventions.md) để phân biệt phần đã chạy và quy ước dự thảo.
 
 ## 2. Luồng xác thực và phân quyền
 
@@ -50,47 +50,51 @@ Chương 3 trang 7 và UC-04 trang 38–40 quy định access token tối đa 15
 - Chưa có bảng/cột lưu refresh session hoặc token bị thu hồi trong Chương 4. Cơ chế rotation/thu hồi phải được thảo luận khi làm xác thực; không tự bổ sung `sessions`, `refresh_tokens` hoặc kho dữ liệu khác.
 - Yêu cầu khởi tạo Admin trong UC-04 là công việc triển khai sau. Không tạo Admin, tài khoản mẫu hoặc seed trong đợt này.
 
-## 3. Cấu trúc repository dự kiến
+## 3. Cấu trúc scaffold và vị trí Prisma sau này
 
-**Hiện tại chỉ hai file trong `docs/` tồn tại.** Cây sau là mục tiêu của bước scaffold, không phải báo cáo thư mục đã tạo:
+Theo yêu cầu ngày 24/10/2026, tổ chức frontend theo feature và backend theo module. Cây sau phản ánh phần scaffold chính; các thư mục nghiệp vụ mới có README phạm vi, không có endpoint hoặc component giả:
 
 ```text
 UniHub/
 ├── frontend/                    # npm workspace: một ứng dụng React
 │   ├── src/
-│   │   ├── app/                 # khởi tạo ứng dụng, router, layout
-│   │   ├── areas/               # Public, Student, Admin trong cùng app
-│   │   ├── components/          # thành phần dùng chung
-│   │   ├── services/            # gọi REST API; không truy cập database
-│   │   └── styles/              # Tailwind và CSS bổ sung theo Figma
+│   │   ├── app/                 # màn hình kỹ thuật kiểm tra backend
+│   │   ├── features/            # README theo chức năng, gồm admin/
+│   │   ├── components/          # README thành phần dùng chung
+│   │   ├── layouts/             # README layout Public/Student/Admin
+│   │   ├── lib/                 # fetch health; không truy cập database
+│   │   └── styles/              # Tailwind; chưa dựng Figma
 │   └── package.json
 ├── backend/                     # npm workspace: Express REST API
 │   ├── src/
 │   │   ├── config/              # đọc và kiểm tra cấu hình server
-│   │   ├── middleware/          # xác thực, phân quyền, lỗi, input
-│   │   ├── modules/             # nhóm nghiệp vụ: routes/controller/service
-│   │   ├── db/                  # Prisma Client và adapter
-│   │   └── generated/prisma/    # output sinh tự động, sẽ được ignore
-│   ├── prisma.config.ts         # cấu hình CLI, schema và migrations
+│   │   ├── middleware/          # 404 và xử lý lỗi; chưa có auth
+│   │   ├── modules/             # health có mã; nghiệp vụ chỉ README
+│   │   ├── lib/                 # README hạ tầng dùng chung
+│   │   ├── app.ts               # cấu hình Express, không mở cổng
+│   │   └── server.ts            # mở cổng, dừng server
+│   ├── test/                    # kiểm thử bằng node:test
 │   └── package.json
 ├── database/
-│   ├── prisma/schema.prisma     # 12 model nghiệp vụ ánh xạ Chương 4
-│   └── migrations/              # migration Prisma và SQL bổ sung được review
+│   └── README.md                # chỉ dẫn đến backend/prisma/ sau này
 ├── docs/
-│   ├── technology-stack.md      # được tạo trong nhiệm vụ hiện tại
-│   └── architecture.md          # được tạo trong nhiệm vụ hiện tại
+│   ├── technology-stack.md      # phiên bản và phạm vi
+│   ├── architecture.md          # tài liệu này; giữ đối chiếu 12 bảng
+│   ├── team-workflow.md         # TV1–TV5, nhánh/commit/PR
+│   ├── development-roadmap.md   # thứ tự công việc sau scaffold
+│   └── api-conventions.md       # health đã chạy, quy ước nghiệp vụ dự thảo
 ├── package.json                 # private, workspaces: frontend + backend
 ├── package-lock.json            # một lockfile npm ở gốc
 ├── .gitignore
-├── .env.example                 # chỉ tên biến/giá trị mẫu an toàn
+├── AGENTS.md                    # hướng dẫn Agent; .env.example ở mỗi workspace
 └── README.md                    # tiếng Việt, lệnh chạy đúng trạng thái thực tế
 ```
 
-Tên thư mục con là định hướng tổ chức, không phải yêu cầu viết các module nghiệp vụ ngay khi scaffold. Nếu cần giữ thư mục chưa có mã nguồn, dùng README mô tả mục đích hoặc `.gitkeep`.
+Các module chưa có mã dùng README mô tả phạm vi. Admin chia theo chức năng: TV1 users, TV2 opportunities, TV3 categories, TV4 dashboard, TV5 forum; TV1 phối hợp shell/layout chung. Xem [workflow](team-workflow.md), không tạo nhiều kiến trúc cạnh tranh hoặc một file Admin lớn.
 
-Backend sở hữu dependency Prisma. Trong kế hoạch cấu hình Prisma 7, `backend/prisma.config.ts` trỏ `schema` tới `../database/prisma/schema.prisma` và `migrations.path` tới `../database/migrations`; đường dẫn được giải theo vị trí file config. Generator đặt output từ schema tới `../../backend/src/generated/prisma`. Không đặt bản schema thứ hai trong backend; không import Prisma vào frontend. URL của CLI và cấu hình adapter runtime phải trỏ cùng database. Biến môi trường được nạp rõ ràng, không mặc định Prisma tự nạp `.env`.
+**Quyết định vị trí dữ liệu mới, thay cho đề xuất database/prisma trước đây:** khi làm database, đặt nguồn duy nhất tại `backend/prisma/schema.prisma` và `backend/prisma/migrations/`. `backend/prisma.config.ts` khi được tạo sẽ trỏ `schema: "prisma/schema.prisma"`, `migrations.path: "prisma/migrations"`; generator output từ schema tới `../src/generated/prisma`. Hiện chưa tạo các file này hoặc cài Prisma Client. Backend sở hữu dependency Prisma khi triển khai; database/ không có bản schema/SQL thứ hai. URL CLI và adapter runtime phải cùng database; nạp biến môi trường rõ ràng, không mặc định Prisma tự nạp `.env`.
 
-Sau scaffold, npm scripts chạy từ root và chuyển việc cho đúng workspace. Chưa có các scripts này, nên hiện chưa có lệnh chạy frontend/backend có thể xác nhận là hoạt động.
+Các scripts tại root gồm `dev:frontend`, `dev:backend`, `typecheck`, `build`, `test`, `format`, `format:check`. Backend nạp PORT từ `.env` workspace bằng Node, mặc định 3001; frontend dùng Vite proxy `/api` tới backend, cổng dev 5173. Proxy chỉ phục vụ phát triển; chưa có cấu hình hosting/HTTPS production. Hướng dẫn từng lệnh PowerShell ở [README](../README.md).
 
 ## 4. Nguyên tắc giữ nguyên mô hình dữ liệu
 
@@ -340,12 +344,12 @@ SQL `CHECK` theo thiết kế cũng không bảo đảm mọi điều kiện ngh
 
 Đã kiểm tra tài liệu ở mức tĩnh: 12 bảng, **81 cột nghiệp vụ**, 8 PK tự tăng, 4 PK ghép và 16 FK; `activity_logs.target_id` không được tính là FK. Có 13 nhóm quan hệ trong bảng 4.2.1 của Chương 4; một quan hệ nhiều-nhiều dùng hai FK ở bảng trung gian nên số nhóm quan hệ khác số FK vật lý.
 
-Khi thực hiện nhiệm vụ scaffold/migration sau này:
+Sau scaffold, các bước tiếp theo và phạm vi kiểm tra:
 
 1. Đối chiếu môi trường môn học với Node/MySQL đã chọn; giữ phiên bản và một lockfile npm ở gốc.
-2. Khởi tạo hai workspace tối thiểu, Tailwind 3/PostCSS, cấu hình build target trình duyệt; kiểm tra typecheck/build và khởi động frontend/backend. Chưa đưa chức năng nghiệp vụ vào scaffold.
+2. Hai workspace tối thiểu, Tailwind 3/PostCSS và build target trình duyệt đã được cấu hình; duy trì kiểm tra typecheck/build, HTTP test và khởi động khi sửa. Chưa đưa chức năng nghiệp vụ vào scaffold.
 3. Khi nhóm cho phép tạo schema/migration: chuyển đủ 12 bảng và mọi cột từ mục 5, xác định các hành vi FK chưa nêu, kiểm tra `prisma validate`/generate và review SQL trước khi áp dụng lên database phát triển riêng.
 4. Kiểm tra migration bằng dữ liệu kiểm thử không có thông tin cá nhân: giá trị CHECK sai, FK sai, UNIQUE/PK ghép trùng phải bị từ chối; cascade event–notification và ON UPDATE phải đúng; rollback không để lại log/notification dở dang. Chưa chạy các kiểm tra này.
 5. Trước khi làm auth, xử lý các điểm Google identity/session ở mục 2; trước khi làm UI, đọc được Figma đúng node `318-2` và đối chiếu token thiết kế.
 
-Hiện chưa có schema thực thi để validate, chưa có database/API/giao diện hoạt động, chưa tạo dữ liệu mẫu hoặc dịch vụ hosting. Hai tài liệu này là đầu vào review cho bước khởi tạo tiếp theo.
+Hiện chỉ health HTTP và màn hình kỹ thuật frontend được triển khai. Chưa có schema thực thi để validate, database, API nghiệp vụ, UI chính thức, dữ liệu mẫu hoặc dịch vụ hosting. Đạt kiểm tra scaffold không chứng minh NFR hiệu năng, 100 người dùng đồng thời hay mọi trình duyệt đã đáp ứng; xem [roadmap](development-roadmap.md).

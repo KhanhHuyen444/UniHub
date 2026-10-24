@@ -1,0 +1,29 @@
+# Lộ trình sau scaffold
+
+Đây là kế hoạch thứ tự, không phải chức năng đã hoàn thành. Chưa gán deadline/tên người; TV1–TV5 theo [phân công dự kiến](team-workflow.md). Bộ khung hiện chỉ có HTTP health, UI kiểm tra và công cụ cộng tác.
+
+| Mốc                                    | Điều kiện bắt đầu                                                                                                                      | Việc chung và người phối hợp                                                                                                                            | Tiêu chí hoàn thành                                                                                                                                                                           |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Thống nhất API                      | Cả 5 người lấy được scaffold, tự chạy các kiểm tra; xác nhận phân công                                                                 | Cả nhóm review dự thảo api-conventions; mỗi TV viết contract cho phần mình, TV1 điều phối kiểu lỗi/quyền chung                                          | Có contract được review: method/path, request/response, nullable, phân trang, lỗi và quyền; phân biệt API đã có/dự kiến                                                                       |
+| 2. Schema và migration                 | Contract dữ liệu được thống nhất; đối chiếu MySQL với môi trường môn học; có database phát triển được cấp riêng cho từng người         | TV1 điều phối; mỗi TV rà soát bảng mình dùng. Chuyển đủ 12 bảng/81 cột, giải quyết các hành vi FK chưa rõ, CHECK và ON UPDATE, không tự đổi mô hình     | Một nguồn schema ở backend/prisma, SQL migration được review, kiểm tra ràng buộc/rollback trên database riêng; hướng dẫn tái tạo và không đưa dữ liệu cá nhân vào Git                         |
+| 3. Luồng danh sách/chi tiết cơ hội mẫu | API đọc cơ hội đã thống nhất; schema/migration hợp lệ                                                                                  | TV2 làm frontend/backend từ đầu đến cuối; TV1 hỗ trợ layout, các TV khác review cách tổ chức làm mẫu                                                    | Request thật đi từ UI tới API rồi MySQL; dữ liệu kiểm thử an toàn được nhóm cho phép; có loading/empty/error, phân trang/chi tiết và test. Không dùng màn hình giả để tuyên bố hoàn thành     |
+| 4. Xác thực và hồ sơ                   | Giải quyết Google sub/định danh, session/refresh, cấu hình Google, quyền và điều kiện hồ sơ; mọi thay đổi schema được nhóm duyệt trước | TV1 thực hiện cả frontend/backend; các TV còn lại review quyền trên module mình                                                                         | Backend xác minh Google ID token và phát JWT UniHub; kiểm tra quyền/ownership ở server; Guest không thành role trong users; có kiểm thử đăng nhập lỗi, hết hạn và cập nhật role theo tài liệu |
+| 5. Phát triển song song                | Nền API/dữ liệu/quyền ổn định; đọc được Figma đúng node khi bắt đầu UI nghiệp vụ                                                       | TV2 Hub và thẩm định; TV3 định hướng/gợi ý/danh mục; TV4 lịch/thông báo/dashboard; TV5 diễn đàn/kiểm duyệt; TV1 nền tảng/tài khoản và phối hợp tích hợp | Mỗi module có UI/API/query/test/contract được review; Admin chia theo chức năng; các luồng log/notification cùng transaction được kiểm tra                                                    |
+| 6. Tích hợp và kiểm thử                | Các PR chức năng đã review, test riêng đạt và phụ thuộc được giải quyết                                                                | TV1 điều phối, cả nhóm kiểm tra liên module, Windows, trình duyệt và nghiệp vụ của mình                                                                 | Có kiểm thử luồng người dùng, phân quyền, tính toàn vẹn dữ liệu, viewport desktop; ghi riêng kết quả tải/hiệu năng NFR, lỗi còn lại và cách tái tạo                                           |
+
+Thành viên có thể chuẩn bị contract, đọc tài liệu hoặc test case trong lúc chờ mốc trước; không tự triển khai dựa trên một schema/token contract chưa thống nhất. Mốc 3 là luồng đọc công khai làm mẫu, không yêu cầu làm Admin hoặc auth sớm hơn kế hoạch.
+
+## Những quyết định đang mở
+
+- Hạn chế Node/MySQL trên máy môn học; kiểm tra trước khi dùng database thực tế, không mặc định đã hỗ trợ.
+- Cách liên kết Google identity với mô hình users hiện chỉ có email; cơ chế session/refresh/thu hồi, các hành vi FK chưa được Chương 4 đặc tả. Không tự thêm cột/bảng/Redis hoặc dịch vụ khác.
+- Figma node `318-2` chưa đọc được trong phiên tài liệu; phải đối chiếu trước khi xây UI chính thức.
+- Chính sách thời gian/múi giờ, phân trang và cấu trúc lỗi trong api-conventions còn là dự thảo nghiệp vụ. Chốt trước khi tạo contract/migration liên quan.
+
+## Phân biệt mức hoàn thành
+
+- **Scaffold chạy:** frontend gọi health, build/typecheck/test kỹ thuật đạt; không chứng minh database, login hay nghiệp vụ đã chạy.
+- **Module hoàn thành:** có chứng cứ kiểm thử đúng use case, quyền, dữ liệu và UI liên quan; không chỉ có file/folder.
+- **NFR đạt:** cần đo đúng tải, trình duyệt và điều kiện quy định; test scaffold không chứng minh 100 người dùng đồng thời, thời gian phản hồi hoặc đầy đủ trình duyệt.
+
+Chưa triển khai hosting trong nhiệm vụ này. Môi trường triển khai/HTTPS production sẽ là công việc riêng sau khi được nhóm giao.
