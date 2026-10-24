@@ -18,7 +18,11 @@
     "build": "npm run build --workspaces",
     "test": "npm run test --workspace @unihub/backend",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prisma:format": "npm run prisma:format --workspace @unihub/backend",
+    "prisma:validate": "npm run prisma:validate --workspace @unihub/backend",
+    "prisma:generate": "npm run prisma:generate --workspace @unihub/backend",
+    "prisma:diff": "npm run prisma:diff --workspace @unihub/backend"
   },
   "devDependencies": {
     "prettier": "3.6.2"

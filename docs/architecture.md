@@ -1,6 +1,6 @@
 # Kiến trúc UniHub
 
-Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật scaffold **24/10/2026**. Đã có frontend kỹ thuật React gọi health và backend Express. Sơ đồ nghiệp vụ/auth/database dưới đây vẫn là kiến trúc mục tiêu, **chưa được triển khai**; không coi health là kiểm tra MySQL.
+Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật scaffold/schema **24/10/2026**. Đã có frontend kỹ thuật React gọi health, backend Express và file schema Prisma. Sơ đồ nghiệp vụ/auth/database dưới đây vẫn là kiến trúc mục tiêu, **chưa kết nối hoặc tạo database**; không coi health là kiểm tra MySQL. Kiểm đếm và kết quả công cụ schema tại [database-schema.md](database-schema.md).
 
 Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md). Đối chiếu dữ liệu dùng Chương 4 trang 6–30; quy tắc nghiệp vụ dùng Chương 3. Quyết định mới của nhóm về Google ID token được ưu tiên so với luồng Authorization Code cũ trong Chương 3.
 
@@ -92,13 +92,13 @@ UniHub/
 
 Các module chưa có mã dùng README mô tả phạm vi. Admin chia theo chức năng: TV1 users, TV2 opportunities, TV3 categories, TV4 dashboard, TV5 forum; TV1 phối hợp shell/layout chung. Xem [workflow](team-workflow.md), không tạo nhiều kiến trúc cạnh tranh hoặc một file Admin lớn.
 
-**Quyết định vị trí dữ liệu mới, thay cho đề xuất database/prisma trước đây:** khi làm database, đặt nguồn duy nhất tại `backend/prisma/schema.prisma` và `backend/prisma/migrations/`. `backend/prisma.config.ts` khi được tạo sẽ trỏ `schema: "prisma/schema.prisma"`, `migrations.path: "prisma/migrations"`; generator output từ schema tới `../src/generated/prisma`. Hiện chưa tạo các file này hoặc cài Prisma Client. Backend sở hữu dependency Prisma khi triển khai; database/ không có bản schema/SQL thứ hai. URL CLI và adapter runtime phải cùng database; nạp biến môi trường rõ ràng, không mặc định Prisma tự nạp `.env`.
+**Vị trí dữ liệu duy nhất:** đã tạo `backend/prisma/schema.prisma` và `backend/prisma.config.ts`, trỏ `schema: "prisma/schema.prisma"`, `migrations.path: "prisma/migrations"`; chưa tạo thư mục migration hoặc áp dụng SQL. Generator output từ schema tới `../src/generated/prisma`, được ignore. Backend đã có CLI và @prisma/client cho codegen, chưa tạo instance/client kết nối hoặc adapter runtime. database/ không có bản schema/SQL thứ hai. Config hiện chỉ đọc process environment, không tự đọc `.env` thật; khi triển khai runtime sau này URL CLI và adapter phải thống nhất.
 
 Các scripts tại root gồm `dev:frontend`, `dev:backend`, `typecheck`, `build`, `test`, `format`, `format:check`. Backend nạp PORT từ `.env` workspace bằng Node, mặc định 3001; frontend dùng Vite proxy `/api` tới backend, cổng dev 5173. Proxy chỉ phục vụ phát triển; chưa có cấu hình hosting/HTTPS production. Hướng dẫn từng lệnh PowerShell ở [README](../README.md).
 
 ## 4. Nguyên tắc giữ nguyên mô hình dữ liệu
 
-Đã đối chiếu **8 bảng thực thể + 4 bảng trung gian = 12 bảng nghiệp vụ** ở Chương 4 mục 4.3.2.1–4.3.2.12. Vì hiện chưa có `schema.prisma`, phần dưới là **đặc tả ánh xạ để kiểm tra schema khi tạo sau này**, không phải kết quả `prisma validate` hoặc migration đã chạy.
+Đã đối chiếu **8 bảng thực thể + 4 bảng trung gian = 12 bảng nghiệp vụ** ở Chương 4 mục 4.3.2.1–4.3.2.12. Phần dưới là **đặc tả gốc dùng đối chiếu file schema đã tạo**, không phải bằng chứng migration đã chạy. Kết quả kiểm đếm/công cụ thực tế, quyết định FK và timestamp đã xác nhận được ghi riêng trong [database-schema.md](database-schema.md).
 
 - Giữ nguyên tên bảng/cột `snake_case`, tên khóa và kiểu MySQL, độ dài, nullable, mặc định, unique, khóa ghép, khóa ngoại. Model Prisma có thể dùng tên PascalCase với `@@map`; tên field giữ `snake_case` để dễ đối chiếu. Nếu sau này đổi tên field TypeScript sang camelCase, phải có `@map` để tên cột MySQL không đổi.
 - Dùng provider `mysql` với khóa ngoại thật (`relationMode = "foreignKeys"`). Không chuyển sang quan hệ chỉ do Prisma mô phỏng.
@@ -336,7 +336,7 @@ Database: `@@id([item_id, academic_year])`, CHECK academic_year BETWEEN 1 AND 4.
 | Log chỉ thêm | Backend và quyền MySQL | Service không sửa/xóa log; tài khoản runtime chỉ INSERT/SELECT trên bảng log |
 | Nghiệp vụ + log + notification; nhắc hạn + reminded_at | Backend điều phối, MySQL commit/rollback | Prisma transaction và kiểm soát đồng thời, bảo đảm thành công/thất bại cùng nhau |
 
-**Không tự chọn cascade cho FK chưa được mô tả.** Ngoài `notifications.event_id`, Chương 4 chưa nêu rõ ON DELETE/ON UPDATE của các FK. Prisma mặc định onDelete khác nhau cho relation optional/required và onUpdate thường là Cascade. Trước migration phải đối chiếu và ghi rõ hành vi được nhóm chấp nhận; không để default của ORM âm thầm đổi ngữ nghĩa hoặc xóa dữ liệu. Đây là điểm cần hoàn tất khi thiết kế migration, không phải lý do tự thêm hoặc bớt quan hệ.
+**Quyết định bổ sung đã xác nhận ngày 24/10/2026:** ngoài ON DELETE CASCADE của `notifications.event_id` có sẵn trong Chương 4, nhóm chọn ON DELETE RESTRICT cho 15 FK khác và ON UPDATE RESTRICT cho cả 16 FK. Schema khai báo tường minh, không dùng default ORM. Nhóm cũng chọn MySQL tự cập nhật cả `users.updated_at` và `events.updated_at`; ON UPDATE CURRENT_TIMESTAMP được để dành cho migration SQL, không thay bằng `@updatedAt`. Đây là quyết định bổ sung của nhóm, không được trình bày như nội dung vốn có của Chương 4.
 
 SQL `CHECK` theo thiết kế cũng không bảo đảm mọi điều kiện nghiệp vụ: ví dụ `publisher IS NOT NULL` không loại chuỗi toàn khoảng trắng; FK `reviewed_by` không bảo đảm role Admin. Backend vẫn phải kiểm tra. Không thêm trigger, index nghiệp vụ hoặc constraint chưa được thống nhất chỉ để làm mô hình trông hoàn chỉnh hơn.
 
@@ -352,4 +352,4 @@ Sau scaffold, các bước tiếp theo và phạm vi kiểm tra:
 4. Kiểm tra migration bằng dữ liệu kiểm thử không có thông tin cá nhân: giá trị CHECK sai, FK sai, UNIQUE/PK ghép trùng phải bị từ chối; cascade event–notification và ON UPDATE phải đúng; rollback không để lại log/notification dở dang. Chưa chạy các kiểm tra này.
 5. Trước khi làm auth, xử lý các điểm Google identity/session ở mục 2; trước khi làm UI, đọc được Figma đúng node `318-2` và đối chiếu token thiết kế.
 
-Hiện chỉ health HTTP và màn hình kỹ thuật frontend được triển khai. Chưa có schema thực thi để validate, database, API nghiệp vụ, UI chính thức, dữ liệu mẫu hoặc dịch vụ hosting. Đạt kiểm tra scaffold không chứng minh NFR hiệu năng, 100 người dùng đồng thời hay mọi trình duyệt đã đáp ứng; xem [roadmap](development-roadmap.md).
+Hiện có health HTTP, màn hình kỹ thuật frontend và schema/cấu hình Prisma; xem [trạng thái kiểm tra schema](database-schema.md#5-trạng-thái-kiểm-tra-và-giới-hạn). Chưa có database, migration, API nghiệp vụ, UI chính thức, dữ liệu mẫu hoặc hosting. Đạt kiểm tra scaffold/schema không chứng minh NFR hiệu năng, 100 người dùng đồng thời hay mọi trình duyệt đã đáp ứng; xem [roadmap](development-roadmap.md).

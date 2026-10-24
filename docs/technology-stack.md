@@ -4,7 +4,7 @@ Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật scaffold **24/10
 
 ## 1. Phạm vi và căn cứ
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Sau đợt tài liệu ban đầu, nhiệm vụ scaffold đã thêm hai npm workspace, một lockfile gốc, màn hình kỹ thuật React gọi `GET /api/health`, backend Express và tài liệu cộng tác. Chưa có `schema.prisma`, migration, Prisma Client, database, dữ liệu mẫu, xác thực hoặc chức năng nghiệp vụ; chưa triển khai hosting. Hướng dẫn chạy theo [README](../README.md).
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Sau scaffold đã có hai npm workspace, một lockfile gốc, màn hình kỹ thuật React gọi `GET /api/health`, backend Express và tài liệu cộng tác. Nhiệm vụ schema ngày 24/10/2026 bổ sung `backend/prisma/schema.prisma`, cấu hình CLI và thư viện codegen 7.10.1; xem [database-schema.md](database-schema.md) để biết kiểm tra thực tế. Chưa có migration, instance Prisma Client kết nối database, dữ liệu mẫu, xác thực hoặc chức năng nghiệp vụ; chưa triển khai hosting. Hướng dẫn chạy theo [README](../README.md).
 
 Các tài liệu thực sự đã đọc, với số trang tính theo thứ tự trong PDF:
 
@@ -41,7 +41,7 @@ Frontend chỉ gọi API backend. Chỉ backend kết nối MySQL. Route guard f
 
 ## 3. Phiên bản scaffold và kế hoạch dữ liệu
 
-Các phiên bản đã được đối chiếu lại qua metadata đúng phiên bản trên npm registry trước khi scaffold, không dùng `latest` hay nâng major. Manifest khai báo phiên bản cụ thể, một `package-lock.json` ở gốc khóa dependency thực tế. Các dòng MySQL, Prisma và driver bên dưới vẫn là kế hoạch: chưa cài hoặc dùng trong health.
+Các phiên bản đã được đối chiếu lại qua metadata đúng phiên bản trên npm registry, không dùng `latest` hay nâng major. Manifest khai báo phiên bản cụ thể, một `package-lock.json` ở gốc khóa dependency thực tế. Prisma CLI và @prisma/client 7.10.1 đã cài để làm schema/codegen. MySQL, adapter và driver runtime vẫn là kế hoạch; health không dùng Prisma hoặc database.
 
 | Công cụ / gói | Phiên bản chọn | Kết quả đối chiếu |
 | --- | --- | --- |
@@ -85,7 +85,7 @@ Scaffold tích hợp Tailwind 3 bằng PostCSS/Autoprefixer, cấu hình Vite `b
 
 Đã đọc tài liệu chính thức qua Node.js, mã nguồn/tài liệu trong repository do nhà phát triển quản lý và npm registry. Các website như `vite.dev`, `expressjs.com`, `www.prisma.io`, `tailwindcss.com`, `dev.mysql.com`, `docs.npmjs.com` và `developers.google.com` bị proxy chặn khi truy cập trực tiếp; các nguồn GitHub chính thức đọc được được dẫn bên dưới. Không coi lỗi mạng này là lỗi tương thích thư viện.
 
-Scaffold đã có lệnh cài dependency, typecheck/build hai workspace, test HTTP/config và format check tại root. Kết quả kiểm tra đợt scaffold được ghi trong PR/báo cáo bàn giao. Chưa chạy `prisma validate`, `prisma generate`, migration hoặc thử kết nối MySQL; không suy ra NFR hiệu năng, mọi trình duyệt hoặc máy Windows đã được kiểm tra từ kết quả trên Codex.
+Scaffold đã có lệnh cài dependency, typecheck/build hai workspace, test HTTP/config và format check tại root. Nhiệm vụ schema đã chạy thành công Prisma format/validate/generate và SQL diff offline; typecheck/build và 7 test HTTP tiếp tục đạt sau generate. Chi tiết và giới hạn ở [database-schema.md](database-schema.md#5-trạng-thái-kiểm-tra-và-giới-hạn). Chưa tạo/chạy migration hoặc thử kết nối MySQL; không suy ra NFR hiệu năng hoặc đầy đủ trình duyệt từ các kiểm tra này.
 
 ## 4. Quy tắc cấu hình và công việc tiếp theo
 
@@ -93,7 +93,7 @@ Scaffold đã có lệnh cài dependency, typecheck/build hai workspace, test HT
 - Bí mật database và khóa ký JWT chỉ cấp cho backend qua cấu hình cục bộ/bí mật môi trường. Biến có tiền tố `VITE_` có thể bị đóng gói vào frontend nên không được chứa bí mật. Google client ID là định danh công khai; Google client secret không được đưa vào frontend hoặc Git và không cần cho luồng xác minh ID token đã chọn.
 - Có `.env.example` riêng ở frontend/backend, `.gitignore`, README gốc và các tài liệu workflow/roadmap/API. Chỉ dùng tên biến và giá trị mẫu an toàn, không tạo tài khoản hoặc dữ liệu cá nhân. Dev proxy chỉ phục vụ phát triển cục bộ.
 - PR tài liệu #1 đã được merge vào main trước khi bắt đầu scaffold. Nhánh `chore/project-scaffold` kế thừa main ở `eff7ba2`; PR scaffold đặt base main. Agent không tự merge. Xem [workflow](team-workflow.md) để tạo nhánh chức năng tiếp theo.
-- Theo yêu cầu mới ngày 24/10/2026, nguồn schema/migration duy nhất sau này ở **backend/prisma/**; database/ chỉ giữ hướng dẫn, không có schema thứ hai. Bước tiếp theo theo [roadmap](development-roadmap.md): thống nhất API → schema/migration → luồng cơ hội mẫu → xác thực/hồ sơ → phát triển song song → tích hợp/kiểm thử. Không tự cài MySQL hoặc thêm nghiệp vụ trong scaffold.
+- Nguồn schema duy nhất đã đặt ở **backend/prisma/schema.prisma**; migration tương lai ở **backend/prisma/migrations/**. database/ chỉ giữ hướng dẫn, không có schema thứ hai. Nhiệm vụ schema không tạo migration hoặc MySQL. Bước tiếp theo theo [roadmap](development-roadmap.md), sau khi review schema và các ràng buộc SQL/backend: chuẩn bị migration riêng, luồng cơ hội mẫu, xác thực/hồ sơ, phát triển song song và tích hợp.
 
 ## 5. Nguồn kỹ thuật đã đối chiếu
 

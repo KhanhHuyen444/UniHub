@@ -2,18 +2,18 @@
 
 UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Repository hiện ở **giai đoạn bộ khung phát triển chung**: React hiển thị màn hình kỹ thuật tạm thời và gọi Express qua `GET /api/health`.
 
-Health chỉ kiểm tra HTTP server. Chưa có database, schema/migration, đăng nhập Google, JWT, tài khoản mẫu, chức năng nghiệp vụ hoặc UI chính thức theo Figma. MySQL/Prisma vẫn là công nghệ đã chốt cho giai đoạn sau; hiện **không cần MySQL, Docker hoặc khóa Google để chạy bộ khung**.
+Health chỉ kiểm tra HTTP server. Đã bổ sung schema Prisma và công cụ schema; xem [hướng dẫn database-schema](docs/database-schema.md) để biết kết quả validate/generate thực tế và giới hạn. Chưa có database, migration, đăng nhập Google, JWT, tài khoản mẫu, chức năng nghiệp vụ hoặc UI chính thức theo Figma. Hiện **không cần MySQL, Docker hoặc khóa Google để chạy bộ khung**.
 
 ## 1. Công nghệ và điều kiện môi trường
 
-| Thành phần       | Phiên bản / vai trò                                              |
-| ---------------- | ---------------------------------------------------------------- |
-| Node.js          | 24.19.0 thuộc dòng 24 LTS; chạy JavaScript và công cụ phát triển |
-| npm              | Khuyến nghị 11.9.0; dùng npm 11 từ 11.9.0, một lockfile ở gốc    |
-| Git              | Cài Git for Windows; quản lý commit, nhánh và đồng bộ GitHub     |
-| Frontend         | React 19.3.1, TypeScript 5.9.3, Vite 8.3.5, Tailwind CSS 3.4.19  |
-| Backend          | Express 5.3.0 + TypeScript; ES modules                           |
-| Database sau này | MySQL 8.4 LTS + Prisma 7.10.1; chưa cài vào ứng dụng             |
+| Thành phần        | Phiên bản / vai trò                                                              |
+| ----------------- | -------------------------------------------------------------------------------- |
+| Node.js           | 24.19.0 thuộc dòng 24 LTS; chạy JavaScript và công cụ phát triển                 |
+| npm               | Khuyến nghị 11.9.0; dùng npm 11 từ 11.9.0, một lockfile ở gốc                    |
+| Git               | Cài Git for Windows; quản lý commit, nhánh và đồng bộ GitHub                     |
+| Frontend          | React 19.3.1, TypeScript 5.9.3, Vite 8.3.5, Tailwind CSS 3.4.19                  |
+| Backend           | Express 5.3.0 + TypeScript; ES modules                                           |
+| Database / schema | MySQL 8.4 LTS chưa chạy; công cụ Prisma 7.10.1 đã cài, chưa có client kết nối DB |
 
 Antigravity là IDE (trình soạn thảo và chạy terminal), không thay thế Node.js/Git. Những công cụ có sẵn ở Codex **không có nghĩa máy Windows của bạn đã cài**. Cài Git từ [git-scm.com](https://git-scm.com/downloads/win) và Node.js từ [nodejs.org](https://nodejs.org/en/download), chọn đúng dòng/phiên bản trên, rồi mở lại terminal/IDE. `.nvmrc` chỉ ghi phiên bản, không tự cài Node.
 
@@ -21,7 +21,7 @@ Giới hạn phần mềm của môn học vẫn cần đối chiếu; chưa có
 
 ## 2. Lấy bộ khung về máy Windows
 
-Nhánh scaffold: **`chore/project-scaffold`**. Khi tạo nhánh này, tài liệu kiến trúc đã được merge vào `main` qua PR #1. Không mặc định scaffold đã được merge.
+Scaffold đã được merge vào `main` qua PR #2 tại `6a1cc76`, ngày 24/10/2026. Các ví dụ lấy nhánh scaffold bên dưới vẫn dùng nhánh gốc `chore/project-scaffold`. Muốn lấy phần schema đang review trên **`feat/prisma-schema`**, dùng lệnh lấy nhánh và kiểm tra trong [database-schema.md](docs/database-schema.md#4-hướng-dẫn-windows-powershell); không mặc định PR schema đã merge.
 
 Mở PowerShell trong Antigravity hoặc Windows. Ví dụ dưới đây dùng thư mục Documents; có thể chọn nơi khác nhưng phải điều chỉnh đường dẫn ở các lệnh sau.
 
@@ -173,4 +173,4 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 - Lệnh không có script/workspace: kiểm tra terminal đang ở gốc UniHub và đã lấy đúng nhánh.
 - Không commit `.env`, node_modules, dist, coverage, khóa hoặc dữ liệu cục bộ. `.env.example` chỉ chứa cấu hình mẫu an toàn.
 
-Kết quả kiểm tra ở Codex/Linux không chứng minh đã kiểm tra Windows, tất cả trình duyệt, NFR hiệu năng hoặc tải 100 người dùng. UI tạm thời không dựa trên Figma chưa đọc được. Đăng nhập, JWT, Prisma Client, MySQL, migration, cron và mọi chức năng nghiệp vụ vẫn chưa triển khai.
+Nhóm đã báo chạy thành công frontend gọi health trên Windows; kiểm tra của Agent vẫn diễn ra ở Codex/Linux. Điều đó không chứng minh tất cả trình duyệt, NFR hiệu năng hoặc tải 100 người dùng đã đạt. UI tạm thời không dựa trên Figma chưa đọc được. Đăng nhập, JWT, Prisma Client runtime kết nối MySQL, database, migration, cron và mọi chức năng nghiệp vụ vẫn chưa triển khai.
