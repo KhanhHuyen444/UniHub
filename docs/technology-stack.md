@@ -1,10 +1,10 @@
 # Công nghệ UniHub
 
-Ngày đối chiếu: **23/10/2026**. Trạng thái: quyết định kiến trúc và kế hoạch phiên bản, **chưa khởi tạo ứng dụng**.
+Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật scaffold **24/10/2026**. Trạng thái: đã có bộ khung React/Express; dữ liệu và nghiệp vụ vẫn là kế hoạch.
 
 ## 1. Phạm vi và căn cứ
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Đợt này chỉ tạo `docs/technology-stack.md` và [docs/architecture.md](architecture.md). Chưa có `package.json`, lockfile, `schema.prisma`, migration, dữ liệu mẫu, API hoặc giao diện chạy được; chưa cài dependency, tạo database hay triển khai hosting.
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Sau đợt tài liệu ban đầu, nhiệm vụ scaffold đã thêm hai npm workspace, một lockfile gốc, màn hình kỹ thuật React gọi `GET /api/health`, backend Express và tài liệu cộng tác. Chưa có `schema.prisma`, migration, Prisma Client, database, dữ liệu mẫu, xác thực hoặc chức năng nghiệp vụ; chưa triển khai hosting. Hướng dẫn chạy theo [README](../README.md).
 
 Các tài liệu thực sự đã đọc, với số trang tính theo thứ tự trong PDF:
 
@@ -29,7 +29,7 @@ Khi có khác biệt, quyết định chính thức mới của nhóm được g
 | Backend | Node.js + Express + TypeScript | REST API; xác thực, phân quyền, kiểm tra dữ liệu và thực hiện nghiệp vụ tại server |
 | Database | MySQL dòng 8.4 LTS | Lưu mô hình quan hệ 12 bảng trong Chương 4 |
 | Truy cập dữ liệu | Prisma ORM + Prisma Migrate | Truy vấn có kiểu và quản lý thay đổi schema; giữ các ràng buộc SQL của thiết kế |
-| Dependency | npm workspaces | Một repository, hai workspace ứng dụng và một lockfile ở gốc khi scaffold |
+| Dependency | npm workspaces | Một repository, hai workspace ứng dụng và một lockfile ở gốc |
 | Mã nguồn | Git / GitHub | Nhánh công việc, commit, pull request; không tự merge vào `main` |
 | Xác thực | Google Identity Services → backend xác minh Google ID token → JWT UniHub | Tách chứng thực danh tính Google khỏi phiên làm việc và quyền trong UniHub |
 | Phân quyền | Guest / Student / Admin | Guest là trạng thái chưa đăng nhập; `users.role` chỉ chứa `Student` hoặc `Admin` |
@@ -37,11 +37,11 @@ Khi có khác biệt, quyết định chính thức mới của nhóm được g
 
 Frontend chỉ gọi API backend. Chỉ backend kết nối MySQL. Route guard frontend phục vụ điều hướng, không thay thế kiểm tra quyền tại backend.
 
-**Giới hạn môi trường môn học chưa được xác nhận.** Node.js 24 LTS và MySQL 8.4 LTS là lựa chọn của nhóm, không phải bằng chứng máy phòng học hoặc hệ thống chấm bài đã hỗ trợ. Cần đối chiếu trước khi scaffold/cài đặt; nếu có xung đột, báo nhóm để quyết định, không âm thầm đổi công nghệ.
+**Giới hạn môi trường môn học chưa được xác nhận.** Node.js 24 LTS và MySQL 8.4 LTS là lựa chọn của nhóm, không phải bằng chứng máy phòng học hoặc hệ thống chấm bài đã hỗ trợ. Scaffold được kiểm tra tại Codex/Linux; cần đối chiếu trên máy Windows/môi trường môn học. Nếu có xung đột, báo nhóm để quyết định, không âm thầm đổi công nghệ.
 
-## 3. Bộ phiên bản được chọn cho bước scaffold
+## 3. Phiên bản scaffold và kế hoạch dữ liệu
 
-Đây là các phiên bản cụ thể được chọn sau đối chiếu tài liệu chính thức và metadata gói đã xuất bản. Chưa có lockfile nên đây chưa phải bộ dependency đã được cài hay kiểm thử tích hợp. Bước scaffold cần khai báo phiên bản cụ thể, tạo và commit một `package-lock.json` ở gốc; không dùng `latest` để thay thế bảng này mà không đánh giá lại.
+Các phiên bản đã được đối chiếu lại qua metadata đúng phiên bản trên npm registry trước khi scaffold, không dùng `latest` hay nâng major. Manifest khai báo phiên bản cụ thể, một `package-lock.json` ở gốc khóa dependency thực tế. Các dòng MySQL, Prisma và driver bên dưới vẫn là kế hoạch: chưa cài hoặc dùng trong health.
 
 | Công cụ / gói | Phiên bản chọn | Kết quả đối chiếu |
 | --- | --- | --- |
@@ -58,14 +58,17 @@ Frontend chỉ gọi API backend. Chỉ backend kết nối MySQL. Route guard f
 | `mariadb` — driver dưới adapter | **3.5.4** | Dependency của adapter 7.10.1; Node >=20. Đây là driver kết nối MySQL, **không phải đổi database sang MariaDB** [S2, S6] |
 | `tailwindcss` | **3.4.19** | Node >=14; chọn dòng 3.4 để giữ yêu cầu trình duyệt Chương 3 [S2, S7] |
 | `postcss` / `autoprefixer` | **8.5.31** / **10.6.1** | Autoprefixer yêu cầu PostCSS `^8.1.0`; Vite hỗ trợ PostCSS [S2, S4] |
+| `@types/node` | **24.10.1** | Typings theo Node 24, ở các workspace TypeScript cần dùng [S10] |
+| `tsx` | **4.23.15** | Chạy TypeScript cho backend dev qua Node `--import tsx`; Node >=18 [S10] |
+| `prettier` | **3.6.2** | Định dạng mã/tài liệu, chỉ ở root devDependencies; Node >=14 [S10] |
 
-Google Identity Services là SDK web do Google cung cấp, không coi như một gói npm có phiên bản cố định trong bảng. Thư viện xác minh Google token, ký JWT, kiểm tra input, routing frontend và công cụ kiểm thử sẽ được đánh giá ở nhiệm vụ triển khai liên quan; chưa tự thêm vào dependency.
+Google Identity Services là SDK web do Google cung cấp, không coi như một gói npm có phiên bản cố định trong bảng. Thư viện xác minh Google token, ký JWT, kiểm tra input nghiệp vụ và routing frontend sẽ được đánh giá khi thực sự cần. Scaffold dùng fetch, Node.js built-in `node:test` (không thêm framework test), Prettier và TypeScript strict; chưa thêm React Router, UI kit, chart, ESLint hoặc công cụ chạy hai server cùng lúc.
 
 ### 3.1. Vì sao dùng Tailwind 3.4 thay vì 4
 
 Chương 3 trang 7, NFR-04.2, yêu cầu Chrome/Edge >=110, Firefox >=110 và Safari >=16. Tài liệu Tailwind 4 yêu cầu Chrome >=111, Firefox >=128 và Safari >=16.4, đồng thời khuyến nghị giữ dòng 3.4 nếu cần trình duyệt cũ hơn [S7]. Vì thế **Tailwind 3.4.19 là lựa chọn tương thích với yêu cầu hiện có**, không dùng `@tailwindcss/vite` dành cho Tailwind 4.
 
-Khi scaffold, tích hợp Tailwind 3 bằng PostCSS/Autoprefixer. Cấu hình build Vite phải chỉ rõ đích Chrome 110, Edge 110, Firefox 110 và Safari 16 thay vì dựa vào mặc định của Vite 8. Cấu hình CSS/Browserslist phải cùng yêu cầu. Đây là kế hoạch cấu hình; chưa chứng minh tất cả API trình duyệt hoặc giao diện hoạt động trên các phiên bản đó. Vite không tự polyfill mọi Web API. Máy phát triển nên dùng trình duyệt hiện hành; kiểm thử trình duyệt tối thiểu áp dụng cho bản build ứng dụng.
+Scaffold tích hợp Tailwind 3 bằng PostCSS/Autoprefixer, cấu hình Vite `build.target`, `build.cssTarget` và Browserslist cho Chrome 110, Edge 110, Firefox 110, Safari 16. Chưa kiểm thử đủ các phiên bản tối thiểu đó. Vite không tự polyfill mọi Web API. Máy phát triển nên dùng trình duyệt hiện hành; kiểm thử trình duyệt tối thiểu áp dụng cho bản build ứng dụng.
 
 ### 3.2. Những điều phải giữ khi dùng Prisma 7
 
@@ -82,15 +85,15 @@ Khi scaffold, tích hợp Tailwind 3 bằng PostCSS/Autoprefixer. Cấu hình bu
 
 Đã đọc tài liệu chính thức qua Node.js, mã nguồn/tài liệu trong repository do nhà phát triển quản lý và npm registry. Các website như `vite.dev`, `expressjs.com`, `www.prisma.io`, `tailwindcss.com`, `dev.mysql.com`, `docs.npmjs.com` và `developers.google.com` bị proxy chặn khi truy cập trực tiếp; các nguồn GitHub chính thức đọc được được dẫn bên dưới. Không coi lỗi mạng này là lỗi tương thích thư viện.
 
-**Chưa chạy** `npm install`, build, typecheck, `prisma validate`, `prisma generate`, migration hoặc thử kết nối MySQL. Vì vậy kết luận hiện tại là **phù hợp yêu cầu phiên bản được công bố**, không phải môi trường/ứng dụng đã hoạt động.
+Scaffold đã có lệnh cài dependency, typecheck/build hai workspace, test HTTP/config và format check tại root. Kết quả kiểm tra đợt scaffold được ghi trong PR/báo cáo bàn giao. Chưa chạy `prisma validate`, `prisma generate`, migration hoặc thử kết nối MySQL; không suy ra NFR hiệu năng, mọi trình duyệt hoặc máy Windows đã được kiểm tra từ kết quả trên Codex.
 
 ## 4. Quy tắc cấu hình và công việc tiếp theo
 
-- Sau khi scaffold: root package `private`, workspace `frontend` và `backend`, một lockfile ở gốc. Dependency ứng dụng khai báo trong workspace sử dụng nó; Prisma Client chỉ thuộc backend. Không tạo workspace ứng dụng thứ ba cho `database/`.
+- Root package `private`, workspace `frontend` và `backend`, một lockfile ở gốc. Dependency ứng dụng khai báo trong workspace sử dụng nó. Prisma Client khi triển khai chỉ thuộc backend. Không tạo workspace ứng dụng thứ ba cho `database/`.
 - Bí mật database và khóa ký JWT chỉ cấp cho backend qua cấu hình cục bộ/bí mật môi trường. Biến có tiền tố `VITE_` có thể bị đóng gói vào frontend nên không được chứa bí mật. Google client ID là định danh công khai; Google client secret không được đưa vào frontend hoặc Git và không cần cho luồng xác minh ID token đã chọn.
-- `.env.example`, `.gitignore`, README gốc và tài liệu cộng tác đầy đủ sẽ tạo ở bước scaffold, không thuộc hai file của đợt này. Chỉ dùng tên biến và giá trị mẫu an toàn, không tạo tài khoản mẫu hoặc dữ liệu cá nhân.
-- Nhánh hiện tại: `docs/technology-architecture`, trên commit nền rỗng của `main` đã được nhóm cho phép. Đưa hai tài liệu qua pull request; không tự merge. Các công việc sau dùng nhánh riêng và commit có tiền tố như `docs:`, `chore:`, `feat:`, `fix:`.
-- Bước tiếp theo là đối chiếu hạn chế môi trường môn học, rồi khởi tạo frontend/backend tối thiểu theo các phiên bản này, kiểm tra build và khởi động. Migration 12 bảng, xác thực và nghiệp vụ là các công việc riêng; không chạy trong đợt tài liệu.
+- Có `.env.example` riêng ở frontend/backend, `.gitignore`, README gốc và các tài liệu workflow/roadmap/API. Chỉ dùng tên biến và giá trị mẫu an toàn, không tạo tài khoản hoặc dữ liệu cá nhân. Dev proxy chỉ phục vụ phát triển cục bộ.
+- PR tài liệu #1 đã được merge vào main trước khi bắt đầu scaffold. Nhánh `chore/project-scaffold` kế thừa main ở `eff7ba2`; PR scaffold đặt base main. Agent không tự merge. Xem [workflow](team-workflow.md) để tạo nhánh chức năng tiếp theo.
+- Theo yêu cầu mới ngày 24/10/2026, nguồn schema/migration duy nhất sau này ở **backend/prisma/**; database/ chỉ giữ hướng dẫn, không có schema thứ hai. Bước tiếp theo theo [roadmap](development-roadmap.md): thống nhất API → schema/migration → luồng cơ hội mẫu → xác thực/hồ sơ → phát triển song song → tích hợp/kiểm thử. Không tự cài MySQL hoặc thêm nghiệp vụ trong scaffold.
 
 ## 5. Nguồn kỹ thuật đã đối chiếu
 
@@ -103,3 +106,4 @@ Khi scaffold, tích hợp Tailwind 3 bằng PostCSS/Autoprefixer. Cấu hình bu
 - **[S7] Tailwind, nguồn tại commit `7f92c2213315c195dae583d68752da4042da3ade`:** [giới hạn trình duyệt v4](https://github.com/tailwindlabs/tailwindcss.com/blob/7f92c2213315c195dae583d68752da4042da3ade/src/docs/compatibility.mdx), [hướng dẫn giữ v3.4 khi cần trình duyệt cũ](https://github.com/tailwindlabs/tailwindcss.com/blob/7f92c2213315c195dae583d68752da4042da3ade/src/docs/upgrade-guide.mdx).
 - **[S8] npm:** [hướng dẫn workspaces của npm 11.9.0](https://github.com/npm/cli/blob/v11.9.0/docs/lib/content/using-npm/workspaces.md).
 - **[S9] Google:** [mã nguồn OAuth2Client của thư viện chính thức](https://github.com/googleapis/google-cloud-node-core/blob/main/packages/google-auth-library-nodejs/src/auth/oauth2client.ts), gồm kiểm tra chữ ký, hạn token, issuer và audience. Chưa tích hợp thư viện này vào UniHub.
+- **[S10] Công cụ scaffold bổ sung, đọc metadata phiên bản cụ thể ngày 24/10/2026:** [Node typings](https://registry.npmjs.org/@types%2fnode/24.10.1), [tsx](https://registry.npmjs.org/tsx/4.23.15), [Prettier](https://registry.npmjs.org/prettier/3.6.2). Cách nạp cấu hình/chạy test: [Node CLI](https://nodejs.org/docs/latest-v24.x/api/cli.html), [Node test runner](https://nodejs.org/docs/latest-v24.x/api/test.html).
