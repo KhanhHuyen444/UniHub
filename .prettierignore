@@ -6,6 +6,10 @@ backend/src/generated/
 # Schema dùng định dạng chính thức của Prisma: npm run prisma:format.
 backend/prisma/schema.prisma
 backend/prisma/migrations/
+# Figma handoff evidence is source material; preserve exported formatting.
+docs/shared-ui-design/README.md
+docs/shared-ui-design/assets/manifest.json
+docs/shared-ui-design/evidence/
 # Giữ định dạng phần phân tích đã review; chỉ chỉnh có chọn lọc.
 docs/architecture.md
 docs/technology-stack.md

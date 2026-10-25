@@ -1,6 +1,6 @@
 # Công nghệ UniHub
 
-Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime **25/10/2026**. Trạng thái: bộ khung React/Express đã có schema và lớp kết nối Prisma/MySQL; nghiệp vụ vẫn là kế hoạch.
+Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI **25/10/2026**. Trạng thái: bộ khung React/Express, API client, router và shell preview đã có; nghiệp vụ vẫn là kế hoạch.
 
 ## 1. Phạm vi và căn cứ
 
@@ -16,7 +16,7 @@ Các tài liệu thực sự đã đọc, với số trang tính theo thứ tự
 
 Các đường dẫn trên chỉ ghi nguồn đã đọc trong môi trường làm việc, không phải tệp được đưa vào repository. PCCV là căn cứ phân công, không tự thay thế quy tắc nghiệp vụ trong Chương 3–4. Chương 2 chưa chốt và sẽ cập nhật theo công nghệ thực tế. Tài liệu nhóm khác không được coi là yêu cầu bắt buộc.
 
-Figma đúng do nhóm cung cấp: [UniHub — node 318-2](https://www.figma.com/design/6lTZvLvJfeOhz6D8QltvMe/Untitled?node-id=318-2&t=PFFCH76hu4tSNTHK-0). Yêu cầu truy cập bị proxy mạng trả `403 Forbidden`; **chưa đọc được thiết kế Figma**, không suy diễn màu sắc, typography hoặc component từ liên kết. Liên kết này thay cho node `24-2` trước đó. Việc viết tài liệu thành phần và dữ liệu không phụ thuộc việc đọc Figma.
+Figma đúng do nhóm cung cấp: file `6lTZvLvJfeOhz6D8QltvMe`, node `24:2` (Page 3). Handoff được nhóm xuất từ Figma trong `UniHub-design-handoff.zip` đã được đọc, gồm 63 frame, ba screenshot đại diện, manifest asset và JSON bằng chứng. Bản kiểm kê cùng phân loại thông số trực tiếp/tính toán/chưa xác nhận được giữ tại [shared-ui-design](shared-ui-design/README.md) và [ghi nhận triển khai](shared-ui-design/implementation.md). Handoff hình ảnh không phải bằng chứng cho route, nghiệp vụ, quyền hoặc responsive rules.
 
 Khi có khác biệt, quyết định chính thức mới của nhóm được ghi rõ và ưu tiên; không tự sửa mô hình dữ liệu để giải quyết khác biệt.
 
@@ -64,11 +64,11 @@ Các phiên bản đã được đối chiếu lại qua metadata đúng phiên 
 | `tsx` | **4.23.15** | Chạy TypeScript cho backend dev qua Node `--import tsx`; Node >=18 [S10] |
 | `prettier` | **3.6.2** | Định dạng mã/tài liệu, chỉ ở root devDependencies; Node >=14 [S10] |
 
-Google Identity Services là SDK web do Google cung cấp, không coi như một gói npm có phiên bản cố định trong bảng. Thư viện xác minh Google token, ký JWT và kiểm tra input nghiệp vụ sẽ được đánh giá khi thực sự cần. Frontend dùng React Router ở declarative mode cho `BrowserRouter`, `Routes`, `Route` và `Navigate`; chưa dùng data loaders/actions, route guard hoặc layout tính năng. Scaffold dùng fetch, Node.js built-in `node:test` (không thêm framework test), Prettier và TypeScript strict; chưa thêm UI kit, chart, ESLint hoặc công cụ chạy hai server cùng lúc.
+Google Identity Services là SDK web do Google cung cấp, không coi như một gói npm có phiên bản cố định trong bảng. Thư viện xác minh Google token, ký JWT và kiểm tra input nghiệp vụ sẽ được đánh giá khi thực sự cần. Frontend dùng React Router declarative mode cho `BrowserRouter`, `Routes`, `Route` và `Navigate`; không dùng data loaders/actions hoặc route guard. Ba layout shared UI và route preview kỹ thuật đã được thêm; chưa có layout/page sản phẩm. Scaffold dùng fetch, Node.js built-in `node:test` (không thêm framework test), Prettier và TypeScript strict; chưa thêm UI kit, chart, ESLint hoặc công cụ chạy hai server cùng lúc.
 
 ### 3.1. React Router và cấu trúc route ban đầu
 
-Đã chọn chính xác `react-router@8.5.0`, không cài thêm `react-router-dom`. Tài liệu đi cùng gói npm hướng dẫn render `BrowserRouter` và khai báo `Routes`/`Route` trong declarative mode. `frontend/src/app/router.tsx` giữ route tập trung; hiện chỉ mount `/_dev/health`, `/404` và fallback `*`; `/` chuyển tới trang health để giữ khả năng mở màn hình kỹ thuật hiện tại. Các màn hình nghiệp vụ trong Chương 4 chỉ được liệt kê trong tài liệu, chưa mount route hoặc trang giả.
+Đã chọn chính xác `react-router@8.5.0`, không cài thêm `react-router-dom`. Tài liệu đi cùng gói npm hướng dẫn render `BrowserRouter` và khai báo `Routes`/`Route` trong declarative mode. `frontend/src/app/router.tsx` giữ route tập trung; hiện mount `/_dev/health`, `/_dev/ui`, `/404` và fallback `*`; `/` chuyển tới trang health. Các màn hình nghiệp vụ trong Chương 4 chỉ được liệt kê trong tài liệu, chưa mount route hoặc trang giả.
 
 Metadata peer/engine được kiểm tra từ npm registry và tài liệu cài đặt/routing trong tarball chính thức `react-router-8.5.0.tgz`. Node 24.19.0 đáp ứng `>=22.22.0`, React/React DOM 19.3.1 đáp ứng `>=19.2.7`, typings 19.3.0 đáp ứng `>=19.2.0`. Website tài liệu chính thức bị proxy chặn trong môi trường này; phần declarative mode được đối chiếu từ tài liệu đóng gói với đúng phiên bản, không suy ra từ tài liệu major khác.
 

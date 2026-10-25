@@ -1,8 +1,8 @@
 # UniHub
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Repository hiện ở **giai đoạn bộ khung phát triển chung**: React Router đưa màn hình kỹ thuật tạm thời tới `/_dev/health`, frontend dùng API client chung gọi Express. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Repository hiện ở **giai đoạn bộ khung phát triển chung**: frontend có API client, router kỹ thuật và preview component/layout dùng chung từ Figma Page 3; chưa có trang nghiệp vụ. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
 
-Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4, Prisma runtime qua PR #5. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Chưa có đăng nhập Google, JWT, tài khoản mẫu, API nghiệp vụ hoặc UI chính thức theo Figma. Có thể chạy health mà không cần MySQL hoặc Docker.
+Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4, Prisma runtime qua PR #5. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Chưa có đăng nhập Google, JWT, tài khoản mẫu hoặc API nghiệp vụ. Preview UI chỉ dùng kiểm tra shell/component, không phải giao diện hoặc chức năng sản phẩm. Có thể chạy frontend health/preview mà không cần MySQL hoặc Docker.
 
 ## 1. Công nghệ và điều kiện môi trường
 
@@ -90,6 +90,16 @@ npm.cmd run dev:frontend
 
 Mở trình duyệt tại **`http://127.0.0.1:5173`**. `/` chuyển tới `/_dev/health`; trang hiển thị "Đang kiểm tra kết nối…", sau đó "Backend hoạt động" nếu nhận đúng health JSON. Nếu backend chưa chạy, trang báo "Không kết nối được backend"; chạy backend rồi bấm **Thử lại**. Mỗi lần kiểm tra có timeout 5 giây. Yêu cầu bị hủy/bỏ qua khi component được tháo khỏi trang hoặc lần kiểm tra đã hết hiệu lực. Đường dẫn chưa triển khai hiển thị trang 404 tối giản, không có menu giả.
 
+Component/layout preview không cần backend: chỉ cần Terminal 2 chạy frontend. Mở một URL sau để xem shell tương ứng:
+
+```text
+http://127.0.0.1:5173/_dev/ui?area=public
+http://127.0.0.1:5173/_dev/ui?area=student
+http://127.0.0.1:5173/_dev/ui?area=admin
+```
+
+Thanh chọn shell và các mục nav trong preview chỉ đổi trạng thái xem trước. Student/Admin preview không xác thực; nút đăng nhập, chuông, đăng xuất không hoạt động. Footer giữ cột Hỗ trợ; tên “Điều khoản sử dụng” và “Chính sách bảo mật” là chữ từ screenshot, chưa có URL/nội dung được nhóm duyệt nên không phải link.
+
 Frontend gọi đường dẫn tương đối `/api/health`; Vite **dev proxy** chuyển `/api` tới backend. Proxy là cơ chế chuyển tiếp yêu cầu khi phát triển, **chưa phải cấu hình production**. Build frontend không tự tạo proxy hoặc hosting. Cả hai server hiện chỉ nghe loopback trên máy đang chạy, không mở ra Internet.
 
 **Terminal thứ ba, ở bất kỳ thư mục nào**, kiểm tra trực tiếp API:
@@ -138,12 +148,13 @@ Frontend dev ở terminal 2 vẫn gọi được backend này. Đây là kiểm 
 ```text
 UniHub/
 ├── frontend/src/
-│   ├── app/                 # router, màn hình health và fallback 404
-│   ├── components/          # README cho thành phần chung
-│   ├── layouts/             # README cho layout dùng chung
+│   ├── app/                 # router, health, 404, shared UI preview
+│   ├── components/ui/       # Button, Input, Select, FormField, Badge, Card, states
+│   ├── layouts/             # PublicLayout, StudentLayout, AdminLayout
+│   ├── assets/              # logo và icon Figma đang được shell sử dụng
 │   ├── features/            # README theo chức năng, chưa có nghiệp vụ
 │   ├── lib/                 # API client và kiểm tra health
-│   └── styles/              # Tailwind CSS
+│   └── styles/              # Tailwind CSS và tokens
 ├── backend/
 │   ├── src/
 │   │   ├── app.ts           # cấu hình Express, không mở cổng
@@ -156,6 +167,7 @@ UniHub/
 │   └── prisma/              # schema, migration SQL và Prisma config
 ├── database/README.md       # lối vào tài liệu dữ liệu
 ├── docs/                    # kiến trúc, workflow, roadmap, quy ước API
+│   └── shared-ui-design/    # handoff Figma, screenshot/evidence không vào build
 ├── AGENTS.md
 ├── package.json             # npm workspaces
 └── package-lock.json        # lockfile duy nhất
@@ -171,7 +183,7 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 | TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                  |
 | TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction        |
 
-Đọc [quy trình cộng tác](docs/team-workflow.md) và [lộ trình](docs/development-roadmap.md). Figma chưa truy cập được; chưa dựng layout/token/navbar/footer hoặc giao diện nghiệp vụ. Danh sách frame và thông số cần cung cấp nằm tại [hướng dẫn layout](frontend/src/layouts/README.md). Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
+Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3; chưa dựng giao diện nghiệp vụ. Font Inter chưa được bundle. Link/footer legal labels còn chờ nhóm chốt đích và nội dung chính thức. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
 
 ## 7. Lỗi thường gặp và giới hạn
 
@@ -181,4 +193,4 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 - Lệnh không có script/workspace: kiểm tra terminal đang ở gốc UniHub và đã lấy đúng nhánh.
 - Không commit `.env`, node_modules, dist, coverage, khóa hoặc dữ liệu cục bộ. `.env.example` chỉ chứa cấu hình mẫu an toàn.
 
-Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. UI tạm thời không dựa trên Figma chưa đọc được. Đăng nhập, JWT, API nghiệp vụ, cron và mọi chức năng nghiệp vụ vẫn chưa triển khai.
+Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. Shared UI được đối chiếu ảnh handoff ở 1280 px; chưa xác nhận breakpoint, max-width CSS gốc hoặc viewport Figma 1920 px. Đăng nhập, JWT, API nghiệp vụ, cron và mọi chức năng nghiệp vụ vẫn chưa triển khai.

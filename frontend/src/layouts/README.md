@@ -1,7 +1,15 @@
 # Layout dùng chung
 
-Public, Student và Admin là các khu vực trong một ứng dụng React. Chưa tạo layout, navbar, footer, sidebar hay component menu: Figma không truy cập được do proxy trả 403, và không suy diễn hình ảnh từ sitemap. Màn hình kỹ thuật hiện có ở `app/App.tsx`; route được khai báo tập trung tại `app/router.tsx`.
+Layout reusable cho một ứng dụng React:
 
-Trước khi dựng layout, cần nhóm cung cấp frame hoặc ảnh đầy đủ của: (1) trang Public có navbar/footer; (2) shell Student, tối thiểu profile, recommendations, calendar và forum; (3) shell Admin trên dashboard và moderation có cả tab duyệt cơ hội/kiểm duyệt forum. Ảnh cần ghi kích thước viewport 1280 px và 1920 px, trạng thái menu đang mở/đóng và phần đầu/cuối trang.
+- `PublicLayout`: header Guest cao 72 px, vùng nội dung tối đa 1200 px và footer Public.
+- `StudentLayout`: header Student cao 64 px, vùng nội dung tối đa 1280 px và footer Student.
+- `AdminLayout`: sidebar cố định 260 px, vùng nội dung co giãn và footer Admin cao 52 px.
 
-Cần thông số token gồm font và trọng lượng, cấp cỡ chữ, màu brand/semantic, lưới và chiều rộng nội dung, spacing, chiều cao navbar/footer/sidebar, nhãn và đích liên kết, kích thước/radius/viền/đổ bóng, cùng trạng thái focus/disabled/loading/error của nút, input, badge. Chỉ tạo component/layout sau khi đối chiếu các nguồn này; component riêng của nghiệp vụ nằm trong feature tương ứng.
+Các layout nhận `children`, `activeKey` và `previewNavigation`. Feature route tương lai dùng navigation path thực của mình. Trong `/_dev/ui`, `previewNavigation` đổi link thành route preview/query để các mục chỉ đổi active state; không đi tới feature route chưa được triển khai. Preview Student/Admin là minh họa, không xác thực quyền.
+
+Token CSS ở `frontend/src/styles/tokens.css`; Tailwind map các màu/font/size/surface trong `tailwind.config.js`. Số đo frame 1280 là nguồn trực tiếp; cách căn giữa container ở 1920 px, scale spacing và chiều rộng footer logo là lựa chọn triển khai được ghi trong [implementation notes](../../../docs/shared-ui-design/implementation.md). Inter được ưu tiên nhưng không bundle font: máy cần có Inter để khớp tuyệt đối, nếu không sẽ dùng system sans.
+
+Footer giữ cột **Hỗ trợ** và hai label trong screenshot. Hiện chúng là text tĩnh vì repository chưa có quyết định/URL đã duyệt; không biến thành liên kết giả và không tự viết điều khoản/chính sách. Dòng copyright cũng là copy từ hình tham chiếu, chưa được xác nhận là nội dung pháp lý chính thức.
+
+Frame nguồn: Public `24:1632`, Student `301:382`, Admin `166:940`. README gốc bàn giao, screenshot và JSON bằng chứng nằm tại `docs/shared-ui-design/`; chỉ asset dùng trong shell được import từ `frontend/src/assets/`.

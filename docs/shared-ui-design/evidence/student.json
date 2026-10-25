@@ -1,0 +1,2432 @@
+{
+  "id": "301:382",
+  "name": "Cơ hội dành cho bạn ",
+  "typography": [
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:389",
+          "text": "Gợi ý thông minh dựa trên hồ sơ học thuật"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 24,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 32
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:391",
+          "text": "Cơ hội dành cho bạn"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:393",
+          "text": "Khám phá cơ hội phù hợp với chuyên ngành, năm học và kỹ năng của "
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 16,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 24
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0F172A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:399",
+          "text": "3 cơ hội phù hợp"
+        },
+        {
+          "id": "301:415",
+          "text": "Thực tập sinh Frontend"
+        },
+        {
+          "id": "301:483",
+          "text": "Lập trình viên Python bán thời gian"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#475569",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:405",
+          "text": "Sắp xếp theo mức độ phù hợp giảm dần"
+        },
+        {
+          "id": "301:421",
+          "text": "•"
+        },
+        {
+          "id": "301:423",
+          "text": "Đăng tuyển 2 ngày trước"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:419",
+          "text": "Công ty ABC"
+        },
+        {
+          "id": "301:439",
+          "text": "Hình thức:"
+        },
+        {
+          "id": "301:445",
+          "text": "Địa điểm:"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:778",
+          "text": "Verified"
+        },
+        {
+          "id": "301:787",
+          "text": "Verified"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#166534",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:780",
+          "text": "Verified"
+        },
+        {
+          "id": "301:782",
+          "text": "Verified"
+        },
+        {
+          "id": "301:789",
+          "text": "Verified"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#166534",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:433",
+          "text": "Phù hợp 100%"
+        },
+        {
+          "id": "301:497",
+          "text": "Phù hợp 70%"
+        },
+        {
+          "id": "301:559",
+          "text": "Phù hợp 60%"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#075985",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:426",
+          "text": "Thực tập"
+        },
+        {
+          "id": "301:494",
+          "text": "Việc làm"
+        },
+        {
+          "id": "301:552",
+          "text": "Học bổng"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0F172A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:441",
+          "text": "Hybrid"
+        },
+        {
+          "id": "301:447",
+          "text": "TP. Hồ Chí Minh"
+        },
+        {
+          "id": "301:453",
+          "text": "30/11/2026"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:472",
+          "text": "Xem chi tiết"
+        },
+        {
+          "id": "301:530",
+          "text": "Xem chi tiết"
+        },
+        {
+          "id": "301:594",
+          "text": "Xem chi tiết"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0F172A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:610",
+          "text": "Công nghệ thông tin"
+        },
+        {
+          "id": "301:615",
+          "text": "Năm 3"
+        },
+        {
+          "id": "301:632",
+          "text": "Thực tập sinh Frontend"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:636",
+          "text": "Cập nhật hồ sơ"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 16,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 24
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:642",
+          "text": "Cách gợi ý hoạt động"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:644",
+          "text": "Mức độ phù hợp được tính từ chuyên\nngành (40%), năm học (30%) và "
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:658",
+          "text": "Ngành 40%"
+        },
+        {
+          "id": "301:661",
+          "text": "Năm 30%"
+        },
+        {
+          "id": "301:664",
+          "text": "Kỹ năng 30%"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Italic",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": -10
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#475569",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "301:669",
+          "text": "Vị trí nghề nghiệp mục tiêu không tham\ngia tính điểm."
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 24,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 32
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#1E3A8A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:18",
+          "text": "UniHub"
+        },
+        {
+          "id": "303:81",
+          "text": "UniHub"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 24,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 32
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#2563EB",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:18",
+          "text": "UniHub"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#404850",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:21",
+          "text": "Trang chủ"
+        },
+        {
+          "id": "303:23",
+          "text": "Hub cơ hội"
+        },
+        {
+          "id": "303:27",
+          "text": "Lộ trình kỹ năng"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0077B6",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:25",
+          "text": "Cơ hội dành cho bạn"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0F172A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:42",
+          "text": "Nguyễn Minh Anh"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:47",
+          "text": "MA"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0F172A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:57",
+          "text": "HỖ TRỢ"
+        },
+        {
+          "id": "303:66",
+          "text": "KHÁM PHÁ"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#475569",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:61",
+          "text": "Điều khoản sử dụng"
+        },
+        {
+          "id": "303:63",
+          "text": "Chính sách bảo mật"
+        },
+        {
+          "id": "303:71",
+          "text": "Hub Cơ hội"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#475569",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:69",
+          "text": "Trang chủ"
+        },
+        {
+          "id": "303:73",
+          "text": "Cơ hội dành cho bạn"
+        },
+        {
+          "id": "303:77",
+          "text": "Lịch & Deadline"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:82",
+          "text": "Kết nối cơ hội, định hướng tương lai."
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#64748B",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "303:84",
+          "text": "© 2026 UniHub. Bảo lưu mọi quyền"
+        }
+      ]
+    }
+  ],
+  "colors": {
+    "#FFFFFF / 1": [
+      "301:382",
+      "301:407",
+      "301:457"
+    ],
+    "#F7F9FB / 1": [
+      "301:382"
+    ],
+    "#F8FAFC / 1": [
+      "301:383"
+    ],
+    "#F1F5F9 / 1": [
+      "301:386",
+      "301:410",
+      "301:434"
+    ],
+    "#0077B6 / 1": [
+      "301:387",
+      "301:412",
+      "301:438"
+    ],
+    "#03045E / 1": [
+      "301:389",
+      "301:391",
+      "301:777"
+    ],
+    "#334155 / 1": [
+      "301:393",
+      "301:419",
+      "301:439"
+    ],
+    "#0F172A / 1": [
+      "301:399",
+      "301:415",
+      "301:441"
+    ],
+    "#475569 / 1": [
+      "301:404",
+      "301:405",
+      "301:421"
+    ],
+    "#CAF0F8 / 1": [
+      "301:775",
+      "301:425",
+      "301:784"
+    ],
+    "#DCFCE7 / 1": [
+      "301:779",
+      "301:781",
+      "301:431"
+    ],
+    "#166534 / 1": [
+      "301:780",
+      "301:782",
+      "301:433"
+    ],
+    "#075985 / 1": [
+      "301:426",
+      "301:494",
+      "301:552"
+    ],
+    "#00B4D8 / 1": [
+      "301:480",
+      "301:654",
+      "301:663"
+    ],
+    "#E0F2FE / 1": [
+      "301:493",
+      "301:551",
+      "301:620"
+    ],
+    "#E6E8EA / 1": [
+      "301:651"
+    ],
+    "#707881 / 1": [
+      "301:667"
+    ],
+    "#FFFFFF / 0.949999988079071": [
+      "303:11"
+    ],
+    "#404850 / 1": [
+      "303:21",
+      "303:23",
+      "303:27"
+    ],
+    "#BA1A1A / 1": [
+      "303:37"
+    ],
+    "#FFFFFF / 0.0020000000949949026": [
+      "303:38",
+      "303:46"
+    ],
+    "#1E3A8A / 1": [
+      "303:81"
+    ],
+    "#64748B / 1": [
+      "303:84"
+    ]
+  },
+  "structure": [
+    {
+      "id": "301:383",
+      "name": "Main - 2. MAIN SLOT (Exact pt-16 matches h-16 header)",
+      "parent": "301:382",
+      "w": 1280,
+      "h": 1110,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 64,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#F8FAFC",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:384",
+      "name": "Content Container",
+      "parent": "301:383",
+      "w": 1280,
+      "h": 1046,
+      "x": 0,
+      "y": 64,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 32,
+      "paddingTop": 40,
+      "paddingRight": 32,
+      "paddingBottom": 40,
+      "paddingLeft": 32,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:385",
+      "name": "1. Header Section (Typography & Subtitle, No Filters/Search)",
+      "parent": "301:384",
+      "w": 1216,
+      "h": 96,
+      "x": 32,
+      "y": 40,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:390",
+      "name": "Heading 1",
+      "parent": "301:385",
+      "w": 1216,
+      "h": 36,
+      "x": 0,
+      "y": 32,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 4,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:394",
+      "name": "2. Main 2-Column Responsive Layout",
+      "parent": "301:384",
+      "w": 1216,
+      "h": 838,
+      "x": 32,
+      "y": 168,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 24,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:396",
+      "name": "Section Header Bar",
+      "parent": "301:395",
+      "w": 832,
+      "h": 28,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 218.80999755859375,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 4,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:398",
+      "name": "Heading 2",
+      "parent": "301:397",
+      "w": 128,
+      "h": 24,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:406",
+      "name": "OPPORTUNITY CARDS STACK",
+      "parent": "301:395",
+      "w": 832,
+      "h": 790,
+      "x": 0,
+      "y": 48,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:407",
+      "name": "Article - Card 1: Thực tập sinh Frontend (100% Match)",
+      "parent": "301:406",
+      "w": 832,
+      "h": 260,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 24,
+      "paddingRight": 24,
+      "paddingBottom": 24,
+      "paddingLeft": 24,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.05000000074505806
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "301:414",
+      "name": "Link → Heading 3",
+      "parent": "301:413",
+      "w": 179,
+      "h": 24,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:424",
+      "name": "Badges Cluster",
+      "parent": "301:408",
+      "w": 186,
+      "h": 24,
+      "x": 569,
+      "y": 0,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:463",
+      "name": "Skill Tags & Actions",
+      "parent": "301:407",
+      "w": 784,
+      "h": 44,
+      "x": 24,
+      "y": 192,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 358.5799865722656,
+      "paddingTop": 4,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:475",
+      "name": "Article - Card 2: Lập trình viên Python bán thời gian (70% Match)",
+      "parent": "301:406",
+      "w": 832,
+      "h": 244,
+      "x": 0,
+      "y": 276,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 24,
+      "paddingRight": 24,
+      "paddingBottom": 24,
+      "paddingLeft": 24,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.05000000074505806
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "301:482",
+      "name": "Link → Heading 3",
+      "parent": "301:481",
+      "w": 266,
+      "h": 24,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:492",
+      "name": "Badges Cluster (NO Verified)",
+      "parent": "301:476",
+      "w": 99,
+      "h": 24,
+      "x": 664,
+      "y": 0,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:521",
+      "name": "Skill Tags & Actions",
+      "parent": "301:475",
+      "w": 784,
+      "h": 44,
+      "x": 24,
+      "y": 176,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 367.5,
+      "paddingTop": 4,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:533",
+      "name": "Article - Card 3: Học bổng phát triển tài năng công nghệ (60% Match)",
+      "parent": "301:406",
+      "w": 832,
+      "h": 254,
+      "x": 0,
+      "y": 536,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 24,
+      "paddingRight": 24,
+      "paddingBottom": 24,
+      "paddingLeft": 24,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.05000000074505806
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "301:540",
+      "name": "Link → Heading 3",
+      "parent": "301:539",
+      "w": 303,
+      "h": 24,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:550",
+      "name": "Badges Cluster (Has Verified)",
+      "parent": "301:534",
+      "w": 112,
+      "h": 24,
+      "x": 672,
+      "y": 0,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:583",
+      "name": "Skill Tags & Actions",
+      "parent": "301:533",
+      "w": 784,
+      "h": 44,
+      "x": 24,
+      "y": 186,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 266.2200012207031,
+      "paddingTop": 4,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:597",
+      "name": "Aside - RIGHT COLUMN: Profile Summary & Recommendation Algorithm Info (Approx 30%)",
+      "parent": "301:394",
+      "w": 360,
+      "h": 661,
+      "x": 856,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:598",
+      "name": "Block 1: \"Hồ sơ của bạn\" Card",
+      "parent": "301:597",
+      "w": 360,
+      "h": 350,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 20,
+      "paddingTop": 20,
+      "paddingRight": 20,
+      "paddingBottom": 20,
+      "paddingLeft": 20,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.05000000074505806
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "301:599",
+      "name": "Card Header",
+      "parent": "301:598",
+      "w": 320,
+      "h": 24,
+      "x": 20,
+      "y": 20,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 76.97000122070312,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:600",
+      "name": "Heading 2",
+      "parent": "301:599",
+      "w": 109,
+      "h": 24,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:633",
+      "name": "Link - Action Button",
+      "parent": "301:598",
+      "w": 320,
+      "h": 40,
+      "x": 20,
+      "y": 290,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 6,
+      "paddingTop": 0,
+      "paddingRight": 16,
+      "paddingBottom": 0,
+      "paddingLeft": 16,
+      "cornerRadius": 10,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#CAF0F8",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:637",
+      "name": "Block 2: \"Cách gợi ý hoạt động\" Card",
+      "parent": "301:597",
+      "w": 360,
+      "h": 295,
+      "x": 0,
+      "y": 366,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 12,
+      "paddingTop": 20,
+      "paddingRight": 20,
+      "paddingBottom": 20,
+      "paddingLeft": 20,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#F1F5F9",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "301:641",
+      "name": "Heading 3",
+      "parent": "301:638",
+      "w": 163,
+      "h": 24,
+      "x": 24.66666603088379,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "303:11",
+      "name": "Header — UniHub sinh viên",
+      "parent": "301:382",
+      "w": 1280,
+      "h": 64,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 0.949999988079071
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 8,
+          "boundVariables": {},
+          "color": {
+            "r": 0.0117647061124444,
+            "g": 0.01568627543747425,
+            "b": 0.3686274588108063,
+            "a": 0.05999999865889549
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        },
+        {
+          "type": "BACKGROUND_BLUR",
+          "visible": true,
+          "radius": 12,
+          "boundVariables": {},
+          "blurType": "NORMAL"
+        }
+      ]
+    },
+    {
+      "id": "303:34",
+      "name": "Button - Thông báo",
+      "parent": "303:33",
+      "w": 24,
+      "h": 34,
+      "x": 0,
+      "y": 1,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 4,
+      "paddingRight": 4,
+      "paddingBottom": 10,
+      "paddingLeft": 4,
+      "cornerRadius": 9999,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "303:48",
+      "name": "Footer — UniHub",
+      "parent": "301:382",
+      "w": 1280,
+      "h": 301.25,
+      "x": 0,
+      "y": 1110,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 48,
+      "paddingRight": 0,
+      "paddingBottom": 32,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#F1F5F9",
+          "opacity": 1
+        }
+      ],
+      "stroke": [
+        {
+          "hex": "#E2E8F0",
+          "opacity": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "303:56",
+      "name": "Heading 3",
+      "parent": "303:55",
+      "w": 280,
+      "h": 20,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "303:65",
+      "name": "Heading 3",
+      "parent": "303:64",
+      "w": 280,
+      "h": 20,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    }
+  ],
+  "assets": [
+    {
+      "id": "301:404",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 12,
+      "h": 8
+    },
+    {
+      "id": "301:412",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 21.66666603088379,
+      "h": 19.5
+    },
+    {
+      "id": "301:777",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 11.916666984558105,
+      "h": 11.375
+    },
+    {
+      "id": "301:438",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 12.666666984558105
+    },
+    {
+      "id": "301:444",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 10.666666984558105,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "301:450",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 12,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "301:474",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 12,
+      "h": 12
+    },
+    {
+      "id": "301:480",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 19.5,
+      "h": 19.5
+    },
+    {
+      "id": "301:786",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 11.916666984558105,
+      "h": 11.375
+    },
+    {
+      "id": "301:502",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 12
+    },
+    {
+      "id": "301:508",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 12,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "301:532",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 12,
+      "h": 12
+    },
+    {
+      "id": "301:538",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 23.83333396911621,
+      "h": 19.5
+    },
+    {
+      "id": "301:564",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "301:570",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 16,
+      "h": 7.333333492279053
+    },
+    {
+      "id": "301:596",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 12,
+      "h": 12
+    },
+    {
+      "id": "301:631",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 10,
+      "h": 11.333333015441895
+    },
+    {
+      "id": "301:635",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.5,
+      "h": 12
+    },
+    {
+      "id": "301:640",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 16.66666603088379,
+      "h": 16.66666603088379
+    },
+    {
+      "id": "301:645",
+      "name": "SVG Scoring Weight Micro-Visualizer",
+      "type": "FRAME",
+      "w": 320,
+      "h": 79
+    },
+    {
+      "id": "301:667",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "303:16",
+      "name": "UniHub Logo",
+      "type": "FRAME",
+      "w": 40,
+      "h": 40
+    },
+    {
+      "id": "303:36",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 16,
+      "h": 20
+    },
+    {
+      "id": "303:53",
+      "name": "UniHub_Icon 1",
+      "type": "RECTANGLE",
+      "w": 180,
+      "h": 180
+    }
+  ],
+  "reactions": [
+    {
+      "id": "303:20",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "24:1632",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "24:1632",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "303:22",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "36:39",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "36:39",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "303:26",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "152:12586",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "152:12586",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "303:28",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "123:484",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "123:484",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "303:30",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "129:4708",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "129:4708",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "303:68",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "24:1632",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "24:1632",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "303:70",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "36:39",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "36:39",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "303:74",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "152:12586",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "152:12586",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "303:76",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "123:484",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "123:484",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "303:78",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "129:4708",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "129:4708",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    }
+  ]
+}
