@@ -1,6 +1,6 @@
 # Migration MySQL của UniHub
 
-Ngày: **25/10/2026**. Initial migration được tạo trên nhánh `feat/initial-migration` từ `main` tại `d10ab25`. Mục đích là chuyển schema đã review thành một lịch sử migration dùng chung cho cả nhóm. File migration được commit; các lần test database bên dưới chỉ dùng MySQL 8.4 dùng một lần trong môi trường Codex. **Không có database trên máy người dùng nào được mở hoặc thay đổi.**
+Ngày: **25/10/2026**. Initial migration được tạo trên nhánh `feat/initial-migration` và đã merge vào `main` qua PR #4 tại `d7c2cefc79754728a6731498a33f4d3ebfe40c48`. Nhánh runtime được cập nhật từ commit này; migration dùng chung không bị sửa hoặc tạo lại. Kiểm thử trong tài liệu chỉ dùng MySQL 8.4 tạm ở Codex. **Không có database trên máy thành viên nào được mở hoặc thay đổi.**
 
 ## Quyết định đã xác nhận
 
@@ -95,9 +95,9 @@ Không chỉnh migration sau khi đã chia sẻ/áp dụng. Mọi thay đổi ti
 - Runtime user được phép đọc và ghi theo bảng, xóa event/association; UPDATE/DELETE `activity_logs` và CREATE TABLE bị từ chối. Migration user có ALL PRIVILEGES đúng một schema; không có CREATE DATABASE ở mức máy chủ.
 - Bổ sung kiểm tra quyền/transaction bằng SQL trên MySQL tạm 8.4.13: runtime user xóa một notification `Reminder` mà event vẫn còn, reset `events.reminded_at` trong cùng transaction, rồi `ROLLBACK`; notification và giá trị `reminded_at` ban đầu đều được phục hồi. Runtime user vẫn SELECT/INSERT được `activity_logs`; MySQL từ chối UPDATE và DELETE bảng này. Đây là kiểm thử GRANT và transaction trực tiếp ở SQL, **chưa phải kiểm thử API/nghiệp vụ**: chưa xác nhận validation `due_date`/`remind_before`, ownership, điều kiện chọn Reminder cũ hay điều phối transaction trong backend.
 - Prisma migrate diff từ database về Prisma schema trả SQL diff rỗng. Điều đó **không phát hiện** CHECK, collation hoặc ON UPDATE do các đặc điểm này không được schema Prisma biểu diễn; đây là giới hạn mong đợi, không phải bằng chứng đã drift-free toàn bộ MySQL metadata. SQL initial migration đã kiểm tra riêng bằng metadata và hành vi phía trên.
-- Prisma validate/generate, typecheck, build, 10 test (7 HTTP + 3 CSS), format check và audit được chạy lại sau khi cập nhật scripts/docs. Audit không có lỗ hổng. Giữ nguyên Tailwind 3.4.19/Prisma 7.10.1 và override parser đã chốt; `npm ls` còn cảnh báo đã biết về khoảng `^6` so với parser 7.1.6, xem [dependency-security.md](dependency-security.md).
+- Prisma validate/generate, typecheck, build, test, format check và audit được chạy lại sau các thay đổi theo từng nhiệm vụ; số test HTTP hiện được ghi trong [README](../README.md). Giữ nguyên Tailwind 3.4.19/Prisma 7.10.1 và override parser đã chốt; `npm ls` còn cảnh báo peer range đã biết về `^6` so với parser 7.1.6, xem [dependency-security.md](dependency-security.md).
 
-Kiểm tra này xác nhận migration trên đúng MySQL 8.4.13 trong Codex/Linux. Nó không chứng minh MySQL phòng học, host/collation khác hoặc máy Windows của thành viên đã sẵn sàng. Adapter Prisma runtime chưa được thêm; mỗi kết nối ứng dụng sau này phải thiết lập session timezone UTC khi khởi tạo pool.
+Kiểm tra này xác nhận migration trên đúng MySQL 8.4.13 trong Codex/Linux. Nó không chứng minh MySQL phòng học, host/collation khác hoặc máy Windows của thành viên đã sẵn sàng. Prisma runtime hiện dùng adapter/pool cấu hình UTC cho từng physical connection; xem [database-runtime.md](database-runtime.md) để biết kiểm tra tích hợp và hướng dẫn Windows.
 
 MySQL DDL có thể implicit commit; nếu một migration lỗi giữa chừng không giả định `ROLLBACK` sẽ hoàn tác CREATE/ALTER. Trên database dùng một lần, lưu lỗi, kiểm tra `_prisma_migrations`/cấu trúc còn lại, bỏ toàn bộ container test và dựng container/database test mới rồi chạy lại. Không chạy RESET/DROP hướng dẫn này trên database có dữ liệu.
 

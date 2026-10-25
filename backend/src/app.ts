@@ -1,11 +1,24 @@
 import express from 'express';
 import { errorHandler, notFound } from './middleware/errors.js';
 import { healthRouter } from './modules/health/health.routes.js';
+import { createReadyRouter } from './modules/health/ready.routes.js';
 
-export const app = express();
+interface AppDependencies {
+  checkDatabase?: () => Promise<void>;
+  logDatabaseFailure?: () => void;
+}
 
-app.disable('x-powered-by');
-app.use(express.json({ limit: '100kb' }));
-app.use('/api/health', healthRouter);
-app.use(notFound);
-app.use(errorHandler);
+export function createApp(dependencies: AppDependencies = {}) {
+  const app = express();
+
+  app.disable('x-powered-by');
+  app.use(express.json({ limit: '100kb' }));
+  app.use('/api/health', healthRouter);
+  app.use('/api/ready', createReadyRouter(dependencies));
+  app.use(notFound);
+  app.use(errorHandler);
+
+  return app;
+}
+
+export const app = createApp();

@@ -1,6 +1,6 @@
 # Kiến trúc UniHub
 
-Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật scaffold/schema **24/10/2026**; initial migration **25/10/2026**. Đã có frontend kỹ thuật React gọi health, backend Express, schema và migration đầu tiên. Migration được kiểm tra trên MySQL 8.4 dùng một lần trong Codex/Linux; chưa áp dụng vào database của nhóm/thành viên và chưa có kết nối DB trong API. Không coi health là kiểm tra MySQL. Xem [database-schema.md](database-schema.md) và [database-migrations.md](database-migrations.md).
+Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật Prisma runtime **25/10/2026**. Đã có frontend kỹ thuật React, backend Express, schema, initial migration và adapter MySQL. Prisma Client dùng singleton lazy; `GET /api/health` chỉ kiểm tra HTTP còn `GET /api/ready` truy vấn MySQL. Migration/runtime được kiểm thử trên MySQL tạm ở Codex/Linux; không truy cập database thành viên. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md) và [database-runtime.md](database-runtime.md).
 
 Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md). Đối chiếu dữ liệu dùng Chương 4 trang 6–30; quy tắc nghiệp vụ dùng Chương 3. Quyết định mới của nhóm về Google ID token được ưu tiên so với luồng Authorization Code cũ trong Chương 3.
 
@@ -23,7 +23,7 @@ flowchart LR
 - **Backend:** một REST API Express. Middleware kiểm tra phiên, quyền và dữ liệu đầu vào; service xử lý quy tắc, quyền sở hữu, chuyển trạng thái và transaction. Không tin `role`, `user_id`, `author_id` hoặc `admin_id` do frontend tự khai báo để cấp quyền.
 - **Dữ liệu:** chỉ backend sử dụng Prisma và thông tin kết nối MySQL. Prisma không thay thế kiểm tra nghiệp vụ; MySQL chịu trách nhiệm ràng buộc cấu trúc và giao dịch.
 - **Tác vụ nền:** nhắc hạn thuộc backend theo Chương 3, triển khai sau. Chưa chọn thư viện lập lịch, chưa thêm queue, Redis, dịch vụ cron ngoài hoặc tiến trình chạy thật.
-- **Ranh giới API:** frontend dùng JSON qua REST. Scaffold đã có `GET /api/health`, 404 và error middleware; các endpoint nghiệp vụ chưa có. Xem [api-conventions.md](api-conventions.md) để phân biệt phần đã chạy và quy ước dự thảo.
+- **Ranh giới API:** frontend dùng JSON qua REST. Backend có `GET /api/health` (liveness), `GET /api/ready` (readiness database), 404 và error middleware; endpoint nghiệp vụ chưa có. Xem [api-conventions.md](api-conventions.md).
 
 ## 2. Luồng xác thực và phân quyền
 
@@ -69,8 +69,8 @@ UniHub/
 │   ├── src/
 │   │   ├── config/              # đọc và kiểm tra cấu hình server
 │   │   ├── middleware/          # 404 và xử lý lỗi; chưa có auth
-│   │   ├── modules/             # health có mã; nghiệp vụ chỉ README
-│   │   ├── lib/                 # README hạ tầng dùng chung
+│   │   ├── modules/             # health/readiness có mã; nghiệp vụ chỉ README
+│   │   ├── lib/                 # singleton Prisma runtime
 │   │   ├── app.ts               # cấu hình Express, không mở cổng
 │   │   └── server.ts            # mở cổng, dừng server
 │   ├── test/                    # kiểm thử bằng node:test
@@ -92,9 +92,9 @@ UniHub/
 
 Các module chưa có mã dùng README mô tả phạm vi. Admin chia theo chức năng: TV1 users, TV2 opportunities, TV3 categories, TV4 dashboard, TV5 forum; TV1 phối hợp shell/layout chung. Xem [workflow](team-workflow.md), không tạo nhiều kiến trúc cạnh tranh hoặc một file Admin lớn.
 
-**Vị trí dữ liệu duy nhất:** `backend/prisma/schema.prisma`, `backend/prisma/migrations/` và `backend/prisma.config.ts`. Initial migration đã tạo trên nhánh review; chỉ test trên MySQL dùng một lần, chưa áp dụng database nhóm. Generator output từ schema tới `../src/generated/prisma`, được ignore. Backend có CLI và @prisma/client cho codegen nhưng chưa có instance hoặc adapter runtime. database/ không có schema/SQL thứ hai. Config chỉ đọc `MIGRATION_DATABASE_URL`; migrate scripts nạp `.env.migration` theo ưu tiên environment của Node, tách biệt `DATABASE_URL` runtime.
+**Vị trí dữ liệu duy nhất:** `backend/prisma/schema.prisma` là nguồn schema; `backend/prisma/migrations/` là lịch sử duy nhất, đã có initial migration sau PR #4. Prisma Client được sinh vào `backend/src/generated/prisma/` và không commit. `backend/src/lib/prisma.ts` tạo tối đa một client/pool cho tiến trình và chỉ đọc `DATABASE_URL`; migration dùng `MIGRATION_DATABASE_URL` riêng. Adapter MySQL thiết lập UTC ở từng physical connection; chi tiết phân biệt timezone session với DATETIME nằm trong [database-runtime.md](database-runtime.md). database/ không có bản schema/SQL thứ hai.
 
-Các scripts tại root gồm `dev:frontend`, `dev:backend`, `typecheck`, `build`, `test`, `format`, `format:check`. Backend nạp PORT từ `.env` workspace bằng Node, mặc định 3001; frontend dùng Vite proxy `/api` tới backend, cổng dev 5173. Proxy chỉ phục vụ phát triển; chưa có cấu hình hosting/HTTPS production. Hướng dẫn từng lệnh PowerShell ở [README](../README.md).
+Các scripts tại root gồm `dev:frontend`, `dev:backend`, `typecheck`, `build`, `test`, `format`, `format:check`. Backend tự sinh Prisma Client trước dev/typecheck/build; không có migration ở các lifecycle này. Node nạp PORT và `DATABASE_URL` từ `.env` backend; thiếu DB vẫn phục vụ health, readiness trả 503. Frontend dùng Vite proxy `/api`; đây chỉ là cấu hình phát triển. Hướng dẫn ở [README](../README.md).
 
 ## 4. Nguyên tắc giữ nguyên mô hình dữ liệu
 
@@ -336,7 +336,7 @@ Database: `@@id([item_id, academic_year])`, CHECK academic_year BETWEEN 1 AND 4.
 | Log chỉ thêm | Backend và quyền MySQL | Service không sửa/xóa log; tài khoản runtime chỉ INSERT/SELECT trên bảng log |
 | Nghiệp vụ + log + notification; nhắc hạn + reminded_at | Backend điều phối, MySQL commit/rollback | Prisma transaction và kiểm soát đồng thời, bảo đảm thành công/thất bại cùng nhau |
 
-**Quyết định bổ sung đã xác nhận ngày 24/10/2026:** ngoài ON DELETE CASCADE của `notifications.event_id` có sẵn trong Chương 4, nhóm chọn ON DELETE RESTRICT cho 15 FK khác và ON UPDATE RESTRICT cho cả 16 FK. Schema khai báo tường minh, không dùng default ORM. Nhóm cũng chọn MySQL tự cập nhật cả `users.updated_at` và `events.updated_at`; ON UPDATE CURRENT_TIMESTAMP được để dành cho migration SQL, không thay bằng `@updatedAt`. Đây là quyết định bổ sung của nhóm, không được trình bày như nội dung vốn có của Chương 4.
+**Quyết định bổ sung đã xác nhận ngày 24/10/2026:** ngoài ON DELETE CASCADE của `notifications.event_id` có sẵn trong Chương 4, nhóm chọn ON DELETE RESTRICT cho 15 FK khác và ON UPDATE RESTRICT cho cả 16 FK. Schema khai báo tường minh, không dùng default ORM. Nhóm cũng chọn MySQL tự cập nhật cả `users.updated_at` và `events.updated_at`; initial migration đã ghi ON UPDATE CURRENT_TIMESTAMP, không thay bằng `@updatedAt`. Đây là quyết định bổ sung của nhóm, không được trình bày như nội dung vốn có của Chương 4.
 
 SQL `CHECK` theo thiết kế cũng không bảo đảm mọi điều kiện nghiệp vụ: ví dụ `publisher IS NOT NULL` không loại chuỗi toàn khoảng trắng; FK `reviewed_by` không bảo đảm role Admin. Backend vẫn phải kiểm tra. Không thêm trigger, index nghiệp vụ hoặc constraint chưa được thống nhất chỉ để làm mô hình trông hoàn chỉnh hơn.
 
@@ -348,8 +348,8 @@ Sau scaffold, các bước tiếp theo và phạm vi kiểm tra:
 
 1. Đối chiếu môi trường môn học với Node/MySQL đã chọn; giữ phiên bản và một lockfile npm ở gốc.
 2. Hai workspace tối thiểu, Tailwind 3/PostCSS và build target trình duyệt đã được cấu hình; duy trì kiểm tra typecheck/build, HTTP test và khởi động khi sửa. Chưa đưa chức năng nghiệp vụ vào scaffold.
-3. Khi nhóm cho phép tạo schema/migration: chuyển đủ 12 bảng và mọi cột từ mục 5, xác định các hành vi FK chưa nêu, kiểm tra `prisma validate`/generate và review SQL trước khi áp dụng lên database phát triển riêng.
-4. Kiểm tra migration bằng dữ liệu kiểm thử không có thông tin cá nhân: giá trị CHECK sai, FK sai, UNIQUE/PK ghép trùng phải bị từ chối; cascade event–notification và ON UPDATE phải đúng; rollback không để lại log/notification dở dang. Chưa chạy các kiểm tra này.
+3. Initial migration đã có trên `main` qua PR #4; schema, CHECK, FK, collation, timestamp và GRANT đã được kiểm tra trên MySQL tạm theo [database-migrations.md](database-migrations.md). Runtime adapter/readiness và quyền tài khoản ứng dụng được kiểm tra riêng tại [database-runtime.md](database-runtime.md).
+4. Đối chiếu Node/MySQL với môi trường môn học và kiểm tra kết nối trên từng máy Windows. Mọi thay đổi dữ liệu tiếp theo phải dùng migration mới, được review trước khi áp dụng vào database phát triển riêng.
 5. Trước khi làm auth, xử lý các điểm Google identity/session ở mục 2; trước khi làm UI, đọc được Figma đúng node `318-2` và đối chiếu token thiết kế.
 
-Hiện có health HTTP, màn hình kỹ thuật frontend và schema/cấu hình Prisma; xem [trạng thái kiểm tra schema](database-schema.md#5-trạng-thái-kiểm-tra-và-giới-hạn). Chưa có database, migration, API nghiệp vụ, UI chính thức, dữ liệu mẫu hoặc hosting. Đạt kiểm tra scaffold/schema không chứng minh NFR hiệu năng, 100 người dùng đồng thời hay mọi trình duyệt đã đáp ứng; xem [roadmap](development-roadmap.md).
+Hiện có health/readiness HTTP, màn hình kỹ thuật frontend, schema và Prisma runtime; xem [trạng thái schema](database-schema.md#5-trạng-thái-kiểm-tra-và-giới-hạn) và [kiểm tra runtime](database-runtime.md). Chưa có API nghiệp vụ, UI chính thức, dữ liệu mẫu hoặc hosting. Runtime chưa được đối chiếu với MySQL máy Windows của thành viên; pool cấu hình nhỏ chưa phải bằng chứng NFR hiệu năng hoặc 100 người dùng đồng thời.
