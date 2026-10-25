@@ -66,12 +66,6 @@ export function SiteFooter({
               </li>
             ))}
           </ul>
-          {previewNavigation && (
-            <p className="mt-3 max-w-56 type-caption text-subtle">
-              Đường dẫn dự kiến: /terms và /privacy; nội dung trang đang chờ
-              nhóm hoàn thiện.
-            </p>
-          )}
         </div>
       </div>
       <p className="absolute bottom-4 right-8 mx-auto max-w-[1216px] text-right type-caption text-subtle">
