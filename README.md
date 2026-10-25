@@ -2,7 +2,7 @@
 
 UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Repository hiện ở **giai đoạn bộ khung phát triển chung**: React hiển thị màn hình kỹ thuật tạm thời và gọi Express qua `GET /api/health`.
 
-Health chỉ kiểm tra HTTP server. Đã bổ sung schema Prisma và công cụ schema; xem [hướng dẫn database-schema](docs/database-schema.md) để biết kết quả validate/generate thực tế và giới hạn. Chưa có database, migration, đăng nhập Google, JWT, tài khoản mẫu, chức năng nghiệp vụ hoặc UI chính thức theo Figma. Hiện **không cần MySQL, Docker hoặc khóa Google để chạy bộ khung**.
+Health chỉ kiểm tra HTTP server. Đã có schema Prisma và initial migration; xem [hướng dẫn database-schema](docs/database-schema.md) và [database-migrations](docs/database-migrations.md) để biết phạm vi. Migration đang review trên `feat/initial-migration`; chưa áp dụng vào database của nhóm. Chưa có đăng nhập Google, JWT, tài khoản mẫu, chức năng nghiệp vụ hoặc UI chính thức theo Figma. Chạy health vẫn **không cần MySQL, Docker hoặc khóa Google**.
 
 ## 1. Công nghệ và điều kiện môi trường
 
@@ -21,7 +21,7 @@ Giới hạn phần mềm của môn học vẫn cần đối chiếu; chưa có
 
 ## 2. Lấy bộ khung về máy Windows
 
-Scaffold đã được merge vào `main` qua PR #2 tại `6a1cc76`, ngày 24/10/2026. Các ví dụ lấy nhánh scaffold bên dưới vẫn dùng nhánh gốc `chore/project-scaffold`. Muốn lấy phần schema đang review trên **`feat/prisma-schema`**, dùng lệnh lấy nhánh và kiểm tra trong [database-schema.md](docs/database-schema.md#4-hướng-dẫn-windows-powershell); không mặc định PR schema đã merge.
+Scaffold merge qua PR #2; schema merge qua PR #3. Initial migration đang review trên **`feat/initial-migration`**. Clone `main` để chạy health; migration docs có lệnh lấy nhánh riêng và hướng dẫn xác nhận database trước khi áp dụng.
 
 Mở PowerShell trong Antigravity hoặc Windows. Ví dụ dưới đây dùng thư mục Documents; có thể chọn nơi khác nhưng phải điều chỉnh đường dẫn ở các lệnh sau.
 
@@ -145,8 +145,9 @@ UniHub/
 │   │   ├── middleware/      # lỗi JSON và 404
 │   │   ├── lib/             # README cho hạ tầng dùng chung
 │   │   └── modules/         # health đã chạy; các module khác chỉ README
-│   └── test/                # Node.js built-in test runner
-├── database/README.md       # schema/migration tương lai ở backend/prisma/
+│   ├── test/                # Node.js built-in test runner
+│   └── prisma/              # schema, migration SQL và Prisma config
+├── database/README.md       # lối vào tài liệu dữ liệu
 ├── docs/                    # kiến trúc, workflow, roadmap, quy ước API
 ├── AGENTS.md
 ├── package.json             # npm workspaces
@@ -173,4 +174,4 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 - Lệnh không có script/workspace: kiểm tra terminal đang ở gốc UniHub và đã lấy đúng nhánh.
 - Không commit `.env`, node_modules, dist, coverage, khóa hoặc dữ liệu cục bộ. `.env.example` chỉ chứa cấu hình mẫu an toàn.
 
-Nhóm đã báo chạy thành công frontend gọi health trên Windows; kiểm tra của Agent vẫn diễn ra ở Codex/Linux. Điều đó không chứng minh tất cả trình duyệt, NFR hiệu năng hoặc tải 100 người dùng đã đạt. UI tạm thời không dựa trên Figma chưa đọc được. Đăng nhập, JWT, Prisma Client runtime kết nối MySQL, database, migration, cron và mọi chức năng nghiệp vụ vẫn chưa triển khai.
+Nhóm đã báo chạy thành công frontend gọi health trên Windows; migration đã được kiểm tra trên MySQL 8.4 dùng một lần trong Codex/Linux, chưa áp dụng vào database của nhóm. Điều đó không chứng minh môi trường Windows, database từng thành viên, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. UI tạm thời không dựa trên Figma chưa đọc được. Đăng nhập, JWT, Prisma Client runtime, API nghiệp vụ, cron và mọi chức năng nghiệp vụ vẫn chưa triển khai.

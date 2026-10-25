@@ -1,6 +1,6 @@
 # Kiến trúc UniHub
 
-Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật scaffold/schema **24/10/2026**. Đã có frontend kỹ thuật React gọi health, backend Express và file schema Prisma. Sơ đồ nghiệp vụ/auth/database dưới đây vẫn là kiến trúc mục tiêu, **chưa kết nối hoặc tạo database**; không coi health là kiểm tra MySQL. Kiểm đếm và kết quả công cụ schema tại [database-schema.md](database-schema.md).
+Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật scaffold/schema **24/10/2026**; initial migration **25/10/2026**. Đã có frontend kỹ thuật React gọi health, backend Express, schema và migration đầu tiên. Migration được kiểm tra trên MySQL 8.4 dùng một lần trong Codex/Linux; chưa áp dụng vào database của nhóm/thành viên và chưa có kết nối DB trong API. Không coi health là kiểm tra MySQL. Xem [database-schema.md](database-schema.md) và [database-migrations.md](database-migrations.md).
 
 Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md). Đối chiếu dữ liệu dùng Chương 4 trang 6–30; quy tắc nghiệp vụ dùng Chương 3. Quyết định mới của nhóm về Google ID token được ưu tiên so với luồng Authorization Code cũ trong Chương 3.
 
@@ -92,7 +92,7 @@ UniHub/
 
 Các module chưa có mã dùng README mô tả phạm vi. Admin chia theo chức năng: TV1 users, TV2 opportunities, TV3 categories, TV4 dashboard, TV5 forum; TV1 phối hợp shell/layout chung. Xem [workflow](team-workflow.md), không tạo nhiều kiến trúc cạnh tranh hoặc một file Admin lớn.
 
-**Vị trí dữ liệu duy nhất:** đã tạo `backend/prisma/schema.prisma` và `backend/prisma.config.ts`, trỏ `schema: "prisma/schema.prisma"`, `migrations.path: "prisma/migrations"`; chưa tạo thư mục migration hoặc áp dụng SQL. Generator output từ schema tới `../src/generated/prisma`, được ignore. Backend đã có CLI và @prisma/client cho codegen, chưa tạo instance/client kết nối hoặc adapter runtime. database/ không có bản schema/SQL thứ hai. Config hiện chỉ đọc process environment, không tự đọc `.env` thật; khi triển khai runtime sau này URL CLI và adapter phải thống nhất.
+**Vị trí dữ liệu duy nhất:** `backend/prisma/schema.prisma`, `backend/prisma/migrations/` và `backend/prisma.config.ts`. Initial migration đã tạo trên nhánh review; chỉ test trên MySQL dùng một lần, chưa áp dụng database nhóm. Generator output từ schema tới `../src/generated/prisma`, được ignore. Backend có CLI và @prisma/client cho codegen nhưng chưa có instance hoặc adapter runtime. database/ không có schema/SQL thứ hai. Config chỉ đọc `MIGRATION_DATABASE_URL`; migrate scripts nạp `.env.migration` theo ưu tiên environment của Node, tách biệt `DATABASE_URL` runtime.
 
 Các scripts tại root gồm `dev:frontend`, `dev:backend`, `typecheck`, `build`, `test`, `format`, `format:check`. Backend nạp PORT từ `.env` workspace bằng Node, mặc định 3001; frontend dùng Vite proxy `/api` tới backend, cổng dev 5173. Proxy chỉ phục vụ phát triển; chưa có cấu hình hosting/HTTPS production. Hướng dẫn từng lệnh PowerShell ở [README](../README.md).
 
@@ -105,7 +105,7 @@ Các scripts tại root gồm `dev:frontend`, `dev:backend`, `typecheck`, `build
 - Bốn bảng trung gian phải là model tường minh; không dùng many-to-many ngầm định khiến Prisma sinh thêm bảng hoặc cột. `opportunity_years` chỉ liên kết cơ hội với giá trị năm 1–4, không tạo bảng năm học hoặc FK tới categories.
 - Không tách `opportunities` thành bảng cơ hội và bảng lộ trình: Chương 4 lưu cả bài viết định hướng trong cùng bảng. Không tách `categories` thành bảng chuyên ngành và kỹ năng.
 - Không đổi các cột `VARCHAR` + `CHECK` thành MySQL `ENUM`; dùng Prisma `String` với native type đúng và giữ `CHECK` trong SQL migration. Không mặc định đổi `TEXT` thành `LONGTEXT`, `DATETIME` thành `DATETIME(3)` hoặc `INT` thành `BIGINT`/unsigned.
-- Prisma Migrate sẽ có bảng kỹ thuật `_prisma_migrations` khi được triển khai. Đây là lịch sử migration của công cụ, không phải bảng nghiệp vụ thứ 13; hiện chưa tạo bảng này.
+- Prisma Migrate tạo bảng kỹ thuật `_prisma_migrations` khi migration áp dụng. Đây là lịch sử migration của công cụ, không phải bảng nghiệp vụ thứ 13.
 
 ### Quy ước đọc các bảng ánh xạ bên dưới
 
