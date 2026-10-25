@@ -98,7 +98,7 @@ http://127.0.0.1:5173/_dev/ui?area=student
 http://127.0.0.1:5173/_dev/ui?area=admin
 ```
 
-Thanh chọn shell và các mục nav trong preview chỉ đổi trạng thái xem trước. Student/Admin preview không xác thực; nút đăng nhập, chuông, đăng xuất không hoạt động. Footer giữ cột Hỗ trợ; tên “Điều khoản sử dụng” và “Chính sách bảo mật” là chữ từ screenshot, chưa có URL/nội dung được nhóm duyệt nên không phải link.
+Thanh chọn shell và các mục nav trong preview chỉ đổi trạng thái xem trước. Student/Admin preview không xác thực; nút đăng nhập, chuông, đăng xuất không hoạt động. Footer giữ cột Hỗ trợ với hai mục đã chốt “Điều khoản sử dụng” (`/terms`) và “Chính sách bảo mật” (`/privacy`). Preview tiếp tục hiển thị chữ tĩnh cho đến khi nhóm cung cấp nội dung trang; chưa tạo trang rỗng hoặc tự soạn chính sách.
 
 Frontend gọi đường dẫn tương đối `/api/health`; Vite **dev proxy** chuyển `/api` tới backend. Proxy là cơ chế chuyển tiếp yêu cầu khi phát triển, **chưa phải cấu hình production**. Build frontend không tự tạo proxy hoặc hosting. Cả hai server hiện chỉ nghe loopback trên máy đang chạy, không mở ra Internet.
 
@@ -183,7 +183,7 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 | TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                  |
 | TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction        |
 
-Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3; chưa dựng giao diện nghiệp vụ. Font Inter chưa được bundle. Link/footer legal labels còn chờ nhóm chốt đích và nội dung chính thức. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
+Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3; chưa dựng giao diện nghiệp vụ. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
 
 ## 7. Lỗi thường gặp và giới hạn
 

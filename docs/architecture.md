@@ -47,12 +47,16 @@ Các route sản phẩm bên dưới được chuyển từ sitemap Chương 4 m
 | `/admin/moderation` | Admin | TV1: tab cơ hội; TV5: tab forum | Kế hoạch; cùng route, phân vùng tab |
 | `/admin/categories` | Admin | TV3 | Kế hoạch |
 | `/admin/users` | Admin | TV2 | Kế hoạch |
+| `/terms` | Mọi người | Chưa phân công | Đường dẫn dự kiến đã chốt; trang nội dung tĩnh, chưa có nội dung hoặc route; không cần database/API riêng |
+| `/privacy` | Mọi người | Chưa phân công | Đường dẫn dự kiến đã chốt; trang nội dung tĩnh, chưa có nội dung hoặc route; không cần database/API riêng |
 | `/403` | Mọi người | Điều phối chung | Kế hoạch; chưa có xác thực/guard để dùng |
 | `/404` | Mọi người | Điều phối chung | Màn hình tối giản; fallback `*` dùng cùng trang |
 | `/_dev/health` | Kỹ thuật | TV1 | Đã mount; chỉ kiểm tra kết nối health |
 | `/_dev/ui?area=public` (hoặc `student`, `admin`) | Kỹ thuật | TV1 | Đã mount; preview shared UI, không xác thực và không gọi API nghiệp vụ |
 
 Không tạo menu giả để trỏ đến các route kế hoạch. `/admin/moderation` được TV1 và TV5 tích hợp trên một route chung theo hai tab; cả hai cần phối hợp trước khi đổi cấu trúc hoặc trạng thái tab.
+
+Footer hiển thị label hỗ trợ dạng chữ tĩnh đến khi nhóm hoàn thiện nội dung `/terms` và `/privacy`; không tạo trang rỗng hoặc tự viết nội dung pháp lý.
 
 ## 2. Luồng xác thực và phân quyền
 

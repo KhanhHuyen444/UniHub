@@ -34,14 +34,18 @@ Thông số và ID chi tiết hơn, kể cả attributes nguồn, nằm trong [R
 - CSS đặt public max-width 1200 px, student max-width 1280 px và sidebar Admin 260 px; ở 1920 px hai vùng nội dung căn giữa, sidebar giữ 260 px. Chỉ 1280 px có frame nguồn; max-width/căn giữa ở 1920 px là lựa chọn triển khai trong phạm vi desktop, chưa phải phép đo frame.
 - CSS spacing scale 4/8/12/16/20/24/32/40/48/64 px được suy ra từ các padding/gap thường gặp. Đây là token cục bộ để nhóm dùng nhất quán, không có tên hoặc ID variable chính thức từ Figma; các gap lớn do Auto Layout tự phân bố không được dùng làm scale.
 - PNG footer được xuất 180×180. Preview hiển thị ảnh ở 128×128 px để khớp tỷ lệ nhìn thấy trong screenshot; bound CSS của ảnh không được đo trực tiếp trong evidence, nên đây là giá trị suy ra từ ảnh.
-- Dùng `Inter` đứng đầu font stack, sau đó system sans. ZIP không có font; không tải font từ dịch vụ ngoài. Nếu máy không có Inter, trình duyệt sẽ dùng fallback, nên raster chưa thể khớp hoàn toàn typography Figma.
+- Dùng variable font Inter tự lưu, tải từ kho chính thức [rsms/inter](https://github.com/rsms/inter/tree/353b61b9f4430d5f420d56605a6e7993e0941470/docs/font-files). File nguồn `InterVariable.woff2` có SHA-256 `693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3`; `@font-face` khai báo dải 100–900 và `font-display: swap`, ứng dụng dùng 400/500/600/700. Giấy phép SIL Open Font License 1.1 được giữ tại `frontend/src/assets/fonts/LICENSE.txt`. ZIP không kèm font; font được bổ sung từ nguồn chính thức sau khi nhận handoff.
 - Bản native `<select>` được giữ để hỗ trợ bàn phím và accessibility; kiểu mũi tên native có thể khác artwork. Focus ring 2 px màu brand là quyết định accessibility của implementation; handoff chưa xác nhận tên/trạng thái focus.
 - Page 3 không trả về COMPONENT/COMPONENT_SET hoặc local variables. CSS custom properties và tên token UniHub trong code là cách tổ chức repository, không phải tên token gốc Figma.
 - Không có breakpoint hoặc quy tắc mobile/collapse được xác nhận. Layout chỉ hỗ trợ desktop 1280–1920 px; body giữ min-width 1280 px.
 
 ## Footer Hỗ trợ và nội dung chưa chốt
 
-Screenshot có cột **Hỗ trợ** với “Điều khoản sử dụng” và “Chính sách bảo mật”. Tìm kiếm repository không thấy quyết định trước đó ghi rõ hai label/URL. Preview giữ đúng cột và hai label theo screenshot, nhưng render dạng text không tương tác, không đặt `href="#"`, không viết nội dung pháp lý và không khẳng định đây là chính sách đã được nhóm duyệt. Nhóm cần xác nhận label cuối cùng, nội dung pháp lý và URL trước khi biến chúng thành link. Dòng copyright trong preview cũng chỉ lặp lại chữ trong screenshot, chưa phải tuyên bố pháp lý đã duyệt.
+Nhóm đã chốt giữ cột **Hỗ trợ** với “Điều khoản sử dụng” (`/terms`) và “Chính sách bảo mật” (`/privacy`). Đây là các trang nội dung tĩnh, không cần database/API riêng. Preview vẫn hiển thị chữ tĩnh đến khi nhóm cung cấp nội dung; chưa tạo trang rỗng hoặc tự soạn chính sách. Dòng copyright trong preview lặp lại chữ trong screenshot và chưa phải tuyên bố pháp lý đã được duyệt.
+
+## Font Inter tự lưu
+
+Font variable lấy từ kho chính thức [rsms/inter tại commit `353b61b`](https://github.com/rsms/inter/tree/353b61b9f4430d5f420d56605a6e7993e0941470), tự lưu tại `frontend/src/assets/fonts/InterVariable.woff2`. Trục weight hỗ trợ các giá trị 400, 500, 600, 700; `font-display: swap` tránh ẩn văn bản trong lúc tải. Giấy phép SIL OFL 1.1 đi kèm trong `frontend/src/assets/fonts/LICENSE.txt`. Chromium xác nhận Inter custom font được dùng cho mẫu chữ tiếng Việt và các weight này sau khi font nạp; chi tiết kiểm tra được ghi ở phần xác minh bên dưới.
 
 ## Asset dùng trong app
 
@@ -63,3 +67,10 @@ Screenshot có cột **Hỗ trợ** với “Điều khoản sử dụng” và 
 `/_dev/ui?area=public`, `/_dev/ui?area=student`, `/_dev/ui?area=admin` xem shell tương ứng. Query `active` chỉ đổi tab đang chọn trong preview. Navbar/Footer preview trỏ lại trang preview để không gửi người xem tới trang nghiệp vụ chưa tồn tại. Login, notification, logout được hiển thị nhưng vô hiệu hóa; state/control gallery là minh họa cục bộ, không gọi API. Không có route guard; Student/Admin preview không chứng minh danh tính hoặc quyền.
 
 `/_dev/health` vẫn hoạt động và `/` vẫn chuyển tới health. Không thêm trang Hub, hồ sơ, lịch, forum hay Admin nghiệp vụ.
+
+## Kết quả xác minh cập nhật
+
+- `npm test` từ gốc repository: frontend 13/13 (10 API client, 3 Tailwind compatibility), backend 13/13 (HTTP), tổng 26/26. Đính chính báo cáo trước: con số 13/13 khi ấy chỉ phản ánh suite backend; frontend suite vẫn tồn tại và chạy đủ, không có test bị mất hoặc được thêm để khớp số cũ. Báo cáo tổng 26 trước đó là đúng.
+- `npm run typecheck`, `npm run build`, `npm run format:check` và `git diff --check` đều đạt. Build có asset `InterVariable` tự lưu; ZIP, screenshot và evidence không nằm trong `frontend/dist`.
+- Chromium tải font từ asset cục bộ với HTTP 200; `document.fonts` báo Inter loaded và Chrome DevTools Protocol xác nhận `Inter Variable` là custom font cho tiếng Việt ở weight 400, 500, 600, 700.
+- Sáu preview (Public/Student/Admin ở 1280 và 1920 px) đều render, không có lỗi runtime hoặc tràn ngang. Screenshot được xem lại sau khi font tải; nội dung tiếng Việt và footer không chồng lấn.

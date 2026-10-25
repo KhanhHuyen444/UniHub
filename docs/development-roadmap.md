@@ -17,7 +17,7 @@ Thành viên có thể chuẩn bị contract, đọc tài liệu hoặc test cas
 
 - Hạn chế Node/MySQL trên máy môn học; kiểm tra trước khi dùng database thực tế, không mặc định đã hỗ trợ.
 - Cách liên kết Google identity với mô hình users hiện chỉ có email; cơ chế session/refresh/thu hồi, các hành vi FK chưa được Chương 4 đặc tả. Không tự thêm cột/bảng/Redis hoặc dịch vụ khác.
-- Figma Page 3 được đọc qua gói bàn giao đã xuất, không phải qua proxy. Đã có ba screenshot shell ở viewport nguồn 1280 px. Frame 1920 px, breakpoint/collapse, CSS max-width gốc và focus states có tên rõ chưa được xác nhận; xem phân loại trong [implementation notes](shared-ui-design/implementation.md). Font Inter chưa bundle; Hỗ trợ/legal labels còn chờ nhóm xác nhận đích và nội dung chính thức.
+- Figma Page 3 được đọc qua gói bàn giao đã xuất, không phải qua proxy. Đã có ba screenshot shell ở viewport nguồn 1280 px. Frame 1920 px, breakpoint/collapse, CSS max-width gốc và focus states có tên rõ chưa được xác nhận; xem phân loại trong [implementation notes](shared-ui-design/implementation.md). Inter đã được tự lưu từ nguồn chính thức. Nhóm đã chốt Footer Hỗ trợ, hai label và đường dẫn dự kiến `/terms`, `/privacy`; nội dung tĩnh của các trang còn chờ hoàn thiện.
 - Phân trang và cấu trúc lỗi trong api-conventions còn là dự thảo nghiệp vụ. Quy ước lưu UTC đã được chọn; chốt contract API cụ thể trước khi triển khai lịch.
 
 ## Phân biệt mức hoàn thành

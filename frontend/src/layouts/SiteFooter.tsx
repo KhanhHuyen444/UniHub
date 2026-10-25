@@ -68,7 +68,8 @@ export function SiteFooter({
           </ul>
           {previewNavigation && (
             <p className="mt-3 max-w-56 type-caption text-subtle">
-              Mục mẫu trong Figma; nhóm chưa xác nhận nội dung pháp lý hoặc URL.
+              Đường dẫn dự kiến: /terms và /privacy; nội dung trang đang chờ
+              nhóm hoàn thiện.
             </p>
           )}
         </div>
