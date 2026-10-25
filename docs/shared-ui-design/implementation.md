@@ -49,17 +49,18 @@ Font variable lấy từ kho chính thức [rsms/inter tại commit `353b61b`](h
 
 ## Asset dùng trong app
 
-| Asset được import      | Node nguồn          | Dùng ở                 |
-| ---------------------- | ------------------- | ---------------------- |
-| `logo-student-40.svg`  | 303:16              | Public/Student navbar  |
-| `logo-admin-36.svg`    | 166:945             | Admin sidebar          |
-| `logo-footer-180.png`  | 303:53              | Public/Student footer  |
-| `notification.svg`     | 303:36              | Student navbar         |
-| `admin-dashboard.svg`  | 166:950             | Admin sidebar          |
-| `admin-moderation.svg` | 166:955             | Admin sidebar          |
-| `admin-categories.svg` | 166:960             | Admin sidebar          |
-| `admin-accounts.svg`   | 166:965             | Admin sidebar          |
-| `google-g-logo.svg`    | FirebaseUI upstream | Public sign-in preview |
+| Asset được import      | Node nguồn                          | Dùng ở                                             |
+| ---------------------- | ----------------------------------- | -------------------------------------------------- |
+| `logo-student-40.svg`  | 303:16                              | Public/Student navbar                              |
+| `logo-admin-36.svg`    | 166:945                             | Admin sidebar                                      |
+| `logo-footer-180.png`  | 303:53                              | Public/Student footer                              |
+| `notification.svg`     | 303:36                              | Student navbar                                     |
+| `admin-dashboard.svg`  | 166:950                             | Admin sidebar                                      |
+| `admin-moderation.svg` | 166:955                             | Admin sidebar                                      |
+| `admin-categories.svg` | 166:960                             | Admin sidebar                                      |
+| `admin-accounts.svg`   | 166:965                             | Admin sidebar                                      |
+| `logout-icon.png`      | Hình nhóm cung cấp cho node 166:977 | Nút Đăng xuất Admin; 64×64 raster hiển thị ở 16×16 |
+| `google-g-logo.svg`    | FirebaseUI upstream                 | Public sign-in preview                             |
 
 Google G được chép nguyên trạng từ [FirebaseUI for Web](https://github.com/firebase/firebaseui-web/blob/91e4016cb513686bd32bc793b8efa1dbce976753/packages/core/brands/google/logo.svg), không tự vẽ hoặc đổi màu. Nguồn là SVG `viewBox="0 0 48 48"`; giữ tỷ lệ vuông và hiển thị ở 18×18 px theo frame `49:1680`, phần tử icon `152:11304` trong evidence controls. Nút nguồn là 270×48 px. Bản Apache License 2.0 của upstream được giữ tại `frontend/src/assets/GOOGLE-FIREBASEUI-LICENSE.txt`. Ảnh có `alt=""` và `aria-hidden="true"`; chỉ dòng chữ cung cấp tên cho nút preview. Đây là trạng thái đăng nhập chưa hoạt động, không gọi Google Identity Services.
 
@@ -82,5 +83,5 @@ Google G được chép nguyên trạng từ [FirebaseUI for Web](https://github
 - Sửa `Button` dùng chiều cao cố định 40 px theo control Figma; thêm size `icon` riêng để padding của nút chung không làm co asset chuông 16×20. Sửa khoảng trên 16 px trước menu Admin và wordmark theo màu từng frame: Public/Student `#1E3A8A` + `#2563EB`, Admin `#03045E` + `#2563EB`.
 - Tab bàn phím đi qua các link, nút và form control với focus outline 2 px; các link có tên truy cập, tab đang chọn dùng `aria-current`, Input lỗi liên kết helper bằng `aria-describedby`. Điều hướng `Hub cơ hội` cập nhật URL preview và active state.
 - Screenshot Student nguồn có chấm đỏ cạnh chuông; preview chưa hiển thị chấm vì không có trạng thái thông báo chưa đọc. Đây là khác biệt còn lại, không gắn nhãn unread giả. Thân trang của cả ba route vẫn là component gallery kỹ thuật, không phải trang nghiệp vụ Figma; chưa đối chiếu giao diện nghiệp vụ hoặc hành vi API.
-- Nút Admin nguồn `166:976` dùng icon SVG `166:977` kích thước 16×16 px, gap 8 px, nhãn 14/20 weight 500 màu `#B91C1C`. Evidence JSON ghi nhận node SVG nhưng README/manifest và thư mục `assets/` không có file SVG tương ứng. Giữ nút preview disabled, sửa nhãn còn “Đăng xuất” theo nguồn; chưa gắn icon thay thế hoặc tái tạo từ screenshot. Cần xuất asset `166:977` từ Figma để hoàn tất căn icon/chữ.
-- Kiểm tra Chromium 154 tại viewport 1280×1024 và 1920×1024, zoom 100%: sidebar 260 px; vùng nút nguồn đặt đúng x=20, y=973, 219×31, viền trên 1 px và padding trên 10 px. Nhãn disabled đo 14/20, weight 500, màu `#B91C1C`; không có handler đăng xuất, lỗi runtime/request hoặc tràn ngang. Ảnh kiểm tra được lưu ngoài repository tại `/tmp/unihub-shared-ui-review/logout-admin-{1280,1920}.png`.
+- Nút Admin nguồn `166:976` dùng icon `166:977` 16×16 px, gap 8 px, nhãn 14/20 weight 500 màu `#B91C1C`. Do handoff không có bytes SVG, icon PNG nền trong suốt được tạo từ ảnh do nhóm cung cấp; render 16×16 px. Icon là trang trí (`alt=""`, `aria-hidden="true"`).
+- Kiểm tra Chromium tại viewport 1280×1024 và 1920×1024, zoom 100%: sidebar 260 px; vùng nút nguồn đặt đúng x=20, y=973, 219×31, viền trên 1 px và padding trên 10 px. Icon 16×16, gap 8 px; nhãn disabled đo 14/20, weight 500, màu `#B91C1C`. Nút không có handler đăng xuất, không có lỗi runtime/request hoặc tràn ngang. Ảnh kiểm tra được lưu ngoài repository tại `/tmp/unihub-shared-ui-review/logout-admin-{1280,1920}.png`.

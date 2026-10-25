@@ -3,6 +3,7 @@ import accountsIcon from '../assets/admin-accounts.svg';
 import categoriesIcon from '../assets/admin-categories.svg';
 import dashboardIcon from '../assets/admin-dashboard.svg';
 import moderationIcon from '../assets/admin-moderation.svg';
+import logoutIcon from '../assets/logout-icon.png';
 import { Brand } from './Brand';
 import {
   adminNavigation,
@@ -73,7 +74,15 @@ export function AdminLayout({
               disabled
               className="flex h-5 w-full items-center gap-2 text-left type-label font-medium text-danger disabled:cursor-not-allowed"
             >
-              Đăng xuất
+              <img
+                src={logoutIcon}
+                alt=""
+                aria-hidden="true"
+                width={16}
+                height={16}
+                className="h-4 w-4 shrink-0"
+              />
+              <span>Đăng xuất</span>
             </button>
           </div>
         </div>
