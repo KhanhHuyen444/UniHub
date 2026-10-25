@@ -2,7 +2,7 @@
 
 ## Nguồn và kiểm tra gói bàn giao
 
-Nguồn là file Figma `6lTZvLvJfeOhz6D8QltvMe`, node `24:2` (Page 3), được nhóm xuất trong `UniHub-design-handoff.zip`. Bản README nguồn, manifest, toàn bộ evidence JSON và ba screenshot được lưu tại thư mục này; ZIP không được commit. Chỉ tám asset cần cho shell được chép vào `frontend/src/assets/`, nằm trong `src` nên Vite chỉ đưa các asset đã import vào build.
+Nguồn là file Figma `6lTZvLvJfeOhz6D8QltvMe`, node `24:2` (Page 3), được nhóm xuất trong `UniHub-design-handoff.zip`. Bản README nguồn, manifest, toàn bộ evidence JSON và ba screenshot được lưu tại thư mục này; ZIP không được commit. Tám asset hình từ Figma cần cho shell được chép vào `frontend/src/assets/`; Google G được bổ sung riêng từ FirebaseUI và Inter từ nguồn chính thức. Vite chỉ đưa asset đã import vào build.
 
 Đã kiểm tra ZIP CRC, parse bảy JSON (manifest và sáu evidence), và đối chiếu danh mục frame: README liệt kê 63 ID duy nhất; `inventory.json` có đúng 63 frame; hai danh sách khớp hoàn toàn. Manifest có 11 asset: 10 SVG và một PNG; mọi tệp được liệt kê đều tồn tại. Screenshot Public là 1280×2824 (frame 1280×2823.25, làm tròn khi raster hóa), Student là 1296×1419 trong khi bounds frame là 1280×1411.25, Admin là 1280×1024. Vì vậy screenshot Student chỉ dùng so sánh hình thức, không dùng bitmap của nó làm kích thước chuẩn.
 
@@ -49,16 +49,19 @@ Font variable lấy từ kho chính thức [rsms/inter tại commit `353b61b`](h
 
 ## Asset dùng trong app
 
-| Asset được import      | Node nguồn | Dùng ở                |
-| ---------------------- | ---------- | --------------------- |
-| `logo-student-40.svg`  | 303:16     | Public/Student navbar |
-| `logo-admin-36.svg`    | 166:945    | Admin sidebar         |
-| `logo-footer-180.png`  | 303:53     | Public/Student footer |
-| `notification.svg`     | 303:36     | Student navbar        |
-| `admin-dashboard.svg`  | 166:950    | Admin sidebar         |
-| `admin-moderation.svg` | 166:955    | Admin sidebar         |
-| `admin-categories.svg` | 166:960    | Admin sidebar         |
-| `admin-accounts.svg`   | 166:965    | Admin sidebar         |
+| Asset được import      | Node nguồn          | Dùng ở                 |
+| ---------------------- | ------------------- | ---------------------- |
+| `logo-student-40.svg`  | 303:16              | Public/Student navbar  |
+| `logo-admin-36.svg`    | 166:945             | Admin sidebar          |
+| `logo-footer-180.png`  | 303:53              | Public/Student footer  |
+| `notification.svg`     | 303:36              | Student navbar         |
+| `admin-dashboard.svg`  | 166:950             | Admin sidebar          |
+| `admin-moderation.svg` | 166:955             | Admin sidebar          |
+| `admin-categories.svg` | 166:960             | Admin sidebar          |
+| `admin-accounts.svg`   | 166:965             | Admin sidebar          |
+| `google-g-logo.svg`    | FirebaseUI upstream | Public sign-in preview |
+
+Google G được chép nguyên trạng từ [FirebaseUI for Web](https://github.com/firebase/firebaseui-web/blob/91e4016cb513686bd32bc793b8efa1dbce976753/packages/core/brands/google/logo.svg), không tự vẽ hoặc đổi màu. Nguồn là SVG `viewBox="0 0 48 48"`; giữ tỷ lệ vuông và hiển thị ở 18×18 px theo frame `49:1680`, phần tử icon `152:11304` trong evidence controls. Nút nguồn là 270×48 px. Bản Apache License 2.0 của upstream được giữ tại `frontend/src/assets/GOOGLE-FIREBASEUI-LICENSE.txt`. Ảnh có `alt=""` và `aria-hidden="true"`; chỉ dòng chữ cung cấp tên cho nút preview. Đây là trạng thái đăng nhập chưa hoạt động, không gọi Google Identity Services.
 
 `arrow-right.svg`, `edit-profile.svg` và `refresh.svg` được giữ trong tài liệu nguồn nhưng chưa cần cho shared shell/preview nên không copy vào frontend. ZIP, screenshot và evidence JSON chỉ nằm trong `docs/shared-ui-design/`, không nằm trong Vite public tree hoặc bundle.
 

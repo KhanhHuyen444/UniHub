@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import googleGLogo from '../assets/google-g-logo.svg';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
 import {
@@ -45,9 +46,12 @@ export function PublicLayout({
             aria-disabled="true"
             className="inline-flex h-12 w-[270px] shrink-0 items-center justify-center gap-3 rounded-control border border-control bg-white px-4 text-sm font-medium leading-5 text-secondary shadow-soft"
           >
-            <span aria-hidden="true" className="font-bold text-[#4285F4]">
-              G
-            </span>
+            <img
+              src={googleGLogo}
+              alt=""
+              aria-hidden="true"
+              className="h-[18px] w-[18px] shrink-0 object-contain"
+            />
             Đăng nhập với Google
           </span>
         </div>
