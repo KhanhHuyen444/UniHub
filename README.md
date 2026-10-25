@@ -113,7 +113,7 @@ git status
 
 - `typecheck`: kiểm tra kiểu TypeScript của cả frontend/backend.
 - `build`: tạo `frontend/dist` và `backend/dist`. Thư mục dist là kết quả sinh tự động, không commit.
-- `test`: build backend rồi chạy 7 kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có bộ test nghiệp vụ/frontend trong repository; không hiểu lệnh này là đã test toàn bộ UI.
+- `test`: chạy 3 kiểm thử tương thích Tailwind/CSS ở frontend, build backend rồi chạy 7 kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có test nghiệp vụ hoặc toàn bộ UI. Lý do kiểm tra CSS và phạm vi override dependency ở [dependency-security.md](docs/dependency-security.md).
 - `format:check`: kiểm tra định dạng mã và tài liệu mới bằng Prettier. Nếu cần sửa định dạng, chạy `npm.cmd run format`, xem diff rồi kiểm tra lại. Hai tài liệu kiến trúc cũ được giữ định dạng riêng để tránh sửa hàng loạt phần đã review.
 
 Chưa cấu hình ESLint; TypeScript dùng strict và Prettier lo định dạng. Không có thêm framework kiểm thử hoặc công cụ chạy song song chỉ để dự phòng.

@@ -16,13 +16,18 @@
     "dev:backend": "npm run dev --workspace @unihub/backend",
     "typecheck": "npm run typecheck --workspaces",
     "build": "npm run build --workspaces",
-    "test": "npm run test --workspace @unihub/backend",
+    "test": "npm run test --workspaces --if-present",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prisma:format": "npm run prisma:format --workspace @unihub/backend",
     "prisma:validate": "npm run prisma:validate --workspace @unihub/backend",
     "prisma:generate": "npm run prisma:generate --workspace @unihub/backend",
     "prisma:diff": "npm run prisma:diff --workspace @unihub/backend"
+  },
+  "overrides": {
+    "tailwindcss@3.4.19": {
+      "postcss-selector-parser": "7.1.6"
+    }
   },
   "devDependencies": {
     "prettier": "3.6.2"

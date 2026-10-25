@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
-    "build": "npm run typecheck && vite build"
+    "build": "npm run typecheck && vite build",
+    "test": "node --test test/tailwind-compat.test.mjs"
   },
   "dependencies": {
     "react": "19.3.1",
