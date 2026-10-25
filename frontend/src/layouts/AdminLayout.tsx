@@ -67,13 +67,13 @@ export function AdminLayout({
             Quản trị viên xem trước
           </p>
           <p className="mt-1 type-label text-secondary">Admin preview</p>
-          <div className="mt-3 border-t border-line pt-3">
+          <div className="mt-3 border-t border-line pt-[10px]">
             <button
               type="button"
               disabled
-              className="type-label font-medium text-danger disabled:cursor-not-allowed"
+              className="flex h-5 w-full items-center gap-2 text-left type-label font-medium text-danger disabled:cursor-not-allowed"
             >
-              Đăng xuất (chưa có chức năng)
+              Đăng xuất
             </button>
           </div>
         </div>
