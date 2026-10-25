@@ -46,11 +46,17 @@ export function StudentLayout({
             <Button
               type="button"
               variant="text"
+              size="icon"
               disabled
               aria-label="Thông báo — chỉ là mẫu thiết kế, chưa có chức năng"
-              className="h-9 min-h-9 w-9 px-2"
             >
-              <img src={notificationIcon} alt="" width={16} height={20} />
+              <img
+                src={notificationIcon}
+                alt=""
+                width={16}
+                height={20}
+                className="h-5 w-4 shrink-0"
+              />
             </Button>
             <div className="hidden text-right xl:block">
               <p className="type-label font-semibold text-ink">

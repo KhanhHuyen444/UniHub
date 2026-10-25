@@ -36,7 +36,7 @@ export function AdminLayout({
         <div className="flex h-[84px] shrink-0 items-center px-5">
           <Brand area={area} previewNavigation={previewNavigation} />
         </div>
-        <nav aria-label="Điều hướng quản trị" className="px-4">
+        <nav aria-label="Điều hướng quản trị" className="px-4 py-4">
           <ul className="grid gap-1.5">
             {adminNavigation.map((item) => {
               const active = activeKey === item.key;

@@ -15,6 +15,7 @@ export function Brand({ area, previewNavigation }: BrandProps) {
   const target = previewNavigation
     ? previewTarget(area, area === 'admin' ? 'dashboard' : 'home')
     : '/';
+  const wordmarkBase = isAdmin ? 'text-navy' : 'text-[#1E3A8A]';
 
   return (
     <Link
@@ -29,7 +30,10 @@ export function Brand({ area, previewNavigation }: BrandProps) {
         height={isAdmin ? 36 : 40}
         className={isAdmin ? 'h-9 w-9' : 'h-10 w-10'}
       />
-      <span className="text-2xl font-bold leading-8 text-navy">UniHub</span>
+      <span className="text-2xl font-bold leading-8">
+        <span className={wordmarkBase}>Uni</span>
+        <span className="text-[#2563EB]">Hub</span>
+      </span>
     </Link>
   );
 }

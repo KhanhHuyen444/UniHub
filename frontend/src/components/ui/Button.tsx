@@ -7,8 +7,11 @@ export type ButtonVariant =
   | 'neutral'
   | 'danger';
 
+export type ButtonSize = 'default' | 'icon';
+
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
+  size?: ButtonSize;
   loading?: boolean;
 }
 
@@ -21,8 +24,14 @@ const variants: Record<ButtonVariant, string> = {
   danger: 'border border-transparent bg-danger text-white hover:brightness-95',
 };
 
+const sizes: Record<ButtonSize, string> = {
+  default: 'h-10 min-h-10 px-4 py-2',
+  icon: 'h-9 min-h-9 w-9 p-0',
+};
+
 export function Button({
   variant = 'primary',
+  size = 'default',
   loading = false,
   disabled,
   className = '',
@@ -36,7 +45,7 @@ export function Button({
       type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-medium leading-5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:border-transparent disabled:bg-control disabled:text-subtle disabled:shadow-none ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-control text-sm font-medium leading-5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:border-transparent disabled:bg-control disabled:text-subtle disabled:shadow-none ${sizes[size]} ${variants[variant]} ${className}`}
     >
       {loading && (
         <span
