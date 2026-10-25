@@ -1,19 +1,19 @@
 # UniHub
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Repository hiện ở **giai đoạn bộ khung phát triển chung**: React hiển thị màn hình kỹ thuật tạm thời và gọi Express qua `GET /api/health`.
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Repository hiện ở **giai đoạn bộ khung phát triển chung**: React hiển thị màn hình kỹ thuật tạm thời và gọi Express. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
 
-Health chỉ kiểm tra HTTP server. Đã có schema Prisma và initial migration; xem [hướng dẫn database-schema](docs/database-schema.md) và [database-migrations](docs/database-migrations.md) để biết phạm vi. Migration đang review trên `feat/initial-migration`; chưa áp dụng vào database của nhóm. Chưa có đăng nhập Google, JWT, tài khoản mẫu, chức năng nghiệp vụ hoặc UI chính thức theo Figma. Chạy health vẫn **không cần MySQL, Docker hoặc khóa Google**.
+Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4; runtime branch không đổi mô hình schema hoặc nội dung migration. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Chưa có đăng nhập Google, JWT, tài khoản mẫu, API nghiệp vụ hoặc UI chính thức theo Figma. Có thể chạy health mà không cần MySQL hoặc Docker.
 
 ## 1. Công nghệ và điều kiện môi trường
 
-| Thành phần        | Phiên bản / vai trò                                                              |
-| ----------------- | -------------------------------------------------------------------------------- |
-| Node.js           | 24.19.0 thuộc dòng 24 LTS; chạy JavaScript và công cụ phát triển                 |
-| npm               | Khuyến nghị 11.9.0; dùng npm 11 từ 11.9.0, một lockfile ở gốc                    |
-| Git               | Cài Git for Windows; quản lý commit, nhánh và đồng bộ GitHub                     |
-| Frontend          | React 19.3.1, TypeScript 5.9.3, Vite 8.3.5, Tailwind CSS 3.4.19                  |
-| Backend           | Express 5.3.0 + TypeScript; ES modules                                           |
-| Database / schema | MySQL 8.4 LTS chưa chạy; công cụ Prisma 7.10.1 đã cài, chưa có client kết nối DB |
+| Thành phần        | Phiên bản / vai trò                                                      |
+| ----------------- | ------------------------------------------------------------------------ |
+| Node.js           | 24.19.0 thuộc dòng 24 LTS; chạy JavaScript và công cụ phát triển         |
+| npm               | Khuyến nghị 11.9.0; dùng npm 11 từ 11.9.0, một lockfile ở gốc            |
+| Git               | Cài Git for Windows; quản lý commit, nhánh và đồng bộ GitHub             |
+| Frontend          | React 19.3.1, TypeScript 5.9.3, Vite 8.3.5, Tailwind CSS 3.4.19          |
+| Backend           | Express 5.3.0 + TypeScript; Prisma 7.10.1 + adapter MySQL, ES modules    |
+| Database / schema | MySQL 8.4 LTS; Prisma runtime dùng `DATABASE_URL`, pool tối đa 5 kết nối |
 
 Antigravity là IDE (trình soạn thảo và chạy terminal), không thay thế Node.js/Git. Những công cụ có sẵn ở Codex **không có nghĩa máy Windows của bạn đã cài**. Cài Git từ [git-scm.com](https://git-scm.com/downloads/win) và Node.js từ [nodejs.org](https://nodejs.org/en/download), chọn đúng dòng/phiên bản trên, rồi mở lại terminal/IDE. `.nvmrc` chỉ ghi phiên bản, không tự cài Node.
 
@@ -21,7 +21,7 @@ Giới hạn phần mềm của môn học vẫn cần đối chiếu; chưa có
 
 ## 2. Lấy bộ khung về máy Windows
 
-Scaffold merge qua PR #2; schema merge qua PR #3. Initial migration đang review trên **`feat/initial-migration`**. Clone `main` để chạy health; migration docs có lệnh lấy nhánh riêng và hướng dẫn xác nhận database trước khi áp dụng.
+Scaffold, schema và initial migration đã vào `main` qua PR #2, #3 và #4. Phần Prisma runtime hiện nằm trên nhánh **`feat/prisma-runtime`**, được cập nhật từ `origin/main` tại `d7c2cefc`. Nếu database đã được migration, làm theo [hướng dẫn runtime](docs/database-runtime.md); không áp dụng lại migration.
 
 Mở PowerShell trong Antigravity hoặc Windows. Ví dụ dưới đây dùng thư mục Documents; có thể chọn nơi khác nhưng phải điều chỉnh đường dẫn ở các lệnh sau.
 
@@ -29,7 +29,7 @@ Mở PowerShell trong Antigravity hoặc Windows. Ví dụ dưới đây dùng t
 
 ```powershell
 Set-Location "$HOME\Documents"
-git clone --branch chore/project-scaffold --single-branch https://github.com/KhanhHuyen444/UniHub.git
+git clone --branch feat/prisma-runtime --single-branch https://github.com/KhanhHuyen444/UniHub.git
 Set-Location .\UniHub
 git status
 ```
@@ -39,11 +39,11 @@ git status
 Nếu đã clone trước đó, không clone đè lên thư mục có sẵn. **Tại gốc repository hiện có**, chạy `git status`; nếu có thay đổi của bạn thì commit hoặc lưu chúng an toàn trước khi chuyển nhánh. Khi working tree sạch:
 
 ```powershell
-git fetch origin refs/heads/chore/project-scaffold:refs/remotes/origin/chore/project-scaffold
-git switch chore/project-scaffold
+git fetch origin refs/heads/feat/prisma-runtime:refs/remotes/origin/feat/prisma-runtime
+git switch feat/prisma-runtime
 ```
 
-Nếu nhánh local chưa tồn tại và Git không tự tạo tracking branch, dùng `git switch --track origin/chore/project-scaffold`. Không dùng reset/clean để xử lý thay đổi chưa commit.
+Nếu nhánh local chưa tồn tại và Git không tự tạo tracking branch, dùng `git switch --track origin/feat/prisma-runtime`. Không dùng reset/clean để xử lý thay đổi chưa commit.
 
 ## 3. Cài dependency tại gốc repository
 
@@ -67,7 +67,7 @@ if (-not (Test-Path .\backend\.env)) { Copy-Item .\backend\.env.example .\backen
 if (-not (Test-Path .\frontend\.env)) { Copy-Item .\frontend\.env.example .\frontend\.env }
 ```
 
-Không ghi đè `.env` đã có. `backend/.env` dùng `PORT=3001`; `frontend/.env` dùng `API_PROXY_TARGET=http://127.0.0.1:3001`. Nếu đổi cổng backend, đổi cả đích proxy rồi khởi động lại hai tiến trình. `API_PROXY_TARGET` do Vite dev server đọc, không phải bí mật; biến `VITE_` không được chứa mật khẩu hoặc khóa backend. Hiện không cần `.env` ở gốc.
+Không ghi đè `.env` đã có. `backend/.env` dùng `PORT=3001` và `DATABASE_URL` tài khoản runtime; `frontend/.env` dùng `API_PROXY_TARGET=http://127.0.0.1:3001`. Nếu đổi cổng backend, đổi cả đích proxy rồi khởi động lại hai tiến trình. `API_PROXY_TARGET` do Vite dev server đọc, không phải bí mật; biến `VITE_` không được chứa mật khẩu hoặc khóa backend. Hiện không cần `.env` ở gốc. Runtime chỉ đọc `DATABASE_URL`, không dùng `MIGRATION_DATABASE_URL` làm dự phòng.
 
 ## 4. Chạy bằng hai terminal
 
@@ -78,7 +78,7 @@ Set-Location "$HOME\Documents\UniHub"
 npm.cmd run dev:backend
 ```
 
-Giữ terminal mở. Backend mặc định nghe tại `http://127.0.0.1:3001`; tự khởi động lại khi sửa mã nguồn. Node nạp `.env` trong workspace backend nếu tệp tồn tại; không có tệp vẫn dùng cổng mặc định.
+Giữ terminal mở. Trước khi chạy dev, npm sinh Prisma Client; backend mặc định nghe tại `http://127.0.0.1:3001` và tự khởi động lại khi sửa mã nguồn. Node nạp `.env` trong workspace backend nếu tệp tồn tại. Không có `DATABASE_URL` vẫn chạy HTTP và health; readiness báo 503.
 
 **Terminal 2 — cũng tại gốc UniHub, chạy frontend:**
 
@@ -97,7 +97,13 @@ Frontend gọi đường dẫn tương đối `/api/health`; Vite **dev proxy** 
 Invoke-RestMethod http://127.0.0.1:3001/api/health
 ```
 
-Kết quả tương ứng JSON `{"status":"ok","service":"unihub-api"}`. Không có kiểm tra MySQL trong endpoint này. Nhấn **Ctrl+C** ở mỗi terminal để dừng server.
+Kết quả tương ứng JSON `{"status":"ok","service":"unihub-api"}`. Không có kiểm tra MySQL trong endpoint này. Nếu đã cấu hình `backend/.env`, kiểm tra readiness:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:3001/api/ready
+```
+
+HTTP 200 nghĩa là truy vấn `SELECT 1` thành công; HTTP 503 nghĩa là cần kiểm tra `DATABASE_URL`, MySQL và quyền tài khoản theo [database-runtime.md](docs/database-runtime.md). Không gửi file `.env` hoặc mật khẩu vào chat. Nhấn **Ctrl+C** ở mỗi terminal để dừng server.
 
 ## 5. Kiểm tra trước khi gửi thay đổi
 
@@ -113,7 +119,7 @@ git status
 
 - `typecheck`: kiểm tra kiểu TypeScript của cả frontend/backend.
 - `build`: tạo `frontend/dist` và `backend/dist`. Thư mục dist là kết quả sinh tự động, không commit.
-- `test`: chạy 3 kiểm thử tương thích Tailwind/CSS ở frontend, build backend rồi chạy 7 kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có test nghiệp vụ hoặc toàn bộ UI. Lý do kiểm tra CSS và phạm vi override dependency ở [dependency-security.md](docs/dependency-security.md).
+- `test`: chạy 3 kiểm thử tương thích Tailwind/CSS ở frontend, build backend rồi chạy 13 kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có test API nghiệp vụ hoặc toàn bộ UI. Lý do kiểm tra CSS và phạm vi override dependency ở [dependency-security.md](docs/dependency-security.md).
 - `format:check`: kiểm tra định dạng mã và tài liệu mới bằng Prettier. Nếu cần sửa định dạng, chạy `npm.cmd run format`, xem diff rồi kiểm tra lại. Hai tài liệu kiến trúc cũ được giữ định dạng riêng để tránh sửa hàng loạt phần đã review.
 
 Chưa cấu hình ESLint; TypeScript dùng strict và Prettier lo định dạng. Không có thêm framework kiểm thử hoặc công cụ chạy song song chỉ để dự phòng.
@@ -174,4 +180,4 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 - Lệnh không có script/workspace: kiểm tra terminal đang ở gốc UniHub và đã lấy đúng nhánh.
 - Không commit `.env`, node_modules, dist, coverage, khóa hoặc dữ liệu cục bộ. `.env.example` chỉ chứa cấu hình mẫu an toàn.
 
-Nhóm đã báo chạy thành công frontend gọi health trên Windows; migration đã được kiểm tra trên MySQL 8.4 dùng một lần trong Codex/Linux, chưa áp dụng vào database của nhóm. Điều đó không chứng minh môi trường Windows, database từng thành viên, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. UI tạm thời không dựa trên Figma chưa đọc được. Đăng nhập, JWT, Prisma Client runtime, API nghiệp vụ, cron và mọi chức năng nghiệp vụ vẫn chưa triển khai.
+Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. UI tạm thời không dựa trên Figma chưa đọc được. Đăng nhập, JWT, API nghiệp vụ, cron và mọi chức năng nghiệp vụ vẫn chưa triển khai.

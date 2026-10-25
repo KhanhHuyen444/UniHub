@@ -1,6 +1,6 @@
 // Nguồn: Chương 4, mục 4.3.2.1–4.3.2.12.
 // Schema không biểu diễn đủ CHECK, quyền SQL hoặc quy tắc backend.
-// Xem docs/database-schema.md trước khi chuẩn bị migration (chưa có migration).
+// Xem docs/database-schema.md và docs/database-migrations.md trước khi đổi schema.
 
 generator client {
   provider               = "prisma-client"
@@ -21,13 +21,13 @@ model User {
   email         String   @unique @db.VarChar(255)
   full_name     String   @db.VarChar(150)
   avatar_url    String?  @db.VarChar(500)
-  // CHECK Student/Admin ở SQL sau này; Guest không phải role lưu trong DB.
+  // CHECK Student/Admin nằm trong initial migration; Guest không lưu trong DB.
   role          String   @default("Student") @db.VarChar(10)
   major_id      Int?     @db.Int
   academic_year Int?     @db.TinyInt
   career_goal   String?  @db.VarChar(200)
   created_at    DateTime @default(now()) @db.DateTime(0)
-  // Nhóm chọn MySQL: SQL migration sau này phải thêm ON UPDATE CURRENT_TIMESTAMP.
+  // ON UPDATE CURRENT_TIMESTAMP nằm trong SQL migration, Prisma không biểu diễn.
   updated_at    DateTime @default(now()) @db.DateTime(0)
 
   major                  Category?      @relation("UserMajor", fields: [major_id], references: [category_id], onDelete: Restrict, onUpdate: Restrict)
@@ -93,7 +93,7 @@ model Event {
   status        String    @default("Upcoming") @db.VarChar(10)
   reminded_at   DateTime? @db.DateTime(0)
   created_at    DateTime  @default(now()) @db.DateTime(0)
-  // SQL migration sau này phải thêm ON UPDATE CURRENT_TIMESTAMP.
+  // ON UPDATE CURRENT_TIMESTAMP nằm trong SQL migration, Prisma không biểu diễn.
   updated_at    DateTime  @default(now()) @db.DateTime(0)
 
   user          User           @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)

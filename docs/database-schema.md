@@ -1,10 +1,10 @@
 # Schema Prisma của UniHub
 
-Ngày đối chiếu schema: **24/10/2026**. Tài liệu ghi lại trạng thái lúc schema được tạo; initial migration tiếp theo được chuẩn bị trên nhánh `feat/initial-migration`. Migration và kiểm thử MySQL dùng một lần được mô tả trong [database-migrations.md](database-migrations.md). Database của nhóm/thành viên chưa được thay đổi; chưa seed.
+Ngày đối chiếu schema: **24/10/2026**. Tài liệu ghi lại phạm vi tạo schema; initial migration sau đó được merge vào `main` qua PR #4. Migration và kiểm thử MySQL dùng một lần được mô tả trong [database-migrations.md](database-migrations.md); runtime kết nối/readiness được mô tả trong [database-runtime.md](database-runtime.md). Tài liệu này không xác nhận trạng thái database trên từng máy thành viên.
 
 ## 1. Nguồn và trạng thái
 
-Scaffold được merge qua PR #2; schema được merge qua PR #3 vào `main` tại `d10ab25`. Initial migration được tạo từ main đó trên nhánh `feat/initial-migration`. Đã đọc AGENTS.md, README, technology-stack, architecture và team-workflow trong repository.
+Scaffold được merge qua PR #2; schema qua PR #3; initial migration qua PR #4 vào `main` tại `d7c2cefc`. Schema vẫn là nguồn mô hình duy nhất. Đã đọc AGENTS.md, README, technology-stack, architecture và team-workflow trong repository.
 
 Đã truy cập lại hai nguồn gốc trong phiên làm việc:
 
@@ -16,7 +16,7 @@ Scaffold được merge qua PR #2; schema được merge qua PR #3 vào `main` t
 Hai quyết định bổ sung đã được người dùng xác nhận trong nhiệm vụ này:
 
 1. Giữ ON DELETE CASCADE cho `notifications.event_id`; ON DELETE RESTRICT cho 15 FK khác; ON UPDATE RESTRICT cho đủ 16 FK.
-2. `users.updated_at` và `events.updated_at` cùng dùng cơ chế tự cập nhật tại **MySQL**. Phần ON UPDATE CURRENT_TIMESTAMP phải bổ sung ở nhiệm vụ migration SQL; không thay bằng Prisma `@updatedAt`.
+2. `users.updated_at` và `events.updated_at` cùng dùng cơ chế tự cập nhật tại **MySQL**. Initial migration đã ghi ON UPDATE CURRENT_TIMESTAMP; không thay bằng Prisma `@updatedAt`.
 
 ## 2. File và công cụ
 
@@ -30,11 +30,11 @@ Hai quyết định bổ sung đã được người dùng xác nhận trong nhi
 | `package-lock.json`                    | Lockfile npm duy nhất cho cả repository                                                        |
 | `database/README.md`                   | Chỉ dẫn đến schema chính, không có bộ SQL/schema thứ hai                                       |
 
-Giữ **Prisma CLI 7.10.1** và **@prisma/client 7.10.1** đúng công nghệ đã chọn. CLI là devDependency của backend; @prisma/client cung cấp phần thư viện cho mã client được generator sinh và kiểm tra kiểu. Việc cài thư viện **không tạo instance `new PrismaClient()` hoặc kết nối MySQL**. Chưa thêm adapter runtime, singleton client, query hoặc API nghiệp vụ.
+Giữ **Prisma CLI 7.10.1** và **@prisma/client 7.10.1** đúng công nghệ đã chọn. CLI là devDependency của backend; @prisma/client cung cấp runtime cho mã client được generator sinh. Lớp kết nối `@prisma/adapter-mariadb` 7.10.1, singleton client và readiness probe được bổ sung ở nhiệm vụ tiếp theo; xem [database-runtime.md](database-runtime.md). Không có API nghiệp vụ.
 
-Generator dùng `prisma-client`, `runtime = "nodejs"`, `moduleFormat = "esm"`, output `../src/generated/prisma` tính từ schema. File sinh là `.ts`, import nội bộ có đuôi `.js` để phù hợp cách biên dịch `NodeNext` hiện có. Đã generate và kiểm tra typecheck/build với output này. Khi làm tích hợp runtime sau này phải kiểm tra cả backend dev lẫn bản build cùng adapter; không đổi sang CommonJS hoặc thêm adapter trong nhiệm vụ schema.
+Generator dùng `prisma-client`, `runtime = "nodejs"`, `moduleFormat = "esm"`, output `../src/generated/prisma` tính từ schema. File sinh là `.ts`, import nội bộ có đuôi `.js` để phù hợp cách biên dịch `NodeNext`. Scripts predev/pretypecheck/prebuild sinh lại codegen trước khi dùng; đầu ra được ignore, không commit. Kết quả kết nối/dev/build với adapter xem [database-runtime.md](database-runtime.md).
 
-Prisma 7 đặt URL ở `prisma.config.ts`, không ở block datasource của schema. Block datasource giữ `provider = "mysql"`, `relationMode = "foreignKeys"`. Config đọc `process.env.DATABASE_URL ?? ''`; không dùng `env()` bắt buộc giá trị và **không tự đọc `.env` thật**. Format/validate/generate không cần kết nối database. Không có postinstall của dự án để generate hoặc kết nối MySQL.
+Prisma 7 đặt URL của Prisma CLI ở `prisma.config.ts`, không ở block datasource của schema. Block datasource giữ `provider = "mysql"`, `relationMode = "foreignKeys"`. CLI config đọc riêng `MIGRATION_DATABASE_URL ?? ''`; runtime đọc duy nhất `DATABASE_URL`. CLI không dùng `env()` bắt buộc giá trị và **không tự đọc `.env` thật**. Format/validate/generate không cần kết nối database. Không có postinstall của dự án để generate hoặc kết nối MySQL.
 
 ## 3. Kiểm đếm cấu trúc
 
@@ -56,7 +56,7 @@ Prisma 7 đặt URL ở `prisma.config.ts`, không ở block datasource của sc
 | opportunity_years  | OpportunityYear  |          2 | (item_id, academic_year)          |      1 | —               |
 | **Tổng**           | **12 model**     |     **81** | **12 PK: 8 đơn tự tăng + 4 ghép** | **16** | **2**           |
 
-UNIQUE ở đây không đếm lại tính duy nhất vốn có của PK. Không thêm id vào bảng trung gian, không có many-to-many ngầm định hoặc bảng identity/session. `activity_logs.target_id` là scalar tham chiếu logic, không được tính là FK. Sau này Prisma Migrate có thể tạo `_prisma_migrations` để ghi lịch sử, nhưng đó không phải bảng nghiệp vụ thứ 13 và hiện chưa có bảng này.
+UNIQUE ở đây không đếm lại tính duy nhất vốn có của PK. Không thêm id vào bảng trung gian, không có many-to-many ngầm định hoặc bảng identity/session. `activity_logs.target_id` là scalar tham chiếu logic, không được tính là FK. Prisma Migrate tạo `_prisma_migrations` để ghi lịch sử khi áp dụng; đây là bảng kỹ thuật, không phải bảng nghiệp vụ thứ 13 hoặc một model Prisma trong 12 bảng thiết kế.
 
 ### A. Schema Prisma biểu diễn trực tiếp
 
@@ -90,9 +90,9 @@ RESTRICT từ chối xóa bản ghi cha hoặc đổi khóa đang được tham 
 | opportunity_skills.skill_id | categories.category_id | RESTRICT    | RESTRICT  |
 | opportunity_years.item_id   | opportunities.item_id  | RESTRICT    | RESTRICT  |
 
-### B. Ràng buộc phải bổ sung trong migration SQL sau này
+### B. Ràng buộc SQL không được Prisma schema biểu diễn
 
-Schema chưa thực thi các **13 CHECK được nêu rõ bằng biểu thức CHECK trong Chương 4** dưới đây. Không được coi SQL chỉ sinh từ schema là bản thiết kế database hoàn chỉnh.
+Prisma schema không biểu diễn trực tiếp các **13 CHECK được nêu rõ bằng biểu thức CHECK trong Chương 4** dưới đây. Initial migration đã giữ chúng bằng SQL; không được coi SQL chỉ sinh từ schema là bản thiết kế database hoàn chỉnh.
 
 | Bảng              | CHECK cần giữ                                                                                                                                                                                                                                                           |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -106,9 +106,9 @@ Schema chưa thực thi các **13 CHECK được nêu rõ bằng biểu thức C
 
 `opportunity_type` chỉ nhận `Thực tập`, `Việc làm`, `Học bổng`, `Bài viết định hướng`; `forum_posts.topic` chỉ nhận `Học tập`, `Thực tập`, `Kinh nghiệm phỏng vấn` theo mô tả. Hai miền giá trị này phải được backend kiểm tra; nếu nhóm muốn bổ sung CHECK tương ứng thì review ở nhiệm vụ migration, không tự coi chúng là CHECK đã có trong schema.
 
-**Timestamp:** nhóm đã chọn MySQL tự cập nhật cả `users.updated_at` và `events.updated_at`. Cần giữ `DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` trong SQL migration sau này. Schema hiện chỉ biểu diễn DATETIME và default; chưa có ON UPDATE và không gắn `@updatedAt`. `@updatedAt` chạy ở Prisma Client, không bảo đảm một lệnh SQL ngoài Prisma có cùng hành vi.
+**Timestamp:** nhóm đã chọn MySQL tự cập nhật cả `users.updated_at` và `events.updated_at`. Initial migration giữ `DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`. Prisma schema chỉ biểu diễn DATETIME và default; không gắn `@updatedAt`, vì cơ chế đó chạy ở Prisma Client và không áp dụng cho lệnh SQL ngoài Prisma.
 
-**Quyền SQL:** Chương 4 yêu cầu tài khoản ứng dụng chỉ INSERT/SELECT trên activity_logs. GRANT và quyền riêng của tài khoản migration là cấu hình database sau này, không được Prisma schema biểu diễn và chưa được tạo. Collation/charset, cách so sánh hoa-thường của UNIQUE và múi giờ cần đối chiếu khi chuẩn bị database/migration; không suy ra chúng từ kiểm đếm schema. MySQL cần index hỗ trợ FK; index hạ tầng có thể xuất hiện trong SQL sinh ra, không được nhầm với UNIQUE nghiệp vụ bổ sung.
+**Quyền SQL:** Chương 4 yêu cầu tài khoản ứng dụng chỉ INSERT/SELECT trên activity_logs. GRANT và quyền riêng của tài khoản migration không được Prisma schema biểu diễn; mẫu đã được kiểm thử trên MySQL tạm và được ghi trong [database-migrations.md](database-migrations.md). Initial migration cũng lưu charset/collation và múi giờ đã được nhóm xác nhận. MySQL cần index hỗ trợ FK; index hạ tầng trong migration không phải UNIQUE nghiệp vụ bổ sung.
 
 ### C. Quy tắc phải xử lý tại backend
 
@@ -127,7 +127,7 @@ FK `reviewed_by`/`admin_id` không xác nhận người được tham chiếu l�
 
 ## 4. Hướng dẫn Windows PowerShell
 
-Các lệnh đều chạy tại **gốc UniHub**, nơi có package.json và package-lock.json gốc. `validate` kiểm tra cấu trúc/ngữ nghĩa schema theo Prisma; `generate` sinh mã TypeScript; **migration** là thay đổi cấu trúc database và chưa được phép chạy trong nhiệm vụ này.
+Các lệnh đều chạy tại **gốc UniHub**, nơi có package.json và package-lock.json gốc. `validate` kiểm tra cấu trúc/ngữ nghĩa schema theo Prisma; `generate` sinh mã TypeScript. Migration initial đã được merge qua PR #4; hướng dẫn kiểm tra migration nằm riêng trong [database-migrations.md](database-migrations.md). Các lệnh generate/validate dưới đây không áp dụng migration hay kết nối database.
 
 Trước khi chuyển nhánh, chạy `git status`. Nếu có mã chưa commit, lưu an toàn và không reset/clean để chuyển nhánh. Khi working tree sạch:
 
@@ -167,18 +167,18 @@ npm.cmd test
 npm.cmd run format:check
 ```
 
-Health và frontend không import client được sinh, không yêu cầu MySQL hoặc DATABASE_URL. Chúng vẫn dùng các lệnh dev trong README. Bộ công cụ Prisma có thể cần tải engine từ binaries.prisma.sh trong lần chạy đầu, kể cả khi không kết nối database.
+`GET /api/health` không gọi database và vẫn hoạt động khi thiếu `DATABASE_URL`; ứng dụng import mã client được sinh để phục vụ readiness nhưng chỉ tạo Prisma Client/pool khi readiness được gọi. Frontend không kết nối MySQL. Prisma generate cần chạy trước khi build/server; các scripts predev/pretypecheck/prebuild tự thực hiện, và lệnh tường minh ở [README](../README.md). Prisma CLI có thể cần tải engine trong lần chạy đầu.
 
 ## 5. Trạng thái kiểm tra schema và giới hạn
 
 - **Đạt kiểm tra tĩnh:** đủ 12 model, 81 scalar column, 12 PK (8 đơn + 4 ghép), 16 FK, 2 UNIQUE ngoài PK; tên/kiểu/nullable/default so với bảng thiết kế; khai báo rõ hành vi đủ 16 FK.
 - **Prisma format, validate và generate đạt:** cả ba script ở root hoàn tất với exit code 0, client 7.10.1 được sinh vào thư mục đã ignore. Các lệnh không cần cấp DATABASE_URL hoặc kết nối MySQL.
-- **SQL diff offline đạt:** script `prisma:diff` hoàn tất với exit code 0; đã kiểm đếm output đủ 12 bảng, 81 cột, 12 PK, 16 FK, 2 UNIQUE và kiểm tra hành vi FK đúng quyết định. Output chỉ nằm trong tệp tạm ngoài repository, chưa phải migration; không có CHECK hoặc ON UPDATE timestamp, không áp dụng SQL.
-- **Typecheck, build và 7 test HTTP đạt**, đã chạy lại sau generate. **Prettier format check đạt**; `.prisma` dùng formatter Prisma riêng. Generated client, node_modules, dist và `.env` thật đều được ignore. Kiểm tra này diễn ra trên Codex/Linux, không kiểm tra MySQL thật, Windows hoặc NFR.
+- **SQL diff offline đạt tại thời điểm tạo schema:** output ban đầu chỉ dùng để đối chiếu, không được áp dụng trực tiếp. Initial migration đã được review/merge qua PR #4; các ràng buộc CHECK và ON UPDATE được giữ trong file migration, xem [database-migrations.md](database-migrations.md).
+- **Typecheck, build và test HTTP đạt**; phiên bản hiện tại có thêm readiness/client tests được ghi tại [database-runtime.md](database-runtime.md). **Prettier format check đạt**; `.prisma` dùng formatter Prisma riêng. Generated client, node_modules, dist và `.env` thật đều được ignore. Tài liệu schema gốc không kiểm tra MySQL Windows hoặc NFR.
 
 Lần thử đầu gặp 403 khi tải checksum engine từ **binaries.prisma.sh**. Lần kiểm tra cuối đã tải/chạy được bằng CLI chính thức, không bỏ xác minh checksum hoặc TLS. Nếu môi trường khác gặp lỗi này, cần cho phép hostname nguồn engine chính thức trên; đây không phải máy chủ database. Bản nháp cấu hình mạng Codex đã được lưu để review, nhưng lưu draft không tự chứng minh runtime đã áp dụng cấu hình; kết quả đạt ở trên dựa trên exit code thực tế.
 
-SQL diff hiện sinh mặc định `utf8mb4`/`utf8mb4_unicode_ci`; đây là mặc định của công cụ, chưa phải quyết định charset/collation của nhóm và chưa được áp dụng vào database. Cần review trước nhiệm vụ migration vì nó ảnh hưởng so sánh và UNIQUE.
+SQL diff thuần từ schema sinh mặc định `utf8mb4`/`utf8mb4_unicode_ci`; đây không phải collation được nhóm chọn. Initial migration dùng collation đã chốt, nhưng việc áp dụng vào database từng thành viên phải được kiểm tra bằng `migrate status`/metadata theo hướng dẫn migration.
 
 Initial migration đã bổ sung các CHECK, collation, hai `ON UPDATE` và thiết lập timezone đã được xác nhận; chi tiết và kết quả MySQL thật của container test ở [database-migrations.md](database-migrations.md). SQL diff ở trên vẫn chỉ là nền Prisma trước phần SQL tùy chỉnh, không phải nội dung migration hoàn chỉnh.
 

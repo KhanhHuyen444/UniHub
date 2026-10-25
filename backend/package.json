@@ -4,8 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "npm run prisma:generate",
     "dev": "node --watch --env-file-if-exists=.env --import tsx src/server.ts",
+    "pretypecheck": "npm run prisma:generate",
     "typecheck": "tsc --noEmit",
+    "prebuild": "npm run prisma:generate",
     "build": "tsc",
     "start": "node --env-file-if-exists=.env dist/server.js",
     "test": "npm run build && node --test test/http.test.mjs",
@@ -17,6 +20,7 @@
     "db:migrate:deploy": "node --env-file-if-exists=.env.migration ../node_modules/prisma/build/index.js migrate deploy --config prisma.config.ts"
   },
   "dependencies": {
+    "@prisma/adapter-mariadb": "7.10.1",
     "@prisma/client": "7.10.1",
     "express": "5.3.0"
   },

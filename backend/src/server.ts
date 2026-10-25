@@ -1,5 +1,6 @@
 import { app } from './app.js';
 import { readPort } from './config/env.js';
+import { disconnectPrismaClient } from './lib/prisma.js';
 
 const port = readPort();
 const host = '127.0.0.1';
@@ -15,7 +16,7 @@ server.on('error', (error: NodeJS.ErrnoException) => {
 
 let shuttingDown = false;
 
-function shutdown() {
+async function shutdown() {
   if (shuttingDown) return;
   shuttingDown = true;
   console.info('Đang dừng HTTP server…');
@@ -27,13 +28,23 @@ function shutdown() {
   }, 10_000);
   timeout.unref();
 
-  server.close((error) => {
-    clearTimeout(timeout);
-    if (error) {
-      console.error('Không thể dừng HTTP server bình thường.');
-      process.exitCode = 1;
-    }
+  await new Promise<void>((resolve) => {
+    server.close((error) => {
+      clearTimeout(timeout);
+      if (error) {
+        console.error('Không thể dừng HTTP server bình thường.');
+        process.exitCode = 1;
+      }
+      resolve();
+    });
   });
+
+  try {
+    await disconnectPrismaClient();
+  } catch {
+    console.error('Không thể đóng pool database bình thường.');
+    process.exitCode = 1;
+  }
 }
 
 process.once('SIGINT', shutdown);
