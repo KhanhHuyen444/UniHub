@@ -92,6 +92,9 @@ function ComponentGallery() {
           <Button type="button" disabled>
             Disabled
           </Button>
+          <Button type="button" loading>
+            Đang xử lý
+          </Button>
         </div>
       </Card>
 
