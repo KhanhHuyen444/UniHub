@@ -5,6 +5,7 @@ package-lock.json
 backend/src/generated/
 # Schema dùng định dạng chính thức của Prisma: npm run prisma:format.
 backend/prisma/schema.prisma
+backend/prisma/migrations/
 # Giữ định dạng phần phân tích đã review; chỉ chỉnh có chọn lọc.
 docs/architecture.md
 docs/technology-stack.md

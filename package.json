@@ -22,7 +22,9 @@
     "prisma:format": "npm run prisma:format --workspace @unihub/backend",
     "prisma:validate": "npm run prisma:validate --workspace @unihub/backend",
     "prisma:generate": "npm run prisma:generate --workspace @unihub/backend",
-    "prisma:diff": "npm run prisma:diff --workspace @unihub/backend"
+    "prisma:diff": "npm run prisma:diff --workspace @unihub/backend",
+    "db:migrate:status": "npm run db:migrate:status --workspace @unihub/backend",
+    "db:migrate:deploy": "npm run db:migrate:deploy --workspace @unihub/backend"
   },
   "overrides": {
     "tailwindcss@3.4.19": {

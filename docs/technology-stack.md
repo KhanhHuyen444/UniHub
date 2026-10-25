@@ -4,7 +4,7 @@ Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật scaffold **24/10
 
 ## 1. Phạm vi và căn cứ
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Sau scaffold đã có hai npm workspace, một lockfile gốc, màn hình kỹ thuật React gọi `GET /api/health`, backend Express và tài liệu cộng tác. Nhiệm vụ schema ngày 24/10/2026 bổ sung `backend/prisma/schema.prisma`, cấu hình CLI và thư viện codegen 7.10.1; xem [database-schema.md](database-schema.md) để biết kiểm tra thực tế. Chưa có migration, instance Prisma Client kết nối database, dữ liệu mẫu, xác thực hoặc chức năng nghiệp vụ; chưa triển khai hosting. Hướng dẫn chạy theo [README](../README.md).
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Sau scaffold có hai npm workspace, một lockfile gốc, frontend React gọi `GET /api/health`, backend Express và tài liệu cộng tác. Schema Prisma được bổ sung ngày 24/10/2026; initial migration được tạo ngày 25/10/2026 trên nhánh review và kiểm tra với MySQL 8.4 dùng một lần. Chưa áp dụng database của nhóm, chưa có instance Prisma Client kết nối DB, dữ liệu mẫu, xác thực hoặc chức năng nghiệp vụ; chưa triển khai hosting. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md) và [README](../README.md).
 
 Các tài liệu thực sự đã đọc, với số trang tính theo thứ tự trong PDF:
 
@@ -85,7 +85,7 @@ Scaffold tích hợp Tailwind 3 bằng PostCSS/Autoprefixer, cấu hình Vite `b
 
 Đã đọc tài liệu chính thức qua Node.js, mã nguồn/tài liệu trong repository do nhà phát triển quản lý và npm registry. Các website như `vite.dev`, `expressjs.com`, `www.prisma.io`, `tailwindcss.com`, `dev.mysql.com`, `docs.npmjs.com` và `developers.google.com` bị proxy chặn khi truy cập trực tiếp; các nguồn GitHub chính thức đọc được được dẫn bên dưới. Không coi lỗi mạng này là lỗi tương thích thư viện.
 
-Scaffold đã có lệnh cài dependency, typecheck/build hai workspace, test HTTP/config và format check tại root. Nhiệm vụ schema đã chạy thành công Prisma format/validate/generate và SQL diff offline; typecheck/build và 7 test HTTP tiếp tục đạt sau generate. Chi tiết và giới hạn ở [database-schema.md](database-schema.md#5-trạng-thái-kiểm-tra-và-giới-hạn). Chưa tạo/chạy migration hoặc thử kết nối MySQL; không suy ra NFR hiệu năng hoặc đầy đủ trình duyệt từ các kiểm tra này.
+Scaffold đã có lệnh cài dependency, typecheck/build hai workspace, test HTTP/config và format check tại root. Prisma format/validate/generate, SQL diff offline, migration trên MySQL 8.4 dùng một lần và kiểm thử database được ghi trong [database-migrations.md](database-migrations.md). Không áp dụng vào DB của nhóm; không suy ra NFR hiệu năng hoặc đầy đủ trình duyệt từ các kiểm tra này.
 
 ## 4. Quy tắc cấu hình và công việc tiếp theo
 
@@ -93,7 +93,7 @@ Scaffold đã có lệnh cài dependency, typecheck/build hai workspace, test HT
 - Bí mật database và khóa ký JWT chỉ cấp cho backend qua cấu hình cục bộ/bí mật môi trường. Biến có tiền tố `VITE_` có thể bị đóng gói vào frontend nên không được chứa bí mật. Google client ID là định danh công khai; Google client secret không được đưa vào frontend hoặc Git và không cần cho luồng xác minh ID token đã chọn.
 - Có `.env.example` riêng ở frontend/backend, `.gitignore`, README gốc và các tài liệu workflow/roadmap/API. Chỉ dùng tên biến và giá trị mẫu an toàn, không tạo tài khoản hoặc dữ liệu cá nhân. Dev proxy chỉ phục vụ phát triển cục bộ.
 - PR tài liệu #1 đã được merge vào main trước khi bắt đầu scaffold. Nhánh `chore/project-scaffold` kế thừa main ở `eff7ba2`; PR scaffold đặt base main. Agent không tự merge. Xem [workflow](team-workflow.md) để tạo nhánh chức năng tiếp theo.
-- Nguồn schema duy nhất đã đặt ở **backend/prisma/schema.prisma**; migration tương lai ở **backend/prisma/migrations/**. database/ chỉ giữ hướng dẫn, không có schema thứ hai. Nhiệm vụ schema không tạo migration hoặc MySQL. Bước tiếp theo theo [roadmap](development-roadmap.md), sau khi review schema và các ràng buộc SQL/backend: chuẩn bị migration riêng, luồng cơ hội mẫu, xác thực/hồ sơ, phát triển song song và tích hợp.
+- Nguồn schema/migration duy nhất là **backend/prisma/**. Initial migration đã có trên nhánh review; database/ chỉ giữ lối vào tài liệu. Sau khi review migration, bước tiếp theo là các API/chức năng theo [roadmap](development-roadmap.md); mọi thay đổi database tiếp theo phải có migration mới.
 
 ## 5. Nguồn kỹ thuật đã đối chiếu
 

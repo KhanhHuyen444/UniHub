@@ -1,10 +1,10 @@
 # Schema Prisma của UniHub
 
-Ngày đối chiếu: **24/10/2026**. Phạm vi: mô tả cấu trúc MySQL bằng Prisma, cấu hình công cụ, kiểm tra/generate và tài liệu. **Chưa tạo hoặc thay đổi database thật, chưa tạo/áp dụng migration, chưa seed.**
+Ngày đối chiếu schema: **24/10/2026**. Tài liệu ghi lại trạng thái lúc schema được tạo; initial migration tiếp theo được chuẩn bị trên nhánh `feat/initial-migration`. Migration và kiểm thử MySQL dùng một lần được mô tả trong [database-migrations.md](database-migrations.md). Database của nhóm/thành viên chưa được thay đổi; chưa seed.
 
 ## 1. Nguồn và trạng thái
 
-Scaffold đã được nhóm merge qua PR #2 vào `main` tại `6a1cc76`; nhánh schema là `feat/prisma-schema`, tạo từ main này. Đã đọc AGENTS.md, README, technology-stack, architecture và team-workflow trong repository.
+Scaffold được merge qua PR #2; schema được merge qua PR #3 vào `main` tại `d10ab25`. Initial migration được tạo từ main đó trên nhánh `feat/initial-migration`. Đã đọc AGENTS.md, README, technology-stack, architecture và team-workflow trong repository.
 
 Đã truy cập lại hai nguồn gốc trong phiên làm việc:
 
@@ -20,15 +20,15 @@ Hai quyết định bổ sung đã được người dùng xác nhận trong nhi
 
 ## 2. File và công cụ
 
-| File / thành phần                      | Mục đích                                                                                        |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `backend/prisma/schema.prisma`         | Nguồn schema duy nhất: 12 model, native type MySQL, khóa và quan hệ hai phía                    |
-| `backend/prisma.config.ts`             | Cấu hình Prisma CLI 7: vị trí schema, đường dẫn migration dự kiến và URL từ process environment |
-| `backend/src/generated/prisma/`        | Output TypeScript ESM của generator; sinh tự động, không commit, không chỉnh tay                |
-| `backend/.env.example`                 | PORT và DATABASE_URL mẫu; không có tài khoản hoặc database thật                                 |
-| `backend/package.json`, `package.json` | Scripts trong backend và lệnh chuyển tiếp từ root                                               |
-| `package-lock.json`                    | Lockfile npm duy nhất cho cả repository                                                         |
-| `database/README.md`                   | Chỉ dẫn đến schema chính, không có bộ SQL/schema thứ hai                                        |
+| File / thành phần                      | Mục đích                                                                                       |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `backend/prisma/schema.prisma`         | Nguồn schema duy nhất: 12 model, native type MySQL, khóa và quan hệ hai phía                   |
+| `backend/prisma.config.ts`             | Cấu hình Prisma CLI 7: vị trí schema, đường dẫn migration và URL riêng của tài khoản migration |
+| `backend/src/generated/prisma/`        | Output TypeScript ESM của generator; sinh tự động, không commit, không chỉnh tay               |
+| `backend/.env.example`                 | PORT và DATABASE_URL mẫu; không có tài khoản hoặc database thật                                |
+| `backend/package.json`, `package.json` | Scripts trong backend và lệnh chuyển tiếp từ root                                              |
+| `package-lock.json`                    | Lockfile npm duy nhất cho cả repository                                                        |
+| `database/README.md`                   | Chỉ dẫn đến schema chính, không có bộ SQL/schema thứ hai                                       |
 
 Giữ **Prisma CLI 7.10.1** và **@prisma/client 7.10.1** đúng công nghệ đã chọn. CLI là devDependency của backend; @prisma/client cung cấp phần thư viện cho mã client được generator sinh và kiểm tra kiểu. Việc cài thư viện **không tạo instance `new PrismaClient()` hoặc kết nối MySQL**. Chưa thêm adapter runtime, singleton client, query hoặc API nghiệp vụ.
 
@@ -169,7 +169,7 @@ npm.cmd run format:check
 
 Health và frontend không import client được sinh, không yêu cầu MySQL hoặc DATABASE_URL. Chúng vẫn dùng các lệnh dev trong README. Bộ công cụ Prisma có thể cần tải engine từ binaries.prisma.sh trong lần chạy đầu, kể cả khi không kết nối database.
 
-## 5. Trạng thái kiểm tra và giới hạn
+## 5. Trạng thái kiểm tra schema và giới hạn
 
 - **Đạt kiểm tra tĩnh:** đủ 12 model, 81 scalar column, 12 PK (8 đơn + 4 ghép), 16 FK, 2 UNIQUE ngoài PK; tên/kiểu/nullable/default so với bảng thiết kế; khai báo rõ hành vi đủ 16 FK.
 - **Prisma format, validate và generate đạt:** cả ba script ở root hoàn tất với exit code 0, client 7.10.1 được sinh vào thư mục đã ignore. Các lệnh không cần cấp DATABASE_URL hoặc kết nối MySQL.
@@ -180,15 +180,18 @@ Lần thử đầu gặp 403 khi tải checksum engine từ **binaries.prisma.sh
 
 SQL diff hiện sinh mặc định `utf8mb4`/`utf8mb4_unicode_ci`; đây là mặc định của công cụ, chưa phải quyết định charset/collation của nhóm và chưa được áp dụng vào database. Cần review trước nhiệm vụ migration vì nó ảnh hưởng so sánh và UNIQUE.
 
+Initial migration đã bổ sung các CHECK, collation, hai `ON UPDATE` và thiết lập timezone đã được xác nhận; chi tiết và kết quả MySQL thật của container test ở [database-migrations.md](database-migrations.md). SQL diff ở trên vẫn chỉ là nền Prisma trước phần SQL tùy chỉnh, không phải nội dung migration hoàn chỉnh.
+
 ## 6. Việc còn cần quyết định trước triển khai tiếp
 
-Hai quyết định chặn schema trong nhiệm vụ này (FK và timestamp) đã được người dùng xác nhận. Các điểm sau thuộc nhiệm vụ kế tiếp, không tự mở rộng mô hình 12 bảng:
+Các quyết định FK/timestamp đã được xác nhận và lưu trong schema/migration. Các điểm sau thuộc nhiệm vụ kế tiếp, không tự mở rộng mô hình 12 bảng:
 
 - Liên kết tài khoản Google lâu dài bằng sub và cơ chế refresh session/thu hồi: users hiện chưa có google_sub, không có bảng session/identity/token.
-- Charset/collation và quy ước thời gian thống nhất với API; quyền tài khoản ứng dụng/migration trên MySQL thật; giới hạn môi trường môn học.
-- Review SQL bổ sung phần B, kể cả cách chuẩn hóa cú pháp CHECK trong bản PDF, trước khi tạo migration. Sau khi được giao nhiệm vụ migration riêng mới chuẩn bị database phát triển, kiểm tra SQL, thử ràng buộc, transaction và rollback trên MySQL.
+- Liên kết tài khoản Google lâu dài bằng sub, session/thu hồi token; xem xét khi làm xác thực.
+- Xác nhận môi trường môn học hỗ trợ phiên bản đã chọn và kiểm thử trên máy Windows của nhóm.
+- Các thay đổi lược đồ mới vẫn cần migration riêng và review theo quy trình trong database-migrations.md.
 
-Không chạy db push, migrate dev/deploy/reset, seed hoặc truy vấn dữ liệu thật trong đợt schema. Cài/generate thư viện và validate schema không chứng minh database đã được tạo hoặc kết nối.
+Database của nhóm không được truy vấn/thay đổi trong nhiệm vụ migration; container kiểm thử tách biệt và bị hủy sau test. Cài/generate và kiểm thử trên MySQL tạm không chứng minh môi trường máy thành viên đã sẵn sàng.
 
 ## 7. Nguồn công cụ chính thức
 
