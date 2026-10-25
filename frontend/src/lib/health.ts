@@ -1,8 +1,10 @@
-export async function checkBackend(signal: AbortSignal): Promise<void> {
-  const response = await fetch('/api/health', { signal, cache: 'no-store' });
-  if (!response.ok) throw new Error('Backend chưa sẵn sàng.');
+import { ApiError, apiRequest } from './api';
 
-  const body: unknown = await response.json();
+export async function checkBackend(signal: AbortSignal): Promise<void> {
+  const body = await apiRequest<unknown>('/api/health', {
+    signal,
+    cache: 'no-store',
+  });
   if (
     !body ||
     typeof body !== 'object' ||
@@ -11,6 +13,9 @@ export async function checkBackend(signal: AbortSignal): Promise<void> {
     !('service' in body) ||
     body.service !== 'unihub-api'
   ) {
-    throw new Error('Phản hồi health không đúng định dạng.');
+    throw new ApiError('Phản hồi health không đúng định dạng.', {
+      code: 'INVALID_RESPONSE',
+      kind: 'response',
+    });
   }
 }

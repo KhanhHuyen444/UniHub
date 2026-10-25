@@ -35,7 +35,13 @@ Route không tồn tại trả HTTP 404:
 
 Middleware JSON giới hạn 100 KB. JSON sai trả 400/`INVALID_JSON`, vượt giới hạn trả 413/`PAYLOAD_TOO_LARGE`, encoding/charset không hỗ trợ trả 415/`UNSUPPORTED_ENCODING`; lỗi bất ngờ trả 500/`INTERNAL_ERROR`. Phản hồi không đưa stack trace, thông tin cấu hình hoặc request body ra client. Kiểm tra body có thể chạy trước xử lý route; một request tới route không tồn tại với JSON lỗi có thể nhận 400 thay vì 404.
 
-Frontend gọi `/api/health` bằng fetch, kiểm tra HTTP status và shape JSON; timeout 5 giây, hủy/bỏ qua request đã hết hiệu lực. Trong phát triển, Vite chuyển tiếp `/api` tới `API_PROXY_TARGET`. Không hardcode địa chỉ backend vào từng component, không thêm CORS chỉ để né cấu hình proxy. Cấu hình production chưa được triển khai.
+Frontend gọi `/api/health` qua `frontend/src/lib/api.ts`, kiểm tra HTTP status và shape JSON; timeout 5 giây, hủy/bỏ qua request đã hết hiệu lực. Trong phát triển, Vite chuyển tiếp `/api` tới `API_PROXY_TARGET`. Không hardcode địa chỉ backend vào từng component, không thêm CORS chỉ để né cấu hình proxy. Cấu hình production chưa được triển khai.
+
+### API client dùng chung ở frontend
+
+Đã triển khai `apiRequest` trong `frontend/src/lib/api.ts`. Client nhận path cùng tiền tố `/api`, hỗ trợ `GET`, `POST`, `PATCH`, `DELETE`, query qua `URLSearchParams`, JSON body, `AbortSignal` và các tùy chọn `fetch` cần thiết. Client không tự chuyển tên field, gắn JWT, lưu token, ghi log hoặc tạo thông báo UI; từng feature phải dùng đúng contract đã review. Không truyền URL tuyệt đối để tránh bỏ qua Vite proxy và gọi nhầm origin.
+
+Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi đọc `error.code`/`error.message` theo envelope hiện tại; body lỗi không phải JSON chỉ trả thông báo HTTP tổng quát, không đưa HTML hoặc nội dung upstream ra UI. Lỗi mạng được chuẩn hóa thành `ApiError`; lỗi hủy `AbortError` được giữ nguyên để caller xử lý riêng. Phản hồi thành công rỗng (204 hoặc body rỗng) trả `undefined`; phản hồi thành công có body không phải JSON tạo `INVALID_RESPONSE`. Client không kiểm tra schema nghiệp vụ: caller vẫn cần xác thực shape dữ liệu khi sử dụng.
 
 ## Dự thảo cho API nghiệp vụ — cần nhóm thống nhất
 
@@ -46,7 +52,7 @@ Các quy ước dưới đây **chưa phải endpoint hoặc hợp đồng nghi�
 | Đường dẫn    | Tiền tố `/api`, tên tài nguyên rõ ràng ở dạng số nhiều; thống nhất cách đặt path trước khi tạo endpoint                                                                                                                                                              |
 | JSON         | Request có `Content-Type: application/json`; response JSON với kiểu dữ liệu rõ, không đổi null thành chuỗi rỗng tùy ý                                                                                                                                                |
 | Payload      | Chọn tên field và quy tắc chuyển đổi nhất quán; không tự coi tên cột SQL là API contract hoặc tự đổi tên cột database                                                                                                                                                |
-| HTTP status  | 200 đọc/cập nhật, 201 tạo, 204 xóa thành công không body; 400 dữ liệu sai, 401 chưa có phiên hợp lệ, 403 thiếu quyền, 404 không tìm thấy, 409 xung đột, 500 lỗi nội bộ                                                                                               |
+| HTTP status  | 200 đọc/cập nhật, 201 tạo, 204 xóa thành công không body; 400 dữ liệu sai, 401 chưa có phiên hợp lệ, 403 thiếu quyền, 404 không tìm thấy, 409 xung đột, 500 lỗi nội bộ. Client hỗ trợ 204 và body thành công rỗng; contract từng endpoint phải nêu status thực tế    |
 | Phân trang   | Đề xuất page bắt đầu từ 1, pageSize mặc định 20 và tối đa 100; response có items và meta gồm page/pageSize/total/totalPages. Cần chốt thứ tự sắp xếp ổn định trước khi triển khai                                                                                    |
 | Tìm kiếm/lọc | Nêu rõ tham số hỗ trợ, khoảng giá trị, chuẩn hóa chuỗi và hành vi tham số không hợp lệ; không nhận tùy tiện tên cột/SQL từ client                                                                                                                                    |
 | Ngày giờ     | Đề xuất ISO 8601 có timezone trên API, chuẩn hóa UTC để lưu/xử lý; giao diện hiển thị theo múi giờ được nhóm thống nhất. MySQL DATETIME không tự lưu timezone; initial migration/runtime đã giữ UTC cho database và cần tuân thủ quy ước này khi triển khai API lịch |

@@ -25,6 +25,7 @@ Khi có khác biệt, quyết định chính thức mới của nhóm được g
 | Thành phần | Công nghệ / quy ước | Mục đích |
 | --- | --- | --- |
 | Frontend | React + TypeScript, Vite | Một ứng dụng với các khu vực Public, Student, Admin |
+| Routing frontend | React Router declarative mode | Một router tập trung cho route kỹ thuật và các route tính năng sẽ triển khai sau |
 | CSS | Tailwind CSS | Xây dựng giao diện theo Figma; chưa chọn thêm UI kit |
 | Backend | Node.js + Express + TypeScript | REST API; xác thực, phân quyền, kiểm tra dữ liệu và thực hiện nghiệp vụ tại server |
 | Database | MySQL dòng 8.4 LTS | Lưu mô hình quan hệ 12 bảng trong Chương 4 |
@@ -50,6 +51,7 @@ Các phiên bản đã được đối chiếu lại qua metadata đúng phiên 
 | MySQL Server | **8.4.13**, dòng 8.4 LTS | Tag chính thức `mysql-8.4.13` có `MYSQL_VERSION_MATURITY="LTS"`; Prisma hỗ trợ MySQL 5.6+ [S3, S6] |
 | `react`, `react-dom` | **19.3.1** cho cả hai | `react-dom` yêu cầu React `^19.3.1` [S2] |
 | `@types/react`, `@types/react-dom` | **19.3.0** cho cả hai | Cặp typings cùng dòng 19; peer của `@types/react-dom` là `@types/react: ^19.3.0` [S2] |
+| `react-router` | **8.5.0** | React/React DOM >=19.2.7, typings >=19.2.0, Node >=22.22.0; tương thích với React 19.3.1, typings 19.3.0 và Node 24.19.0 [S11] |
 | `vite` | **8.3.5** | Node `^20.19.0 \|\| >=22.12.0` [S2, S4] |
 | `@vitejs/plugin-react` | **6.1.2** | Peer Vite `^8.0.0`; Node giống yêu cầu của Vite [S2] |
 | `typescript` | **5.9.3** | Đáp ứng Prisma yêu cầu TypeScript 5.4+; chọn bản ổn định này, không tự nâng major [S2, S6] |
@@ -62,15 +64,21 @@ Các phiên bản đã được đối chiếu lại qua metadata đúng phiên 
 | `tsx` | **4.23.15** | Chạy TypeScript cho backend dev qua Node `--import tsx`; Node >=18 [S10] |
 | `prettier` | **3.6.2** | Định dạng mã/tài liệu, chỉ ở root devDependencies; Node >=14 [S10] |
 
-Google Identity Services là SDK web do Google cung cấp, không coi như một gói npm có phiên bản cố định trong bảng. Thư viện xác minh Google token, ký JWT, kiểm tra input nghiệp vụ và routing frontend sẽ được đánh giá khi thực sự cần. Scaffold dùng fetch, Node.js built-in `node:test` (không thêm framework test), Prettier và TypeScript strict; chưa thêm React Router, UI kit, chart, ESLint hoặc công cụ chạy hai server cùng lúc.
+Google Identity Services là SDK web do Google cung cấp, không coi như một gói npm có phiên bản cố định trong bảng. Thư viện xác minh Google token, ký JWT và kiểm tra input nghiệp vụ sẽ được đánh giá khi thực sự cần. Frontend dùng React Router ở declarative mode cho `BrowserRouter`, `Routes`, `Route` và `Navigate`; chưa dùng data loaders/actions, route guard hoặc layout tính năng. Scaffold dùng fetch, Node.js built-in `node:test` (không thêm framework test), Prettier và TypeScript strict; chưa thêm UI kit, chart, ESLint hoặc công cụ chạy hai server cùng lúc.
 
-### 3.1. Vì sao dùng Tailwind 3.4 thay vì 4
+### 3.1. React Router và cấu trúc route ban đầu
+
+Đã chọn chính xác `react-router@8.5.0`, không cài thêm `react-router-dom`. Tài liệu đi cùng gói npm hướng dẫn render `BrowserRouter` và khai báo `Routes`/`Route` trong declarative mode. `frontend/src/app/router.tsx` giữ route tập trung; hiện chỉ mount `/_dev/health`, `/404` và fallback `*`; `/` chuyển tới trang health để giữ khả năng mở màn hình kỹ thuật hiện tại. Các màn hình nghiệp vụ trong Chương 4 chỉ được liệt kê trong tài liệu, chưa mount route hoặc trang giả.
+
+Metadata peer/engine được kiểm tra từ npm registry và tài liệu cài đặt/routing trong tarball chính thức `react-router-8.5.0.tgz`. Node 24.19.0 đáp ứng `>=22.22.0`, React/React DOM 19.3.1 đáp ứng `>=19.2.7`, typings 19.3.0 đáp ứng `>=19.2.0`. Website tài liệu chính thức bị proxy chặn trong môi trường này; phần declarative mode được đối chiếu từ tài liệu đóng gói với đúng phiên bản, không suy ra từ tài liệu major khác.
+
+### 3.2. Vì sao dùng Tailwind 3.4 thay vì 4
 
 Chương 3 trang 7, NFR-04.2, yêu cầu Chrome/Edge >=110, Firefox >=110 và Safari >=16. Tài liệu Tailwind 4 yêu cầu Chrome >=111, Firefox >=128 và Safari >=16.4, đồng thời khuyến nghị giữ dòng 3.4 nếu cần trình duyệt cũ hơn [S7]. Vì thế **Tailwind 3.4.19 là lựa chọn tương thích với yêu cầu hiện có**, không dùng `@tailwindcss/vite` dành cho Tailwind 4.
 
 Scaffold tích hợp Tailwind 3 bằng PostCSS/Autoprefixer, cấu hình Vite `build.target`, `build.cssTarget` và Browserslist cho Chrome 110, Edge 110, Firefox 110, Safari 16. Chưa kiểm thử đủ các phiên bản tối thiểu đó. Vite không tự polyfill mọi Web API. Máy phát triển nên dùng trình duyệt hiện hành; kiểm thử trình duyệt tối thiểu áp dụng cho bản build ứng dụng.
 
-### 3.2. Những điều phải giữ khi dùng Prisma 7
+### 3.3. Những điều phải giữ khi dùng Prisma 7
 
 - Dùng backend theo ES modules; không sao chép cấu hình CommonJS hoặc ví dụ Prisma phiên bản khác mà chưa đối chiếu.
 - Dùng provider `mysql`, generator `prisma-client`, đường dẫn output rõ ràng và driver adapter `@prisma/adapter-mariadb` theo hướng dẫn MySQL chính thức [S6]. Không thêm dịch vụ database bên ngoài.
@@ -79,9 +87,9 @@ Scaffold tích hợp Tailwind 3 bằng PostCSS/Autoprefixer, cấu hình Vite `b
 - `schema.prisma` chỉ biểu diễn được một phần ràng buộc database. Giữ `CHECK` và hành vi SQL đặc thù trong migration SQL được review; không bỏ chúng vì Prisma không biểu diễn trực tiếp.
 - `@updatedAt` là hành vi của Prisma Client, không tương đương hoàn toàn với `ON UPDATE CURRENT_TIMESTAMP` tại MySQL. `events.updated_at` phải giữ hành vi database mô tả trong Chương 4; xem [đối chiếu dữ liệu](architecture.md#5-đối-chiếu-prisma-với-12-bảng-chương-4).
 
-### 3.3. Kết quả kiểm tra và giới hạn
+### 3.4. Kết quả kiểm tra và giới hạn
 
-Đã đọc metadata **đúng phiên bản** của 17 gói trong bảng; kiểm tra bằng semver có sẵn cho ra **19 điều kiện engines/peer dependency đạt, 0 lỗi**. Các peer tùy chọn không được coi là dependency phải cài. Đây không phải kiểm tra toàn bộ dependency bắc cầu. Node 24.19.0 và npm 11.9.0 được xác nhận bằng lệnh đọc phiên bản trong môi trường; MySQL chưa cài hoặc khởi động.
+Đã đọc metadata **đúng phiên bản** của các gói trong bảng; kiểm tra bằng semver cho ra các điều kiện engines/peer dependency đã ghi đều đạt. Với React Router, peer/engine cụ thể được đối chiếu ở trên. Các peer tùy chọn không được coi là dependency phải cài. Đây không phải kiểm tra toàn bộ dependency bắc cầu. Node 24.19.0 và npm 11.9.0 được xác nhận bằng lệnh đọc phiên bản trong môi trường; MySQL chưa cài hoặc khởi động.
 
 Đã đọc tài liệu chính thức qua Node.js, mã nguồn/tài liệu trong repository do nhà phát triển quản lý và npm registry. Các website như `vite.dev`, `expressjs.com`, `www.prisma.io`, `tailwindcss.com`, `dev.mysql.com`, `docs.npmjs.com` và `developers.google.com` bị proxy chặn khi truy cập trực tiếp; các nguồn GitHub chính thức đọc được được dẫn bên dưới. Không coi lỗi mạng này là lỗi tương thích thư viện.
 
@@ -92,7 +100,7 @@ Scaffold có lệnh cài dependency, typecheck/build hai workspace, test HTTP/co
 - Root package `private`, workspace `frontend` và `backend`, một lockfile ở gốc. Dependency ứng dụng khai báo trong workspace sử dụng nó. Prisma Client khi triển khai chỉ thuộc backend. Không tạo workspace ứng dụng thứ ba cho `database/`.
 - Bí mật database và khóa ký JWT chỉ cấp cho backend qua cấu hình cục bộ/bí mật môi trường. Biến có tiền tố `VITE_` có thể bị đóng gói vào frontend nên không được chứa bí mật. Google client ID là định danh công khai; Google client secret không được đưa vào frontend hoặc Git và không cần cho luồng xác minh ID token đã chọn.
 - Có `.env.example` riêng ở frontend/backend, `.gitignore`, README gốc và các tài liệu workflow/roadmap/API. Chỉ dùng tên biến và giá trị mẫu an toàn, không tạo tài khoản hoặc dữ liệu cá nhân. Dev proxy chỉ phục vụ phát triển cục bộ.
-- PR tài liệu #1 đã được merge vào main trước khi bắt đầu scaffold. Nhánh `chore/project-scaffold` kế thừa main ở `eff7ba2`; PR scaffold đặt base main. Agent không tự merge. Xem [workflow](team-workflow.md) để tạo nhánh chức năng tiếp theo.
+- Scaffold, initial migration và Prisma runtime đã được merge vào `main` qua PR #2–#5. Agent không tự merge. Xem [workflow](team-workflow.md) để tạo nhánh chức năng tiếp theo.
 - Nguồn schema/migration duy nhất là **backend/prisma/**. Initial migration đã merge qua PR #4 vào `main` tại `d7c2cefc`; database/ chỉ giữ lối vào tài liệu. Mọi thay đổi database tiếp theo cần migration mới, được review theo [workflow](team-workflow.md) và [roadmap](development-roadmap.md).
 
 ## 5. Nguồn kỹ thuật đã đối chiếu
@@ -107,3 +115,4 @@ Scaffold có lệnh cài dependency, typecheck/build hai workspace, test HTTP/co
 - **[S8] npm:** [hướng dẫn workspaces của npm 11.9.0](https://github.com/npm/cli/blob/v11.9.0/docs/lib/content/using-npm/workspaces.md).
 - **[S9] Google:** [mã nguồn OAuth2Client của thư viện chính thức](https://github.com/googleapis/google-cloud-node-core/blob/main/packages/google-auth-library-nodejs/src/auth/oauth2client.ts), gồm kiểm tra chữ ký, hạn token, issuer và audience. Chưa tích hợp thư viện này vào UniHub.
 - **[S10] Công cụ scaffold bổ sung, đọc metadata phiên bản cụ thể ngày 24/10/2026:** [Node typings](https://registry.npmjs.org/@types%2fnode/24.10.1), [tsx](https://registry.npmjs.org/tsx/4.23.15), [Prettier](https://registry.npmjs.org/prettier/3.6.2). Cách nạp cấu hình/chạy test: [Node CLI](https://nodejs.org/docs/latest-v24.x/api/cli.html), [Node test runner](https://nodejs.org/docs/latest-v24.x/api/test.html).
+- **[S11] React Router:** metadata engines/peer và tarball [react-router 8.5.0](https://registry.npmjs.org/react-router/8.5.0); tài liệu trong package `docs/start/declarative/installation.md` và `docs/start/declarative/routing.md`, đối chiếu với [tài liệu cài đặt](https://reactrouter.com/start/declarative/installation) và [khai báo route](https://reactrouter.com/start/declarative/routing). Trang web trực tiếp bị proxy chặn; đã đọc bản tài liệu đóng gói cùng đúng phiên bản.

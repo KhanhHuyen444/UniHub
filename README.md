@@ -1,8 +1,8 @@
 # UniHub
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Repository hiện ở **giai đoạn bộ khung phát triển chung**: React hiển thị màn hình kỹ thuật tạm thời và gọi Express. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Repository hiện ở **giai đoạn bộ khung phát triển chung**: React Router đưa màn hình kỹ thuật tạm thời tới `/_dev/health`, frontend dùng API client chung gọi Express. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
 
-Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4; runtime branch không đổi mô hình schema hoặc nội dung migration. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Chưa có đăng nhập Google, JWT, tài khoản mẫu, API nghiệp vụ hoặc UI chính thức theo Figma. Có thể chạy health mà không cần MySQL hoặc Docker.
+Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4, Prisma runtime qua PR #5. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Chưa có đăng nhập Google, JWT, tài khoản mẫu, API nghiệp vụ hoặc UI chính thức theo Figma. Có thể chạy health mà không cần MySQL hoặc Docker.
 
 ## 1. Công nghệ và điều kiện môi trường
 
@@ -21,7 +21,7 @@ Giới hạn phần mềm của môn học vẫn cần đối chiếu; chưa có
 
 ## 2. Lấy bộ khung về máy Windows
 
-Scaffold, schema và initial migration đã vào `main` qua PR #2, #3 và #4. Phần Prisma runtime hiện nằm trên nhánh **`feat/prisma-runtime`**, được cập nhật từ `origin/main` tại `d7c2cefc`. Nếu database đã được migration, làm theo [hướng dẫn runtime](docs/database-runtime.md); không áp dụng lại migration.
+Scaffold, schema, initial migration và Prisma runtime đã vào `main` qua PR #2–#5. Bắt đầu từ `main` mới nhất để nhận bộ khung chung. Nếu database đã được migration, làm theo [hướng dẫn runtime](docs/database-runtime.md); không áp dụng lại migration.
 
 Mở PowerShell trong Antigravity hoặc Windows. Ví dụ dưới đây dùng thư mục Documents; có thể chọn nơi khác nhưng phải điều chỉnh đường dẫn ở các lệnh sau.
 
@@ -29,21 +29,22 @@ Mở PowerShell trong Antigravity hoặc Windows. Ví dụ dưới đây dùng t
 
 ```powershell
 Set-Location "$HOME\Documents"
-git clone --branch feat/prisma-runtime --single-branch https://github.com/KhanhHuyen444/UniHub.git
+git clone --branch main --single-branch https://github.com/KhanhHuyen444/UniHub.git
 Set-Location .\UniHub
 git status
 ```
 
-`clone` tải một bản repository về máy; `--branch` chọn đúng nhánh có bộ khung. Sau đó mở **cả thư mục UniHub** trong Antigravity, không chỉ frontend hoặc backend.
+`clone` tải một bản repository về máy; `--branch main` chọn nhánh tích hợp. Sau đó mở **cả thư mục UniHub** trong Antigravity, không chỉ frontend hoặc backend.
 
 Nếu đã clone trước đó, không clone đè lên thư mục có sẵn. **Tại gốc repository hiện có**, chạy `git status`; nếu có thay đổi của bạn thì commit hoặc lưu chúng an toàn trước khi chuyển nhánh. Khi working tree sạch:
 
 ```powershell
-git fetch origin refs/heads/feat/prisma-runtime:refs/remotes/origin/feat/prisma-runtime
-git switch feat/prisma-runtime
+git fetch origin
+git switch main
+git pull --ff-only origin main
 ```
 
-Nếu nhánh local chưa tồn tại và Git không tự tạo tracking branch, dùng `git switch --track origin/feat/prisma-runtime`. Không dùng reset/clean để xử lý thay đổi chưa commit.
+Nếu nhánh local chưa tồn tại và Git không tự tạo tracking branch, dùng `git switch --track origin/main`. Không dùng reset/clean để xử lý thay đổi chưa commit.
 
 ## 3. Cài dependency tại gốc repository
 
@@ -87,7 +88,7 @@ Set-Location "$HOME\Documents\UniHub"
 npm.cmd run dev:frontend
 ```
 
-Mở trình duyệt tại **`http://127.0.0.1:5173`**. Trang hiển thị "Đang kiểm tra kết nối…", sau đó "Backend hoạt động" nếu nhận đúng health JSON. Nếu backend chưa chạy, trang báo "Không kết nối được backend"; chạy backend rồi bấm **Thử lại**. Mỗi lần kiểm tra có timeout 5 giây. Yêu cầu bị hủy/bỏ qua khi component được tháo khỏi trang hoặc lần kiểm tra đã hết hiệu lực.
+Mở trình duyệt tại **`http://127.0.0.1:5173`**. `/` chuyển tới `/_dev/health`; trang hiển thị "Đang kiểm tra kết nối…", sau đó "Backend hoạt động" nếu nhận đúng health JSON. Nếu backend chưa chạy, trang báo "Không kết nối được backend"; chạy backend rồi bấm **Thử lại**. Mỗi lần kiểm tra có timeout 5 giây. Yêu cầu bị hủy/bỏ qua khi component được tháo khỏi trang hoặc lần kiểm tra đã hết hiệu lực. Đường dẫn chưa triển khai hiển thị trang 404 tối giản, không có menu giả.
 
 Frontend gọi đường dẫn tương đối `/api/health`; Vite **dev proxy** chuyển `/api` tới backend. Proxy là cơ chế chuyển tiếp yêu cầu khi phát triển, **chưa phải cấu hình production**. Build frontend không tự tạo proxy hoặc hosting. Cả hai server hiện chỉ nghe loopback trên máy đang chạy, không mở ra Internet.
 
@@ -119,7 +120,7 @@ git status
 
 - `typecheck`: kiểm tra kiểu TypeScript của cả frontend/backend.
 - `build`: tạo `frontend/dist` và `backend/dist`. Thư mục dist là kết quả sinh tự động, không commit.
-- `test`: chạy 3 kiểm thử tương thích Tailwind/CSS ở frontend, build backend rồi chạy 13 kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có test API nghiệp vụ hoặc toàn bộ UI. Lý do kiểm tra CSS và phạm vi override dependency ở [dependency-security.md](docs/dependency-security.md).
+- `test`: chạy kiểm thử API client và tương thích Tailwind/CSS ở frontend, build backend rồi chạy kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có test API nghiệp vụ hoặc toàn bộ UI. Lý do kiểm tra CSS và phạm vi override dependency ở [dependency-security.md](docs/dependency-security.md).
 - `format:check`: kiểm tra định dạng mã và tài liệu mới bằng Prettier. Nếu cần sửa định dạng, chạy `npm.cmd run format`, xem diff rồi kiểm tra lại. Hai tài liệu kiến trúc cũ được giữ định dạng riêng để tránh sửa hàng loạt phần đã review.
 
 Chưa cấu hình ESLint; TypeScript dùng strict và Prettier lo định dạng. Không có thêm framework kiểm thử hoặc công cụ chạy song song chỉ để dự phòng.
@@ -137,11 +138,11 @@ Frontend dev ở terminal 2 vẫn gọi được backend này. Đây là kiểm 
 ```text
 UniHub/
 ├── frontend/src/
-│   ├── app/                 # màn hình kiểm tra tạm thời
+│   ├── app/                 # router, màn hình health và fallback 404
 │   ├── components/          # README cho thành phần chung
 │   ├── layouts/             # README cho layout dùng chung
 │   ├── features/            # README theo chức năng, chưa có nghiệp vụ
-│   ├── lib/                 # fetch health
+│   ├── lib/                 # API client và kiểm tra health
 │   └── styles/              # Tailwind CSS
 ├── backend/
 │   ├── src/
@@ -160,17 +161,17 @@ UniHub/
 └── package-lock.json        # lockfile duy nhất
 ```
 
-Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Phân công **dự kiến**, chưa gán tên/deadline:
+Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Phân công theo yêu cầu mới nhất, chưa gán tên/deadline:
 
-| Thành viên | Phần frontend và backend                                                                        |
-| ---------- | ----------------------------------------------------------------------------------------------- |
-| TV1        | Nền tảng, layout chung, tài khoản/hồ sơ/xác thực, Admin tài khoản; điều phối schema và tích hợp |
-| TV2        | Trang chủ/Hub cơ hội, tìm kiếm/chi tiết; Admin thẩm định cơ hội                                 |
-| TV3        | Định hướng, gợi ý; Admin chuyên ngành/kỹ năng                                                   |
-| TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                             |
-| TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction                   |
+| Thành viên | Phần frontend và backend                                                             |
+| ---------- | ------------------------------------------------------------------------------------ |
+| TV1        | Nền tảng chung, Hub cơ hội/tìm kiếm/chi tiết; Admin duyệt cơ hội; điều phối tích hợp |
+| TV2        | Đăng nhập Google/JWT/role, hồ sơ và tài khoản; Admin quản lý tài khoản               |
+| TV3        | Lộ trình kỹ năng, gợi ý/cơ hội dành cho bạn; Admin danh mục                          |
+| TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                  |
+| TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction        |
 
-Đọc [quy trình cộng tác](docs/team-workflow.md), xác nhận tên và khối lượng, rồi làm theo [lộ trình](docs/development-roadmap.md). Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
+Đọc [quy trình cộng tác](docs/team-workflow.md) và [lộ trình](docs/development-roadmap.md). Figma chưa truy cập được; chưa dựng layout/token/navbar/footer hoặc giao diện nghiệp vụ. Danh sách frame và thông số cần cung cấp nằm tại [hướng dẫn layout](frontend/src/layouts/README.md). Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
 
 ## 7. Lỗi thường gặp và giới hạn
 
