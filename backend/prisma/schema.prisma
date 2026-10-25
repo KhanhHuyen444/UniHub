@@ -1,0 +1,211 @@
+// Nguồn: Chương 4, mục 4.3.2.1–4.3.2.12.
+// Schema không biểu diễn đủ CHECK, quyền SQL hoặc quy tắc backend.
+// Xem docs/database-schema.md trước khi chuẩn bị migration (chưa có migration).
+
+generator client {
+  provider               = "prisma-client"
+  output                 = "../src/generated/prisma"
+  runtime                = "nodejs"
+  moduleFormat           = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension    = "js"
+}
+
+datasource db {
+  provider     = "mysql"
+  relationMode = "foreignKeys"
+}
+
+model User {
+  user_id       Int      @id @default(autoincrement()) @db.Int
+  email         String   @unique @db.VarChar(255)
+  full_name     String   @db.VarChar(150)
+  avatar_url    String?  @db.VarChar(500)
+  // CHECK Student/Admin ở SQL sau này; Guest không phải role lưu trong DB.
+  role          String   @default("Student") @db.VarChar(10)
+  major_id      Int?     @db.Int
+  academic_year Int?     @db.TinyInt
+  career_goal   String?  @db.VarChar(200)
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  // Nhóm chọn MySQL: SQL migration sau này phải thêm ON UPDATE CURRENT_TIMESTAMP.
+  updated_at    DateTime @default(now()) @db.DateTime(0)
+
+  major                  Category?      @relation("UserMajor", fields: [major_id], references: [category_id], onDelete: Restrict, onUpdate: Restrict)
+  reviewed_opportunities Opportunity[]  @relation("OpportunityReviewer")
+  events                 Event[]
+  forum_posts            ForumPost[]
+  comments               Comment[]
+  activity_logs          ActivityLog[]
+  notifications          Notification[]
+  skills                 UserSkill[]
+
+  @@map("users")
+}
+
+model Category {
+  category_id Int      @id @default(autoincrement()) @db.Int
+  type        String   @db.VarChar(10)
+  name        String   @db.VarChar(100)
+  status      String   @default("Active") @db.VarChar(10)
+  created_at  DateTime @default(now()) @db.DateTime(0)
+
+  major_users        User[]             @relation("UserMajor")
+  user_skills        UserSkill[]
+  opportunity_majors OpportunityMajor[]
+  opportunity_skills OpportunitySkill[]
+
+  @@unique([type, name])
+  @@map("categories")
+}
+
+model Opportunity {
+  item_id          Int       @id @default(autoincrement()) @db.Int
+  opportunity_type String    @db.VarChar(30)
+  title            String    @db.VarChar(255)
+  description      String?   @db.Text
+  requirements     String?   @db.Text
+  publisher        String?   @db.VarChar(255)
+  location         String?   @db.VarChar(100)
+  work_format      String?   @db.VarChar(10)
+  deadline         DateTime? @db.DateTime(0)
+  status           String    @default("Pending") @db.VarChar(10)
+  is_verified      Boolean   @default(false)
+  source_url       String?   @db.VarChar(500)
+  reviewed_by      Int?      @db.Int
+  reviewed_at      DateTime? @db.DateTime(0)
+  created_at       DateTime  @default(now()) @db.DateTime(0)
+
+  reviewer User?              @relation("OpportunityReviewer", fields: [reviewed_by], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+  majors   OpportunityMajor[]
+  skills   OpportunitySkill[]
+  years    OpportunityYear[]
+
+  @@map("opportunities")
+}
+
+model Event {
+  event_id      Int       @id @default(autoincrement()) @db.Int
+  user_id       Int       @db.Int
+  title         String    @db.VarChar(255)
+  due_date      DateTime  @db.DateTime(0)
+  remind_before Int       @default(24) @db.Int
+  notes         String?   @db.VarChar(1000)
+  status        String    @default("Upcoming") @db.VarChar(10)
+  reminded_at   DateTime? @db.DateTime(0)
+  created_at    DateTime  @default(now()) @db.DateTime(0)
+  // SQL migration sau này phải thêm ON UPDATE CURRENT_TIMESTAMP.
+  updated_at    DateTime  @default(now()) @db.DateTime(0)
+
+  user          User           @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+  notifications Notification[]
+
+  @@map("events")
+}
+
+model ForumPost {
+  post_id        Int       @id @default(autoincrement()) @db.Int
+  author_id      Int       @db.Int
+  topic          String    @db.VarChar(30)
+  title          String    @db.VarChar(255)
+  content        String    @db.Text
+  is_deleted     Boolean   @default(false)
+  deleted_at     DateTime? @db.DateTime(0)
+  deleted_reason String?   @db.VarChar(500)
+  created_at     DateTime  @default(now()) @db.DateTime(0)
+
+  author   User      @relation(fields: [author_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+  comments Comment[]
+
+  @@map("forum_posts")
+}
+
+model Comment {
+  comment_id     Int       @id @default(autoincrement()) @db.Int
+  post_id        Int       @db.Int
+  author_id      Int       @db.Int
+  content        String    @db.Text
+  is_deleted     Boolean   @default(false)
+  deleted_at     DateTime? @db.DateTime(0)
+  deleted_reason String?   @db.VarChar(500)
+  created_at     DateTime  @default(now()) @db.DateTime(0)
+
+  post   ForumPost @relation(fields: [post_id], references: [post_id], onDelete: Restrict, onUpdate: Restrict)
+  author User      @relation(fields: [author_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@map("comments")
+}
+
+model ActivityLog {
+  log_id      Int      @id @default(autoincrement()) @db.Int
+  admin_id    Int      @db.Int
+  action_type String   @db.VarChar(30)
+  target_type String   @db.VarChar(20)
+  // Tham chiếu logic theo target_type; không thêm @relation/FK.
+  target_id   Int      @db.Int
+  old_value   String?  @db.VarChar(500)
+  new_value   String?  @db.VarChar(500)
+  reason      String?  @db.VarChar(500)
+  created_at  DateTime @default(now()) @db.DateTime(0)
+
+  admin User @relation(fields: [admin_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@map("activity_logs")
+}
+
+model Notification {
+  notification_id Int      @id @default(autoincrement()) @db.Int
+  user_id         Int      @db.Int
+  event_id        Int?     @db.Int
+  type            String   @db.VarChar(20)
+  content         String   @db.VarChar(500)
+  is_read         Boolean  @default(false)
+  created_at      DateTime @default(now()) @db.DateTime(0)
+
+  user  User   @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+  event Event? @relation(fields: [event_id], references: [event_id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@map("notifications")
+}
+
+model UserSkill {
+  user_id  Int @db.Int
+  skill_id Int @db.Int
+
+  user  User     @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+  skill Category @relation(fields: [skill_id], references: [category_id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([user_id, skill_id])
+  @@map("user_skills")
+}
+
+model OpportunityMajor {
+  item_id  Int @db.Int
+  major_id Int @db.Int
+
+  opportunity Opportunity @relation(fields: [item_id], references: [item_id], onDelete: Restrict, onUpdate: Restrict)
+  major       Category    @relation(fields: [major_id], references: [category_id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([item_id, major_id])
+  @@map("opportunity_majors")
+}
+
+model OpportunitySkill {
+  item_id  Int @db.Int
+  skill_id Int @db.Int
+
+  opportunity Opportunity @relation(fields: [item_id], references: [item_id], onDelete: Restrict, onUpdate: Restrict)
+  skill       Category    @relation(fields: [skill_id], references: [category_id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([item_id, skill_id])
+  @@map("opportunity_skills")
+}
+
+model OpportunityYear {
+  item_id       Int @db.Int
+  academic_year Int @db.TinyInt
+
+  opportunity Opportunity @relation(fields: [item_id], references: [item_id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([item_id, academic_year])
+  @@map("opportunity_years")
+}
