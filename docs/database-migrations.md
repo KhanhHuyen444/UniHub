@@ -46,12 +46,14 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON unihub_dev.events TO 'unihub_app'@'local
 GRANT SELECT, INSERT, UPDATE ON unihub_dev.forum_posts TO 'unihub_app'@'localhost';
 GRANT SELECT, INSERT, UPDATE ON unihub_dev.comments TO 'unihub_app'@'localhost';
 GRANT SELECT, INSERT ON unihub_dev.activity_logs TO 'unihub_app'@'localhost';
-GRANT SELECT, INSERT, UPDATE ON unihub_dev.notifications TO 'unihub_app'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON unihub_dev.notifications TO 'unihub_app'@'localhost';
 GRANT SELECT, INSERT, DELETE ON unihub_dev.user_skills TO 'unihub_app'@'localhost';
 GRANT SELECT, INSERT, DELETE ON unihub_dev.opportunity_majors TO 'unihub_app'@'localhost';
 GRANT SELECT, INSERT, DELETE ON unihub_dev.opportunity_skills TO 'unihub_app'@'localhost';
 GRANT SELECT, INSERT, DELETE ON unihub_dev.opportunity_years TO 'unihub_app'@'localhost';
 ```
+
+Quyền `DELETE` trên `notifications` phục vụ luồng backend xóa Reminder cũ khi thay đổi `due_date`/`remind_before`, cùng transaction reset `events.reminded_at`. Grant này không cấp quyền xóa `events`. Backend vẫn phải kiểm tra quyền sở hữu và điều kiện nghiệp vụ trước khi thực hiện hai thay đổi nguyên tử.
 
 Phân quyền database chỉ là lớp bảo vệ cuối. Backend vẫn kiểm tra Student/Admin, ownership, ai được thay đổi bản ghi, lý do kiểm duyệt và transaction. Các quyền phải được xem lại khi use case/API triển khai có thêm thao tác.
 
@@ -91,6 +93,7 @@ Không chỉnh migration sau khi đã chia sẻ/áp dụng. Mọi thay đổi ti
 - INSERT tiếng Việt, `academic_year = NULL`, `work_format = NULL` và bài định hướng không publisher thành công. Mỗi một trong 13 CHECK bị thử với giá trị sai và đều bị từ chối; email/tên trùng hoa-thường bị UNIQUE từ chối, tên khác dấu được phân biệt. PK ghép trùng, FK không tồn tại, DELETE/UPDATE RESTRICT đều bị từ chối; xóa event cascade đúng notification.
 - Cập nhật trường thường làm `users.updated_at` và `events.updated_at` tăng ít nhất một giây ở độ chính xác DATETIME(0). Transaction DML rollback không để lại dòng. Session tài khoản thử thiết lập timezone UTC thành công.
 - Runtime user được phép đọc và ghi theo bảng, xóa event/association; UPDATE/DELETE `activity_logs` và CREATE TABLE bị từ chối. Migration user có ALL PRIVILEGES đúng một schema; không có CREATE DATABASE ở mức máy chủ.
+- Bổ sung kiểm tra quyền/transaction bằng SQL trên MySQL tạm 8.4.13: runtime user xóa một notification `Reminder` mà event vẫn còn, reset `events.reminded_at` trong cùng transaction, rồi `ROLLBACK`; notification và giá trị `reminded_at` ban đầu đều được phục hồi. Runtime user vẫn SELECT/INSERT được `activity_logs`; MySQL từ chối UPDATE và DELETE bảng này. Đây là kiểm thử GRANT và transaction trực tiếp ở SQL, **chưa phải kiểm thử API/nghiệp vụ**: chưa xác nhận validation `due_date`/`remind_before`, ownership, điều kiện chọn Reminder cũ hay điều phối transaction trong backend.
 - Prisma migrate diff từ database về Prisma schema trả SQL diff rỗng. Điều đó **không phát hiện** CHECK, collation hoặc ON UPDATE do các đặc điểm này không được schema Prisma biểu diễn; đây là giới hạn mong đợi, không phải bằng chứng đã drift-free toàn bộ MySQL metadata. SQL initial migration đã kiểm tra riêng bằng metadata và hành vi phía trên.
 - Prisma validate/generate, typecheck, build, 10 test (7 HTTP + 3 CSS), format check và audit được chạy lại sau khi cập nhật scripts/docs. Audit không có lỗ hổng. Giữ nguyên Tailwind 3.4.19/Prisma 7.10.1 và override parser đã chốt; `npm ls` còn cảnh báo đã biết về khoảng `^6` so với parser 7.1.6, xem [dependency-security.md](dependency-security.md).
 
