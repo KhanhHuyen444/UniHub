@@ -1,6 +1,6 @@
 # Migration MySQL của UniHub
 
-Initial migration: **25/10/2026**, đã merge vào `main` qua PR #4 tại `d7c2cefc79754728a6731498a33f4d3ebfe40c48`. Migration deadline được thêm riêng ngày **26/10/2026** trên nhánh `feat/opportunity-deadline-metadata`, chờ review/merge. Không sửa hoặc tạo lại migration dùng chung đã áp dụng. Kiểm thử trong tài liệu chỉ dùng MySQL 8.4 tạm ở Codex. **Không có database trên máy thành viên nào được mở hoặc thay đổi.**
+Initial migration **25/10/2026** đã merge vào `main` qua PR #4 tại `d7c2cefc79754728a6731498a33f4d3ebfe40c48`. Migration deadline ngày **26/10/2026** đã merge qua PR #8. Theo xác nhận của nhóm ngày 26/10/2026, database phát triển trên máy leader có hai cột `deadline_source_date` và `deadline_source_timezone`; chưa xác nhận database của các thành viên khác. Đây là ghi nhận từ nhóm, Codex không tự kết nối để kiểm chứng. Kiểm thử trong tài liệu chỉ dùng MySQL 8.4 tạm ở Codex; nhiệm vụ cập nhật tài liệu này không mở hoặc thay đổi database nào của nhóm.
 
 ## Quyết định đã xác nhận
 
@@ -32,7 +32,7 @@ Không có enum, trigger, bảng identity/session, tài khoản, seed data hoặ
 
 Prisma `Opportunity` khai báo `deadline_source_date DateTime? @db.Date` và `deadline_source_timezone String? @db.VarChar(64)`. Schema Prisma không biểu diễn CHECK nên migration bổ sung bằng SQL. CHECK này chỉ kiểm tra tổ hợp cột; không kiểm tra tên timezone, không tính cutoff date-only và không xác minh instant có khớp nguồn. Backend sau này phải xác thực timezone hợp lệ, đổi instant nguồn sang UTC đúng cách và tính cutoff date-only là 00:00 ngày kế tiếp `Asia/Ho_Chi_Minh`.
 
-Migration chỉ thêm hai cột nullable và constraint; **không có UPDATE dữ liệu**. Vì vậy mọi deadline cũ giữ nguyên giá trị và nhận metadata NULL. Có deadline + hai metadata NULL nghĩa là unknown, không được phỏng đoán từ giờ timestamp. Fresh database chạy initial rồi migration metadata; database đã có initial migration và dữ liệu chỉ chạy migration mới. Không áp dụng migration này vào database của nhóm trong nhiệm vụ chuẩn bị.
+Migration chỉ thêm hai cột nullable và constraint; **không có UPDATE dữ liệu**. Vì vậy mọi deadline cũ giữ nguyên giá trị và nhận metadata NULL. Có deadline + hai metadata NULL nghĩa là unknown, không được phỏng đoán từ giờ timestamp. Fresh database chạy initial rồi migration metadata; database đã có initial migration và dữ liệu chỉ chạy migration mới. Nhóm xác nhận hai cột có trong database phát triển của leader; tài liệu này không suy ra migration history hoặc tình trạng constraint từ xác nhận hai cột, và không xác nhận database của thành viên khác. Không database nào được truy cập hoặc sửa trong lần cập nhật tài liệu này.
 
 ### Nội dung cần cập nhật trong Chương 4
 
