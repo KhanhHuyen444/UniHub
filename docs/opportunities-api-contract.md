@@ -1,10 +1,10 @@
-# Dự thảo hợp đồng API — Hub cơ hội → Chi tiết cơ hội
+# Hợp đồng API — Hub cơ hội → Chi tiết cơ hội
 
-> **Trạng thái: contract cơ hội đã thống nhất, API chưa triển khai.** Nhóm đã duyệt deadline metadata/unknown, xử lý `majorId` Closed, phân trang, thứ tự và phần Major của API categories cho Hub. Phần Skill và xử lý hồ sơ có danh mục Closed trong [categories-api-contract.md](categories-api-contract.md) vẫn là dự thảo chờ TV2/TV3 thống nhất. Nhóm vẫn cần xác định frame chi tiết public trước khi dựng frontend chi tiết.
+> **Trạng thái: hợp đồng đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` đã triển khai trong backend.** Giao diện nghiệp vụ chưa triển khai. Phần Skill và xử lý hồ sơ có danh mục Closed trong [categories-api-contract.md](categories-api-contract.md) vẫn là dự thảo chờ TV2/TV3 thống nhất. Nhóm vẫn cần xác định frame chi tiết public trước khi dựng frontend chi tiết.
 
 ## 1. Phạm vi và nguồn
 
-Tài liệu này ghi hợp đồng đọc danh sách cơ hội, tìm kiếm/lọc/phân trang và đọc chi tiết. Không bao gồm API/UI nghiệp vụ, Admin tạo/duyệt/từ chối, xác thực, cơ hội dành cho bạn, thuật toán gợi ý, seed hay thu thập dữ liệu. Metadata deadline được bổ sung riêng cho `opportunities` bằng migration mới đã merge vào `main` qua PR #8. Theo xác nhận của nhóm, database phát triển của leader có hai cột metadata; trạng thái database của thành viên khác chưa được xác nhận. Chưa triển khai endpoint API hay giao diện nghiệp vụ.
+Tài liệu này ghi hợp đồng đọc danh sách cơ hội, tìm kiếm/lọc/phân trang và đọc chi tiết. Không bao gồm API ghi, giao diện nghiệp vụ, Admin tạo/duyệt/từ chối, xác thực, cơ hội dành cho bạn, thuật toán gợi ý, seed hay thu thập dữ liệu. Metadata deadline được bổ sung riêng cho `opportunities` bằng migration mới đã merge vào `main` qua PR #8. Theo xác nhận của nhóm, database phát triển của leader có hai cột metadata; trạng thái database của thành viên khác chưa được xác nhận. Hai endpoint đọc được triển khai tại `backend/src/modules/opportunities`; chúng yêu cầu database đã áp dụng migrations hiện có. Chưa có fixture Approved ngoài database kiểm thử cô lập.
 
 | Nguồn đã đọc                                 | Phần dùng trong dự thảo                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -34,7 +34,7 @@ Sitemap ghi `/opportunities` và `/opportunities/:id` là route công khai cho G
 
 ### `GET /api/opportunities`
 
-**Contract:** đã thống nhất; endpoint chưa triển khai. **Truy cập:** công khai, không yêu cầu Google/JWT. Thành công trả HTTP 200 và `application/json` theo envelope `items`/`meta`.
+**Contract:** đã thống nhất và endpoint đã triển khai. **Truy cập:** công khai, không yêu cầu Google/JWT. Thành công trả HTTP 200 và `application/json` theo envelope `items`/`meta`.
 
 Không truyền bộ lọc là hợp lệ cho UC-01 và trả feed mặc định. UC-02 yêu cầu có ít nhất một điều kiện khi người dùng bấm Tìm kiếm; nếu form rỗng, frontend hiển thị lời nhắc và không gửi request. Cùng một endpoint không thể phân biệt “mở feed” và “bấm tìm kiếm rỗng” chỉ từ GET.
 
@@ -123,7 +123,7 @@ Mọi lỗi giữ envelope `error.code`/`error.message` của `api-conventions.m
 
 ### Phụ thuộc danh mục bộ lọc — TV3 sở hữu hợp đồng chung
 
-BR-02.3 yêu cầu bộ chọn chuyên ngành chỉ gồm Major Active. Nhóm đã duyệt phần Major của API đọc dùng chung do TV3 sở hữu: `GET /api/categories?type=Major`, không có query `status`, response `{ "items": [{ "id": 12, "name": "Kỹ thuật phần mềm", "type": "Major" }] }`. Endpoint opportunities tiêu thụ API này; implementation chưa có. Phần Skill và hồ sơ Closed còn chờ TV2/TV3, xem [categories-api-contract.md](categories-api-contract.md). Không dùng endpoint danh mục cho `type`/`workFormat` của cơ hội vì miền giá trị đó cố định trong Chương 4.
+BR-02.3 yêu cầu bộ chọn chuyên ngành chỉ gồm Major Active. Nhóm đã duyệt phần Major của API đọc dùng chung do TV3 sở hữu: `GET /api/categories?type=Major`, không có query `status`, response `{ "items": [{ "id": 12, "name": "Kỹ thuật phần mềm", "type": "Major" }] }`. Endpoint danh mục này do TV3 triển khai riêng và chưa nằm trong PR cơ hội. API cơ hội tự kiểm tra `majorId` trực tiếp qua bảng `categories`; API này không gọi endpoint categories và không phụ thuộc frontend đã tải options hay chưa. Phần Skill và hồ sơ Closed còn chờ TV2/TV3, xem [categories-api-contract.md](categories-api-contract.md). Không dùng endpoint danh mục cho `type`/`workFormat` của cơ hội vì miền giá trị đó cố định trong Chương 4.
 
 ### URL có `majorId` đã đóng — quyết định đã duyệt
 
@@ -133,7 +133,7 @@ Trả 400/`INVALID_FILTER` với thông báo trung tính “Bộ lọc chuyên n
 
 ### `GET /api/opportunities/:id`
 
-**Contract:** đã thống nhất; endpoint chưa triển khai. Công khai, không yêu cầu xác thực. `id` phải là số nguyên thập phân dương trong miền MySQL `INT` có dấu. ID sai cấu trúc/ngoài miền trả 400/`INVALID_ID`; ID hợp lệ không tồn tại, Pending, Rejected, bài định hướng hoặc không thuộc tập công khai trả cùng HTTP 404/`NOT_FOUND`.
+**Contract:** đã thống nhất và endpoint đã triển khai. Công khai, không yêu cầu xác thực. `id` phải là số nguyên thập phân dương trong miền MySQL `INT` có dấu. ID sai cấu trúc/ngoài miền trả 400/`INVALID_ID`; ID hợp lệ không tồn tại, Pending, Rejected, bài định hướng hoặc không thuộc tập công khai trả cùng HTTP 404/`NOT_FOUND`.
 
 Truy vấn chỉ trả `Approved` thuộc ba loại công khai. Không phân biệt 404 do tài nguyên không tồn tại hay không đủ điều kiện công khai. Không dùng 403 cho tin riêng tư vì endpoint này không phải khu vực yêu cầu quyền đăng nhập.
 
@@ -235,7 +235,9 @@ Tên API được chọn riêng cho hợp đồng JSON (camelCase/ý nghĩa giao
 
 Student/Admin preview hiện tại không phải xác thực. Route guard frontend về sau chỉ phục vụ điều hướng; hai endpoint công khai vẫn kiểm tra `Approved` và type tại server.
 
-## 6. Ma trận kiểm thử dự kiến (chưa viết test)
+## 6. Ma trận kiểm thử và trạng thái
+
+Các ca nghiệp vụ chính bên dưới đã có test HTTP trong `backend/test/opportunities.test.mjs`, chạy trên MySQL tạm 8.4.13 với initial migration và deadline metadata migration hiện có. Fixture Approved/Pending/Rejected chỉ được tạo trong database kiểm thử loopback riêng rồi xóa sau test; không phải seed. `npm test` gần nhất đạt 13/13 test frontend và 22/22 test backend (35 tổng); các ca SQL nghiệp vụ đều chạy trên MySQL tạm. Nếu không đặt `TEST_DATABASE_URL` an toàn, 8 test nghiệp vụ cần MySQL tự bỏ qua; health/readiness và kiểm tra HTTP độc lập vẫn chạy.
 
 | Ca                                                        | Kỳ vọng                                                                                                                                                                    |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -291,12 +293,12 @@ Response API mục tiêu do đó có `deadline: null` hoặc `{ precision, date,
 
 ### Tác động tài liệu/mô hình
 
-| Thành phần    | Thay đổi / đối chiếu                                                                                                                                                                                                          |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chương 4      | Cần cập nhật §4.3.2.3: thêm hai cột ở bảng `opportunities`, kiểu/nullability, các tổ hợp metadata hợp lệ/legacy unknown, cutoff date-only, lưu timezone nguồn cho datetime và ranh giới CHECK/backend. **PDF chưa được sửa.** |
-| Prisma schema | `Opportunity` thêm `deadline_source_date DateTime? @db.Date` và `deadline_source_timezone String? @db.VarChar(64)`. Hai cột, không đổi model/bảng module khác.                                                                |
-| Migration     | Migration mới duy nhất thêm hai cột nullable và `chk_opportunities_deadline_metadata` vào `opportunities`; không cập nhật deadline hiện có, không sửa initial migration.                                                      |
-| API           | `deadline` trả `precision`, `date`, `sourceTimeZone`, `instant`, `state`; legacy unknown giữ instant nhưng ngày/timezone/state là unknown/null theo contract. API nghiệp vụ chưa triển khai.                                  |
+| Thành phần    | Thay đổi / đối chiếu                                                                                                                                                                                                                                |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chương 4      | Cần cập nhật §4.3.2.3: thêm hai cột ở bảng `opportunities`, kiểu/nullability, các tổ hợp metadata hợp lệ/legacy unknown, cutoff date-only, lưu timezone nguồn cho datetime và ranh giới CHECK/backend. **PDF chưa được sửa.**                       |
+| Prisma schema | `Opportunity` thêm `deadline_source_date DateTime? @db.Date` và `deadline_source_timezone String? @db.VarChar(64)`. Hai cột, không đổi model/bảng module khác.                                                                                      |
+| Migration     | Migration mới duy nhất thêm hai cột nullable và `chk_opportunities_deadline_metadata` vào `opportunities`; không cập nhật deadline hiện có, không sửa initial migration.                                                                            |
+| API           | `deadline` trả `precision`, `date`, `sourceTimeZone`, `instant`, `state`; legacy unknown giữ instant nhưng ngày/timezone/state là unknown/null theo contract. Hai endpoint đọc đã triển khai; chưa có API ghi/Admin duyệt hoặc giao diện nghiệp vụ. |
 
 ### Bản ghi cũ
 
@@ -323,9 +325,9 @@ API công khai chỉ có dữ liệu Approved sau quy trình duyệt. Không see
 ## 9. Phụ thuộc triển khai
 
 - Backend thuộc `backend/src/modules/opportunities`; frontend thuộc `frontend/src/features/opportunities`, cùng làm bởi TV1 theo [team-workflow](team-workflow.md).
-- Contract Major Active dùng chung của TV3 đã được nhóm duyệt; TV1 và TV3 có thể triển khai provider/consumer song song. Endpoint chưa chạy. Skill và hồ sơ Closed vẫn là dự thảo chờ TV2/TV3.
+- Contract Major Active dùng chung của TV3 đã được nhóm duyệt. Endpoint categories vẫn do TV3 triển khai riêng; API cơ hội tự kiểm tra Major Active trong database và không gọi API đó. Skill và hồ sơ Closed vẫn là dự thảo chờ TV2/TV3.
 - `opportunities` có 17 cột trong schema/migration đã merge vào `main`; Chương 4 hiện mô tả 15 cột và cần cập nhật §4.3.2.3. Xem [schema Prisma và migration](database-schema.md).
-- API và UI nghiệp vụ vẫn chưa triển khai. Frame public detail cần được xác định trước khi dựng trang chi tiết. Theo nhóm, database phát triển leader đã có hai cột metadata deadline; thành viên khác cần xác minh database của mình. Runtime chỉ backend kết nối MySQL.
+- Hai endpoint đọc cơ hội đã triển khai; API ghi/Admin duyệt và UI nghiệp vụ chưa có. Frame public detail cần được xác định trước khi dựng trang chi tiết. Theo nhóm, database phát triển leader đã có hai cột metadata deadline; thành viên khác cần xác minh database của mình. Runtime chỉ backend kết nối MySQL.
 
 ### Ranh giới database và backend
 

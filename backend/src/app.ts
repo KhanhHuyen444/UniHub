@@ -2,10 +2,15 @@ import express from 'express';
 import { errorHandler, notFound } from './middleware/errors.js';
 import { healthRouter } from './modules/health/health.routes.js';
 import { createReadyRouter } from './modules/health/ready.routes.js';
+import {
+  createOpportunitiesRouter,
+  type OpportunitiesRouterDependencies,
+} from './modules/opportunities/opportunities.routes.js';
 
 interface AppDependencies {
   checkDatabase?: () => Promise<void>;
   logDatabaseFailure?: () => void;
+  opportunities?: OpportunitiesRouterDependencies;
 }
 
 export function createApp(dependencies: AppDependencies = {}) {
@@ -15,6 +20,10 @@ export function createApp(dependencies: AppDependencies = {}) {
   app.use(express.json({ limit: '100kb' }));
   app.use('/api/health', healthRouter);
   app.use('/api/ready', createReadyRouter(dependencies));
+  app.use(
+    '/api/opportunities',
+    createOpportunitiesRouter(dependencies.opportunities),
+  );
   app.use(notFound);
   app.use(errorHandler);
 
