@@ -11,7 +11,7 @@
     "prebuild": "npm run prisma:generate",
     "build": "tsc",
     "start": "node --env-file-if-exists=.env dist/server.js",
-    "test": "npm run build && node --test test/http.test.mjs",
+    "test": "npm run build && node --test",
     "prisma:format": "prisma format --config prisma.config.ts",
     "prisma:validate": "prisma validate --config prisma.config.ts",
     "prisma:generate": "prisma generate --config prisma.config.ts",

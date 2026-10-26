@@ -1,5 +1,16 @@
 import type { ErrorRequestHandler, RequestHandler } from 'express';
 
+export class ApiError extends Error {
+  constructor(
+    readonly status: number,
+    readonly code: string,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 export const notFound: RequestHandler = (_request, response) => {
   response.status(404).json({
     error: { code: 'NOT_FOUND', message: 'Không tìm thấy tài nguyên.' },
@@ -14,6 +25,13 @@ export const errorHandler: ErrorRequestHandler = (
 ) => {
   if (response.headersSent) {
     next(error);
+    return;
+  }
+
+  if (error instanceof ApiError) {
+    response.status(error.status).json({
+      error: { code: error.code, message: error.message },
+    });
     return;
   }
 

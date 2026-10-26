@@ -33,6 +33,10 @@ Route không tồn tại trả HTTP 404:
 }
 ```
 
+### API đọc cơ hội
+
+`GET /api/opportunities` trả danh sách public đã duyệt theo query, filter, page và thứ tự cố định trong [hợp đồng cơ hội](opportunities-api-contract.md). `GET /api/opportunities/:id` trả detail public; ID hợp lệ nhưng không tồn tại hoặc không công khai cùng trả 404. Hai route không cần xác thực. Lỗi database trả 503/`SERVICE_UNAVAILABLE`, khác với kết quả rỗng HTTP 200.
+
 Middleware JSON giới hạn 100 KB. JSON sai trả 400/`INVALID_JSON`, vượt giới hạn trả 413/`PAYLOAD_TOO_LARGE`, encoding/charset không hỗ trợ trả 415/`UNSUPPORTED_ENCODING`; lỗi bất ngờ trả 500/`INTERNAL_ERROR`. Phản hồi không đưa stack trace, thông tin cấu hình hoặc request body ra client. Kiểm tra body có thể chạy trước xử lý route; một request tới route không tồn tại với JSON lỗi có thể nhận 400 thay vì 404.
 
 Frontend gọi `/api/health` qua `frontend/src/lib/api.ts`, kiểm tra HTTP status và shape JSON; timeout 5 giây, hủy/bỏ qua request đã hết hiệu lực. Trong phát triển, Vite chuyển tiếp `/api` tới `API_PROXY_TARGET`. Không hardcode địa chỉ backend vào từng component, không thêm CORS chỉ để né cấu hình proxy. Cấu hình production chưa được triển khai.
@@ -45,7 +49,7 @@ Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi đọc `e
 
 ## Hợp đồng theo chức năng
 
-- [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất contract nhưng chưa có endpoint nghiệp vụ. Deadline metadata, `majorId` Closed, phân trang, thứ tự và phần Major của API categories cho Hub đã được duyệt. Skill/hồ sơ Closed còn là dự thảo; frame chi tiết public cũng cần xác định trước khi dựng frontend chi tiết.
+- [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` đã triển khai. API categories Major vẫn do TV3 triển khai riêng; API cơ hội tự kiểm tra Major Active trong database. Skill/hồ sơ Closed còn là dự thảo; frame chi tiết public cần xác định trước khi dựng frontend chi tiết.
 - [API đọc danh mục dùng chung](categories-api-contract.md): phần Major cho Hub đã được duyệt, TV3 là provider và TV1 consumer; phần Skill/hồ sơ Closed còn chờ TV2/TV3. API chưa triển khai.
 - `page=1`, `pageSize=20`, tối đa 100 là baseline kỹ thuật đang đề xuất chung; endpoint phải ghi giới hạn thực tế và khóa sort ổn định. Contract cơ hội đã duyệt các giá trị này cùng trần page 1,000,000; quyết định đó không mặc nhiên áp dụng cho API khác.
 - Thời gian lưu/trao đổi đã thống nhất UTC; giao diện dùng `Asia/Ho_Chi_Minh`. Chính sách date-only theo từng nghiệp vụ và biểu diễn trong `DATETIME(0)` được ghi ở hợp đồng tương ứng.
