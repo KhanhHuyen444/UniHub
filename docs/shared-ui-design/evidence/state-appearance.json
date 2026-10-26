@@ -1,0 +1,823 @@
+[
+  {
+    "id": "24:2071",
+    "name": "Container",
+    "w": 415,
+    "h": 28,
+    "fill": [],
+    "stroke": [],
+    "effects": [],
+    "cornerRadius": 0,
+    "paddingTop": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "itemSpacing": 32,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "24:2075",
+        "text": "Trang chủ",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#0077B6",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      },
+      {
+        "id": "24:2077",
+        "text": "Hub cơ hội",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#334155",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "24:2074",
+    "name": "Link",
+    "w": 68,
+    "h": 25,
+    "fill": [],
+    "stroke": [
+      {
+        "type": "SOLID",
+        "hex": "#0077B6",
+        "opacity": 1
+      }
+    ],
+    "effects": [],
+    "cornerRadius": 0,
+    "paddingTop": 0,
+    "paddingRight": 0,
+    "paddingBottom": 4,
+    "paddingLeft": 0,
+    "itemSpacing": 0,
+    "opacity": 1,
+    "strokeTopWeight": 0,
+    "strokeRightWeight": 0,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 0,
+    "text": [
+      {
+        "id": "24:2075",
+        "text": "Trang chủ",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#0077B6",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "303:24",
+    "name": "Link",
+    "w": 138,
+    "h": 28,
+    "fill": [],
+    "stroke": [
+      {
+        "type": "SOLID",
+        "hex": "#0077B6",
+        "opacity": 1
+      }
+    ],
+    "effects": [],
+    "cornerRadius": 0,
+    "paddingTop": 4,
+    "paddingRight": 0,
+    "paddingBottom": 4,
+    "paddingLeft": 0,
+    "itemSpacing": 0,
+    "opacity": 1,
+    "strokeTopWeight": 0,
+    "strokeRightWeight": 0,
+    "strokeBottomWeight": 2,
+    "strokeLeftWeight": 0,
+    "text": [
+      {
+        "id": "303:25",
+        "text": "Cơ hội dành cho bạn",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#0077B6",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "303:45",
+    "name": "Background",
+    "w": 36,
+    "h": 36,
+    "fill": [
+      {
+        "type": "SOLID",
+        "hex": "#CAF0F8",
+        "opacity": 1
+      }
+    ],
+    "stroke": [],
+    "effects": [],
+    "cornerRadius": 9999,
+    "paddingTop": 10.5,
+    "paddingRight": 0,
+    "paddingBottom": 11.5,
+    "paddingLeft": 0,
+    "itemSpacing": 0,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "303:47",
+        "text": "MA",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#03045E",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 700,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "124:2986",
+    "name": "Overlay+OverlayBlur",
+    "w": 1280,
+    "h": 821,
+    "fill": [
+      {
+        "type": "SOLID",
+        "hex": "#0F172A",
+        "opacity": 0.5
+      }
+    ],
+    "stroke": [],
+    "effects": [
+      {
+        "type": "BACKGROUND_BLUR",
+        "visible": true,
+        "radius": 4,
+        "boundVariables": {},
+        "blurType": "NORMAL"
+      }
+    ],
+    "cornerRadius": 0,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1
+  },
+  {
+    "id": "124:2987",
+    "name": "Background+Shadow",
+    "w": 512,
+    "h": 621,
+    "fill": [
+      {
+        "type": "SOLID",
+        "hex": "#FFFFFF",
+        "opacity": 1
+      }
+    ],
+    "stroke": [],
+    "effects": [
+      {
+        "type": "DROP_SHADOW",
+        "visible": true,
+        "radius": 24,
+        "boundVariables": {},
+        "color": {
+          "r": 0.0117647061124444,
+          "g": 0.01568627543747425,
+          "b": 0.3686274588108063,
+          "a": 0.18000000715255737
+        },
+        "offset": {
+          "x": 0,
+          "y": 8
+        },
+        "spread": 0,
+        "blendMode": "NORMAL",
+        "showShadowBehindNode": false
+      }
+    ],
+    "cornerRadius": 12,
+    "paddingTop": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "itemSpacing": 0,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "124:2995",
+        "text": "Chỉnh sửa sự kiện",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#03045E",
+            "opacity": 1
+          }
+        ],
+        "size": 24,
+        "weight": 600,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 32
+        }
+      },
+      {
+        "id": "124:2997",
+        "text": "Cập nhật hạn chót hoặc nội dung lời nhắc học tập",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#475569",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "124:3002",
+    "name": "Dải cảnh báo Lỗi lưu (Save Error Alert)",
+    "w": 464,
+    "h": 46,
+    "fill": [
+      {
+        "type": "SOLID",
+        "hex": "#FEF2F2",
+        "opacity": 1
+      }
+    ],
+    "stroke": [
+      {
+        "type": "SOLID",
+        "hex": "#FCA5A5",
+        "opacity": 1
+      }
+    ],
+    "effects": [
+      {
+        "type": "DROP_SHADOW",
+        "visible": true,
+        "radius": 2,
+        "boundVariables": {},
+        "color": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 0.05000000074505806
+        },
+        "offset": {
+          "x": 0,
+          "y": 1
+        },
+        "spread": 0,
+        "blendMode": "NORMAL",
+        "showShadowBehindNode": false
+      }
+    ],
+    "cornerRadius": 8,
+    "paddingTop": 12,
+    "paddingRight": 12,
+    "paddingBottom": 12,
+    "paddingLeft": 12,
+    "itemSpacing": 8,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "124:3006",
+        "text": "Không thể lưu sự kiện, vui lòng thử lại",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#B91C1C",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 400,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "124:3021",
+    "name": "Container",
+    "w": 214,
+    "h": 16,
+    "fill": [],
+    "stroke": [],
+    "effects": [],
+    "cornerRadius": 0,
+    "paddingTop": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "itemSpacing": 0,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "124:3022",
+        "text": "Tiêu đề sự kiện không được để trống.",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#B91C1C",
+            "opacity": 1
+          }
+        ],
+        "size": 12,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 16
+        }
+      }
+    ]
+  },
+  {
+    "id": "183:1529",
+    "name": "Background",
+    "w": 480,
+    "h": 272,
+    "fill": [
+      {
+        "type": "SOLID",
+        "hex": "#FFFFFF",
+        "opacity": 1
+      }
+    ],
+    "stroke": [],
+    "effects": [],
+    "cornerRadius": 12,
+    "paddingTop": 24,
+    "paddingRight": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "itemSpacing": 0,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "183:1533",
+        "text": "Thêm chuyên ngành",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#0F172A",
+            "opacity": 1
+          }
+        ],
+        "size": 24,
+        "weight": 600,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 32
+        }
+      },
+      {
+        "id": "183:1539",
+        "text": "Tên chuyên ngành *",
+        "fill": [],
+        "size": 14,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "183:1540",
+    "name": "Input",
+    "w": 432,
+    "h": 40,
+    "fill": [
+      {
+        "type": "SOLID",
+        "hex": "#FFFFFF",
+        "opacity": 1
+      }
+    ],
+    "stroke": [
+      {
+        "type": "SOLID",
+        "hex": "#0077B6",
+        "opacity": 1
+      }
+    ],
+    "effects": [
+      {
+        "type": "DROP_SHADOW",
+        "visible": true,
+        "radius": 0,
+        "boundVariables": {},
+        "color": {
+          "r": 0,
+          "g": 0.46666666865348816,
+          "b": 0.7137255072593689,
+          "a": 1
+        },
+        "offset": {
+          "x": 0,
+          "y": 0
+        },
+        "spread": 1,
+        "blendMode": "NORMAL",
+        "showShadowBehindNode": false
+      }
+    ],
+    "cornerRadius": 10,
+    "paddingTop": 10,
+    "paddingRight": 14,
+    "paddingBottom": 10,
+    "paddingLeft": 14,
+    "itemSpacing": 0,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "183:1542",
+        "text": "Nhập tên chuyên ngành...",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#94A3B8",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 400,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "189:3282",
+    "name": "Button",
+    "w": 168.3433074951172,
+    "h": 40,
+    "fill": [
+      {
+        "type": "SOLID",
+        "hex": "#CBD5E1",
+        "opacity": 1
+      }
+    ],
+    "stroke": [],
+    "effects": [],
+    "cornerRadius": 8,
+    "paddingTop": 0,
+    "paddingRight": 16,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "itemSpacing": 6,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "189:3286",
+        "text": "Cập nhật vai trò",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#64748B",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "152:11458",
+    "name": "Button - Nút đăng nhập trạng thái ĐANG XỬ LÝ (Processing / Loading)",
+    "w": 270,
+    "h": 48,
+    "fill": [
+      {
+        "type": "SOLID",
+        "hex": "#E2E8F0",
+        "opacity": 1
+      }
+    ],
+    "stroke": [
+      {
+        "type": "SOLID",
+        "hex": "#0077B6",
+        "opacity": 1
+      }
+    ],
+    "effects": [
+      {
+        "type": "DROP_SHADOW",
+        "visible": true,
+        "radius": 2,
+        "boundVariables": {},
+        "color": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 0.05000000074505806
+        },
+        "offset": {
+          "x": 0,
+          "y": 1
+        },
+        "spread": 0,
+        "blendMode": "NORMAL",
+        "showShadowBehindNode": false
+      }
+    ],
+    "cornerRadius": 10,
+    "paddingTop": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "itemSpacing": 12,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "152:11463",
+        "text": "Đang chuyển đến Google...",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#475569",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "152:11590",
+    "name": "DẢI BÁO LỖI (Alert Banner)",
+    "w": 358,
+    "h": 46,
+    "fill": [
+      {
+        "type": "SOLID",
+        "hex": "#FEF2F2",
+        "opacity": 1
+      }
+    ],
+    "stroke": [
+      {
+        "type": "SOLID",
+        "hex": "#FCA5A5",
+        "opacity": 1
+      }
+    ],
+    "effects": [
+      {
+        "type": "DROP_SHADOW",
+        "visible": true,
+        "radius": 2,
+        "boundVariables": {},
+        "color": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 0.05000000074505806
+        },
+        "offset": {
+          "x": 0,
+          "y": 1
+        },
+        "spread": 0,
+        "blendMode": "NORMAL",
+        "showShadowBehindNode": false
+      }
+    ],
+    "cornerRadius": 10,
+    "paddingTop": 12,
+    "paddingRight": 16,
+    "paddingBottom": 12,
+    "paddingLeft": 16,
+    "itemSpacing": 10,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "152:11596",
+        "text": "Xác thực không thành công, vui lòng thử lại",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#B91C1C",
+            "opacity": 1
+          }
+        ],
+        "size": 14,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "301:417",
+    "name": "Container",
+    "w": 179,
+    "h": 16,
+    "fill": [],
+    "stroke": [],
+    "effects": [],
+    "cornerRadius": 0,
+    "paddingTop": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "itemSpacing": 6,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "301:419",
+        "text": "Công ty ABC",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#334155",
+            "opacity": 1
+          }
+        ],
+        "size": 12,
+        "weight": 500,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 16
+        }
+      },
+      {
+        "id": "301:421",
+        "text": "•",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#475569",
+            "opacity": 1
+          }
+        ],
+        "size": 12,
+        "weight": 400,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 16
+        }
+      }
+    ]
+  },
+  {
+    "id": "301:422",
+    "name": "Container",
+    "w": 140,
+    "h": 16,
+    "fill": [],
+    "stroke": [],
+    "effects": [],
+    "cornerRadius": 0,
+    "paddingTop": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "itemSpacing": 0,
+    "opacity": 1,
+    "strokeTopWeight": 1,
+    "strokeRightWeight": 1,
+    "strokeBottomWeight": 1,
+    "strokeLeftWeight": 1,
+    "text": [
+      {
+        "id": "301:423",
+        "text": "Đăng tuyển 2 ngày trước",
+        "fill": [
+          {
+            "type": "SOLID",
+            "hex": "#475569",
+            "opacity": 1
+          }
+        ],
+        "size": 12,
+        "weight": 400,
+        "lineHeight": {
+          "unit": "PIXELS",
+          "value": 16
+        }
+      }
+    ]
+  }
+]

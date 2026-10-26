@@ -1,6 +1,6 @@
 # Kiến trúc UniHub
 
-Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật Prisma runtime **25/10/2026**. Đã có frontend kỹ thuật React, backend Express, schema, initial migration và adapter MySQL. Prisma Client dùng singleton lazy; `GET /api/health` chỉ kiểm tra HTTP còn `GET /api/ready` truy vấn MySQL. Migration/runtime được kiểm thử trên MySQL tạm ở Codex/Linux; không truy cập database thành viên. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md) và [database-runtime.md](database-runtime.md).
+Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật Prisma runtime và nền API/router frontend **25/10/2026**. Đã có frontend kỹ thuật React, backend Express, schema, initial migration và adapter MySQL. Prisma Client dùng singleton lazy; `GET /api/health` chỉ kiểm tra HTTP còn `GET /api/ready` truy vấn MySQL. Migration/runtime được kiểm thử trên MySQL tạm ở Codex/Linux; không truy cập database thành viên. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md) và [database-runtime.md](database-runtime.md).
 
 Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md). Đối chiếu dữ liệu dùng Chương 4 trang 6–30; quy tắc nghiệp vụ dùng Chương 3. Quyết định mới của nhóm về Google ID token được ưu tiên so với luồng Authorization Code cũ trong Chương 3.
 
@@ -19,11 +19,44 @@ flowchart LR
     B -->|JWT UniHub / dữ liệu / lỗi| F
 ```
 
-- **Frontend:** một ứng dụng React được build bằng Vite, có khu vực Public, Student, Admin. Public/Student dùng các route trong Chương 4 mục 4.1.1; Admin dùng tiền tố `/admin`, với dashboard, moderation, categories và users. Không tách Admin thành ứng dụng thứ hai. Route guard và 403/404 hỗ trợ điều hướng.
+- **Frontend:** một ứng dụng React được build bằng Vite, có khu vực Public, Student, Admin. React Router declarative mode khai báo route tại `frontend/src/app/router.tsx`; hiện mount `/_dev/health`, `/_dev/ui`, `/404` và fallback `*`, còn `/` chuyển tới health. `/_dev/ui` preview ba shared layout và component; chưa mount route nghiệp vụ hoặc route guard. Sitemap Public/Student/Admin ở Chương 4 mục 4.1.1 được ghi dưới đây để phân công. Không tách Admin thành ứng dụng thứ hai.
 - **Backend:** một REST API Express. Middleware kiểm tra phiên, quyền và dữ liệu đầu vào; service xử lý quy tắc, quyền sở hữu, chuyển trạng thái và transaction. Không tin `role`, `user_id`, `author_id` hoặc `admin_id` do frontend tự khai báo để cấp quyền.
 - **Dữ liệu:** chỉ backend sử dụng Prisma và thông tin kết nối MySQL. Prisma không thay thế kiểm tra nghiệp vụ; MySQL chịu trách nhiệm ràng buộc cấu trúc và giao dịch.
 - **Tác vụ nền:** nhắc hạn thuộc backend theo Chương 3, triển khai sau. Chưa chọn thư viện lập lịch, chưa thêm queue, Redis, dịch vụ cron ngoài hoặc tiến trình chạy thật.
-- **Ranh giới API:** frontend dùng JSON qua REST. Backend có `GET /api/health` (liveness), `GET /api/ready` (readiness database), 404 và error middleware; endpoint nghiệp vụ chưa có. Xem [api-conventions.md](api-conventions.md).
+- **Ranh giới API:** frontend dùng JSON qua REST và gọi qua client dùng chung `frontend/src/lib/api.ts`. Backend có `GET /api/health` (liveness), `GET /api/ready` (readiness database), 404 và error middleware; endpoint nghiệp vụ chưa có. Xem [api-conventions.md](api-conventions.md).
+
+### Router hiện có và sitemap được phân công
+
+Các route sản phẩm bên dưới được chuyển từ sitemap Chương 4 mục 4.1.1; trạng thái “kế hoạch” nghĩa là chưa có page/API. Quyền thực tế luôn cần kiểm tra ở backend. Route guard chưa được viết. Phân công theo yêu cầu mới nhất của nhóm:
+
+| Route từ Chương 4 | Truy cập theo tài liệu | Phụ trách | Trạng thái trong frontend |
+| --- | --- | --- | --- |
+| `/` | Guest, Student | TV1 | Chưa có trang chủ; tạm chuyển tới `/_dev/health` |
+| `/opportunities` | Guest, Student | TV1 | Kế hoạch; danh sách/Hub |
+| `/opportunities/:id` | Guest, Student | TV1 | Kế hoạch; chi tiết |
+| `/roadmaps` | Guest, Student | TV3 | Kế hoạch |
+| `/roadmaps/:id` | Guest, Student | TV3 | Kế hoạch |
+| `/login` | Guest | TV2 | Kế hoạch |
+| `/profile` | Student | TV2 | Kế hoạch |
+| `/recommendations` | Student | TV3 | Kế hoạch |
+| `/calendar` | Student | TV4 | Kế hoạch |
+| `/forum` | Guest đọc, Student | TV5 | Kế hoạch |
+| `/forum/:id` | Guest đọc, Student | TV5 | Kế hoạch |
+| `/admin` → `/admin/dashboard` | Admin | TV4 | Kế hoạch |
+| `/admin/dashboard` | Admin | TV4 | Kế hoạch |
+| `/admin/moderation` | Admin | TV1: tab cơ hội; TV5: tab forum | Kế hoạch; cùng route, phân vùng tab |
+| `/admin/categories` | Admin | TV3 | Kế hoạch |
+| `/admin/users` | Admin | TV2 | Kế hoạch |
+| `/terms` | Mọi người | Chưa phân công | Đường dẫn dự kiến đã chốt; trang nội dung tĩnh, chưa có nội dung hoặc route; không cần database/API riêng |
+| `/privacy` | Mọi người | Chưa phân công | Đường dẫn dự kiến đã chốt; trang nội dung tĩnh, chưa có nội dung hoặc route; không cần database/API riêng |
+| `/403` | Mọi người | Điều phối chung | Kế hoạch; chưa có xác thực/guard để dùng |
+| `/404` | Mọi người | Điều phối chung | Màn hình tối giản; fallback `*` dùng cùng trang |
+| `/_dev/health` | Kỹ thuật | TV1 | Đã mount; chỉ kiểm tra kết nối health |
+| `/_dev/ui?area=public` (hoặc `student`, `admin`) | Kỹ thuật | TV1 | Đã mount; preview shared UI, không xác thực và không gọi API nghiệp vụ |
+
+Không tạo menu giả để trỏ đến các route kế hoạch. `/admin/moderation` được TV1 và TV5 tích hợp trên một route chung theo hai tab; cả hai cần phối hợp trước khi đổi cấu trúc hoặc trạng thái tab.
+
+Footer hiển thị label hỗ trợ dạng chữ tĩnh đến khi nhóm hoàn thiện nội dung `/terms` và `/privacy`; không tạo trang rỗng hoặc tự viết nội dung pháp lý.
 
 ## 2. Luồng xác thực và phân quyền
 
@@ -58,12 +91,13 @@ Theo yêu cầu ngày 24/10/2026, tổ chức frontend theo feature và backend 
 UniHub/
 ├── frontend/                    # npm workspace: một ứng dụng React
 │   ├── src/
-│   │   ├── app/                 # màn hình kỹ thuật kiểm tra backend
+│   │   ├── app/                 # router, health page và fallback 404
 │   │   ├── features/            # README theo chức năng, gồm admin/
-│   │   ├── components/          # README thành phần dùng chung
-│   │   ├── layouts/             # README layout Public/Student/Admin
-│   │   ├── lib/                 # fetch health; không truy cập database
-│   │   └── styles/              # Tailwind; chưa dựng Figma
+│   │   ├── components/ui/       # primitive Button/Input/Select/Badge/states
+│   │   ├── layouts/             # PublicLayout/StudentLayout/AdminLayout
+│   │   ├── assets/              # logo và icon Figma được shell sử dụng
+│   │   ├── lib/                 # API client và kiểm tra health; không truy cập database
+│   │   └── styles/              # Tailwind và design tokens shared UI
 │   └── package.json
 ├── backend/                     # npm workspace: Express REST API
 │   ├── src/
@@ -82,7 +116,8 @@ UniHub/
 │   ├── architecture.md          # tài liệu này; giữ đối chiếu 12 bảng
 │   ├── team-workflow.md         # TV1–TV5, nhánh/commit/PR
 │   ├── development-roadmap.md   # thứ tự công việc sau scaffold
-│   └── api-conventions.md       # health đã chạy, quy ước nghiệp vụ dự thảo
+│   ├── api-conventions.md       # health đã chạy, quy ước nghiệp vụ dự thảo
+│   └── shared-ui-design/        # Figma Page 3 handoff, screenshot/evidence tham chiếu
 ├── package.json                 # private, workspaces: frontend + backend
 ├── package-lock.json            # một lockfile npm ở gốc
 ├── .gitignore
@@ -90,7 +125,7 @@ UniHub/
 └── README.md                    # tiếng Việt, lệnh chạy đúng trạng thái thực tế
 ```
 
-Các module chưa có mã dùng README mô tả phạm vi. Admin chia theo chức năng: TV1 users, TV2 opportunities, TV3 categories, TV4 dashboard, TV5 forum; TV1 phối hợp shell/layout chung. Xem [workflow](team-workflow.md), không tạo nhiều kiến trúc cạnh tranh hoặc một file Admin lớn.
+Các module chưa có mã dùng README mô tả phạm vi. Admin chia theo chức năng: TV2 users, TV1 opportunities (tab trong moderation), TV3 categories, TV4 dashboard, TV5 forum (tab trong moderation). TV1 điều phối route/tích hợp và shared UI; layout/navbar/footer hiện có là shell dùng lại từ frame Page 3, không bao gồm màn hình nghiệp vụ. Xem [workflow](team-workflow.md), không tạo nhiều kiến trúc cạnh tranh hoặc một file Admin lớn.
 
 **Vị trí dữ liệu duy nhất:** `backend/prisma/schema.prisma` là nguồn schema; `backend/prisma/migrations/` là lịch sử duy nhất, đã có initial migration sau PR #4. Prisma Client được sinh vào `backend/src/generated/prisma/` và không commit. `backend/src/lib/prisma.ts` tạo tối đa một client/pool cho tiến trình và chỉ đọc `DATABASE_URL`; migration dùng `MIGRATION_DATABASE_URL` riêng. Adapter MySQL thiết lập UTC ở từng physical connection; chi tiết phân biệt timezone session với DATETIME nằm trong [database-runtime.md](database-runtime.md). database/ không có bản schema/SQL thứ hai.
 
@@ -350,6 +385,6 @@ Sau scaffold, các bước tiếp theo và phạm vi kiểm tra:
 2. Hai workspace tối thiểu, Tailwind 3/PostCSS và build target trình duyệt đã được cấu hình; duy trì kiểm tra typecheck/build, HTTP test và khởi động khi sửa. Chưa đưa chức năng nghiệp vụ vào scaffold.
 3. Initial migration đã có trên `main` qua PR #4; schema, CHECK, FK, collation, timestamp và GRANT đã được kiểm tra trên MySQL tạm theo [database-migrations.md](database-migrations.md). Runtime adapter/readiness và quyền tài khoản ứng dụng được kiểm tra riêng tại [database-runtime.md](database-runtime.md).
 4. Đối chiếu Node/MySQL với môi trường môn học và kiểm tra kết nối trên từng máy Windows. Mọi thay đổi dữ liệu tiếp theo phải dùng migration mới, được review trước khi áp dụng vào database phát triển riêng.
-5. Trước khi làm auth, xử lý các điểm Google identity/session ở mục 2; trước khi làm UI, đọc được Figma đúng node `318-2` và đối chiếu token thiết kế.
+5. Trước khi làm auth, xử lý các điểm Google identity/session ở mục 2; trước khi làm UI nghiệp vụ, dùng frame đúng mục đích trong [handoff Figma Page 3](shared-ui-design/README.md) và không coi spacing suy ra là token gốc.
 
 Hiện có health/readiness HTTP, màn hình kỹ thuật frontend, schema và Prisma runtime; xem [trạng thái schema](database-schema.md#5-trạng-thái-kiểm-tra-và-giới-hạn) và [kiểm tra runtime](database-runtime.md). Chưa có API nghiệp vụ, UI chính thức, dữ liệu mẫu hoặc hosting. Runtime chưa được đối chiếu với MySQL máy Windows của thành viên; pool cấu hình nhỏ chưa phải bằng chứng NFR hiệu năng hoặc 100 người dùng đồng thời.

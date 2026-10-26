@@ -1,0 +1,1366 @@
+{
+  "id": "166:940",
+  "name": "Dashboard_Mặc định",
+  "typography": [
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 24,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 32
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:947",
+          "text": "UniHub"
+        },
+        {
+          "id": "166:1045",
+          "text": "429"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 24,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 32
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#2563EB",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:947",
+          "text": "UniHub"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:953",
+          "text": "Dashboard thống kê"
+        },
+        {
+          "id": "166:1103",
+          "text": "Tải lại"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:958",
+          "text": "Kiểm duyệt nội dung"
+        },
+        {
+          "id": "166:963",
+          "text": "Quản lý danh mục"
+        },
+        {
+          "id": "166:968",
+          "text": "Tài khoản & Phân quyền"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#475569",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:975",
+          "text": "Quản trị viên"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#B91C1C",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:980",
+          "text": "Đăng xuất"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 32,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 40
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:986",
+          "text": "Dashboard thống kê"
+        },
+        {
+          "id": "166:1004",
+          "text": "1.248"
+        },
+        {
+          "id": "166:1011",
+          "text": "14"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:989",
+          "text": "Cập nhật lúc 14:30 - 19/10/2026"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#B45309",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:993",
+          "text": "Đồng bộ dữ liệu một phần"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0077B6",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:998",
+          "text": "Làm mới"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1002",
+          "text": "Tổng tài khoản đăng ký"
+        },
+        {
+          "id": "166:1008",
+          "text": "Chờ thẩm định (Pending)"
+        },
+        {
+          "id": "166:1015",
+          "text": "Đã duyệt (Approved)"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 24,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 32
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1030",
+          "text": "Phân bổ cơ hội theo trạng thái"
+        },
+        {
+          "id": "166:1084",
+          "text": "Tương tác thảo luận"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#475569",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1032",
+          "text": "Tổng số cơ hội: 429"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1032",
+          "text": "Tổng số cơ hội: 429"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#64748B",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1043",
+          "text": "TỔNG CỘNG"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#94A3B8",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1047",
+          "text": "cơ hội"
+        },
+        {
+          "id": "166:1105",
+          "text": "Các dữ liệu khác vẫn cập nhật bình thường"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0F172A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1053",
+          "text": "Đã duyệt (Approved)"
+        },
+        {
+          "id": "166:1062",
+          "text": "Chờ thẩm định (Pending)"
+        },
+        {
+          "id": "166:1071",
+          "text": "Từ chối (Rejected)"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#166534",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1055",
+          "text": "388"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#64748B",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1057",
+          "text": "(90.4%)"
+        },
+        {
+          "id": "166:1066",
+          "text": "(3.3%)"
+        },
+        {
+          "id": "166:1075",
+          "text": "(6.3%)"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#B45309",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1064",
+          "text": "14"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#B91C1C",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1073",
+          "text": "27"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#B91C1C",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1095",
+          "text": "Lỗi tải dữ liệu"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#475569",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1098",
+          "text": "Không thể tải dữ liệu thống kê, vui lòng thử lại"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#64748B",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "166:1108",
+          "text": "© 2026 UniHub. Bảo lưu mọi quyền."
+        }
+      ]
+    }
+  ],
+  "colors": {
+    "#FFFFFF / 1": [
+      "166:940",
+      "166:953",
+      "166:1000"
+    ],
+    "#F8FAFC / 1": [
+      "166:940",
+      "166:1049",
+      "166:1058"
+    ],
+    "#0077B6 / 1": [
+      "166:949",
+      "166:998",
+      "166:1099"
+    ],
+    "#03045E / 1": [
+      "166:958",
+      "166:963",
+      "166:968"
+    ],
+    "#FFFFFF / 0.6000000238418579": [
+      "166:969"
+    ],
+    "#475569 / 1": [
+      "166:975",
+      "166:1098"
+    ],
+    "#B91C1C / 1": [
+      "166:980",
+      "166:1023",
+      "166:1069"
+    ],
+    "#334155 / 1": [
+      "166:989",
+      "166:1002",
+      "166:1008"
+    ],
+    "#94A3B8 / 1": [
+      "166:990",
+      "166:1047",
+      "166:1105"
+    ],
+    "#F59E0B / 1": [
+      "166:992"
+    ],
+    "#B45309 / 1": [
+      "166:993",
+      "166:1009",
+      "166:1060"
+    ],
+    "#166534 / 1": [
+      "166:1016",
+      "166:1051",
+      "166:1055"
+    ],
+    "#64748B / 1": [
+      "166:1043",
+      "166:1057",
+      "166:1066"
+    ],
+    "#0F172A / 1": [
+      "166:1053",
+      "166:1062",
+      "166:1071"
+    ],
+    "#F1F5F9 / 1": [
+      "166:1076"
+    ],
+    "#FEF2F2 / 1": [
+      "166:1085",
+      "166:1090"
+    ]
+  },
+  "structure": [
+    {
+      "id": "166:941",
+      "name": "Aside - SIDEBAR (Giữ nguyên vẹn)",
+      "parent": "166:940",
+      "w": 260,
+      "h": 1024,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 556.75,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "opacity": 1,
+      "fill": [
+        {
+          "type": "GRADIENT_LINEAR"
+        }
+      ],
+      "stroke": [
+        {
+          "hex": "#E2E8F0",
+          "opacity": 1
+        }
+      ],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 10,
+          "boundVariables": {},
+          "color": {
+            "r": 0.0117647061124444,
+            "g": 0.01568627543747425,
+            "b": 0.3686274588108063,
+            "a": 0.029999999329447746
+          },
+          "offset": {
+            "x": 1,
+            "y": 0
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "166:976",
+      "name": "Button",
+      "parent": "166:969",
+      "w": 219,
+      "h": 31,
+      "x": 20,
+      "y": 71.75,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "paddingTop": 10,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [
+        {
+          "hex": "#E2E8F0",
+          "opacity": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "166:981",
+      "name": "Main - VÙNG NỘI DUNG (Lỗi một phần: 4 thẻ & phân bổ bình thường, Tương tác lỗi)",
+      "parent": "166:940",
+      "w": 1020,
+      "h": 1024,
+      "x": 260,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 217,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "166:985",
+      "name": "Heading 1",
+      "parent": "166:984",
+      "w": 419.3299865722656,
+      "h": 40,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "166:994",
+      "name": "Button",
+      "parent": "166:983",
+      "w": 115,
+      "h": 40,
+      "x": 841,
+      "y": 0,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "paddingTop": 0,
+      "paddingRight": 16,
+      "paddingBottom": 0,
+      "paddingLeft": 16,
+      "cornerRadius": 10,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [
+        {
+          "hex": "#0077B6",
+          "opacity": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "166:1029",
+      "name": "Heading 2",
+      "parent": "166:1028",
+      "w": 348,
+      "h": 32,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "166:1083",
+      "name": "Heading 2",
+      "parent": "166:1082",
+      "w": 232,
+      "h": 32,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "166:1099",
+      "name": "Button - Nút Primary \"Tải lại",
+      "parent": "166:1088",
+      "w": 103,
+      "h": 40,
+      "x": 74.83334350585938,
+      "y": 180.75,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "paddingTop": 0,
+      "paddingRight": 20,
+      "paddingBottom": 0,
+      "paddingLeft": 20,
+      "cornerRadius": 10,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#0077B6",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.05000000074505806
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "166:1106",
+      "name": "Footer - FOOTER ADMIN",
+      "parent": "166:981",
+      "w": 1020,
+      "h": 52,
+      "x": 0,
+      "y": 972,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 15,
+      "paddingRight": 32,
+      "paddingBottom": 16,
+      "paddingLeft": 32,
+      "cornerRadius": 0,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "stroke": [
+        {
+          "hex": "#E2E8F0",
+          "opacity": 1
+        }
+      ],
+      "effects": []
+    }
+  ],
+  "assets": [
+    {
+      "id": "166:943",
+      "name": "Logo & Tên UniHub không có viền đóng khung, hòa hợp tự nhiên",
+      "type": "FRAME",
+      "w": 259,
+      "h": 85
+    },
+    {
+      "id": "166:945",
+      "name": "UniHub Logo",
+      "type": "FRAME",
+      "w": 36,
+      "h": 36
+    },
+    {
+      "id": "166:950",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 20,
+      "h": 20
+    },
+    {
+      "id": "166:955",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 20,
+      "h": 20
+    },
+    {
+      "id": "166:960",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 20,
+      "h": 20
+    },
+    {
+      "id": "166:965",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 19.09000015258789,
+      "h": 20
+    },
+    {
+      "id": "166:977",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 16,
+      "h": 16
+    },
+    {
+      "id": "166:995",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 16,
+      "h": 16
+    },
+    {
+      "id": "166:1036",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 176,
+      "h": 176
+    },
+    {
+      "id": "166:1086",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 16,
+      "h": 16
+    },
+    {
+      "id": "166:1091",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 24,
+      "h": 24
+    },
+    {
+      "id": "166:1100",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 16,
+      "h": 16
+    }
+  ],
+  "reactions": [
+    {
+      "id": "166:954",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "168:1274",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "168:1274",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "166:959",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "183:1079",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "183:1079",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "166:964",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "189:3298",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "189:3298",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "166:976",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "24:1632",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "24:1632",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    }
+  ]
+}

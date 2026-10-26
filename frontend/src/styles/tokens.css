@@ -1,0 +1,112 @@
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../assets/fonts/InterVariable.woff2') format('woff2');
+}
+
+:root {
+  color-scheme: light;
+
+  --unihub-brand: #0077b6;
+  --unihub-navy: #03045e;
+  --unihub-cyan: #caf0f8;
+  --unihub-page: #f8fafc;
+  --unihub-surface: #f1f5f9;
+  --unihub-white: #ffffff;
+  --unihub-text: #0f172a;
+  --unihub-text-secondary: #334155;
+  --unihub-text-muted: #475569;
+  --unihub-text-subtle: #64748b;
+  --unihub-placeholder: #94a3b8;
+  --unihub-border: #e2e8f0;
+  --unihub-control-border: #cbd5e1;
+  --unihub-info-bg: #e0f2fe;
+  --unihub-info-text: #075985;
+  --unihub-success-bg: #dcfce7;
+  --unihub-success-text: #166534;
+  --unihub-warning-bg: #fffbeb;
+  --unihub-warning-text: #92400e;
+  --unihub-error-bg: #fef2f2;
+  --unihub-error-border: #fca5a5;
+  --unihub-error-text: #b91c1c;
+
+  --unihub-font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --unihub-type-display-size: 32px;
+  --unihub-type-display-line: 40px;
+  --unihub-type-heading-size: 24px;
+  --unihub-type-heading-line: 32px;
+  --unihub-type-title-size: 18px;
+  --unihub-type-title-line: 28px;
+  --unihub-type-body-size: 16px;
+  --unihub-type-body-line: 24px;
+  --unihub-type-label-size: 14px;
+  --unihub-type-label-line: 20px;
+  --unihub-type-caption-size: 12px;
+  --unihub-type-caption-line: 16px;
+
+  /* Implementation scale inferred from repeated frame measurements, not named Figma variables. */
+  --unihub-space-1: 4px;
+  --unihub-space-2: 8px;
+  --unihub-space-3: 12px;
+  --unihub-space-4: 16px;
+  --unihub-space-5: 20px;
+  --unihub-space-6: 24px;
+  --unihub-space-8: 32px;
+  --unihub-space-10: 40px;
+  --unihub-space-12: 48px;
+  --unihub-space-16: 64px;
+
+  --unihub-radius-control: 10px;
+  --unihub-radius-compact: 8px;
+  --unihub-radius-card: 12px;
+  --unihub-radius-pill: 9999px;
+  --unihub-border-width: 1px;
+
+  --unihub-content-public: 1200px;
+  --unihub-content-student: 1280px;
+  --unihub-admin-sidebar: 260px;
+
+  --unihub-shadow-soft: 0 1px 2px rgb(0 0 0 / 5%);
+  --unihub-shadow-nav-public: 0 1px 8px rgb(3 4 94 / 6%);
+  --unihub-shadow-nav-student: 0 1px 8px rgb(3 4 94 / 6%);
+  --unihub-shadow-card-public: 0 8px 24px rgb(3 4 94 / 12%);
+  --unihub-shadow-button: 0 2px 8px rgb(3 4 94 / 12%);
+}
+
+@layer components {
+  .type-display {
+    font-size: var(--unihub-type-display-size);
+    font-weight: 700;
+    line-height: var(--unihub-type-display-line);
+  }
+
+  .type-heading {
+    font-size: var(--unihub-type-heading-size);
+    font-weight: 600;
+    line-height: var(--unihub-type-heading-line);
+  }
+
+  .type-title {
+    font-size: var(--unihub-type-title-size);
+    font-weight: 600;
+    line-height: var(--unihub-type-title-line);
+  }
+
+  .type-body {
+    font-size: var(--unihub-type-body-size);
+    font-weight: 400;
+    line-height: var(--unihub-type-body-line);
+  }
+
+  .type-label {
+    font-size: var(--unihub-type-label-size);
+    line-height: var(--unihub-type-label-line);
+  }
+
+  .type-caption {
+    font-size: var(--unihub-type-caption-size);
+    line-height: var(--unihub-type-caption-line);
+  }
+}

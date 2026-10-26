@@ -1,0 +1,109 @@
+[
+  {
+    "file": "logo-student-40.svg",
+    "nodeId": "303:16",
+    "name": "UniHub Logo",
+    "width": 40,
+    "height": 40,
+    "fileKey": "6lTZvLvJfeOhz6D8QltvMe",
+    "method": "SVG_STRING",
+    "rasterEmbedded": true
+  },
+  {
+    "file": "logo-admin-36.svg",
+    "nodeId": "166:945",
+    "name": "UniHub Logo",
+    "width": 36,
+    "height": 36,
+    "fileKey": "6lTZvLvJfeOhz6D8QltvMe",
+    "method": "SVG_STRING",
+    "rasterEmbedded": true
+  },
+  {
+    "file": "notification.svg",
+    "nodeId": "303:36",
+    "name": "Icon",
+    "width": 16,
+    "height": 20,
+    "fileKey": "6lTZvLvJfeOhz6D8QltvMe",
+    "method": "SVG_STRING",
+    "rasterEmbedded": false
+  },
+  {
+    "file": "admin-dashboard.svg",
+    "nodeId": "166:950",
+    "name": "SVG",
+    "width": 20,
+    "height": 20,
+    "fileKey": "6lTZvLvJfeOhz6D8QltvMe",
+    "method": "SVG_STRING",
+    "rasterEmbedded": false
+  },
+  {
+    "file": "admin-moderation.svg",
+    "nodeId": "166:955",
+    "name": "SVG",
+    "width": 20,
+    "height": 20,
+    "fileKey": "6lTZvLvJfeOhz6D8QltvMe",
+    "method": "SVG_STRING",
+    "rasterEmbedded": false
+  },
+  {
+    "file": "admin-categories.svg",
+    "nodeId": "166:960",
+    "name": "SVG",
+    "width": 20,
+    "height": 20,
+    "fileKey": "6lTZvLvJfeOhz6D8QltvMe",
+    "method": "SVG_STRING",
+    "rasterEmbedded": false
+  },
+  {
+    "file": "admin-accounts.svg",
+    "nodeId": "166:965",
+    "name": "SVG",
+    "width": 19.09000015258789,
+    "height": 20,
+    "fileKey": "6lTZvLvJfeOhz6D8QltvMe",
+    "method": "SVG_STRING",
+    "rasterEmbedded": false
+  },
+  {
+    "file": "refresh.svg",
+    "nodeId": "166:995",
+    "name": "SVG",
+    "width": 16,
+    "height": 16,
+    "fileKey": "6lTZvLvJfeOhz6D8QltvMe",
+    "method": "SVG_STRING",
+    "rasterEmbedded": false
+  },
+  {
+    "file": "edit-profile.svg",
+    "nodeId": "301:635",
+    "name": "Icon",
+    "width": 13.5,
+    "height": 12,
+    "fileKey": "6lTZvLvJfeOhz6D8QltvMe",
+    "method": "SVG_STRING",
+    "rasterEmbedded": false
+  },
+  {
+    "file": "arrow-right.svg",
+    "nodeId": "24:1771",
+    "name": "Icon",
+    "width": 13.333333015441895,
+    "height": 13.333333015441895,
+    "fileKey": "6lTZvLvJfeOhz6D8QltvMe",
+    "method": "SVG_STRING",
+    "rasterEmbedded": false
+  },
+  {
+    "file": "logo-footer-180.png",
+    "nodeId": "303:53",
+    "width": 180,
+    "height": 180,
+    "method": "get_screenshot at natural size"
+  }
+]

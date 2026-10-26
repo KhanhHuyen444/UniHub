@@ -26,7 +26,7 @@ const statusContent = {
   { title: string; description: string; color: string }
 >;
 
-export function App() {
+export function HealthCheckPage() {
   const [status, setStatus] = useState<Status>('checking');
   const [attempt, setAttempt] = useState(0);
 

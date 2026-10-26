@@ -1,0 +1,2891 @@
+{
+  "id": "24:1632",
+  "name": "UniHub — Trang chủ (Guest)",
+  "typography": [
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0077B6",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1640",
+          "text": "UNIHUB · ĐỒNG HÀNH CÙNG SINH VIÊN"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 32,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 40
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1642",
+          "text": "Học tập, cơ hội và định hướng — tất cả tại một nơi."
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 16,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 24
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1644",
+          "text": "Khám phá thực tập, việc làm, học bổng và lộ trình kỹ năng; theo d"
+        },
+        {
+          "id": "24:1869",
+          "text": "Đăng nhập bằng Google và bổ sung chuyên ngành, năm học, kỹ năng đ"
+        },
+        {
+          "id": "24:1949",
+          "text": "UniHub giúp bạn theo dõi hạn nộp bài tập, lịch thi và hạn ứng tuy"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1647",
+          "text": "Khám phá cơ hội"
+        },
+        {
+          "id": "26:81",
+          "text": "Đăng nhập với Google"
+        },
+        {
+          "id": "24:1891",
+          "text": "Khám phá lộ trình"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0077B6",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1649",
+          "text": "Xem lộ trình nghề nghiệp"
+        },
+        {
+          "id": "24:1769",
+          "text": "Xem tất cả cơ hội"
+        },
+        {
+          "id": "24:1987",
+          "text": "Khám phá diễn đàn"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#00677D",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1658",
+          "text": "Lộ trình · Năm 2"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 16,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 24
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0F172A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1661",
+          "text": "Cấu trúc dữ liệu & Git"
+        },
+        {
+          "id": "24:1901",
+          "text": "Nhập môn & Nền tảng"
+        },
+        {
+          "id": "24:1913",
+          "text": "Kỹ năng chuyên sâu"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#075985",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1671",
+          "text": "Thực tập"
+        },
+        {
+          "id": "26:3",
+          "text": "Thực tập"
+        },
+        {
+          "id": "24:1778",
+          "text": "Học bổng"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1675",
+          "text": "Verified"
+        },
+        {
+          "id": "26:15",
+          "text": "Verified"
+        },
+        {
+          "id": "26:25",
+          "text": "Verified"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 16,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 24
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1677",
+          "text": "Frontend React Developer"
+        },
+        {
+          "id": "24:1955",
+          "text": "Tháng 11, 2025"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#475569",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1679",
+          "text": "FPT Software · Hà Nội"
+        },
+        {
+          "id": "24:1692",
+          "text": "Nhắc hạn nộp"
+        },
+        {
+          "id": "24:1711",
+          "text": "Hàng trăm tin thực tập, việc làm và học bổng đã duyệt."
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#92400E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1682",
+          "text": "Hạn: 15/11/2025"
+        },
+        {
+          "id": "24:1800",
+          "text": "Hạn nộp: 15/11/2025"
+        },
+        {
+          "id": "24:1832",
+          "text": "Hạn nộp: 30/11/2025"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0F172A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1694",
+          "text": "Học bổng Tài năng 2025"
+        },
+        {
+          "id": "24:1963",
+          "text": "Hạn nộp FPT Software"
+        },
+        {
+          "id": "24:1973",
+          "text": "Học bổng Viettel Digital"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 24,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 32
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1698",
+          "text": "Bắt đầu từ điều bạn cần"
+        },
+        {
+          "id": "24:1765",
+          "text": "Khám phá cơ hội đang mở"
+        },
+        {
+          "id": "24:1877",
+          "text": "Định hướng rõ hơn cho từng năm đại học"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#475569",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1700",
+          "text": "Lối tắt nhanh đến các phân hệ cốt lõi dành cho sinh viên."
+        },
+        {
+          "id": "24:1767",
+          "text": "Thực tập, việc làm và học bổng dành cho sinh viên."
+        },
+        {
+          "id": "24:1879",
+          "text": "Khám phá lộ trình kỹ năng và các bài viết theo chuyên ngành."
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 18,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 28
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0F172A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1709",
+          "text": "Tìm cơ hội"
+        },
+        {
+          "id": "24:1724",
+          "text": "Lộ trình kỹ năng"
+        },
+        {
+          "id": "24:1739",
+          "text": "Diễn đàn sinh viên"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0077B6",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1714",
+          "text": "Truy cập"
+        },
+        {
+          "id": "24:1729",
+          "text": "Khám phá"
+        },
+        {
+          "id": "24:1744",
+          "text": "Thảo luận"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#005D90",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1758",
+          "text": "Đăng nhập"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#166534",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "26:17",
+          "text": "Verified"
+        },
+        {
+          "id": "26:20",
+          "text": "Verified"
+        },
+        {
+          "id": "26:27",
+          "text": "Verified"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1789",
+          "text": "FPT Software"
+        },
+        {
+          "id": "24:1821",
+          "text": "Viettel Digital"
+        },
+        {
+          "id": "24:1848",
+          "text": "Shopee Vietnam"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#005D90",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1804",
+          "text": "Xem chi tiết"
+        },
+        {
+          "id": "24:1836",
+          "text": "Xem chi tiết"
+        },
+        {
+          "id": "24:1863",
+          "text": "Xem chi tiết"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 18,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 28
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#03045E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1867",
+          "text": "Cơ hội phù hợp hơn khi hiểu về bạn"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1889",
+          "text": "Lộ trình được thiết kế bài bản theo từng chặng đường đại học, giú"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1897",
+          "text": "Năm 1"
+        },
+        {
+          "id": "24:1909",
+          "text": "Năm 2"
+        },
+        {
+          "id": "24:1921",
+          "text": "Năm 3"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#92400E",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:1967",
+          "text": "Deadline gần"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#075985",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "24:2011",
+          "text": "Học tập"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 24,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 32
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#1E3A8A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "36:444",
+          "text": "UniHub"
+        },
+        {
+          "id": "49:1790",
+          "text": "UniHub"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 24,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 32
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#2563EB",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "36:444",
+          "text": "UniHub"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Bold",
+        "variationSettings": {
+          "wght": 700,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 700,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#0F172A",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "49:1767",
+          "text": "KHÁM PHÁ"
+        },
+        {
+          "id": "49:1779",
+          "text": "HỖ TRỢ"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 500,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#475569",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "49:1772",
+          "text": "Cơ hội"
+        },
+        {
+          "id": "49:1776",
+          "text": "Diễn đàn"
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Semi Bold",
+        "variationSettings": {
+          "wght": 600,
+          "slnt": 0
+        }
+      },
+      "size": 14,
+      "weight": 600,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 20
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#334155",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "49:1791",
+          "text": "Kết nối cơ hội, định hướng tương lai."
+        }
+      ]
+    },
+    {
+      "font": {
+        "family": "Inter",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "slnt": 0
+        }
+      },
+      "size": 12,
+      "weight": 400,
+      "lineHeight": {
+        "unit": "PIXELS",
+        "value": 16
+      },
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "fill": [
+        {
+          "hex": "#64748B",
+          "opacity": 1
+        }
+      ],
+      "sources": [
+        {
+          "id": "49:1793",
+          "text": "© 2026 UniHub. Bảo lưu mọi quyền"
+        }
+      ]
+    }
+  ],
+  "colors": {
+    "#FFFFFF / 1": [
+      "24:1632",
+      "24:1647",
+      "24:1668"
+    ],
+    "#F8FAFC / 1": [
+      "24:1632",
+      "24:1633"
+    ],
+    "#CAF0F8 / 1": [
+      "24:1635",
+      "24:1672",
+      "24:1704"
+    ],
+    "#FFFFFF / 0.4000000059604645": [
+      "24:1636"
+    ],
+    "#0077B6 / 0.10000000149011612": [
+      "24:1637"
+    ],
+    "#0077B6 / 1": [
+      "24:1640",
+      "24:1646",
+      "24:1649"
+    ],
+    "#03045E / 1": [
+      "24:1642",
+      "24:1666",
+      "24:1674"
+    ],
+    "#334155 / 1": [
+      "24:1644",
+      "24:1736",
+      "27:19"
+    ],
+    "#FFFFFF / 0.949999988079071": [
+      "24:1653",
+      "24:1685"
+    ],
+    "#00677D / 1": [
+      "24:1657",
+      "24:1658",
+      "24:1659"
+    ],
+    "#0F172A / 1": [
+      "24:1661",
+      "24:1694",
+      "24:1709"
+    ],
+    "#F1F5F9 / 1": [
+      "24:1662",
+      "24:1803",
+      "24:1835"
+    ],
+    "#E0F2FE / 1": [
+      "24:1670",
+      "24:1719",
+      "24:1734"
+    ],
+    "#075985 / 1": [
+      "24:1671",
+      "26:3",
+      "24:1778"
+    ],
+    "#475569 / 1": [
+      "24:1679",
+      "24:1692",
+      "24:1700"
+    ],
+    "#92400E / 1": [
+      "24:1682",
+      "24:1689",
+      "24:1800"
+    ],
+    "#FFFBEB / 1": [
+      "24:1687",
+      "24:1966"
+    ],
+    "#005D90 / 1": [
+      "24:1758",
+      "24:1760",
+      "24:1804"
+    ],
+    "#DCFCE7 / 1": [
+      "26:16",
+      "26:19",
+      "26:26"
+    ],
+    "#166534 / 1": [
+      "26:17",
+      "26:20",
+      "26:27"
+    ],
+    "#707881 / 1": [
+      "24:1793",
+      "24:1798",
+      "24:1825"
+    ],
+    "#004490 / 1": [
+      "26:78"
+    ],
+    "#227C8A / 1": [
+      "24:1920"
+    ],
+    "#FFFFFF / 0.8999999761581421": [
+      "24:2069"
+    ],
+    "#1E3A8A / 1": [
+      "49:1790"
+    ],
+    "#64748B / 1": [
+      "49:1793"
+    ]
+  },
+  "structure": [
+    {
+      "id": "24:1633",
+      "name": "Main",
+      "parent": "24:1632",
+      "w": 1280,
+      "h": 2522,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 72,
+      "paddingRight": 40,
+      "paddingBottom": 0,
+      "paddingLeft": 40,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#F8FAFC",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1635",
+      "name": "Section - 1. HERO SECTION",
+      "parent": "24:1634",
+      "w": 1136,
+      "h": 456,
+      "x": 32,
+      "y": 24,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 48,
+      "paddingRight": 48,
+      "paddingBottom": 48,
+      "paddingLeft": 48,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#CAF0F8",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 8,
+          "boundVariables": {},
+          "color": {
+            "r": 0.0117647061124444,
+            "g": 0.01568627543747425,
+            "b": 0.3686274588108063,
+            "a": 0.07000000029802322
+          },
+          "offset": {
+            "x": 0,
+            "y": 2
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "24:1641",
+      "name": "Heading 1",
+      "parent": "24:1639",
+      "w": 549.0499877929688,
+      "h": 80,
+      "x": 0,
+      "y": 28,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 45.04999923706055,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1652",
+      "name": "Right Column: Abstract UI Cards Cluster (45% width ~ 5 cols)",
+      "parent": "24:1638",
+      "w": 414.66668701171875,
+      "h": 360,
+      "x": 625.3333129882812,
+      "y": 0,
+      "layoutMode": "NONE",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1653",
+      "name": "Card Layer 1: Roadmap Milestone (Back / Top)",
+      "parent": "24:1652",
+      "w": 269.99993896484375,
+      "h": 81.99857330322266,
+      "x": 138.1999969482422,
+      "y": -8.6899995803833,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 12,
+      "paddingRight": 12,
+      "paddingBottom": 12,
+      "paddingLeft": 12,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 0.949999988079071
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 16,
+          "boundVariables": {},
+          "color": {
+            "r": 0.0117647061124444,
+            "g": 0.01568627543747425,
+            "b": 0.3686274588108063,
+            "a": 0.07999999821186066
+          },
+          "offset": {
+            "x": 0,
+            "y": 4
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        },
+        {
+          "type": "BACKGROUND_BLUR",
+          "visible": true,
+          "radius": 12,
+          "boundVariables": {},
+          "blurType": "NORMAL"
+        }
+      ]
+    },
+    {
+      "id": "24:1668",
+      "name": "Card Layer 2: Job Card (Middle / Focus)",
+      "parent": "24:1652",
+      "w": 290,
+      "h": 128,
+      "x": 8,
+      "y": 64,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 16,
+      "paddingRight": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 24,
+          "boundVariables": {},
+          "color": {
+            "r": 0.0117647061124444,
+            "g": 0.01568627543747425,
+            "b": 0.3686274588108063,
+            "a": 0.11999999731779099
+          },
+          "offset": {
+            "x": 0,
+            "y": 8
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "24:1685",
+      "name": "Card Layer 3: Deadline Reminder (Front / Bottom)",
+      "parent": "24:1652",
+      "w": 259.9999694824219,
+      "h": 60,
+      "x": 137.75958251953125,
+      "y": 296.55755615234375,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 12,
+      "paddingRight": 12,
+      "paddingBottom": 12,
+      "paddingLeft": 12,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 0.949999988079071
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 16,
+          "boundVariables": {},
+          "color": {
+            "r": 0.0117647061124444,
+            "g": 0.01568627543747425,
+            "b": 0.3686274588108063,
+            "a": 0.09000000357627869
+          },
+          "offset": {
+            "x": 0,
+            "y": 4
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        },
+        {
+          "type": "BACKGROUND_BLUR",
+          "visible": true,
+          "radius": 12,
+          "boundVariables": {},
+          "blurType": "NORMAL"
+        }
+      ]
+    },
+    {
+      "id": "24:1697",
+      "name": "Heading 2",
+      "parent": "24:1696",
+      "w": 1136,
+      "h": 32,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1708",
+      "name": "Heading 3",
+      "parent": "24:1707",
+      "w": 234,
+      "h": 28,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1723",
+      "name": "Heading 3",
+      "parent": "24:1722",
+      "w": 234,
+      "h": 28,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1738",
+      "name": "Heading 3",
+      "parent": "24:1737",
+      "w": 234,
+      "h": 28,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1752",
+      "name": "Heading 3",
+      "parent": "24:1751",
+      "w": 234,
+      "h": 28,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1764",
+      "name": "Heading 2",
+      "parent": "24:1763",
+      "w": 339,
+      "h": 32,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1773",
+      "name": "Card 1",
+      "parent": "24:1772",
+      "w": 362.6666564941406,
+      "h": 282,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 16,
+      "paddingRight": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 8,
+          "boundVariables": {},
+          "color": {
+            "r": 0.0117647061124444,
+            "g": 0.01568627543747425,
+            "b": 0.3686274588108063,
+            "a": 0.07000000029802322
+          },
+          "offset": {
+            "x": 0,
+            "y": 2
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "24:1786",
+      "name": "Heading 3",
+      "parent": "24:1785",
+      "w": 330.6666564941406,
+      "h": 56,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1805",
+      "name": "Card 2",
+      "parent": "24:1772",
+      "w": 362.66668701171875,
+      "h": 282,
+      "x": 386.6666564941406,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 24,
+      "paddingTop": 16,
+      "paddingRight": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 8,
+          "boundVariables": {},
+          "color": {
+            "r": 0.0117647061124444,
+            "g": 0.01568627543747425,
+            "b": 0.3686274588108063,
+            "a": 0.07000000029802322
+          },
+          "offset": {
+            "x": 0,
+            "y": 2
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "24:1818",
+      "name": "Heading 3",
+      "parent": "24:1817",
+      "w": 330.66668701171875,
+      "h": 56,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1837",
+      "name": "Card 3",
+      "parent": "24:1772",
+      "w": 362.66668701171875,
+      "h": 282,
+      "x": 773.3333740234375,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 24,
+      "paddingTop": 16,
+      "paddingRight": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "cornerRadius": 12,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 8,
+          "boundVariables": {},
+          "color": {
+            "r": 0.0117647061124444,
+            "g": 0.01568627543747425,
+            "b": 0.3686274588108063,
+            "a": 0.07000000029802322
+          },
+          "offset": {
+            "x": 0,
+            "y": 2
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "24:1845",
+      "name": "Heading 3",
+      "parent": "24:1844",
+      "w": 330.66668701171875,
+      "h": 28,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1866",
+      "name": "Heading 3",
+      "parent": "24:1865",
+      "w": 663,
+      "h": 28,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1876",
+      "name": "Heading 2",
+      "parent": "24:1875",
+      "w": 1136,
+      "h": 32,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1886",
+      "name": "Heading 3",
+      "parent": "24:1885",
+      "w": 333,
+      "h": 28,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1900",
+      "name": "Heading 4",
+      "parent": "24:1893",
+      "w": 143,
+      "h": 48,
+      "x": 12,
+      "y": 36,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1912",
+      "name": "Heading 4",
+      "parent": "24:1905",
+      "w": 143,
+      "h": 48,
+      "x": 12,
+      "y": 36,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1924",
+      "name": "Heading 4",
+      "parent": "24:1917",
+      "w": 143,
+      "h": 24,
+      "x": 12,
+      "y": 36,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1936",
+      "name": "Heading 4",
+      "parent": "24:1929",
+      "w": 143,
+      "h": 48,
+      "x": 12,
+      "y": 36,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1982",
+      "name": "Heading 2",
+      "parent": "24:1981",
+      "w": 424,
+      "h": 32,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1996",
+      "name": "Heading 3:margin",
+      "parent": "24:1992",
+      "w": 330.6666564941406,
+      "h": 60,
+      "x": 0,
+      "y": 24,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 4,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:1997",
+      "name": "Heading 3",
+      "parent": "24:1996",
+      "w": 330.6666564941406,
+      "h": 56,
+      "x": 0,
+      "y": 4,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:2012",
+      "name": "Heading 3:margin",
+      "parent": "24:2008",
+      "w": 330.66668701171875,
+      "h": 88,
+      "x": 0,
+      "y": 24,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 4,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:2013",
+      "name": "Heading 3",
+      "parent": "24:2012",
+      "w": 330.66668701171875,
+      "h": 84,
+      "x": 0,
+      "y": 4,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:2028",
+      "name": "Heading 3:margin",
+      "parent": "24:2024",
+      "w": 330.66668701171875,
+      "h": 60,
+      "x": 0,
+      "y": 24,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 4,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:2029",
+      "name": "Heading 3",
+      "parent": "24:2028",
+      "w": 330.66668701171875,
+      "h": 56,
+      "x": 0,
+      "y": 4,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "24:2069",
+      "name": "Header",
+      "parent": "24:1632",
+      "w": 1280,
+      "h": 72,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 40,
+      "paddingBottom": 0,
+      "paddingLeft": 40,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 0.8999999761581421
+        }
+      ],
+      "stroke": [],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 8,
+          "boundVariables": {},
+          "color": {
+            "r": 0.0117647061124444,
+            "g": 0.01568627543747425,
+            "b": 0.3686274588108063,
+            "a": 0.05999999865889549
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        },
+        {
+          "type": "BACKGROUND_BLUR",
+          "visible": true,
+          "radius": 24,
+          "boundVariables": {},
+          "blurType": "NORMAL"
+        }
+      ]
+    },
+    {
+      "id": "49:1680",
+      "name": "Google Login CTA Button → Button",
+      "parent": "24:2070",
+      "w": 270,
+      "h": 48,
+      "x": 898,
+      "y": 12,
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 10,
+      "paddingTop": 8,
+      "paddingRight": 16,
+      "paddingBottom": 8,
+      "paddingLeft": 16,
+      "cornerRadius": 10,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#FFFFFF",
+          "opacity": 1
+        }
+      ],
+      "stroke": [
+        {
+          "hex": "#CBD5E1",
+          "opacity": 1
+        }
+      ],
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.05000000074505806
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": false
+        }
+      ]
+    },
+    {
+      "id": "49:1758",
+      "name": "Footer - Comprehensive 3-column footer aligned with UniHub home page",
+      "parent": "24:1632",
+      "w": 1280,
+      "h": 301.25,
+      "x": 0,
+      "y": 2522,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 48,
+      "paddingRight": 0,
+      "paddingBottom": 32,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "opacity": 1,
+      "fill": [
+        {
+          "hex": "#F1F5F9",
+          "opacity": 1
+        }
+      ],
+      "stroke": [
+        {
+          "hex": "#E2E8F0",
+          "opacity": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "49:1766",
+      "name": "Heading 3",
+      "parent": "49:1765",
+      "w": 280,
+      "h": 20,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    },
+    {
+      "id": "49:1778",
+      "name": "Heading 3",
+      "parent": "49:1777",
+      "w": 280,
+      "h": 20,
+      "x": 0,
+      "y": 0,
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "cornerRadius": 0,
+      "strokeWeight": 1,
+      "opacity": 1,
+      "fill": [],
+      "stroke": [],
+      "effects": []
+    }
+  ],
+  "assets": [
+    {
+      "id": "24:1657",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 14.666666984558105,
+      "h": 8
+    },
+    {
+      "id": "24:1665",
+      "name": "SVG",
+      "type": "FRAME",
+      "w": 84,
+      "h": 84
+    },
+    {
+      "id": "24:1674",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 12.833333015441895,
+      "h": 12.25
+    },
+    {
+      "id": "24:1684",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "24:1689",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 15.975000381469727,
+      "h": 14.737500190734863
+    },
+    {
+      "id": "24:1706",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 20,
+      "h": 19
+    },
+    {
+      "id": "24:1716",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 10.666666984558105,
+      "h": 10.666666984558105
+    },
+    {
+      "id": "24:1721",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 20,
+      "h": 20
+    },
+    {
+      "id": "24:1731",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 10.666666984558105,
+      "h": 10.666666984558105
+    },
+    {
+      "id": "24:1736",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 20,
+      "h": 20
+    },
+    {
+      "id": "24:1746",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 10.666666984558105,
+      "h": 10.666666984558105
+    },
+    {
+      "id": "27:19",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 20,
+      "h": 20
+    },
+    {
+      "id": "24:1760",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 10.666666984558105,
+      "h": 10.666666984558105
+    },
+    {
+      "id": "24:1771",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "26:14",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 11.916666984558105,
+      "h": 11.375
+    },
+    {
+      "id": "24:1793",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 10.666666984558105,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "24:1798",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "26:24",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 11.916666984558105,
+      "h": 11.375
+    },
+    {
+      "id": "24:1825",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "24:1830",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "24:1852",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 10.666666984558105,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "24:1857",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "26:36",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 11.916666984558105,
+      "h": 11.375
+    },
+    {
+      "id": "24:1884",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 21,
+      "h": 21
+    },
+    {
+      "id": "24:1899",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 16.5,
+      "h": 13.5
+    },
+    {
+      "id": "24:1911",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 15,
+      "h": 9
+    },
+    {
+      "id": "24:1923",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 15,
+      "h": 14.25
+    },
+    {
+      "id": "24:1935",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 12,
+      "h": 15.75
+    },
+    {
+      "id": "24:1945",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.366666793823242
+    },
+    {
+      "id": "24:1957",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 15,
+      "h": 16.66666603088379
+    },
+    {
+      "id": "24:1989",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "24:2004",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "24:2020",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "24:2036",
+      "name": "Icon",
+      "type": "VECTOR",
+      "w": 13.333333015441895,
+      "h": 13.333333015441895
+    },
+    {
+      "id": "36:441",
+      "name": "Link - Brand Logo and Name",
+      "type": "FRAME",
+      "w": 148,
+      "h": 48
+    }
+  ],
+  "reactions": [
+    {
+      "id": "24:1646",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "36:39",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "36:39",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "24:1648",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "152:12375",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "152:12375",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "24:1724",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "152:12375",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "152:12375",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "24:1758",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "152:11244",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "152:11244",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "24:1803",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "47:904",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "47:904",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "24:1835",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "49:1795",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "49:1795",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "24:1862",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "49:1339",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "49:1339",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "26:78",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "152:11244",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "152:11244",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "24:1890",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "152:12375",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "152:12375",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    },
+    {
+      "id": "24:1986",
+      "reactions": [
+        {
+          "action": {
+            "type": "NODE",
+            "destinationId": "128:4460",
+            "navigation": "NAVIGATE",
+            "transition": null,
+            "resetVideoPosition": false,
+            "resetScrollPosition": true
+          },
+          "actions": [
+            {
+              "type": "NODE",
+              "destinationId": "128:4460",
+              "navigation": "NAVIGATE",
+              "transition": null,
+              "resetVideoPosition": false,
+              "resetScrollPosition": true
+            }
+          ],
+          "trigger": {
+            "type": "ON_CLICK"
+          }
+        }
+      ]
+    }
+  ]
+}
