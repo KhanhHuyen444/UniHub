@@ -1,6 +1,6 @@
 # Migration MySQL của UniHub
 
-Ngày: **25/10/2026**. Initial migration được tạo trên nhánh `feat/initial-migration` và đã merge vào `main` qua PR #4 tại `d7c2cefc79754728a6731498a33f4d3ebfe40c48`. Nhánh runtime được cập nhật từ commit này; migration dùng chung không bị sửa hoặc tạo lại. Kiểm thử trong tài liệu chỉ dùng MySQL 8.4 tạm ở Codex. **Không có database trên máy thành viên nào được mở hoặc thay đổi.**
+Initial migration: **25/10/2026**, đã merge vào `main` qua PR #4 tại `d7c2cefc79754728a6731498a33f4d3ebfe40c48`. Migration deadline được thêm riêng ngày **26/10/2026** trên nhánh `feat/opportunity-deadline-metadata`, chờ review/merge. Không sửa hoặc tạo lại migration dùng chung đã áp dụng. Kiểm thử trong tài liệu chỉ dùng MySQL 8.4 tạm ở Codex. **Không có database trên máy thành viên nào được mở hoặc thay đổi.**
 
 ## Quyết định đã xác nhận
 
@@ -19,6 +19,24 @@ Ngày: **25/10/2026**. Initial migration được tạo trên nhánh `feat/initi
 - Charset/collation và session timezone/connection charset đã xác nhận.
 
 Không có enum, trigger, bảng identity/session, tài khoản, seed data hoặc chức năng nghiệp vụ. Prisma tạo thêm bảng kỹ thuật `_prisma_migrations` khi áp dụng migration; đây không phải bảng nghiệp vụ thứ 13.
+
+## Migration metadata deadline đã được duyệt
+
+`backend/prisma/migrations/20261026150000_add_opportunity_deadline_metadata/migration.sql` là migration mới; migration initial ở `20261025000000_initial_schema` giữ nguyên byte-for-byte. Migration chỉ thay đổi bảng `opportunities`:
+
+| Thay đổi                                   | Kiểu / constraint  | Ý nghĩa                                                                                                                                                                                                                                            |
+| ------------------------------------------ | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Thêm `deadline_source_date`                | `DATE NULL`        | Ngày nguồn cho deadline date-only; không suy ra từ `deadline`.                                                                                                                                                                                     |
+| Thêm `deadline_source_timezone`            | `VARCHAR(64) NULL` | Tên IANA hoặc offset nguồn cho deadline có giờ; backend xác thực giá trị.                                                                                                                                                                          |
+| Thêm `chk_opportunities_deadline_metadata` | CHECK              | Không cho metadata khi `deadline` NULL; không cho cả hai metadata cùng có giá trị. Cho phép date-only (date có, timezone NULL), datetime (date NULL, timezone có), no-deadline (cả ba NULL) và legacy unknown (deadline có, metadata cả hai NULL). |
+
+Prisma `Opportunity` khai báo `deadline_source_date DateTime? @db.Date` và `deadline_source_timezone String? @db.VarChar(64)`. Schema Prisma không biểu diễn CHECK nên migration bổ sung bằng SQL. CHECK này chỉ kiểm tra tổ hợp cột; không kiểm tra tên timezone, không tính cutoff date-only và không xác minh instant có khớp nguồn. Backend sau này phải xác thực timezone hợp lệ, đổi instant nguồn sang UTC đúng cách và tính cutoff date-only là 00:00 ngày kế tiếp `Asia/Ho_Chi_Minh`.
+
+Migration chỉ thêm hai cột nullable và constraint; **không có UPDATE dữ liệu**. Vì vậy mọi deadline cũ giữ nguyên giá trị và nhận metadata NULL. Có deadline + hai metadata NULL nghĩa là unknown, không được phỏng đoán từ giờ timestamp. Fresh database chạy initial rồi migration metadata; database đã có initial migration và dữ liệu chỉ chạy migration mới. Không áp dụng migration này vào database của nhóm trong nhiệm vụ chuẩn bị.
+
+### Nội dung cần cập nhật trong Chương 4
+
+§4.3.2.3 cần được cập nhật để liệt kê hai cột mới trong `opportunities`, kiểu và NULLability; định nghĩa chính xác ý nghĩa date-only cutoff và datetime instant/timezone; ghi các tổ hợp metadata hợp lệ cùng legacy unknown; nêu CHECK chỉ bảo đảm tính nhất quán cấu trúc và backend chịu trách nhiệm kiểm tra timezone/cutoff. **PDF Chương 4 chưa được sửa trong nhiệm vụ này.**
 
 ## Tài khoản và quyền
 
@@ -78,6 +96,34 @@ npm.cmd run db:migrate:status
 
 `status` chỉ kiểm tra lịch sử database được chỉ bởi `MIGRATION_DATABASE_URL`. `deploy` áp dụng các migration đã commit còn thiếu; không tạo migration mới và không reset database. Trong quyền đã chốt, migrator chỉ có grants trên schema đang tồn tại nên quản trị viên phải tạo database/tài khoản trước. Prisma CLI có thể thử tạo database khi thiếu nếu caller có quyền cấp máy chủ; tài khoản migration trong hướng dẫn không có quyền đó. Hãy xác nhận URL trỏ tới database phát triển riêng của bạn trước khi chạy `deploy`.
 
+### Áp dụng metadata migration trên Windows sau khi PR được review và merge
+
+Chỉ chạy bước deploy sau khi PR đã merge. Mở PowerShell tại gốc repository, giữ an toàn mọi thay đổi cục bộ và dùng **database phát triển riêng của bạn**, không dùng database dùng chung của nhóm:
+
+```powershell
+git status
+git fetch origin
+git switch main
+git pull --ff-only origin main
+```
+
+Nếu đây là lần clone mới hoặc `package-lock.json` đổi, chạy `npm.cmd ci`. Không cần dependency mới cho migration này. Tạo mẫu cấu hình cục bộ nếu chưa có, rồi nhập `MIGRATION_DATABASE_URL` của database phát triển của chính bạn vào `backend/.env.migration`; không ghi đè file có sẵn hoặc commit file thật:
+
+```powershell
+if (-not (Test-Path .\backend\.env.migration)) { Copy-Item .\backend\.env.migration.example .\backend\.env.migration }
+notepad .\backend\.env.migration
+npm.cmd run db:migrate:status
+```
+
+Xác nhận URL trỏ đúng database cá nhân và status cho thấy migration chờ áp dụng, sau đó chạy các scripts hiện có:
+
+```powershell
+npm.cmd run db:migrate:deploy
+npm.cmd run db:migrate:status
+```
+
+Database trống sẽ nhận initial schema rồi metadata migration; database đã initial sẽ chỉ nhận migration mới. Không chạy `migrate dev`, `db push`, reset hoặc seed. Sau khi deploy, bản ghi cũ giữ `deadline`, metadata để NULL và API tương lai phải trả unknown đến khi nguồn được xác minh.
+
 ## Quy trình nhóm
 
 Nhóm dùng **migration initial duy nhất** này để thiết lập schema ban đầu; thành viên không tự tạo migration ban đầu thứ hai. Mỗi người checkout cùng commit và chạy migration vào database phát triển riêng của mình.
@@ -88,13 +134,16 @@ Không chỉnh migration sau khi đã chia sẻ/áp dụng. Mọi thay đổi ti
 
 Đã tạo một container không gắn volume và schema `unihub_migration_test`, không chứa dữ liệu người dùng. Container dùng image chính thức `mysql:8.4`, server thực tế **8.4.13**, timezone UTC, `utf8mb4_0900_as_ci`; tài khoản migration/app là credentials ngẫu nhiên chỉ dùng trong container. Sau test, toàn bộ container và credentials sẽ bị xóa. Môi trường này tách khỏi database/máy của nhóm.
 
-- Prisma `migrate deploy` lần đầu đạt bằng tài khoản migration có quyền trên đúng schema; `migrate status` báo schema up to date; `migrate deploy` lần hai báo không còn migration chờ áp dụng.
-- Metadata MySQL xác nhận 12 bảng nghiệp vụ, 81 cột, 12 PK, 16 FK, 2 UNIQUE, 13 CHECK và `_prisma_migrations` riêng. 12 bảng dùng đúng collation; hai `updated_at` có thuộc tính ON UPDATE. Hành vi FK là một CASCADE / 15 RESTRICT cho DELETE và 16 RESTRICT cho UPDATE.
-- INSERT tiếng Việt, `academic_year = NULL`, `work_format = NULL` và bài định hướng không publisher thành công. Mỗi một trong 13 CHECK bị thử với giá trị sai và đều bị từ chối; email/tên trùng hoa-thường bị UNIQUE từ chối, tên khác dấu được phân biệt. PK ghép trùng, FK không tồn tại, DELETE/UPDATE RESTRICT đều bị từ chối; xóa event cascade đúng notification.
+- **Kiểm thử initial migration ban đầu:** `migrate deploy` đạt bằng tài khoản migration có quyền trên đúng schema; `migrate status` báo schema up to date; `migrate deploy` lần hai báo không còn migration chờ áp dụng.
+- **Initial migration baseline:** metadata MySQL xác nhận 12 bảng nghiệp vụ, 81 cột, 12 PK, 16 FK, 2 UNIQUE, 13 CHECK và `_prisma_migrations` riêng. 12 bảng dùng đúng collation; hai `updated_at` có thuộc tính ON UPDATE. Hành vi FK là một CASCADE / 15 RESTRICT cho DELETE và 16 RESTRICT cho UPDATE.
+- **Initial migration constraints:** INSERT tiếng Việt, `academic_year = NULL`, `work_format = NULL` và bài định hướng không publisher thành công. Mỗi một trong 13 CHECK bị thử với giá trị sai và đều bị từ chối; email/tên trùng hoa-thường bị UNIQUE từ chối, tên khác dấu được phân biệt. PK ghép trùng, FK không tồn tại, DELETE/UPDATE RESTRICT đều bị từ chối; xóa event cascade đúng notification.
 - Cập nhật trường thường làm `users.updated_at` và `events.updated_at` tăng ít nhất một giây ở độ chính xác DATETIME(0). Transaction DML rollback không để lại dòng. Session tài khoản thử thiết lập timezone UTC thành công.
 - Runtime user được phép đọc và ghi theo bảng, xóa event/association; UPDATE/DELETE `activity_logs` và CREATE TABLE bị từ chối. Migration user có ALL PRIVILEGES đúng một schema; không có CREATE DATABASE ở mức máy chủ.
 - Bổ sung kiểm tra quyền/transaction bằng SQL trên MySQL tạm 8.4.13: runtime user xóa một notification `Reminder` mà event vẫn còn, reset `events.reminded_at` trong cùng transaction, rồi `ROLLBACK`; notification và giá trị `reminded_at` ban đầu đều được phục hồi. Runtime user vẫn SELECT/INSERT được `activity_logs`; MySQL từ chối UPDATE và DELETE bảng này. Đây là kiểm thử GRANT và transaction trực tiếp ở SQL, **chưa phải kiểm thử API/nghiệp vụ**: chưa xác nhận validation `due_date`/`remind_before`, ownership, điều kiện chọn Reminder cũ hay điều phối transaction trong backend.
 - Prisma migrate diff từ database về Prisma schema trả SQL diff rỗng. Điều đó **không phát hiện** CHECK, collation hoặc ON UPDATE do các đặc điểm này không được schema Prisma biểu diễn; đây là giới hạn mong đợi, không phải bằng chứng đã drift-free toàn bộ MySQL metadata. SQL initial migration đã kiểm tra riêng bằng metadata và hành vi phía trên.
+- Kiểm thử metadata deadline mới trên container tạm MySQL **8.4.13**, bind cổng chỉ vào `127.0.0.1`, không gắn volume, không đọc `.env` thật: database trống áp dụng thành công initial + deadline migrations; `opportunities` có 17 cột và 4 CHECK (3 CHECK ban đầu + metadata CHECK). Database khác được dựng chỉ bằng initial migration, chèn bản ghi cũ rồi áp dụng migration mới: giá trị `deadline` trước/sau giống nhau và hai metadata của bản ghi cũ là NULL.
+- SQL chấp nhận bốn trạng thái: date-only (ngày có/timezone NULL), datetime (ngày NULL/timezone có), no-deadline (cả ba NULL), legacy unknown (deadline có/cả metadata NULL); từ chối metadata khi không có deadline và từ chối hai metadata cùng có giá trị. Một date-only 05/11 và datetime 06/11 00:00 `Asia/Ho_Chi_Minh` lưu cùng instant UTC `2026-11-05T17:00:00Z` nhưng khác metadata; kiểm tra `zoneinfo` xác nhận cutoff date-only ngày kế tiếp 00:00 `Asia/Ho_Chi_Minh` đổi thành `2026-11-05T17:00:00Z`, còn ngày hiển thị lần lượt là 05/11 (ngày nguồn) và 06/11. Đây là kiểm tra migration/giá trị SQL và phép đổi timezone độc lập, **chưa phải kiểm thử API hoặc giao diện**.
+- Chạy `migrate deploy` lần thứ hai trên database upgrade báo không có migration chờ; `_prisma_migrations` vẫn có đúng hai migration hoàn tất. Migration initial không bị thay đổi. Chưa có backend nghiệp vụ để kiểm tra timezone input, xác thực zone hợp lệ hoặc phép tính cutoff trong service.
 - Prisma validate/generate, typecheck, build, test, format check và audit được chạy lại sau các thay đổi theo từng nhiệm vụ; số test HTTP hiện được ghi trong [README](../README.md). Giữ nguyên Tailwind 3.4.19/Prisma 7.10.1 và override parser đã chốt; `npm ls` còn cảnh báo peer range đã biết về `^6` so với parser 7.1.6, xem [dependency-security.md](dependency-security.md).
 
 Kiểm tra này xác nhận migration trên đúng MySQL 8.4.13 trong Codex/Linux. Nó không chứng minh MySQL phòng học, host/collation khác hoặc máy Windows của thành viên đã sẵn sàng. Prisma runtime hiện dùng adapter/pool cấu hình UTC cho từng physical connection; xem [database-runtime.md](database-runtime.md) để biết kiểm tra tích hợp và hướng dẫn Windows.

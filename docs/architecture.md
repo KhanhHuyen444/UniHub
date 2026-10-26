@@ -196,7 +196,7 @@ Database: `@@unique([type, name])`; CHECK type thuộc `Major`, `Skill`; CHECK s
 
 ### 5.3. `opportunities` → model `Opportunity`, `@@map("opportunities")`
 
-Nguồn: mục 4.3.2.3, trang 15–18. Có **15 cột**.
+Nguồn Chương 4: mục 4.3.2.3, trang 15–18, có **15 cột**. Nhóm đã duyệt hai metadata bổ sung ở nhánh hiện tại; §4.3.2.3 cần cập nhật trước khi nhóm coi tài liệu PDF đồng bộ.
 
 | Cột | Kiểu MySQL → scalar Prisma | Khóa / mặc định |
 | --- | --- | --- |
@@ -209,6 +209,8 @@ Nguồn: mục 4.3.2.3, trang 15–18. Có **15 cột**.
 | `location` | VARCHAR(100) → String? | NULL |
 | `work_format` | VARCHAR(10) → String? | NULL |
 | `deadline` | DATETIME → DateTime? | NULL |
+| `deadline_source_date` | DATE → DateTime? | NULL; metadata nhóm đã duyệt, chưa có trong PDF Chương 4 hiện tại |
+| `deadline_source_timezone` | VARCHAR(64) → String? | NULL; metadata nhóm đã duyệt, chưa có trong PDF Chương 4 hiện tại |
 | `status` | VARCHAR(10) → String | `'Pending'` |
 | `is_verified` | BOOLEAN → Boolean | false |
 | `source_url` | VARCHAR(500) → String? | NULL |
@@ -216,9 +218,9 @@ Nguồn: mục 4.3.2.3, trang 15–18. Có **15 cột**.
 | `reviewed_at` | DATETIME → DateTime? | NULL |
 | `created_at` | DATETIME → DateTime | now |
 
-Database: CHECK work_format thuộc `Online`, `Offline`, `Hybrid` khi có giá trị; CHECK status thuộc `Pending`, `Approved`, `Rejected`; CHECK `opportunity_type = 'Bài viết định hướng' OR publisher IS NOT NULL`. Trường `opportunity_type` chỉ nhận `Thực tập`, `Việc làm`, `Học bổng`, `Bài viết định hướng` theo đặc tả; đây là miền giá trị cần backend xác thực, không tự đổi sang mã tiếng Anh hoặc ENUM.
+Database: giữ ba CHECK của Chương 4 về work_format, status, publisher; migration metadata thêm CHECK cấu trúc `chk_opportunities_deadline_metadata` để ràng buộc metadata với deadline và cho phép legacy unknown. Không kiểm tra timezone/cutoff bằng SQL. Trường `opportunity_type` chỉ nhận `Thực tập`, `Việc làm`, `Học bổng`, `Bài viết định hướng` theo đặc tả; đây là miền giá trị cần backend xác thực, không tự đổi sang mã tiếng Anh hoặc ENUM.
 
-Backend: location bắt buộc với Offline/Hybrid và NULL với Online; duyệt Approved phải kiểm chứng source_url hợp lệ; `reviewed_by` là Admin được xác thực. Thay đổi trạng thái, `is_verified`, người/thời điểm duyệt và nhật ký phải thống nhất trong giao dịch. Pending/Rejected có `is_verified = false`; không tự đánh dấu Verified cho bài định hướng chỉ vì nó Approved. Bài định hướng được thiết kế nạp sẵn Approved, reviewed_at NULL, không đi qua luồng kiểm duyệt; **chưa tạo dữ liệu này**. Nội dung description/requirements giữ quy ước mục `## Tên mục` và BR-01.8, không tự tách thành bảng mới.
+Backend: xác minh timezone nguồn hợp lệ; với date-only, giữ ngày nguồn và tính cutoff 00:00 ngày kế tiếp `Asia/Ho_Chi_Minh`; với datetime, lưu đúng UTC instant cùng zone/offset nguồn. Dữ liệu cũ thiếu metadata giữ unknown, không suy ra từ timestamp. Location bắt buộc với Offline/Hybrid và NULL với Online; duyệt Approved phải kiểm chứng source_url hợp lệ; `reviewed_by` là Admin được xác thực. Thay đổi trạng thái, `is_verified`, người/thời điểm duyệt và nhật ký phải thống nhất trong giao dịch. Pending/Rejected có `is_verified = false`; không tự đánh dấu Verified cho bài định hướng chỉ vì nó Approved. Bài định hướng được thiết kế nạp sẵn Approved, reviewed_at NULL, không đi qua luồng kiểm duyệt; **chưa tạo dữ liệu này**. Nội dung description/requirements giữ quy ước mục `## Tên mục` và BR-01.8, không tự tách thành bảng mới.
 
 ### 5.4. `events` → model `Event`, `@@map("events")`
 
@@ -377,7 +379,7 @@ SQL `CHECK` theo thiết kế cũng không bảo đảm mọi điều kiện ngh
 
 ## 7. Kiểm tra trước khi chuyển sang mã nguồn
 
-Đã kiểm tra tài liệu ở mức tĩnh: 12 bảng, **81 cột nghiệp vụ**, 8 PK tự tăng, 4 PK ghép và 16 FK; `activity_logs.target_id` không được tính là FK. Có 13 nhóm quan hệ trong bảng 4.2.1 của Chương 4; một quan hệ nhiều-nhiều dùng hai FK ở bảng trung gian nên số nhóm quan hệ khác số FK vật lý.
+Đã kiểm tra tài liệu ở mức tĩnh: Chương 4 baseline có 12 bảng/**81 cột**; schema sau phần mở rộng deadline đã duyệt có 12 bảng/**83 cột nghiệp vụ**, 8 PK tự tăng, 4 PK ghép và 16 FK. `activity_logs.target_id` không được tính là FK. Có 13 nhóm quan hệ trong bảng 4.2.1 của Chương 4; một quan hệ nhiều-nhiều dùng hai FK ở bảng trung gian nên số nhóm quan hệ khác số FK vật lý. PDF §4.3.2.3 chưa được sửa.
 
 Sau scaffold, các bước tiếp theo và phạm vi kiểm tra:
 
