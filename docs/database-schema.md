@@ -1,6 +1,6 @@
 # Schema Prisma của UniHub
 
-Ngày đối chiếu schema: **24/10/2026**. Tài liệu ghi lại phạm vi tạo schema; initial migration sau đó được merge vào `main` qua PR #4. Migration và kiểm thử MySQL dùng một lần được mô tả trong [database-migrations.md](database-migrations.md); runtime kết nối/readiness được mô tả trong [database-runtime.md](database-runtime.md). Tài liệu này không xác nhận trạng thái database trên từng máy thành viên.
+Ngày đối chiếu schema: **24/10/2026**; ghi nhận trạng thái máy thành viên được cập nhật **26/10/2026**. Tài liệu ghi lại phạm vi tạo schema; initial migration sau đó được merge vào `main` qua PR #4. Nhóm xác nhận database phát triển của leader có `deadline_source_date` và `deadline_source_timezone`; trạng thái database của thành viên khác chưa xác nhận. Chi tiết và giới hạn ghi nhận xem [database-migrations.md](database-migrations.md). Runtime kết nối/readiness được mô tả trong [database-runtime.md](database-runtime.md).
 
 ## 1. Nguồn và trạng thái
 
@@ -11,7 +11,7 @@ Scaffold được merge qua PR #2; schema qua PR #3; initial migration qua PR #4
 - **Chương 4**, 30 trang: `/workspace/attachments/c9e7867e-3c02-4ed7-8528-e2fd832c6079/CHƯƠNG 4.pdf`. Mục 4.2 và 4.3 là căn cứ bảng/cột/khóa, đặc biệt đặc tả 4.3.2.1–4.3.2.12, trang 12–30.
 - **Chương 3**, 65 trang: `/workspace/attachments/8eaba411-7586-4eae-aa59-4464586214e5/CHƯƠNG 3.pdf`. Dùng để phân biệt quy tắc hồ sơ, quản trị, sự kiện, giao dịch với ràng buộc database.
 
-Đường dẫn PDF là dấu vết nguồn trong môi trường Codex, không phải tệp được chép vào repository. Chương 4 hiện mô tả baseline 81 cột; bảng `opportunities` trong nhánh này có thêm hai cột metadata deadline đã được nhóm duyệt, nên schema sau thay đổi có 83 cột. Cần cập nhật §4.3.2.3 của PDF; tài liệu này không tuyên bố PDF đã được sửa. Xem bảng đối chiếu trong [architecture.md](architecture.md#5-đối-chiếu-prisma-với-12-bảng-chương-4).
+Đường dẫn PDF là dấu vết nguồn trong môi trường Codex, không phải tệp được chép vào repository. Chương 4 hiện mô tả baseline 81 cột; schema hiện tại trên `main` có thêm hai cột metadata deadline đã được nhóm duyệt, nên có 83 cột. Nhóm xác nhận hai cột này tồn tại trong database phát triển của leader; database thành viên khác chưa được xác nhận. Cần cập nhật §4.3.2.3 của PDF; tài liệu này không tuyên bố PDF đã được sửa. Xem bảng đối chiếu trong [architecture.md](architecture.md#5-đối-chiếu-prisma-với-12-bảng-chương-4).
 
 Hai quyết định bổ sung đã được người dùng xác nhận trong nhiệm vụ này:
 

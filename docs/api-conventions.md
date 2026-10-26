@@ -45,8 +45,8 @@ Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi đọc `e
 
 ## Hợp đồng theo chức năng
 
-- [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất contract nhưng chưa có endpoint nghiệp vụ. Deadline metadata, `majorId` Closed, phân trang và thứ tự đã được duyệt. [Dự thảo API đọc categories](categories-api-contract.md) đang chờ TV1/TV2/TV3 review; frame chi tiết public cũng cần xác định trước khi dựng frontend chi tiết.
-- [API đọc danh mục dùng chung](categories-api-contract.md) là dự thảo, chưa được duyệt hoặc triển khai. TV3 là provider; TV1 tiêu thụ Major Active cho Hub. Không dùng dự thảo này làm bằng chứng API đang tồn tại.
+- [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất contract nhưng chưa có endpoint nghiệp vụ. Deadline metadata, `majorId` Closed, phân trang, thứ tự và phần Major của API categories cho Hub đã được duyệt. Skill/hồ sơ Closed còn là dự thảo; frame chi tiết public cũng cần xác định trước khi dựng frontend chi tiết.
+- [API đọc danh mục dùng chung](categories-api-contract.md): phần Major cho Hub đã được duyệt, TV3 là provider và TV1 consumer; phần Skill/hồ sơ Closed còn chờ TV2/TV3. API chưa triển khai.
 - `page=1`, `pageSize=20`, tối đa 100 là baseline kỹ thuật đang đề xuất chung; endpoint phải ghi giới hạn thực tế và khóa sort ổn định. Contract cơ hội đã duyệt các giá trị này cùng trần page 1,000,000; quyết định đó không mặc nhiên áp dụng cho API khác.
 - Thời gian lưu/trao đổi đã thống nhất UTC; giao diện dùng `Asia/Ho_Chi_Minh`. Chính sách date-only theo từng nghiệp vụ và biểu diễn trong `DATETIME(0)` được ghi ở hợp đồng tương ứng.
 
