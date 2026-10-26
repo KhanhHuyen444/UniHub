@@ -11,7 +11,7 @@ Scaffold được merge qua PR #2; schema qua PR #3; initial migration qua PR #4
 - **Chương 4**, 30 trang: `/workspace/attachments/c9e7867e-3c02-4ed7-8528-e2fd832c6079/CHƯƠNG 4.pdf`. Mục 4.2 và 4.3 là căn cứ bảng/cột/khóa, đặc biệt đặc tả 4.3.2.1–4.3.2.12, trang 12–30.
 - **Chương 3**, 65 trang: `/workspace/attachments/8eaba411-7586-4eae-aa59-4464586214e5/CHƯƠNG 3.pdf`. Dùng để phân biệt quy tắc hồ sơ, quản trị, sự kiện, giao dịch với ràng buộc database.
 
-Đường dẫn PDF là dấu vết nguồn trong môi trường Codex, không phải tệp được chép vào repository. Bảng chi tiết 81 cột trong [architecture.md](architecture.md#5-đối-chiếu-prisma-với-12-bảng-chương-4) được dùng để đối chiếu, không thay thế việc đọc Chương 4.
+Đường dẫn PDF là dấu vết nguồn trong môi trường Codex, không phải tệp được chép vào repository. Chương 4 hiện mô tả baseline 81 cột; bảng `opportunities` trong nhánh này có thêm hai cột metadata deadline đã được nhóm duyệt, nên schema sau thay đổi có 83 cột. Cần cập nhật §4.3.2.3 của PDF; tài liệu này không tuyên bố PDF đã được sửa. Xem bảng đối chiếu trong [architecture.md](architecture.md#5-đối-chiếu-prisma-với-12-bảng-chương-4).
 
 Hai quyết định bổ sung đã được người dùng xác nhận trong nhiệm vụ này:
 
@@ -44,7 +44,7 @@ Prisma 7 đặt URL của Prisma CLI ở `prisma.config.ts`, không ở block da
 | ------------------ | ---------------- | ---------: | --------------------------------- | -----: | --------------- |
 | users              | User             |         10 | user_id, tự tăng                  |      1 | email           |
 | categories         | Category         |          5 | category_id, tự tăng              |      0 | (type, name)    |
-| opportunities      | Opportunity      |         15 | item_id, tự tăng                  |      1 | —               |
+| opportunities      | Opportunity      |         17 | item_id, tự tăng                  |      1 | —               |
 | events             | Event            |         10 | event_id, tự tăng                 |      1 | —               |
 | forum_posts        | ForumPost        |          9 | post_id, tự tăng                  |      1 | —               |
 | comments           | Comment          |          8 | comment_id, tự tăng               |      2 | —               |
@@ -54,7 +54,7 @@ Prisma 7 đặt URL của Prisma CLI ở `prisma.config.ts`, không ở block da
 | opportunity_majors | OpportunityMajor |          2 | (item_id, major_id)               |      2 | —               |
 | opportunity_skills | OpportunitySkill |          2 | (item_id, skill_id)               |      2 | —               |
 | opportunity_years  | OpportunityYear  |          2 | (item_id, academic_year)          |      1 | —               |
-| **Tổng**           | **12 model**     |     **81** | **12 PK: 8 đơn tự tăng + 4 ghép** | **16** | **2**           |
+| **Tổng**           | **12 model**     |     **83** | **12 PK: 8 đơn tự tăng + 4 ghép** | **16** | **2**           |
 
 UNIQUE ở đây không đếm lại tính duy nhất vốn có của PK. Không thêm id vào bảng trung gian, không có many-to-many ngầm định hoặc bảng identity/session. `activity_logs.target_id` là scalar tham chiếu logic, không được tính là FK. Prisma Migrate tạo `_prisma_migrations` để ghi lịch sử khi áp dụng; đây là bảng kỹ thuật, không phải bảng nghiệp vụ thứ 13 hoặc một model Prisma trong 12 bảng thiết kế.
 
@@ -92,7 +92,7 @@ RESTRICT từ chối xóa bản ghi cha hoặc đổi khóa đang được tham 
 
 ### B. Ràng buộc SQL không được Prisma schema biểu diễn
 
-Prisma schema không biểu diễn trực tiếp các **13 CHECK được nêu rõ bằng biểu thức CHECK trong Chương 4** dưới đây. Initial migration đã giữ chúng bằng SQL; không được coi SQL chỉ sinh từ schema là bản thiết kế database hoàn chỉnh.
+Prisma schema không biểu diễn trực tiếp các **13 CHECK được nêu rõ bằng biểu thức CHECK trong Chương 4** dưới đây. Initial migration giữ nguyên các CHECK đó; migration riêng deadline bổ sung một CHECK thứ 14, không có trong PDF hiện tại.
 
 | Bảng              | CHECK cần giữ                                                                                                                                                                                                                                                           |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -104,6 +104,8 @@ Prisma schema không biểu diễn trực tiếp các **13 CHECK được nêu r
 | notifications     | `type IN ('Reminder', 'Violation')`                                                                                                                                                                                                                                     |
 | opportunity_years | `academic_year BETWEEN 1 AND 4`                                                                                                                                                                                                                                         |
 
+Migration `20261026150000_add_opportunity_deadline_metadata` thêm đúng một CHECK vào `opportunities`: `chk_opportunities_deadline_metadata`, cho phép (a) không có deadline khi metadata đều NULL, (b) date-only khi `deadline_source_date` có giá trị và timezone NULL, (c) datetime khi ngày NULL và timezone có giá trị, hoặc (d) legacy unknown khi deadline có giá trị nhưng cả hai metadata NULL. CHECK từ chối metadata khi `deadline` NULL và từ chối trường hợp cả hai metadata cùng có giá trị. Nó không xác thực timezone hay phép tính cutoff; đó là trách nhiệm backend. Không thêm CHECK/FK/UNIQUE/index hoặc cột vào bảng khác.
+
 `opportunity_type` chỉ nhận `Thực tập`, `Việc làm`, `Học bổng`, `Bài viết định hướng`; `forum_posts.topic` chỉ nhận `Học tập`, `Thực tập`, `Kinh nghiệm phỏng vấn` theo mô tả. Hai miền giá trị này phải được backend kiểm tra; nếu nhóm muốn bổ sung CHECK tương ứng thì review ở nhiệm vụ migration, không tự coi chúng là CHECK đã có trong schema.
 
 **Timestamp:** nhóm đã chọn MySQL tự cập nhật cả `users.updated_at` và `events.updated_at`. Initial migration giữ `DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`. Prisma schema chỉ biểu diễn DATETIME và default; không gắn `@updatedAt`, vì cơ chế đó chạy ở Prisma Client và không áp dụng cho lệnh SQL ngoài Prisma.
@@ -112,16 +114,17 @@ Prisma schema không biểu diễn trực tiếp các **13 CHECK được nêu r
 
 ### C. Quy tắc phải xử lý tại backend
 
-| Nhóm quy tắc                 | Phần backend cần bảo đảm                                                                                                                                                                      |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Danh tính, role và ownership | Google token/JWT được xác minh; Guest không lưu như role; kiểm tra đúng Student/Admin và chủ sở hữu từng request; FK chỉ kiểm tra bản ghi tồn tại                                             |
-| Major/Skill                  | major_id phải trỏ category type Major, skill_id phải trỏ Skill; trạng thái Active/Closed theo use case. FK không kiểm tra type/status của danh mục                                            |
-| Hồ sơ và danh mục            | Điều kiện hồ sơ đầy đủ; giữ ít nhất một mục Active mỗi loại; không xóa cứng danh mục; kiểm tra tên không rỗng ngoài UNIQUE                                                                    |
-| Cơ hội và duyệt tin          | Miền loại nội dung, format/location, URL nguồn hợp lệ trước duyệt, is_verified, người/thời điểm duyệt, chuyển trạng thái; CHECK publisher IS NOT NULL không loại chuỗi toàn khoảng trắng      |
-| Lịch                         | Tạo/đổi hạn yêu cầu hạn tương lai; sửa nội dung được giữ hạn cũ; không tự mở lại Completed; reset nhắc đúng ngữ cảnh                                                                          |
-| Diễn đàn/kiểm duyệt          | Miền topic, quyền đăng/bình luận, xóa mềm và lọc nội dung đã xóa, lý do không chỉ có khoảng trắng                                                                                             |
-| Log/thông báo                | action/target đúng nghiệp vụ; reason bắt buộc khi từ chối/xóa; Reminder phải gắn sự kiện, Violation không gắn sự kiện; chủ sở hữu mới đánh dấu đọc                                            |
-| Giao dịch và cạnh tranh      | Thay đổi nghiệp vụ + log + thông báo cùng transaction; Reminder + reminded_at cùng transaction; xử lý hai request đồng thời để không tạo nhắc trùng hoặc vi phạm số danh mục Active tối thiểu |
+| Nhóm quy tắc                 | Phần backend cần bảo đảm                                                                                                                                                                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Danh tính, role và ownership | Google token/JWT được xác minh; Guest không lưu như role; kiểm tra đúng Student/Admin và chủ sở hữu từng request; FK chỉ kiểm tra bản ghi tồn tại                                                                                                |
+| Major/Skill                  | major_id phải trỏ category type Major, skill_id phải trỏ Skill; trạng thái Active/Closed theo use case. FK không kiểm tra type/status của danh mục                                                                                               |
+| Hồ sơ và danh mục            | Điều kiện hồ sơ đầy đủ; giữ ít nhất một mục Active mỗi loại; không xóa cứng danh mục; kiểm tra tên không rỗng ngoài UNIQUE                                                                                                                       |
+| Cơ hội và duyệt tin          | Miền loại nội dung, format/location, URL nguồn hợp lệ trước duyệt, is_verified, người/thời điểm duyệt, chuyển trạng thái; CHECK publisher IS NOT NULL không loại chuỗi toàn khoảng trắng                                                         |
+| Deadline cơ hội              | Backend xác minh timezone nguồn hợp lệ; datetime lưu đúng instant UTC và zone/offset gốc; date-only lưu ngày nguồn cùng cutoff 00:00 ngày kế tiếp `Asia/Ho_Chi_Minh`. CHECK chỉ kiểm tra tổ hợp cột, không tính cutoff hoặc kiểm chứng timezone. |
+| Lịch                         | Tạo/đổi hạn yêu cầu hạn tương lai; sửa nội dung được giữ hạn cũ; không tự mở lại Completed; reset nhắc đúng ngữ cảnh                                                                                                                             |
+| Diễn đàn/kiểm duyệt          | Miền topic, quyền đăng/bình luận, xóa mềm và lọc nội dung đã xóa, lý do không chỉ có khoảng trắng                                                                                                                                                |
+| Log/thông báo                | action/target đúng nghiệp vụ; reason bắt buộc khi từ chối/xóa; Reminder phải gắn sự kiện, Violation không gắn sự kiện; chủ sở hữu mới đánh dấu đọc                                                                                               |
+| Giao dịch và cạnh tranh      | Thay đổi nghiệp vụ + log + thông báo cùng transaction; Reminder + reminded_at cùng transaction; xử lý hai request đồng thời để không tạo nhắc trùng hoặc vi phạm số danh mục Active tối thiểu                                                    |
 
 FK `reviewed_by`/`admin_id` không xác nhận người được tham chiếu là Admin. CHECK scalar và Prisma validate không kiểm chứng được các quy tắc liên bảng, phiên đăng nhập hoặc giao dịch này.
 
@@ -171,10 +174,10 @@ npm.cmd run format:check
 
 ## 5. Trạng thái kiểm tra schema và giới hạn
 
-- **Đạt kiểm tra tĩnh:** đủ 12 model, 81 scalar column, 12 PK (8 đơn + 4 ghép), 16 FK, 2 UNIQUE ngoài PK; tên/kiểu/nullable/default so với bảng thiết kế; khai báo rõ hành vi đủ 16 FK.
-- **Prisma format, validate và generate đạt:** cả ba script ở root hoàn tất với exit code 0, client 7.10.1 được sinh vào thư mục đã ignore. Các lệnh không cần cấp DATABASE_URL hoặc kết nối MySQL.
-- **SQL diff offline đạt tại thời điểm tạo schema:** output ban đầu chỉ dùng để đối chiếu, không được áp dụng trực tiếp. Initial migration đã được review/merge qua PR #4; các ràng buộc CHECK và ON UPDATE được giữ trong file migration, xem [database-migrations.md](database-migrations.md).
-- **Typecheck, build và test HTTP đạt**; phiên bản hiện tại có thêm readiness/client tests được ghi tại [database-runtime.md](database-runtime.md). **Prettier format check đạt**; `.prisma` dùng formatter Prisma riêng. Generated client, node_modules, dist và `.env` thật đều được ignore. Tài liệu schema gốc không kiểm tra MySQL Windows hoặc NFR.
+- **Đạt kiểm tra schema:** 12 model, 83 scalar columns (81 cột baseline Chương 4 + 2 metadata deadline đã duyệt), 12 PK, 16 FK, 2 UNIQUE. Database sau hai migration có 14 CHECK: 13 CHECK Chương 4 trong initial migration và một CHECK metadata riêng.
+- **Prisma format, validate và generate đạt** với Prisma 7.10.1 sau khi thêm metadata. Offline diff xác nhận hai cột `DATE`/`VARCHAR(64)`; SQL CHECK tùy chỉnh không được Prisma diff biểu diễn.
+- **MySQL tạm 8.4.13 đạt** trên database trống và database đã có initial migration cùng bản ghi cũ: deadline cũ giữ nguyên, metadata cũ NULL, các tổ hợp hợp lệ/không hợp lệ được kiểm tra và migrate deploy lần hai không chạy lại migration. Chi tiết ở [database-migrations.md](database-migrations.md). Đây không phải kiểm thử API/UI; backend chưa triển khai validation timezone/cutoff.
+- **Typecheck, build, test HTTP và Prettier đạt** sau thay đổi: frontend 13/13, backend 13/13. `.prisma` dùng formatter Prisma riêng. Generated client, node_modules, dist và `.env` thật đều được ignore. Kiểm thử Codex/Linux không kiểm tra MySQL Windows hoặc NFR.
 
 Lần thử đầu gặp 403 khi tải checksum engine từ **binaries.prisma.sh**. Lần kiểm tra cuối đã tải/chạy được bằng CLI chính thức, không bỏ xác minh checksum hoặc TLS. Nếu môi trường khác gặp lỗi này, cần cho phép hostname nguồn engine chính thức trên; đây không phải máy chủ database. Bản nháp cấu hình mạng Codex đã được lưu để review, nhưng lưu draft không tự chứng minh runtime đã áp dụng cấu hình; kết quả đạt ở trên dựa trên exit code thực tế.
 
