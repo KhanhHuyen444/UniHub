@@ -177,6 +177,10 @@ before(async () => {
   records.nonPublicGuidance = await createOpportunity('guidance article', {
     opportunity_type: 'Bài viết định hướng',
   });
+  records.nonPublicWrongCaseType = await createOpportunity(
+    'invalid lowercase type',
+    { opportunity_type: 'thực tập' },
+  );
   records.publicJob = await createOpportunity('public job', {
     opportunity_type: 'Việc làm',
   });
@@ -278,6 +282,7 @@ enabledTest(
     assert.ok(!ids.includes(records.nonPublicPending.item_id));
     assert.ok(!ids.includes(records.nonPublicRejected.item_id));
     assert.ok(!ids.includes(records.nonPublicGuidance.item_id));
+    assert.ok(!ids.includes(records.nonPublicWrongCaseType.item_id));
     for (const item of body.items) {
       assert.equal(Object.hasOwn(item, 'status'), false);
       assert.equal(Object.hasOwn(item, 'reviewedBy'), false);
@@ -288,6 +293,7 @@ enabledTest(
       records.nonPublicPending,
       records.nonPublicRejected,
       records.nonPublicGuidance,
+      records.nonPublicWrongCaseType,
     ]) {
       const detail = await getDetail(hidden.item_id);
       assert.equal(detail.response.status, 404);

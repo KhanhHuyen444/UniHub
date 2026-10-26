@@ -411,9 +411,21 @@ export async function getPublicOpportunity(
   evaluatedAt: Date,
 ) {
   const id = parseOpportunityId(rawId);
-  const row = await client.opportunity.findFirst({
-    where: { ...publicOpportunityWhere, item_id: id },
-    include: publicOpportunityInclude,
+  const row = await client.$transaction(async (transaction) => {
+    const publicIds = await transaction.$queryRaw<Array<{ item_id: number }>>(
+      Prisma.sql`SELECT o.item_id
+        FROM opportunities AS o
+        WHERE o.item_id = ${id}
+          AND o.status COLLATE utf8mb4_0900_as_cs = 'Approved'
+          AND o.opportunity_type COLLATE utf8mb4_0900_as_cs IN ('Thực tập', 'Việc làm', 'Học bổng')
+        LIMIT 1`,
+    );
+    if (publicIds.length === 0) return null;
+
+    return transaction.opportunity.findUnique({
+      where: { item_id: id },
+      include: publicOpportunityInclude,
+    });
   });
 
   if (!row) {

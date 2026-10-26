@@ -237,7 +237,7 @@ Student/Admin preview hiện tại không phải xác thực. Route guard fronte
 
 ## 6. Ma trận kiểm thử và trạng thái
 
-Các ca nghiệp vụ chính bên dưới đã có test HTTP trong `backend/test/opportunities.test.mjs`, chạy trên MySQL 8.4 tạm với initial migration và deadline metadata migration hiện có. Fixture Approved/Pending/Rejected chỉ được tạo trong database kiểm thử loopback riêng rồi xóa sau test; không phải seed. `npm test` gần nhất đạt 13/13 test frontend và 22/22 test backend (35 tổng); các ca SQL nghiệp vụ đều chạy trên MySQL tạm. Nếu không đặt `TEST_DATABASE_URL` an toàn, 8 test nghiệp vụ cần MySQL tự bỏ qua; health/readiness và kiểm tra HTTP độc lập vẫn chạy.
+Các ca nghiệp vụ chính bên dưới đã có test HTTP trong `backend/test/opportunities.test.mjs`, chạy trên MySQL tạm 8.4.13 với initial migration và deadline metadata migration hiện có. Fixture Approved/Pending/Rejected chỉ được tạo trong database kiểm thử loopback riêng rồi xóa sau test; không phải seed. `npm test` gần nhất đạt 13/13 test frontend và 22/22 test backend (35 tổng); các ca SQL nghiệp vụ đều chạy trên MySQL tạm. Nếu không đặt `TEST_DATABASE_URL` an toàn, 8 test nghiệp vụ cần MySQL tự bỏ qua; health/readiness và kiểm tra HTTP độc lập vẫn chạy.
 
 | Ca                                                        | Kỳ vọng                                                                                                                                                                    |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
