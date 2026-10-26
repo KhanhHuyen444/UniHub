@@ -59,21 +59,24 @@ model Category {
 }
 
 model Opportunity {
-  item_id          Int       @id @default(autoincrement()) @db.Int
-  opportunity_type String    @db.VarChar(30)
-  title            String    @db.VarChar(255)
-  description      String?   @db.Text
-  requirements     String?   @db.Text
-  publisher        String?   @db.VarChar(255)
-  location         String?   @db.VarChar(100)
-  work_format      String?   @db.VarChar(10)
-  deadline         DateTime? @db.DateTime(0)
-  status           String    @default("Pending") @db.VarChar(10)
-  is_verified      Boolean   @default(false)
-  source_url       String?   @db.VarChar(500)
-  reviewed_by      Int?      @db.Int
-  reviewed_at      DateTime? @db.DateTime(0)
-  created_at       DateTime  @default(now()) @db.DateTime(0)
+  item_id                  Int       @id @default(autoincrement()) @db.Int
+  opportunity_type         String    @db.VarChar(30)
+  title                    String    @db.VarChar(255)
+  description              String?   @db.Text
+  requirements             String?   @db.Text
+  publisher                String?   @db.VarChar(255)
+  location                 String?   @db.VarChar(100)
+  work_format              String?   @db.VarChar(10)
+  deadline                 DateTime? @db.DateTime(0)
+  // Paired with deadline by SQL-only CHECK; legacy rows may have both metadata fields NULL.
+  deadline_source_date     DateTime? @db.Date
+  deadline_source_timezone String?   @db.VarChar(64)
+  status                   String    @default("Pending") @db.VarChar(10)
+  is_verified              Boolean   @default(false)
+  source_url               String?   @db.VarChar(500)
+  reviewed_by              Int?      @db.Int
+  reviewed_at              DateTime? @db.DateTime(0)
+  created_at               DateTime  @default(now()) @db.DateTime(0)
 
   reviewer User?              @relation("OpportunityReviewer", fields: [reviewed_by], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
   majors   OpportunityMajor[]
