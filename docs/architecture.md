@@ -19,7 +19,7 @@ flowchart LR
     B -->|JWT UniHub / dữ liệu / lỗi| F
 ```
 
-- **Frontend:** một ứng dụng React được build bằng Vite, có khu vực Public, Student, Admin. React Router declarative mode khai báo route tại `frontend/src/app/router.tsx`; `main` mount `/_dev/health`, `/_dev/ui`, `/404` và fallback `*`, còn `/` chuyển tới health. Nhánh `feat/opportunities-frontend` bổ sung route `/opportunities` và `/opportunities/:id`; danh sách/chi tiết dùng chung chưa merge. `/_dev/ui` preview ba shared layout và component; chưa có auth route guard. Sitemap Public/Student/Admin ở Chương 4 mục 4.1.1 được ghi dưới đây để phân công. Không tách Admin thành ứng dụng thứ hai.
+- **Frontend:** một ứng dụng React được build bằng Vite, có khu vực Public, Student, Admin. React Router declarative mode khai báo route tại `frontend/src/app/router.tsx`; `main` mount `/_dev/health`, `/_dev/ui`, `/404` và fallback `*`, còn `/` chuyển tới health. Nhánh `feat/opportunities-frontend` có route `/opportunities` và `/opportunities/:id` cùng trang danh sách/chi tiết dùng chung; chưa merge. `/_dev/ui` preview ba shared layout và component; chưa có auth route guard. Sitemap Public/Student/Admin ở Chương 4 mục 4.1.1 được ghi dưới đây để phân công. Không tách Admin thành ứng dụng thứ hai.
 - **Backend:** một REST API Express. Middleware kiểm tra phiên, quyền và dữ liệu đầu vào; service xử lý quy tắc, quyền sở hữu, chuyển trạng thái và transaction. Không tin `role`, `user_id`, `author_id` hoặc `admin_id` do frontend tự khai báo để cấp quyền.
 - **Dữ liệu:** chỉ backend sử dụng Prisma và thông tin kết nối MySQL. Prisma không thay thế kiểm tra nghiệp vụ; MySQL chịu trách nhiệm ràng buộc cấu trúc và giao dịch.
 - **Tác vụ nền:** nhắc hạn thuộc backend theo Chương 3, triển khai sau. Chưa chọn thư viện lập lịch, chưa thêm queue, Redis, dịch vụ cron ngoài hoặc tiến trình chạy thật.
@@ -33,7 +33,7 @@ Các route sản phẩm bên dưới được chuyển từ sitemap Chương 4 m
 | --- | --- | --- | --- |
 | `/` | Guest, Student | TV1 | Chưa có trang chủ; tạm chuyển tới `/_dev/health` |
 | `/opportunities` | Guest, Student | TV1 | Danh sách có trên nhánh `feat/opportunities-frontend`; đọc API public đã có trên `main` |
-| `/opportunities/:id` | Guest, Student | TV1 | Trang chi tiết dùng chung đang được hoàn thiện trên `feat/opportunities-frontend`; chưa merge |
+| `/opportunities/:id` | Guest, Student | TV1 | Trang chi tiết dùng chung cho ba loại có trên `feat/opportunities-frontend`; chưa merge |
 | `/roadmaps` | Guest, Student | TV3 | Kế hoạch |
 | `/roadmaps/:id` | Guest, Student | TV3 | Kế hoạch |
 | `/login` | Guest | TV2 | Kế hoạch |

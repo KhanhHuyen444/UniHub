@@ -130,7 +130,7 @@ git status
 
 - `typecheck`: kiểm tra kiểu TypeScript của cả frontend/backend.
 - `build`: tạo `frontend/dist` và `backend/dist`. Thư mục dist là kết quả sinh tự động, không commit.
-- `test`: chạy kiểm thử API client và tương thích Tailwind/CSS ở frontend, build backend rồi chạy kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có test API nghiệp vụ hoặc toàn bộ UI. Lý do kiểm tra CSS và phạm vi override dependency ở [dependency-security.md](docs/dependency-security.md).
+- `test`: chạy kiểm thử API client và tương thích Tailwind/CSS ở frontend, build backend rồi chạy kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có kiểm thử E2E xuyên frontend-backend-MySQL hoặc toàn bộ UI. Lý do kiểm tra CSS và phạm vi override dependency ở [dependency-security.md](docs/dependency-security.md).
 - `format:check`: kiểm tra định dạng mã và tài liệu mới bằng Prettier. Nếu cần sửa định dạng, chạy `npm.cmd run format`, xem diff rồi kiểm tra lại. Hai tài liệu kiến trúc cũ được giữ định dạng riêng để tránh sửa hàng loạt phần đã review.
 
 Chưa cấu hình ESLint; TypeScript dùng strict và Prettier lo định dạng. Không có thêm framework kiểm thử hoặc công cụ chạy song song chỉ để dự phòng.
@@ -183,7 +183,7 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 | TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                  |
 | TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction        |
 
-Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3. Hub cơ hội Public có danh sách; nhánh `feat/opportunities-frontend` đang bổ sung trang chi tiết dùng chung cho ba loại, dựa trên ảnh nhóm cung cấp. Các module sản phẩm khác chưa triển khai. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
+Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3. Trang danh sách, trang chi tiết dùng chung cho ba loại và consumer Major của Hub có trên nhánh `feat/opportunities-frontend`; API Major có trên `feat/categories-major-api`. Các nhánh này chưa merge vào `main`. Các module sản phẩm khác chưa triển khai. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
 
 ## 7. Lỗi thường gặp và giới hạn
 
@@ -193,4 +193,4 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 - Lệnh không có script/workspace: kiểm tra terminal đang ở gốc UniHub và đã lấy đúng nhánh.
 - Không commit `.env`, node_modules, dist, coverage, khóa hoặc dữ liệu cục bộ. `.env.example` chỉ chứa cấu hình mẫu an toàn.
 
-Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. Shared UI/list/detail được kiểm tra trực quan theo ảnh handoff và fixture mock; mock không xác nhận API/MySQL thật. Đăng nhập, JWT và các module nghiệp vụ ngoài Hub cơ hội vẫn chưa triển khai.
+Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. Shared UI/list/detail được kiểm tra trực quan theo ảnh handoff và fixture mock; bố cục ở 1920 px là lựa chọn triển khai, không phải số đo trực tiếp Figma, và mock không xác nhận API/MySQL thật. Đăng nhập, JWT và các module nghiệp vụ ngoài Hub cơ hội vẫn chưa triển khai.

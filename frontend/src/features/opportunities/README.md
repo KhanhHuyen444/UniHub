@@ -13,7 +13,7 @@
 
 ## Phụ thuộc chưa hoàn thành
 
-- `GET /api/categories?type=Major` đã có contract được duyệt nhưng chưa được TV3 triển khai trong `origin/main`. Consumer đã gọi API; trong lúc endpoint lỗi, select Major bị vô hiệu hóa và có thao tác thử lại riêng. Không có Major giả trong ứng dụng. Nếu API cơ hội trả `INVALID_FILTER` cho `majorId`, giao diện giữ query và cho người dùng xóa bộ lọc.
+- `GET /api/categories?type=Major` đã có contract và backend implementation trên `feat/categories-major-api`; endpoint chưa có trên `main` trước khi PR merge. Consumer gửi đúng path/query và parse đúng shape; test consumer được đặt trong `frontend/test/opportunities-api.test.mjs`. Khi backend đang chạy từ `main` chưa có route này, select Major hiện trạng lỗi, bị vô hiệu hóa và có thao tác thử lại riêng. Không có Major giả trong ứng dụng. Nếu API cơ hội trả `INVALID_FILTER` cho `majorId`, giao diện giữ query và cho người dùng xóa bộ lọc.
 - Ba ảnh Public detail do nhóm cung cấp là căn cứ hình thức cho Học bổng, Việc làm và Thực tập. Không dùng frame diễn đàn `131:7557` hoặc chi tiết kiểm duyệt Admin `171:2628` làm thiết kế trang này. Kích thước suy ra từ ảnh là ước lượng, không phải số đo trực tiếp Figma; xem [ghi nhận thiết kế chi tiết](../../../docs/opportunities-detail-ui.md).
 - Nhóm đã cung cấp PNG `Hub cơ hội-V2.png`; ZIP có bounds/text/container trực tiếp cho frame `36:39`, nhưng không có screenshot/asset mới và thiếu nhiều style property. Bố cục tổng thể được đối chiếu theo PNG; các giá trị trực tiếp, phép tính và ước lượng được tách trong [ghi nhận bổ sung](../../../docs/shared-ui-design/opportunities-list-supplement.md). Padding/typography/shadow của card, spacing chính xác, trạng thái pagination và asset icon Hero/Hình thức chưa được đọc trực tiếp.
 - Frame mẫu có sáu thẻ và 28 kết quả, trong khi API mặc định pageSize 20; không hardcode mẫu hoặc cắt danh sách. API summary chưa trả skills dù ảnh card có hàng này; không gửi thêm request detail cho mỗi thẻ. API cũng không trả số ngày countdown; giao diện dùng deadline state/ngày của server.
@@ -33,7 +33,7 @@ Mở terminal PowerShell thứ hai để chạy frontend qua Vite proxy mặc đ
 npm.cmd run dev:frontend
 ```
 
-Mở `http://127.0.0.1:5173/opportunities`. Nếu API chạy ở host/port khác, đặt `API_PROXY_TARGET` trong terminal frontend trước khi chạy Vite. API categories hiện chưa có nên bộ chọn Major sẽ tạm không dùng được; các bộ lọc loại và hình thức vẫn có thể sử dụng.
+Mở `http://127.0.0.1:5173/opportunities`. Nếu API chạy ở host/port khác, đặt `API_PROXY_TARGET` trong terminal frontend trước khi chạy Vite. Để bộ lọc Major tải dữ liệu, backend phải chạy từ nhánh có API categories Major hoặc sau khi PR API được merge; nếu route chưa có, giao diện giữ error/retry state riêng.
 
 Chọn thẻ để mở `/opportunities/:id`, hoặc thay `:id` bằng ID cơ hội Approved thực có trên API. Nếu database chưa có cơ hội công khai, danh sách trả rỗng và chi tiết trả 404 theo contract; không cần tạo dữ liệu hoặc đổi trạng thái trên database nhóm để demo.
 
@@ -46,7 +46,7 @@ npm.cmd test
 npm.cmd run format:check
 ```
 
-Các lời gọi danh sách và danh mục dùng API thật qua proxy. Bài test `frontend/test/opportunities-contracts.test.mjs` chỉ kiểm tra serialization/shape bằng dữ liệu minh họa trong test; nó không chứng minh API categories hoặc MySQL đang hoạt động.
+Các lời gọi danh sách và danh mục dùng API thật qua proxy. `frontend/test/opportunities-api.test.mjs` kiểm tra Major consumer gửi đúng request và nhận đúng response shape; test này không chứng minh endpoint/backend/MySQL đang hoạt động.
 
 ## Kiểm tra
 

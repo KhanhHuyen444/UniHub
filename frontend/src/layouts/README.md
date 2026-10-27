@@ -12,6 +12,6 @@ Token CSS ở `frontend/src/styles/tokens.css`; Tailwind map các màu/font/size
 
 Footer giữ cột **Hỗ trợ** với “Điều khoản sử dụng” (`/terms`) và “Chính sách bảo mật” (`/privacy`) theo quyết định của nhóm. Hai trang dự kiến là nội dung tĩnh, không cần database/API riêng. Preview vẫn hiển thị chữ tĩnh đến khi có nội dung; chưa tạo trang rỗng hoặc tự viết điều khoản/chính sách. Dòng copyright là copy từ hình tham chiếu, chưa được xác nhận là nội dung pháp lý chính thức.
 
-Khung footer Public/Student giữ content 1216 px, cột thương hiệu co giãn và hai cột điều hướng 280 px mỗi cột. Logo Public/Student hiển thị 180 × 180 px theo bounds asset/frame; footer giữ tổng cao tối thiểu 301.25 px.
+CSS hiện đặt logo footer 128 × 128 px, hai cột điều hướng 280 px ở màn hình rộng và 220 px khi viewport không quá 1400 px; footer có chiều cao tối thiểu 301.25 px. Đây là kích thước hiện triển khai, không phải số đo trực tiếp của asset/frame.
 
 Frame nguồn: Public `24:1632`, Student `301:382`, Admin `166:940`. README gốc bàn giao, screenshot và JSON bằng chứng nằm tại `docs/shared-ui-design/`; chỉ asset dùng trong shell được import từ `frontend/src/assets/`.
