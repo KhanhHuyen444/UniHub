@@ -1,6 +1,6 @@
 # Hợp đồng API — Hub cơ hội → Chi tiết cơ hội
 
-> **Trạng thái: hợp đồng đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` đã triển khai trong backend.** Giao diện nghiệp vụ chưa triển khai. Phần Skill và xử lý hồ sơ có danh mục Closed trong [categories-api-contract.md](categories-api-contract.md) vẫn là dự thảo chờ TV2/TV3 thống nhất. Nhóm vẫn cần xác định frame chi tiết public trước khi dựng frontend chi tiết.
+> **Trạng thái: hợp đồng đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` đã triển khai trong backend.** Frontend `/opportunities` đã triển khai một phần: danh sách và bộ lọc; route chi tiết chưa được mount do còn thiếu ảnh/thông số xác nhận của frame Public. API Major có contract đã duyệt nhưng TV3 chưa triển khai. Phần Skill và xử lý hồ sơ có danh mục Closed trong [categories-api-contract.md](categories-api-contract.md) vẫn là dự thảo chờ TV2/TV3 thống nhất.
 
 ## 1. Phạm vi và nguồn
 
@@ -13,7 +13,7 @@ Tài liệu này ghi hợp đồng đọc danh sách cơ hội, tìm kiếm/lọ
 | Handoff Figma trong `docs/shared-ui-design/` | Frame [36:39 — Hub cơ hội-V2](https://www.figma.com/design/6lTZvLvJfeOhz6D8QltvMe/Untitled?node-id=36-39) cho tìm kiếm/lọc và danh sách; frame [171:2628 — Chi tiết một tin HỌC BỔNG](https://www.figma.com/design/6lTZvLvJfeOhz6D8QltvMe/Untitled?node-id=171-2628) chỉ tham khảo tên/nội dung trường. Frame chi tiết ở khu vực kiểm duyệt Admin, không được coi là thiết kế public detail; controls/evidence được dẫn trong [handoff README](shared-ui-design/README.md). |
 | Tài liệu repository                          | [Quy ước API](api-conventions.md), [sitemap/kiến trúc](architecture.md), [schema database](database-schema.md), [lộ trình](development-roadmap.md), [quy trình nhóm](team-workflow.md), [dự thảo categories](categories-api-contract.md), `backend/prisma/schema.prisma` và `frontend/src/lib/api.ts`.                                                                                                                                                                      |
 
-Sitemap ghi `/opportunities` và `/opportunities/:id` là route công khai cho Guest và Student. Router frontend hiện chưa mount hai route nghiệp vụ; API client `apiRequest` đã có nhưng chưa có endpoint cơ hội.
+Sitemap ghi `/opportunities` và `/opportunities/:id` là route công khai cho Guest và Student. `/opportunities` hiện được mount; `/opportunities/:id` vẫn chờ frame chi tiết Public. Danh sách đã dùng API client `apiRequest`; module cũng có hàm gọi/kiểm tra shape detail nhưng chưa render giao diện detail. API cơ hội đã có trên backend. API categories Major vẫn do TV3 triển khai riêng.
 
 ## 2. Đối chiếu nghiệp vụ
 
@@ -237,7 +237,7 @@ Student/Admin preview hiện tại không phải xác thực. Route guard fronte
 
 ## 6. Ma trận kiểm thử và trạng thái
 
-Các ca nghiệp vụ chính bên dưới đã có test HTTP trong `backend/test/opportunities.test.mjs`, chạy trên MySQL tạm 8.4.13 với initial migration và deadline metadata migration hiện có. Fixture Approved/Pending/Rejected chỉ được tạo trong database kiểm thử loopback riêng rồi xóa sau test; không phải seed. `npm test` gần nhất đạt 13/13 test frontend và 22/22 test backend (35 tổng); các ca SQL nghiệp vụ đều chạy trên MySQL tạm. Nếu không đặt `TEST_DATABASE_URL` an toàn, 8 test nghiệp vụ cần MySQL tự bỏ qua; health/readiness và kiểm tra HTTP độc lập vẫn chạy.
+Các ca nghiệp vụ chính bên dưới có test HTTP trong `backend/test/opportunities.test.mjs`; những ca SQL đã được kiểm tra ở vòng backend trước trên MySQL tạm 8.4.13, không phải database nhóm. Trong lần kiểm tra frontend hiện tại, `TEST_DATABASE_URL` không được cấu hình nên 8 ca cần MySQL đã skip; không kiểm tra SQL/MySQL mới trong nhiệm vụ này. `npm test` đạt 20/20 test frontend và 14/14 test backend không cần database; 8/22 test backend bị skip, tổng cộng 34 pass và 8 skip. Fixture Approved/Pending/Rejected của backend chỉ được tạo trong database kiểm thử loopback riêng, không phải seed.
 
 | Ca                                                        | Kỳ vọng                                                                                                                                                                    |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
