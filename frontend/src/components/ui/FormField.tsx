@@ -18,6 +18,7 @@ export interface FormFieldProps {
   hint?: string;
   error?: string;
   required?: boolean;
+  className?: string;
   children: ReactNode;
 }
 
@@ -27,6 +28,7 @@ export function FormField({
   hint,
   error,
   required = false,
+  className = '',
   children,
 }: FormFieldProps) {
   const hintId = hint ? `${id}-hint` : undefined;
@@ -47,7 +49,7 @@ export function FormField({
     : children;
 
   return (
-    <div className="grid gap-2">
+    <div className={`grid ${className || 'gap-2'}`}>
       <label htmlFor={id} className="type-label font-medium text-secondary">
         {label}
         {required && (

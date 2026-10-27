@@ -15,6 +15,8 @@ Tài liệu này ghi hợp đồng đọc danh sách cơ hội, tìm kiếm/lọ
 
 Sitemap ghi `/opportunities` và `/opportunities/:id` là route công khai cho Guest và Student. `/opportunities` hiện được mount; `/opportunities/:id` vẫn chờ frame chi tiết Public. Danh sách đã dùng API client `apiRequest`; module cũng có hàm gọi/kiểm tra shape detail nhưng chưa render giao diện detail. API cơ hội đã có trên backend. API categories Major vẫn do TV3 triển khai riêng.
 
+**Đính chính frame theo ZIP bổ sung ngày 27/10/2026:** `131:7557 — Chi tiết_Guest` là chi tiết bài viết diễn đàn, không phải chi tiết cơ hội. Không dùng frame này làm thiết kế `/opportunities/:id`; frame Public detail vẫn cần nhóm xác định.
+
 ## 2. Đối chiếu nghiệp vụ
 
 | Yêu cầu                                | Nguồn                                                                                    | Quy tắc/đề xuất trong hợp đồng                                                                                                                                                                                                                                                                                              | Điểm chưa chốt                                                                                                                                                                                  |
@@ -219,7 +221,7 @@ Tên API được chọn riêng cho hợp đồng JSON (camelCase/ý nghĩa giao
 
 | Trạng thái/luồng                    | Hành vi dự kiến                                                                                                                                                                                                                                     |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Route                               | Sitemap: `/opportunities` và `/opportunities/:id`, Guest/Student. Router hiện chỉ có route kỹ thuật/preview; TV1 mount route nghiệp vụ sau khi contract được duyệt.                                                                                 |
+| Route                               | `/opportunities` đã được mount cho Guest/Student và hiển thị danh sách qua API. `/opportunities/:id` là route theo contract nhưng giao diện chưa dựng vì còn thiếu frame Public detail.                                                             |
 | API client                          | Dùng `apiRequest('/api/opportunities', { query: URLSearchParams, signal })` và tương tự cho `/:id`; giữ URL tương đối `/api`, không gọi MySQL trực tiếp từ frontend. Xác thực shape JSON ở feature vì client chung không validate schema nghiệp vụ. |
 | Query state                         | Đồng bộ từ khóa, `majorId`, `type`, `workFormat`, `page`, `pageSize` vào query string; submit filter đặt page về 1. URL có thể chia sẻ và browser Back khôi phục danh sách/kết quả.                                                                 |
 | Danh sách loading/success           | Loading state chung; khi có items render trang. Không dùng dữ liệu preview giả để biểu diễn response API.                                                                                                                                           |

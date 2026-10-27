@@ -10,6 +10,7 @@ import {
 export interface SiteFooterProps {
   area: Extract<ShellArea, 'public' | 'student'>;
   previewNavigation?: boolean;
+  navigationLabelOverrides?: Record<string, string>;
 }
 
 const supportLabels = ['Điều khoản sử dụng', 'Chính sách bảo mật'];
@@ -17,19 +18,20 @@ const supportLabels = ['Điều khoản sử dụng', 'Chính sách bảo mật'
 export function SiteFooter({
   area,
   previewNavigation = false,
+  navigationLabelOverrides,
 }: SiteFooterProps) {
   const links = area === 'student' ? studentNavigation : publicNavigation;
 
   return (
-    <footer className="relative min-h-[301.25px] border-t border-line bg-surface px-8 pb-8 pt-12">
-      <div className="mx-auto grid min-h-[220px] max-w-[1216px] grid-cols-[minmax(0,1fr)_280px_280px] gap-8 max-[1400px]:grid-cols-[minmax(0,1fr)_220px_220px]">
+    <footer className="relative min-h-[301.25px] border-t border-line bg-surface px-8 pb-4 pt-12">
+      <div className="mx-auto grid min-h-[220px] max-w-[1216px] grid-cols-[minmax(0,1fr)_280px_280px] gap-8">
         <div className="flex flex-col items-start">
           <img
             src={footerLogo}
             alt=""
             width={180}
             height={180}
-            className="h-32 w-32 object-contain"
+            className="h-[180px] w-[180px] object-contain"
           />
           <span className="mt-2 text-2xl font-bold leading-8 text-navy">
             UniHub
@@ -48,7 +50,7 @@ export function SiteFooter({
                   to={navigationTarget(item, area, previewNavigation)}
                   className="type-label text-muted hover:text-brand focus-visible:rounded-sm"
                 >
-                  {item.label}
+                  {navigationLabelOverrides?.[item.key] ?? item.label}
                 </Link>
               </li>
             ))}
