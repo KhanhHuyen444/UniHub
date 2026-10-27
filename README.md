@@ -152,7 +152,7 @@ UniHub/
 │   ├── components/ui/       # Button, Input, Select, FormField, Badge, Card, states
 │   ├── layouts/             # PublicLayout, StudentLayout, AdminLayout
 │   ├── assets/              # logo và icon Figma đang được shell sử dụng
-│   ├── features/            # module theo chức năng; Hub cơ hội có UI trên nhánh feature
+│   ├── features/            # module theo chức năng; Hub cơ hội list/detail đã có trên main
 │   ├── lib/                 # API client và kiểm tra health
 │   └── styles/              # Tailwind CSS và tokens
 ├── backend/
@@ -162,7 +162,7 @@ UniHub/
 │   │   ├── config/          # kiểm tra PORT
 │   │   ├── middleware/      # lỗi JSON và 404
 │   │   ├── lib/             # README cho hạ tầng dùng chung
-│   │   └── modules/         # health đã chạy; các module khác chỉ README
+│   │   └── modules/         # health và API cơ hội đã chạy; module khác theo phạm vi README
 │   ├── test/                # Node.js built-in test runner
 │   └── prisma/              # schema, migration SQL và Prisma config
 ├── database/README.md       # lối vào tài liệu dữ liệu
@@ -183,7 +183,7 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 | TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                  |
 | TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction        |
 
-Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3. Trang danh sách, trang chi tiết dùng chung cho ba loại và consumer Major của Hub có trên nhánh `feat/opportunities-frontend`; API Major có trên `feat/categories-major-api`. Các nhánh này chưa merge vào `main`. Các module sản phẩm khác chưa triển khai. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
+Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3. Trang danh sách, trang chi tiết dùng chung cho ba loại và consumer Major của Hub đã có trên `main` sau PR #12. API provider Major có implementation trên `feat/categories-major-api` tại PR #13, chờ review/merge. Các module sản phẩm khác chưa triển khai. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
 
 ## 7. Lỗi thường gặp và giới hạn
 

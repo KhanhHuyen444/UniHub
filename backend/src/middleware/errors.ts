@@ -1,4 +1,8 @@
 import type { ErrorRequestHandler, RequestHandler } from 'express';
+import {
+  DatabaseNotConfiguredError,
+  InvalidDatabaseConfigurationError,
+} from '../lib/prisma.js';
 
 export class ApiError extends Error {
   constructor(
@@ -9,6 +13,73 @@ export class ApiError extends Error {
     super(message);
     this.name = 'ApiError';
   }
+}
+
+function isDatabaseUnavailable(error: unknown): boolean {
+  if (
+    error instanceof DatabaseNotConfiguredError ||
+    error instanceof InvalidDatabaseConfigurationError
+  ) {
+    return true;
+  }
+
+  const pending = [error];
+  const seen = new Set<unknown>();
+  const unavailableCodes = new Set([
+    'P1000',
+    'P1001',
+    'P1002',
+    'P1003',
+    'P1008',
+    'P1010',
+    'P1011',
+    'P1017',
+    'P2024',
+    'ECONNREFUSED',
+    'ECONNRESET',
+    'ETIMEDOUT',
+    'EPIPE',
+    'PROTOCOL_CONNECTION_LOST',
+    'ER_ACCESS_DENIED_ERROR',
+    'ER_CON_COUNT_ERROR',
+    'ER_BAD_DB_ERROR',
+    'ER_TABLEACCESS_DENIED_ERROR',
+  ]);
+
+  while (pending.length > 0) {
+    const current = pending.pop();
+    if (!current || typeof current !== 'object' || seen.has(current)) continue;
+    seen.add(current);
+
+    const candidate = current as {
+      code?: unknown;
+      errorCode?: unknown;
+      cause?: unknown;
+    };
+    if (
+      (typeof candidate.code === 'string' &&
+        unavailableCodes.has(candidate.code)) ||
+      (typeof candidate.errorCode === 'string' &&
+        unavailableCodes.has(candidate.errorCode))
+    ) {
+      return true;
+    }
+    pending.push(candidate.cause);
+  }
+
+  return false;
+}
+
+export function asPublicApiError(error: unknown): unknown {
+  if (error instanceof ApiError) return error;
+  if (isDatabaseUnavailable(error)) {
+    return new ApiError(
+      503,
+      'SERVICE_UNAVAILABLE',
+      'Database hiện không sẵn sàng.',
+    );
+  }
+  return error;
 }
 
 export const notFound: RequestHandler = (_request, response) => {

@@ -1,6 +1,6 @@
 # Hợp đồng API — Hub cơ hội → Chi tiết cơ hội
 
-> **Trạng thái: hợp đồng đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` đã triển khai trong backend trên `main`.** Frontend list/detail dùng chung cho ba loại có trên `feat/opportunities-frontend`, chưa merge. Ba ảnh Public detail do nhóm cung cấp được dùng làm căn cứ hình thức; số đo suy ra được ghi là ước lượng. API Major có implementation trên `feat/categories-major-api`, chưa merge; consumer frontend gọi đúng contract trên `feat/opportunities-frontend`. Phần Skill và xử lý hồ sơ có danh mục Closed trong [categories-api-contract.md](categories-api-contract.md) vẫn là dự thảo chờ TV2/TV3 thống nhất.
+> **Trạng thái: hợp đồng đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` đã triển khai trong backend trên `main`.** Frontend list/detail dùng chung cho ba loại đã có trên `main` sau PR #12. Ba ảnh Public detail do nhóm cung cấp được dùng làm căn cứ hình thức; số đo suy ra được ghi là ước lượng. API Major có implementation trên `feat/categories-major-api` tại PR #13, chờ review/merge; consumer frontend đã có trên `main` sau PR #12. Phần Skill và xử lý hồ sơ có danh mục Closed trong [categories-api-contract.md](categories-api-contract.md) vẫn là dự thảo chờ TV2/TV3 thống nhất.
 
 ## 1. Phạm vi và nguồn
 
@@ -13,7 +13,7 @@ Tài liệu này ghi hợp đồng đọc danh sách cơ hội, tìm kiếm/lọ
 | Handoff Figma và ảnh do nhóm cung cấp | Frame [36:39 — Hub cơ hội-V2](https://www.figma.com/design/6lTZvLvJfeOhz6D8QltvMe/Untitled?node-id=36-39) cho tìm kiếm/lọc và danh sách. Public detail dùng ba ảnh `hbong.png`, `job work.png`, `intern (v3).png` do nhóm cung cấp. Frame diễn đàn `131:7557` và kiểm duyệt Admin `171:2628` không thay thế thiết kế Public. Ước lượng từ ảnh được ghi ở [opportunities-detail-ui.md](opportunities-detail-ui.md). |
 | Tài liệu repository                   | [Quy ước API](api-conventions.md), [sitemap/kiến trúc](architecture.md), [schema database](database-schema.md), [lộ trình](development-roadmap.md), [quy trình nhóm](team-workflow.md), [dự thảo categories](categories-api-contract.md), `backend/prisma/schema.prisma` và `frontend/src/lib/api.ts`.                                                                                                             |
 
-Sitemap ghi `/opportunities` và `/opportunities/:id` là route công khai cho Guest và Student. Backend hai endpoint đọc cơ hội có trên `main`; frontend list/detail cùng Major consumer có trên `feat/opportunities-frontend`, chưa merge. API categories Major có implementation riêng trên `feat/categories-major-api`, chờ review/merge; trang chi tiết không gọi endpoint options này.
+Sitemap ghi `/opportunities` và `/opportunities/:id` là route công khai cho Guest và Student. Backend hai endpoint đọc cơ hội cùng frontend list/detail và Major consumer đã có trên `main` sau PR #12. API categories Major có implementation riêng trên `feat/categories-major-api` tại PR #13, chờ review/merge; trang chi tiết không gọi endpoint options này.
 
 **Đính chính nguồn thiết kế:** `131:7557 — Chi tiết_Guest` là chi tiết bài viết diễn đàn, còn `171:2628` thuộc khu vực Admin. Nhóm đã cung cấp ba ảnh Public detail riêng; không dùng hai frame trên để thay thế.
 
@@ -125,7 +125,7 @@ Mọi lỗi giữ envelope `error.code`/`error.message` của `api-conventions.m
 
 ### Phụ thuộc danh mục bộ lọc — TV3 sở hữu hợp đồng chung
 
-BR-02.3 yêu cầu bộ chọn chuyên ngành chỉ gồm Major Active. Nhóm đã duyệt phần Major của API đọc dùng chung do TV3 sở hữu: `GET /api/categories?type=Major`, không có query `status`, response `{ "items": [{ "id": 12, "name": "Kỹ thuật phần mềm", "type": "Major" }] }`. Backend endpoint có code trên `feat/categories-major-api`, chờ review/merge; consumer frontend gửi đúng request này trên `feat/opportunities-frontend`. API cơ hội tự kiểm tra `majorId` trực tiếp qua bảng `categories`; API này không gọi endpoint categories và không phụ thuộc frontend đã tải options hay chưa. Phần Skill và hồ sơ Closed còn chờ TV2/TV3, xem [categories-api-contract.md](categories-api-contract.md). Không dùng endpoint danh mục cho `type`/`workFormat` của cơ hội vì miền giá trị đó cố định trong Chương 4.
+BR-02.3 yêu cầu bộ chọn chuyên ngành chỉ gồm Major Active. Nhóm đã duyệt phần Major của API đọc dùng chung do TV3 sở hữu: `GET /api/categories?type=Major`, không có query `status`, response `{ "items": [{ "id": 12, "name": "Kỹ thuật phần mềm", "type": "Major" }] }`. Frontend consumer đã có trên `main` qua PR #12 và gửi đúng path/query/response shape. Backend endpoint Major có implementation trên `feat/categories-major-api` (PR #13, chờ review/merge). API cơ hội tự kiểm tra `majorId` trực tiếp qua bảng `categories`; API này không gọi endpoint categories và không phụ thuộc frontend đã tải options hay chưa. Phần Skill và hồ sơ Closed còn chờ TV2/TV3, xem [categories-api-contract.md](categories-api-contract.md). Không dùng endpoint danh mục cho `type`/`workFormat` của cơ hội vì miền giá trị đó cố định trong Chương 4.
 
 ### URL có `majorId` đã đóng — quyết định đã duyệt
 
@@ -295,12 +295,12 @@ Response API mục tiêu do đó có `deadline: null` hoặc `{ precision, date,
 
 ### Tác động tài liệu/mô hình
 
-| Thành phần    | Thay đổi / đối chiếu                                                                                                                                                                                                                                                                               |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chương 4      | Cần cập nhật §4.3.2.3: thêm hai cột ở bảng `opportunities`, kiểu/nullability, các tổ hợp metadata hợp lệ/legacy unknown, cutoff date-only, lưu timezone nguồn cho datetime và ranh giới CHECK/backend. **PDF chưa được sửa.**                                                                      |
-| Prisma schema | `Opportunity` thêm `deadline_source_date DateTime? @db.Date` và `deadline_source_timezone String? @db.VarChar(64)`. Hai cột, không đổi model/bảng module khác.                                                                                                                                     |
-| Migration     | Migration mới duy nhất thêm hai cột nullable và `chk_opportunities_deadline_metadata` vào `opportunities`; không cập nhật deadline hiện có, không sửa initial migration.                                                                                                                           |
-| API           | `deadline` trả `precision`, `date`, `sourceTimeZone`, `instant`, `state`; legacy unknown giữ instant nhưng ngày/timezone/state là unknown/null theo contract. Hai endpoint đọc đã triển khai; API ghi/Admin duyệt chưa có. Frontend list/detail có trên `feat/opportunities-frontend`, chưa merge. |
+| Thành phần    | Thay đổi / đối chiếu                                                                                                                                                                                                                                                       |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chương 4      | Cần cập nhật §4.3.2.3: thêm hai cột ở bảng `opportunities`, kiểu/nullability, các tổ hợp metadata hợp lệ/legacy unknown, cutoff date-only, lưu timezone nguồn cho datetime và ranh giới CHECK/backend. **PDF chưa được sửa.**                                              |
+| Prisma schema | `Opportunity` thêm `deadline_source_date DateTime? @db.Date` và `deadline_source_timezone String? @db.VarChar(64)`. Hai cột, không đổi model/bảng module khác.                                                                                                             |
+| Migration     | Migration mới duy nhất thêm hai cột nullable và `chk_opportunities_deadline_metadata` vào `opportunities`; không cập nhật deadline hiện có, không sửa initial migration.                                                                                                   |
+| API           | `deadline` trả `precision`, `date`, `sourceTimeZone`, `instant`, `state`; legacy unknown giữ instant nhưng ngày/timezone/state là unknown/null theo contract. Hai endpoint đọc đã triển khai; API ghi/Admin duyệt chưa có. Frontend list/detail có trên `main` sau PR #12. |
 
 ### Bản ghi cũ
 
@@ -327,9 +327,9 @@ API công khai chỉ có dữ liệu Approved sau quy trình duyệt. Không see
 ## 9. Phụ thuộc triển khai
 
 - Backend thuộc `backend/src/modules/opportunities`; frontend thuộc `frontend/src/features/opportunities`, cùng làm bởi TV1 theo [team-workflow](team-workflow.md).
-- Contract Major Active dùng chung của TV3 đã được nhóm duyệt; implementation endpoint có trên `feat/categories-major-api`, chưa merge vào `main`. API cơ hội tự kiểm tra Major Active trong database và không gọi endpoint options. Skill và hồ sơ Closed vẫn là dự thảo chờ TV2/TV3.
+- Contract Major Active dùng chung của TV3 đã được nhóm duyệt; frontend consumer đã có trên `main` qua PR #12. Provider endpoint có implementation trên `feat/categories-major-api` tại PR #13, đang chờ review/merge. API cơ hội tự kiểm tra Major Active trong database và không gọi endpoint options. Skill và hồ sơ Closed vẫn là dự thảo chờ TV2/TV3.
 - `opportunities` có 17 cột trong schema/migration đã merge vào `main`; Chương 4 hiện mô tả 15 cột và cần cập nhật §4.3.2.3. Xem [schema Prisma và migration](database-schema.md).
-- Hai endpoint đọc cơ hội đã triển khai; API ghi/Admin duyệt chưa có. Trang chi tiết Public dùng chung có trên `feat/opportunities-frontend`; chưa merge. Theo nhóm, database phát triển leader đã có hai cột metadata deadline; thành viên khác cần xác minh database của mình. Runtime chỉ backend kết nối MySQL.
+- Hai endpoint đọc cơ hội đã triển khai; API ghi/Admin duyệt chưa có. Trang chi tiết Public dùng chung có trên `main` sau PR #12. Theo nhóm, database phát triển leader đã có hai cột metadata deadline; thành viên khác cần xác minh database của mình. Runtime chỉ backend kết nối MySQL.
 
 ### Ranh giới database và backend
 
