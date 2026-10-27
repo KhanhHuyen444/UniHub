@@ -123,7 +123,7 @@ Mọi lỗi giữ envelope `error.code`/`error.message` của `api-conventions.m
 
 ### Phụ thuộc danh mục bộ lọc — TV3 sở hữu hợp đồng chung
 
-BR-02.3 yêu cầu bộ chọn chuyên ngành chỉ gồm Major Active. Nhóm đã duyệt phần Major của API đọc dùng chung do TV3 sở hữu: `GET /api/categories?type=Major`, không có query `status`, response `{ "items": [{ "id": 12, "name": "Kỹ thuật phần mềm", "type": "Major" }] }`. Endpoint danh mục này do TV3 triển khai riêng và chưa nằm trong PR cơ hội. API cơ hội tự kiểm tra `majorId` trực tiếp qua bảng `categories`; API này không gọi endpoint categories và không phụ thuộc frontend đã tải options hay chưa. Phần Skill và hồ sơ Closed còn chờ TV2/TV3, xem [categories-api-contract.md](categories-api-contract.md). Không dùng endpoint danh mục cho `type`/`workFormat` của cơ hội vì miền giá trị đó cố định trong Chương 4.
+BR-02.3 yêu cầu bộ chọn chuyên ngành chỉ gồm Major Active. Nhóm đã duyệt phần Major của API đọc dùng chung do TV3 sở hữu: `GET /api/categories?type=Major`, không có query `status`, response `{ "items": [{ "id": 12, "name": "Kỹ thuật phần mềm", "type": "Major" }] }`. Endpoint danh mục được hiện thực riêng trên nhánh `feat/categories-major-api`, chờ review/merge; chưa nằm trên `main` hoặc PR cơ hội. API cơ hội tự kiểm tra `majorId` trực tiếp qua bảng `categories`; API này không gọi endpoint categories và không phụ thuộc frontend đã tải options hay chưa. Phần Skill và hồ sơ Closed còn chờ TV2/TV3, xem [categories-api-contract.md](categories-api-contract.md). Không dùng endpoint danh mục cho `type`/`workFormat` của cơ hội vì miền giá trị đó cố định trong Chương 4.
 
 ### URL có `majorId` đã đóng — quyết định đã duyệt
 
@@ -325,7 +325,7 @@ API công khai chỉ có dữ liệu Approved sau quy trình duyệt. Không see
 ## 9. Phụ thuộc triển khai
 
 - Backend thuộc `backend/src/modules/opportunities`; frontend thuộc `frontend/src/features/opportunities`, cùng làm bởi TV1 theo [team-workflow](team-workflow.md).
-- Contract Major Active dùng chung của TV3 đã được nhóm duyệt. Endpoint categories vẫn do TV3 triển khai riêng; API cơ hội tự kiểm tra Major Active trong database và không gọi API đó. Skill và hồ sơ Closed vẫn là dự thảo chờ TV2/TV3.
+- Contract Major Active dùng chung của TV3 đã được nhóm duyệt; endpoint categories đang có trên nhánh `feat/categories-major-api`, chờ review/merge. API cơ hội tự kiểm tra Major Active trong database và không gọi API đó. Skill và hồ sơ Closed vẫn là dự thảo chờ TV2/TV3.
 - `opportunities` có 17 cột trong schema/migration đã merge vào `main`; Chương 4 hiện mô tả 15 cột và cần cập nhật §4.3.2.3. Xem [schema Prisma và migration](database-schema.md).
 - Hai endpoint đọc cơ hội đã triển khai; API ghi/Admin duyệt và UI nghiệp vụ chưa có. Frame public detail cần được xác định trước khi dựng trang chi tiết. Theo nhóm, database phát triển leader đã có hai cột metadata deadline; thành viên khác cần xác minh database của mình. Runtime chỉ backend kết nối MySQL.
 

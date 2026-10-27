@@ -1,10 +1,10 @@
 # Hợp đồng API đọc danh mục dùng chung
 
-> **Major đã được nhóm duyệt; phần Skill và xử lý hồ sơ Closed vẫn là dự thảo chờ TV2/TV3 thống nhất. API chưa triển khai.** Quyết định về liên kết Major/Skill Closed trong cơ hội đã được nhóm chốt riêng và không mở rộng sang hồ sơ.
+> **Major đã được nhóm duyệt và endpoint đã được triển khai trên nhánh `feat/categories-major-api`; thay đổi chưa có trên `main` cho tới khi PR được merge.** Phần Skill và xử lý hồ sơ Closed vẫn là dự thảo chờ TV2/TV3 thống nhất. Quyết định về liên kết Major/Skill Closed trong cơ hội đã được nhóm chốt riêng và không mở rộng sang hồ sơ.
 
 ## 1. Mục tiêu, phạm vi và nguồn
 
-TV3 sở hữu module `categories` và cung cấp một API đọc danh mục dùng chung. TV1 tiêu thụ danh sách Major Active cho bộ lọc Hub cơ hội. Không tạo endpoint danh mục trong `opportunities`. Tài liệu chỉ chốt hợp đồng đọc; không bao gồm API Admin tạo/sửa/đóng/mở danh mục, code backend/frontend, auth implementation, seed hoặc thay đổi schema/migration/GRANT.
+TV3 sở hữu module `categories` và cung cấp một API đọc danh mục dùng chung. TV1 tiêu thụ danh sách Major Active cho bộ lọc Hub cơ hội. Không tạo endpoint danh mục trong `opportunities`. Tài liệu và nhánh `feat/categories-major-api` hiện thực hóa phần đọc Major đã duyệt; không bao gồm API Admin tạo/sửa/đóng/mở danh mục, Skill, frontend implementation, auth implementation, seed hoặc thay đổi schema/migration/GRANT.
 
 Nguồn đã đối chiếu:
 
@@ -100,17 +100,17 @@ Backend phải xác thực query Major chính xác trước truy vấn. Không d
 
 | Nhu cầu                                                         | Bên cung cấp                            | Bên sử dụng                          | Hợp đồng/phụ thuộc                                                                                                                                               |
 | --------------------------------------------------------------- | --------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Major Active cho bộ lọc Hub cơ hội                              | TV3 — `categories`                      | TV1 — `opportunities`                | Contract Major đã được nhóm duyệt: public, response `{id,name,type}`; Hub gửi `id` qua `majorId`. Chưa có endpoint chạy.                                         |
+| Major Active cho bộ lọc Hub cơ hội                              | TV3 — `categories`                      | TV1 — `opportunities`                | Contract đã duyệt; endpoint ở `feat/categories-major-api`, chờ review/merge.                                                                                     |
 | Major Active cho lựa chọn chuyên ngành trong lộ trình công khai | TV3 — `categories`/`guidance`           | TV3 — `guidance`                     | Chương 3 UC-03/BR-03.3 yêu cầu Major Active; không tạo endpoint category thứ hai trong guidance.                                                                 |
 | Major/Skill Active cho hồ sơ                                    | TV3 — `categories`                      | TV2 — `profile`                      | UC-05 nêu cả Major và Skill Active; cần TV2/TV3 thống nhất quyền `type=Skill`, và xử lý giá trị hồ sơ cũ đã Closed.                                              |
 | Skill trong lộ trình/chi tiết cơ hội                            | TV3 — `guidance`, TV1 — `opportunities` | Guest/Student đọc nội dung tương ứng | Lấy skill đã gắn từ response nội dung; API options Active không được dùng để xóa/ẩn link Closed. Closed link trong cơ hội tiếp tục theo quyết định nhóm đã chốt. |
 | Quản trị danh mục                                               | TV3 — `categories`                      | Admin                                | Tạo/sửa/đóng/mở/đọc Closed thuộc contract Admin riêng; không thêm vào API đọc options này.                                                                       |
 
-TV1 và TV3 không cần đợi implementation của nhau sau khi hợp đồng Major được duyệt: TV3 có thể làm provider, TV1 làm consumer dựa trên cùng shape/error contract rồi tích hợp. Frontend không giả định option luôn còn Active. Nếu category bị đóng sau khi tải option, API cơ hội trả 400/`INVALID_FILTER`; UI báo bộ lọc không còn hợp lệ và cho người dùng xóa. Lỗi tải categories phải có error/retry state riêng, không hiển thị như `items: []`.
+TV3 cung cấp provider Major trong module `categories`; TV1 dùng cùng shape/error contract làm consumer sau khi nhánh được review/merge. Frontend không giả định option luôn còn Active. Nếu category bị đóng sau khi tải option, API cơ hội trả 400/`INVALID_FILTER`; UI báo bộ lọc không còn hợp lệ và cho người dùng xóa. Lỗi tải categories phải có error/retry state riêng, không hiển thị như `items: []`.
 
 Đối với bản ghi liên kết Closed, tách rõ ba việc: endpoint options chỉ trả Active; endpoint nội dung có thể trả liên kết đã tồn tại theo quy tắc của module; endpoint Admin quản lý Closed ngoài phạm vi. Không suy ra rằng mọi module phải xóa hoặc ẩn liên kết cũ.
 
-## 7. Ma trận kiểm thử dự kiến — chưa viết test
+## 7. Ma trận kiểm thử
 
 | Ca kiểm thử                                                               | Kỳ vọng                                                                                                              |
 | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -126,6 +126,8 @@ TV1 và TV3 không cần đợi implementation của nhau sau khi hợp đồng 
 | Field response dùng ở Hub                                                 | `id` khớp `majorId`, `name` hiển thị, `type=Major`; không cần `status`/`created_at`.                                 |
 | Major đóng sau khi Hub tải options                                        | API cơ hội trả 400/`INVALID_FILTER`; giao diện cho người dùng xóa filter, không âm thầm bỏ.                          |
 
+Backend tests cho route Major nằm tại `backend/test/categories.test.mjs`. Các ca route/query/error dùng fake Prisma delegate; ca lọc trạng thái và sắp xếp collation có thể chạy qua Prisma trên MySQL tạm riêng bằng `TEST_CATEGORIES_DATABASE_URL`. Test thật chỉ chạy nếu biến này trỏ tới database loopback có tên bắt đầu `unihub_categories_test` và database chưa có category; test không xóa dữ liệu sẵn có.
+
 ## 8. Phần còn dự thảo — chờ TV2/TV3 thống nhất
 
 | Quyết định                        | Phương án để TV2/TV3 review                                                                                                                                            | Tác động                                                                                   | Có chặn triển khai không                             |
@@ -137,4 +139,10 @@ TV1 và TV3 không cần đợi implementation của nhau sau khi hợp đồng 
 
 ## 9. Không triển khai trong nhiệm vụ này
 
-Chưa có endpoint categories chạy được, chưa sửa API client/UI, chưa có API quản trị danh mục, auth, seed, test code, schema/migration/GRANT hoặc dữ liệu danh mục thật. Phần Major cho Hub đã được duyệt; không tuyên bố phần Skill/hồ sơ Closed đã được duyệt. TV3 có thể triển khai provider Major và TV1 consumer song song theo contract đã duyệt, theo ownership ở [team-workflow.md](team-workflow.md).
+Endpoint `GET /api/categories?type=Major` và backend tests đang có trên `feat/categories-major-api`; chúng chưa có trên `main` khi PR chưa được merge. Consumer Major trên frontend đã được đối chiếu tại nhánh `feat/opportunities-frontend`: gửi `type=Major` và yêu cầu response `items` gồm `id`, `name`, `type`. Chưa kiểm thử tích hợp end-to-end frontend với API. API Skill, API quản trị danh mục, auth, seed, thay đổi schema/migration/GRANT và dữ liệu danh mục thật vẫn ngoài phạm vi. Không tuyên bố phần Skill/hồ sơ Closed đã được duyệt. TV3 tiếp quản module `backend/src/modules/categories`; quyền sở hữu ghi tại [team-workflow.md](team-workflow.md).
+
+## 10. Trạng thái triển khai và kết quả kiểm tra
+
+Trên `feat/categories-major-api`, route được kiểm thử qua HTTP/Express và Prisma Client dùng chung. Ngày 27/10/2026, bộ kiểm thử categories chạy với MySQL 8.4.13 tạm riêng: áp dụng cả hai migration hiện có lên database mới `unihub_categories_test`, xác nhận response rỗng ban đầu, sau đó tạo fixtures tạm Major Active/Closed và Skill Active để kiểm tra filter, response và thứ tự tên theo collation. Container chỉ publish loopback, không gắn volume và được xóa sau test. Không dùng database nhóm hoặc seed repository.
+
+Ở lần chạy root `npm test` cùng MySQL tạm: frontend 13 pass; backend 20 pass, 0 fail, 8 skip; cả 8 skip là các ca MySQL của opportunities vì `TEST_DATABASE_URL` không được cấu hình. Ca MySQL categories đã chạy và pass bằng `TEST_CATEGORIES_DATABASE_URL`. Đây là kiểm thử backend/database; consumer frontend mới được đối chiếu contract, chưa có kiểm thử end-to-end hoặc kiểm thử trực quan.

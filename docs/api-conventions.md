@@ -49,8 +49,8 @@ Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi đọc `e
 
 ## Hợp đồng theo chức năng
 
-- [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` đã triển khai. API categories Major vẫn do TV3 triển khai riêng; API cơ hội tự kiểm tra Major Active trong database. Skill/hồ sơ Closed còn là dự thảo; frame chi tiết public cần xác định trước khi dựng frontend chi tiết.
-- [API đọc danh mục dùng chung](categories-api-contract.md): phần Major cho Hub đã được duyệt, TV3 là provider và TV1 consumer; phần Skill/hồ sơ Closed còn chờ TV2/TV3. API chưa triển khai.
+- [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` đã triển khai. API cơ hội tự kiểm tra Major Active trong database; endpoint options Major riêng của TV3 đã có trên `feat/categories-major-api`, chờ review/merge. Skill/hồ sơ Closed còn là dự thảo; frame chi tiết public cần xác định trước khi dựng frontend chi tiết.
+- [API đọc danh mục dùng chung](categories-api-contract.md): `GET /api/categories?type=Major` đã được hiện thực trên nhánh `feat/categories-major-api`, chờ review/merge để có trên `main`. API public chỉ trả Major Active theo `{items:[{id,name,type}]}`; phần Skill/hồ sơ Closed còn chờ TV2/TV3.
 - `page=1`, `pageSize=20`, tối đa 100 là baseline kỹ thuật đang đề xuất chung; endpoint phải ghi giới hạn thực tế và khóa sort ổn định. Contract cơ hội đã duyệt các giá trị này cùng trần page 1,000,000; quyết định đó không mặc nhiên áp dụng cho API khác.
 - Thời gian lưu/trao đổi đã thống nhất UTC; giao diện dùng `Asia/Ho_Chi_Minh`. Chính sách date-only theo từng nghiệp vụ và biểu diễn trong `DATETIME(0)` được ghi ở hợp đồng tương ứng.
 
