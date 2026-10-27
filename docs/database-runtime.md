@@ -69,6 +69,8 @@ Health phải trả HTTP 200 dù MySQL chưa cấu hình. Readiness trả HTTP 2
 
 Để tạo/cấp runtime user, quản trị viên MySQL thực hiện các lệnh mẫu đã ghi trong [database-migrations.md](database-migrations.md#tai-khoan-va-quyen). Mẫu cấp `DELETE` trên `notifications` nhưng không cấp `DELETE` trên `users`, `activity_logs` hoặc database-wide. `activity_logs` chỉ có `SELECT, INSERT`. Không có lệnh nào trong tài liệu này đã chạy trên MySQL của nhóm.
 
+Quyền trên hiện chỉ áp dụng các bảng đang có. Nếu nhóm duyệt bảng `auth_sessions` trong [hợp đồng xác thực](auth-api-contract.md), cần migration và rà soát/cập nhật GRANT riêng trước khi bật auth; kiểm thử runtime hiện tại chưa kiểm chứng quyền của bảng đó.
+
 ## Kết quả kiểm thử
 
 Đã chạy trên MySQL chính thức `mysql:8.4`, server **8.4.13**, bằng schema tạm `unihub_runtime_test` không gắn volume. Tài khoản migration và runtime được tạo ngẫu nhiên riêng cho container; quyền runtime theo mẫu trong database-migrations.md. Container bị xóa sau test.

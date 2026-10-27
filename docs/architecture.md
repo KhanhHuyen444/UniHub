@@ -65,10 +65,10 @@ Luồng đã được nhóm chốt:
 1. Frontend sử dụng Google Identity Services và nhận **Google ID token**.
 2. Frontend gửi token tới endpoint đăng nhập backend qua HTTPS. Client ID là cấu hình công khai; không đưa Google client secret vào frontend.
 3. Backend xác minh chữ ký bằng khóa công khai của Google, issuer, audience khớp client ID cấu hình, hạn token và các claim cần thiết. Chỉ giải mã JSON của JWT không đủ để xác thực. Không tin tên/email/role do client gửi kèm nếu chưa kiểm chứng.
-4. Backend xử lý tra cứu tài khoản theo thiết kế đã thống nhất, lấy quyền từ dữ liệu UniHub và phát token **của UniHub**. Google ID token không được dùng thay JWT UniHub cho các API nghiệp vụ.
+4. Backend tra cứu tài khoản theo cơ chế identity sau khi nhóm review (hợp đồng đề xuất Google `sub`, không tự liên kết theo email), lấy role từ dữ liệu UniHub và phát token **của UniHub**. Google ID token không được dùng thay JWT UniHub cho các API nghiệp vụ.
 5. Mọi API được bảo vệ kiểm tra token UniHub, quyền và quyền sở hữu tài nguyên ở backend; frontend guard không phải biện pháp bảo vệ dữ liệu.
 
-Chương 3 trang 7 và UC-04 trang 38–40 quy định access token tối đa 15 phút, refresh token tối đa 7 ngày trong cookie `HttpOnly`, `Secure`, `SameSite=Strict`; khi refresh phải đọc lại role từ database. Đây là yêu cầu cho bước triển khai, chưa có cookie hoặc token được tạo trong nhiệm vụ này. Origin/CORS, chống CSRF, lưu access token, refresh rotation/thu hồi và cấu hình HTTPS cục bộ cần thiết kế khi làm xác thực; không tự thêm bảng hoặc dịch vụ để giải quyết ngay.
+Chương 3 NFR-02.4 và UC-04 quy định access token tối đa 15 phút, refresh token tối đa 7 ngày trong cookie `HttpOnly`, `Secure`, `SameSite=Strict`; khi refresh phải đọc lại role từ database. Đây là yêu cầu, chưa có cookie hoặc token được tạo. Đề xuất truyền access bằng Bearer trong memory, refresh opaque trong cookie và kiểm tra trạng thái phiên/user ở backend được ghi tại [auth-api-contract.md](auth-api-contract.md) để review. CORS/Origin, CSRF và HTTPS production cần chốt trước triển khai. Schema không có Google subject, account status hoặc session store; chưa tự thêm bảng.
 
 | Đối tượng | Ý nghĩa và nguồn quyền |
 | --- | --- |
@@ -76,12 +76,13 @@ Chương 3 trang 7 và UC-04 trang 38–40 quy định access token tối đa 15
 | Student | Tài khoản có `users.role = 'Student'`; backend kiểm tra chủ sở hữu khi thao tác hồ sơ, sự kiện, thông báo. |
 | Admin | Tài khoản có `users.role = 'Admin'`; backend kiểm tra quyền cho mọi thao tác quản trị và ghi nhật ký theo use case. |
 
-**Các điểm cần xử lý trước khi triển khai xác thực, không tự đổi schema:**
+**Các giới hạn schema và điểm cần review trước khi triển khai xác thực:**
 
 - UC-04 đang mô tả nhận Authorization Code rồi đổi token; cập nhật tài liệu nghiệp vụ sang Google ID token theo quyết định mới. Không tự thêm bước trao đổi code hoặc yêu cầu client secret cho luồng mới.
-- Chương 4 có `users.email UNIQUE`, chưa có cột lưu Google `sub`. `sub` trong ID token là định danh chủ thể Google; email không phải định danh bất biến. Cần nhóm xác nhận cách gắn danh tính Google lâu dài trước khi viết đăng nhập. Hiện giữ nguyên 12 bảng và mọi cột, **không tự thêm `google_sub`** hoặc giả vờ đã giải quyết liên kết tài khoản.
-- Chưa có bảng/cột lưu refresh session hoặc token bị thu hồi trong Chương 4. Cơ chế rotation/thu hồi phải được thảo luận khi làm xác thực; không tự bổ sung `sessions`, `refresh_tokens` hoặc kho dữ liệu khác.
-- Yêu cầu khởi tạo Admin trong UC-04 là công việc triển khai sau. Không tạo Admin, tài khoản mẫu hoặc seed trong đợt này.
+- Chương 4 có `users.email UNIQUE`, chưa có cột Google `sub`. Email không đủ làm liên kết identity ổn định; hợp đồng đề xuất `google_sub` và quy trình không auto-link theo email, nhưng cần nhóm duyệt và migration riêng. Giữ nguyên 12 bảng trong nhiệm vụ hiện tại.
+- Chưa có account status hoặc bảng session/refresh/revocation. Hợp đồng đề xuất `account_status` và `auth_sessions`; đây là đề xuất cần review, không phải schema đã có.
+- Chương 3 quy định Admin đầu tiên được seed. Hợp đồng đề xuất provisioning có kiểm soát theo Google `sub`, không hardcode email và không có public bootstrap endpoint. Chưa tạo Admin, tài khoản mẫu hoặc seed.
+- Chương 3 UC-04 mô tả Authorization Code, trong khi nhóm đã chốt frontend gửi Google ID token. Contract theo quyết định mới; nội dung PDF vẫn chưa được sửa.
 
 ## 3. Cấu trúc scaffold và vị trí Prisma sau này
 

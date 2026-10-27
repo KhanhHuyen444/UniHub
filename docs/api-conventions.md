@@ -51,6 +51,7 @@ Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi đọc `e
 
 - [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` cùng frontend list/detail đã có trên `main` sau PR #12. Consumer Major của Hub cũng có trên `main`; API cơ hội vẫn tự kiểm tra Major Active trong database.
 - [API đọc danh mục dùng chung](categories-api-contract.md): contract và `GET /api/categories?type=Major` đã có trên `main` sau PR #13. Endpoint chỉ trả Major Active với shape `{items:[{id,name,type}]}`. Luồng Major consumer/API cùng Public Hub đã được kiểm thử tích hợp; xem [báo cáo](opportunities-integration-test.md). Skill và hồ sơ Closed vẫn ngoài phạm vi/chờ TV2/TV3.
+- [Hợp đồng xác thực và phân quyền](auth-api-contract.md) là **dự thảo để review**, chưa có endpoint auth hoặc middleware được triển khai. Hợp đồng giữ Google ID token → backend verification → JWT UniHub và nêu các phụ thuộc schema/session.
 - `page=1`, `pageSize=20`, tối đa 100 là baseline kỹ thuật đang đề xuất chung; endpoint phải ghi giới hạn thực tế và khóa sort ổn định. Contract cơ hội đã duyệt các giá trị này cùng trần page 1,000,000; quyết định đó không mặc nhiên áp dụng cho API khác.
 - Thời gian lưu/trao đổi đã thống nhất UTC; giao diện dùng `Asia/Ho_Chi_Minh`. Chính sách date-only theo từng nghiệp vụ và biểu diễn trong `DATETIME(0)` được ghi ở hợp đồng tương ứng.
 
@@ -75,4 +76,4 @@ Các quy ước dưới đây **chưa phải endpoint hoặc hợp đồng nghi�
 
 Frontend nhận Google ID token từ Google Identity Services, backend xác minh rồi phát JWT riêng UniHub. Guest là trạng thái chưa đăng nhập, không lưu trong users.role. Server kiểm tra quyền và ownership; guard frontend chỉ giúp điều hướng. Chỉ backend được kết nối MySQL.
 
-Thời hạn token/cookie đã ghi trong architecture và Chương 3 được giữ nguyên. Tài liệu này **không tự chốt thêm** lưu access token, refresh rotation/thu hồi, CSRF, CORS/origin hay liên kết Google sub; phải xử lý các điểm mở trước khi làm auth. Chưa có endpoint login/refresh/logout hoặc middleware xác thực trong scaffold.
+Chương 3 NFR-02.4 quy định access tối đa 15 phút, refresh tối đa 7 ngày trong cookie `HttpOnly`, `Secure`, `SameSite=Strict`, và đọc lại role khi refresh. Các đề xuất về Google `sub`, token/session, CSRF, Origin và khóa tài khoản nằm trong [auth-api-contract.md](auth-api-contract.md), cần nhóm review trước triển khai. Schema chưa có identity/session/status cần thiết; chưa có endpoint login/refresh/logout hoặc middleware xác thực trong scaffold.

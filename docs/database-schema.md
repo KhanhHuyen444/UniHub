@@ -189,8 +189,7 @@ Initial migration đã bổ sung các CHECK, collation, hai `ON UPDATE` và thi�
 
 Các quyết định FK/timestamp đã được xác nhận và lưu trong schema/migration. Các điểm sau thuộc nhiệm vụ kế tiếp, không tự mở rộng mô hình 12 bảng:
 
-- Liên kết tài khoản Google lâu dài bằng sub và cơ chế refresh session/thu hồi: users hiện chưa có google_sub, không có bảng session/identity/token.
-- Liên kết tài khoản Google lâu dài bằng sub, session/thu hồi token; xem xét khi làm xác thực.
+- Xác thực Google, trạng thái khóa và session/refresh: schema hiện chưa có `google_sub`, `account_status` hoặc bảng session. Đề xuất `google_sub`, `account_status`, `auth_sessions` đang chờ review trong [auth-api-contract.md](auth-api-contract.md); không có thay đổi schema nào ở commit tài liệu này.
 - Xác nhận môi trường môn học hỗ trợ phiên bản đã chọn và kiểm thử trên máy Windows của nhóm.
 - Các thay đổi lược đồ mới vẫn cần migration riêng và review theo quy trình trong database-migrations.md.
 
