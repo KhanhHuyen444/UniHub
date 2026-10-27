@@ -12,19 +12,26 @@ export interface PublicLayoutProps {
   children: React.ReactNode;
   activeKey?: string;
   previewNavigation?: boolean;
+  variant?: 'default' | 'opportunities';
 }
 
 export function PublicLayout({
   children,
   activeKey = 'home',
   previewNavigation = false,
+  variant = 'default',
 }: PublicLayoutProps) {
   const area: Extract<ShellArea, 'public'> = 'public';
+  const isOpportunities = variant === 'opportunities';
 
   return (
     <div className="flex min-h-screen flex-col bg-page">
-      <header className="h-[72px] shrink-0 border-b border-line bg-white/90 shadow-nav backdrop-blur-[24px]">
-        <div className="mx-auto flex h-full max-w-public items-center justify-between px-8">
+      <header
+        className={`${isOpportunities ? 'h-[81px]' : 'h-[72px]'} shrink-0 border-b border-line bg-white/90 shadow-nav backdrop-blur-[24px]`}
+      >
+        <div
+          className={`mx-auto flex h-full items-center justify-between px-8 ${isOpportunities ? 'w-full max-w-[1280px]' : 'max-w-public'}`}
+        >
           <Brand area={area} previewNavigation={previewNavigation} />
           <nav aria-label="Điều hướng chính">
             <ul className="flex items-center gap-8">
@@ -58,9 +65,21 @@ export function PublicLayout({
       </header>
 
       <main className="w-full flex-1">
-        <div className="mx-auto w-full max-w-public px-8 py-6">{children}</div>
+        <div
+          className={`mx-auto w-full ${isOpportunities ? 'max-w-[1280px] px-8 pt-10' : 'max-w-public px-8 py-6'}`}
+        >
+          {children}
+        </div>
       </main>
-      <SiteFooter area={area} previewNavigation={previewNavigation} />
+      <SiteFooter
+        area={area}
+        previewNavigation={previewNavigation}
+        navigationLabelOverrides={
+          isOpportunities
+            ? { opportunities: 'Cơ hội', roadmaps: 'Lộ trình' }
+            : undefined
+        }
+      />
     </div>
   );
 }

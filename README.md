@@ -1,8 +1,8 @@
 # UniHub
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Repository hiện ở **giai đoạn bộ khung phát triển chung**: frontend có API client, router kỹ thuật và preview component/layout dùng chung từ Figma Page 3; chưa có trang nghiệp vụ. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Nhánh hiện tại có bộ khung phát triển chung và luồng Public Hub cơ hội gồm danh sách cùng chi tiết; các module khác chưa triển khai. `GET /api/opportunities` và `GET /api/opportunities/:id` là API đọc công khai đã có trên `main`; `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
 
-Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4, Prisma runtime qua PR #5. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Chưa có đăng nhập Google, JWT, tài khoản mẫu hoặc API nghiệp vụ. Preview UI chỉ dùng kiểm tra shell/component, không phải giao diện hoặc chức năng sản phẩm. Có thể chạy frontend health/preview mà không cần MySQL hoặc Docker.
+Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4, Prisma runtime qua PR #5. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Chưa có đăng nhập Google, JWT, tài khoản mẫu hoặc API ghi/Admin; API Hub cơ hội chỉ đọc. Shared UI preview chỉ dùng kiểm tra shell/component, không phải giao diện sản phẩm. Có thể chạy frontend health/preview mà không cần MySQL hoặc Docker.
 
 ## 1. Công nghệ và điều kiện môi trường
 
@@ -130,7 +130,7 @@ git status
 
 - `typecheck`: kiểm tra kiểu TypeScript của cả frontend/backend.
 - `build`: tạo `frontend/dist` và `backend/dist`. Thư mục dist là kết quả sinh tự động, không commit.
-- `test`: chạy kiểm thử API client và tương thích Tailwind/CSS ở frontend, build backend rồi chạy kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có test API nghiệp vụ hoặc toàn bộ UI. Lý do kiểm tra CSS và phạm vi override dependency ở [dependency-security.md](docs/dependency-security.md).
+- `test`: chạy kiểm thử API client và tương thích Tailwind/CSS ở frontend, build backend rồi chạy kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có kiểm thử E2E xuyên frontend-backend-MySQL hoặc toàn bộ UI. Lý do kiểm tra CSS và phạm vi override dependency ở [dependency-security.md](docs/dependency-security.md).
 - `format:check`: kiểm tra định dạng mã và tài liệu mới bằng Prettier. Nếu cần sửa định dạng, chạy `npm.cmd run format`, xem diff rồi kiểm tra lại. Hai tài liệu kiến trúc cũ được giữ định dạng riêng để tránh sửa hàng loạt phần đã review.
 
 Chưa cấu hình ESLint; TypeScript dùng strict và Prettier lo định dạng. Không có thêm framework kiểm thử hoặc công cụ chạy song song chỉ để dự phòng.
@@ -152,7 +152,7 @@ UniHub/
 │   ├── components/ui/       # Button, Input, Select, FormField, Badge, Card, states
 │   ├── layouts/             # PublicLayout, StudentLayout, AdminLayout
 │   ├── assets/              # logo và icon Figma đang được shell sử dụng
-│   ├── features/            # README theo chức năng, chưa có nghiệp vụ
+│   ├── features/            # module theo chức năng; Hub cơ hội list/detail đã có trên main
 │   ├── lib/                 # API client và kiểm tra health
 │   └── styles/              # Tailwind CSS và tokens
 ├── backend/
@@ -162,7 +162,7 @@ UniHub/
 │   │   ├── config/          # kiểm tra PORT
 │   │   ├── middleware/      # lỗi JSON và 404
 │   │   ├── lib/             # README cho hạ tầng dùng chung
-│   │   └── modules/         # health đã chạy; các module khác chỉ README
+│   │   └── modules/         # health và API cơ hội đã chạy; module khác theo phạm vi README
 │   ├── test/                # Node.js built-in test runner
 │   └── prisma/              # schema, migration SQL và Prisma config
 ├── database/README.md       # lối vào tài liệu dữ liệu
@@ -183,7 +183,7 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 | TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                  |
 | TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction        |
 
-Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3; chưa dựng giao diện nghiệp vụ. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
+Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3. Trang danh sách, trang chi tiết dùng chung cho ba loại và consumer Major của Hub đã có trên `main` sau PR #12. API provider Major có implementation trên `feat/categories-major-api` tại PR #13, chờ review/merge. Các module sản phẩm khác chưa triển khai. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
 
 ## 7. Lỗi thường gặp và giới hạn
 
@@ -193,4 +193,4 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 - Lệnh không có script/workspace: kiểm tra terminal đang ở gốc UniHub và đã lấy đúng nhánh.
 - Không commit `.env`, node_modules, dist, coverage, khóa hoặc dữ liệu cục bộ. `.env.example` chỉ chứa cấu hình mẫu an toàn.
 
-Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. Shared UI được đối chiếu ảnh handoff ở 1280 px; chưa xác nhận breakpoint, max-width CSS gốc hoặc viewport Figma 1920 px. Đăng nhập, JWT, API nghiệp vụ, cron và mọi chức năng nghiệp vụ vẫn chưa triển khai.
+Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. Shared UI/list/detail được kiểm tra trực quan theo ảnh handoff và fixture mock; bố cục ở 1920 px là lựa chọn triển khai, không phải số đo trực tiếp Figma, và mock không xác nhận API/MySQL thật. Đăng nhập, JWT và các module nghiệp vụ ngoài Hub cơ hội vẫn chưa triển khai.

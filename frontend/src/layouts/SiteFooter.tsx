@@ -10,6 +10,7 @@ import {
 export interface SiteFooterProps {
   area: Extract<ShellArea, 'public' | 'student'>;
   previewNavigation?: boolean;
+  navigationLabelOverrides?: Record<string, string>;
 }
 
 const supportLabels = ['Điều khoản sử dụng', 'Chính sách bảo mật'];
@@ -17,6 +18,7 @@ const supportLabels = ['Điều khoản sử dụng', 'Chính sách bảo mật'
 export function SiteFooter({
   area,
   previewNavigation = false,
+  navigationLabelOverrides,
 }: SiteFooterProps) {
   const links = area === 'student' ? studentNavigation : publicNavigation;
 
@@ -48,7 +50,7 @@ export function SiteFooter({
                   to={navigationTarget(item, area, previewNavigation)}
                   className="type-label text-muted hover:text-brand focus-visible:rounded-sm"
                 >
-                  {item.label}
+                  {navigationLabelOverrides?.[item.key] ?? item.label}
                 </Link>
               </li>
             ))}
