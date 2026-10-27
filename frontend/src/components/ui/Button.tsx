@@ -7,7 +7,7 @@ export type ButtonVariant =
   | 'neutral'
   | 'danger';
 
-export type ButtonSize = 'default' | 'icon';
+export type ButtonSize = 'default' | 'compact' | 'icon' | 'page';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -26,7 +26,9 @@ const variants: Record<ButtonVariant, string> = {
 
 const sizes: Record<ButtonSize, string> = {
   default: 'h-10 min-h-10 px-4 py-2',
+  compact: 'h-[38px] min-h-[38px] px-4 py-2',
   icon: 'h-9 min-h-9 w-9 p-0',
+  page: 'h-10 min-h-10 w-10 p-0',
 };
 
 export function Button({

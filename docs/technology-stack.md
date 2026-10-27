@@ -1,10 +1,10 @@
 # Công nghệ UniHub
 
-Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI **25/10/2026**. Trạng thái: bộ khung React/Express, API client, router và shell preview đã có; nghiệp vụ vẫn là kế hoạch.
+Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI **25/10/2026**. Trạng thái `main`: bộ khung React/Express, API client, router và shell preview. Trên các nhánh tính năng hiện có, luồng Public Hub list/detail và API đọc cơ hội đã được triển khai; các nhánh frontend/API Major chưa merge.
 
 ## 1. Phạm vi và căn cứ
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Sau scaffold có hai npm workspace, một lockfile gốc, frontend React, backend Express, schema Prisma và initial migration đã merge qua PR #4. Prisma runtime bổ sung adapter MySQL, Prisma Client singleton và readiness probe; migration/runtime được kiểm thử trên MySQL 8.4 dùng một lần, không truy cập database nhóm. Chưa có dữ liệu mẫu, xác thực hoặc chức năng nghiệp vụ; chưa triển khai hosting. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md), [database-runtime.md](database-runtime.md) và [README](../README.md).
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Sau scaffold có hai npm workspace, một lockfile gốc, frontend React, backend Express, schema Prisma và initial migration đã merge qua PR #4. Prisma runtime bổ sung adapter MySQL, Prisma Client singleton và readiness probe; migration/runtime được kiểm thử trên MySQL 8.4 dùng một lần, không truy cập database nhóm. Các nhánh tính năng hiện có luồng Public Hub list/detail; API đọc cơ hội đã có trên `main`, còn consumer frontend và API Major đang ở các nhánh chưa merge. Chưa có dữ liệu mẫu, xác thực hoặc API ghi/Admin; chưa triển khai hosting. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md), [database-runtime.md](database-runtime.md) và [README](../README.md).
 
 Các tài liệu thực sự đã đọc, với số trang tính theo thứ tự trong PDF:
 
