@@ -40,7 +40,7 @@ Các mục dưới đây là tính từ bounds/ước lượng theo PNG, không 
 - Icon briefcase/building trong trang được dựng inline ở kích thước nhỏ vì ZIP không xuất SVG ứng viên `36:43`/`36:117`. Hình dạng hiện tại là lựa chọn gần ảnh, chưa được xác nhận là asset Figma.
 - Mũi tên của `<select>` là chevron CSS màu slate để gần hình trong PNG; lựa chọn vẫn là native `<select>` hỗ trợ bàn phím. ZIP không xuất được các asset ứng viên `36:69`, `36:78`, `36:87` nên chưa xác nhận đây là icon gốc.
 
-Loading, empty, error, timeout, `INVALID_FILTER`, lọc Major, tìm kiếm và phân trang được xử lý theo contract/API đang có, không lấy trạng thái dữ liệu mẫu trong ảnh làm quy tắc. Endpoint Major của TV3 đã có implementation trên `feat/categories-major-api` nhưng chưa merge vào `main`; khi chạy backend chưa có route, select bị khóa và báo/thử lại theo trạng thái API.
+Loading, empty, error, timeout, `INVALID_FILTER`, lọc Major, tìm kiếm và phân trang được xử lý theo contract/API đang có, không lấy trạng thái dữ liệu mẫu trong ảnh làm quy tắc. Endpoint Major của TV3 đã có trên `main` sau PR #13; luồng consumer/API được xác minh bằng MySQL và trình duyệt trong [báo cáo tích hợp](../opportunities-integration-test.md).
 
 ## Bổ sung nguồn thiết kế chi tiết Public
 

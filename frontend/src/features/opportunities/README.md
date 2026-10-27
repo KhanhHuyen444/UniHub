@@ -4,6 +4,7 @@
 
 - Route `/opportunities` dùng `PublicLayout`, các primitive dùng chung và API client `frontend/src/lib/api.ts`.
 - Danh sách đọc `GET /api/opportunities`; query đang áp dụng nằm trong URL để tải lại trang và dùng Back/Forward. Gửi tìm kiếm mới sẽ đặt `page=1`; thao tác bấm Tìm kiếm khi chưa có từ khóa/bộ lọc chỉ hiện lời nhắc và không gửi request.
+- `GET /api/categories?type=Major` đã được duyệt và có trên `main` sau PR #13. Consumer gửi đúng path/query, parse đúng shape; kiểm thử tích hợp đã xác nhận chỉ Major Active xuất hiện. Danh sách rỗng thành công và lỗi tải có trạng thái UI riêng, không có Major giả. Nếu API cơ hội trả `INVALID_FILTER` cho `majorId`, giao diện giữ query và cho người dùng xóa bộ lọc. Xem [báo cáo tích hợp](../../../../docs/opportunities-integration-test.md).
 - Response được kiểm tra shape tại feature. Loading, lỗi/retry, feed rỗng, không có kết quả, trang ngoài phạm vi, `INVALID_QUERY` và `INVALID_FILTER` có trạng thái riêng. Bộ lọc Major chỉ bị xóa sau thao tác rõ ràng của người dùng.
 - Thẻ hiển thị loại, tiêu đề, publisher, hình thức, deadline và Verified nếu API có giá trị. Không render location/skills trong danh sách hiện tại: ảnh Public không có hàng location, còn API summary chưa trả skills. Deadline lấy ngày/trạng thái từ backend; legacy `unknown` không hiện ngày hoặc nhãn, và UI không tự tính số ngày còn lại.
 - Route `/opportunities/:id` đọc `GET /api/opportunities/:id` qua API client/parser hiện có. Một page dùng chung cho Thực tập, Việc làm và Học bổng; tiêu đề và thứ tự mục theo BR-01.8 Chương 3. Text được render an toàn như văn bản thường.
@@ -13,9 +14,8 @@
 
 ## Phụ thuộc chưa hoàn thành
 
-- `GET /api/categories?type=Major` đã có contract và backend implementation trên `feat/categories-major-api`; endpoint chưa có trên `main` trước khi PR merge. Consumer gửi đúng path/query và parse đúng shape; test consumer được đặt trong `frontend/test/opportunities-api.test.mjs`. Khi backend đang chạy từ `main` chưa có route này, select Major hiện trạng lỗi, bị vô hiệu hóa và có thao tác thử lại riêng. Không có Major giả trong ứng dụng. Nếu API cơ hội trả `INVALID_FILTER` cho `majorId`, giao diện giữ query và cho người dùng xóa bộ lọc.
-- Ba ảnh Public detail do nhóm cung cấp là căn cứ hình thức cho Học bổng, Việc làm và Thực tập. Không dùng frame diễn đàn `131:7557` hoặc chi tiết kiểm duyệt Admin `171:2628` làm thiết kế trang này. Kích thước suy ra từ ảnh là ước lượng, không phải số đo trực tiếp Figma; xem [ghi nhận thiết kế chi tiết](../../../docs/opportunities-detail-ui.md).
-- Nhóm đã cung cấp PNG `Hub cơ hội-V2.png`; ZIP có bounds/text/container trực tiếp cho frame `36:39`, nhưng không có screenshot/asset mới và thiếu nhiều style property. Bố cục tổng thể được đối chiếu theo PNG; các giá trị trực tiếp, phép tính và ước lượng được tách trong [ghi nhận bổ sung](../../../docs/shared-ui-design/opportunities-list-supplement.md). Padding/typography/shadow của card, spacing chính xác, trạng thái pagination và asset icon Hero/Hình thức chưa được đọc trực tiếp.
+- Ba ảnh Public detail do nhóm cung cấp là căn cứ hình thức cho Học bổng, Việc làm và Thực tập. Không dùng frame diễn đàn `131:7557` hoặc chi tiết kiểm duyệt Admin `171:2628` làm thiết kế trang này. Kích thước suy ra từ ảnh là ước lượng, không phải số đo trực tiếp Figma; xem [ghi nhận thiết kế chi tiết](../../../../docs/opportunities-detail-ui.md).
+- Nhóm đã cung cấp PNG `Hub cơ hội-V2.png`; ZIP có bounds/text/container trực tiếp cho frame `36:39`, nhưng không có screenshot/asset mới và thiếu nhiều style property. Bố cục tổng thể được đối chiếu theo PNG; các giá trị trực tiếp, phép tính và ước lượng được tách trong [ghi nhận bổ sung](../../../../docs/shared-ui-design/opportunities-list-supplement.md). Padding/typography/shadow của card, spacing chính xác, trạng thái pagination và asset icon Hero/Hình thức chưa được đọc trực tiếp.
 - Frame mẫu có sáu thẻ và 28 kết quả, trong khi API mặc định pageSize 20; không hardcode mẫu hoặc cắt danh sách. API summary chưa trả skills dù ảnh card có hàng này; không gửi thêm request detail cho mỗi thẻ. API cũng không trả số ngày countdown; giao diện dùng deadline state/ngày của server.
 
 ## Chạy trên Windows
@@ -50,4 +50,4 @@ Các lời gọi danh sách và danh mục dùng API thật qua proxy. `frontend
 
 ## Kiểm tra
 
-Kết quả kiểm tra cập nhật mới nhất (typecheck, build, frontend/backend test, format và trình duyệt) được ghi trong [opportunities-detail-ui.md](../../../docs/opportunities-detail-ui.md). Kiểm thử frontend bằng fixture/mock không xác nhận API nghiệp vụ hoặc MySQL.
+Kết quả kiểm tra cập nhật mới nhất (typecheck, build, frontend/backend test, MySQL và trình duyệt) được ghi trong [báo cáo kiểm thử tích hợp](../../../../docs/opportunities-integration-test.md). Báo cáo tách rõ test tự động có mock khỏi các ca tích hợp dùng Express/MySQL thật.
