@@ -42,8 +42,8 @@ Các mục dưới đây là tính từ bounds/ước lượng theo PNG, không 
 
 Loading, empty, error, timeout, `INVALID_FILTER`, lọc Major, tìm kiếm và phân trang được xử lý theo contract/API đang có, không lấy trạng thái dữ liệu mẫu trong ảnh làm quy tắc. Endpoint Major của TV3 chưa có trong backend hiện tại nên select bị khóa và báo/thử lại theo trạng thái API.
 
-## Chi tiết cơ hội chưa có thiết kế Public
+## Bổ sung nguồn thiết kế chi tiết Public
 
-Gói này xác nhận `131:7557 — Chi tiết_Guest` là **chi tiết bài viết diễn đàn**: có “Quay lại Diễn đàn”, Article Body và Comments. Không dùng frame đó làm chi tiết cơ hội. `171:2628` vẫn là khu vực Admin. Chưa có frame/screenshot Public cho `/opportunities/:id`; chỉ tiếp tục CTA ở danh sách, chưa dựng trang chi tiết.
+Gói handoff ban đầu xác nhận `131:7557 — Chi tiết_Guest` là **chi tiết bài viết diễn đàn**: có “Quay lại Diễn đàn”, Article Body và Comments. Không dùng frame đó làm chi tiết cơ hội. `171:2628` vẫn là khu vực Admin. Sau gói handoff, nhóm đã cung cấp ba ảnh Public detail (`hbong.png`, `job work.png`, `intern (v3).png`); page chung `/opportunities/:id` đang được triển khai trên `feat/opportunities-frontend`. Ước lượng bố cục và cách ánh xạ theo Chương 3 được ghi tại [opportunities-detail-ui.md](../opportunities-detail-ui.md). Không coi các ước lượng này là số đo Figma trực tiếp.
 
-Trong lúc chờ frame đúng, các thông số còn thiếu chặn việc hoàn thiện/đối chiếu pixel và hành vi của danh sách là style chi tiết bên trong card; khoảng cách chính xác giữa các hàng/thẻ và pagination; trạng thái disabled/hover/focus của pagination; asset gốc cho icon Hero và Hình thức; và cách trình bày kỹ năng/countdown tương ứng API. Chúng không chặn kết nối API, tìm kiếm, bộ lọc, phân trang động hoặc xử lý các trạng thái đã có trong contract.
+Ở trang danh sách, các thông số còn thiếu chặn việc đối chiếu pixel và hành vi là style chi tiết bên trong card; khoảng cách chính xác giữa các hàng/thẻ và pagination; trạng thái disabled/hover/focus của pagination; asset gốc cho icon Hero và Hình thức; và cách trình bày kỹ năng/countdown tương ứng API. Chúng không chặn kết nối API, tìm kiếm, bộ lọc, phân trang động hoặc xử lý các trạng thái đã có trong contract.
