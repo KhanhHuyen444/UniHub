@@ -50,7 +50,7 @@ Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi đọc `e
 ## Hợp đồng theo chức năng
 
 - [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` cùng frontend list/detail đã có trên `main` sau PR #12. Consumer Major của Hub cũng có trên `main`; API cơ hội vẫn tự kiểm tra Major Active trong database.
-- [API đọc danh mục dùng chung](categories-api-contract.md): contract `GET /api/categories?type=Major` đã được duyệt; implementation và backend tests đang ở PR #13 (`feat/categories-major-api`) để cập nhật `main`. Endpoint chỉ trả Major Active với shape `{items:[{id,name,type}]}`. Skill và hồ sơ Closed vẫn ngoài phạm vi/chờ TV2/TV3. Các nhánh Major và frontend chưa có kiểm thử end-to-end với nhau.
+- [API đọc danh mục dùng chung](categories-api-contract.md): contract và `GET /api/categories?type=Major` đã có trên `main` sau PR #13. Endpoint chỉ trả Major Active với shape `{items:[{id,name,type}]}`. Luồng Major consumer/API cùng Public Hub đã được kiểm thử tích hợp; xem [báo cáo](opportunities-integration-test.md). Skill và hồ sơ Closed vẫn ngoài phạm vi/chờ TV2/TV3.
 - `page=1`, `pageSize=20`, tối đa 100 là baseline kỹ thuật đang đề xuất chung; endpoint phải ghi giới hạn thực tế và khóa sort ổn định. Contract cơ hội đã duyệt các giá trị này cùng trần page 1,000,000; quyết định đó không mặc nhiên áp dụng cho API khác.
 - Thời gian lưu/trao đổi đã thống nhất UTC; giao diện dùng `Asia/Ho_Chi_Minh`. Chính sách date-only theo từng nghiệp vụ và biểu diễn trong `DATETIME(0)` được ghi ở hợp đồng tương ứng.
 

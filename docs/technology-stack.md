@@ -1,10 +1,10 @@
 # Công nghệ UniHub
 
-Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI/Hub cơ hội **27/10/2026**. Trạng thái `main`: bộ khung React/Express, API client, router và shell preview. Frontend Public Hub list/detail và API đọc cơ hội đã có trên `main`; API provider Major có trên `feat/categories-major-api` tại PR #13, chờ review/merge.
+Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI/Hub cơ hội **27/10/2026**. Trạng thái `main`: bộ khung React/Express, API client, router, shell preview, Public Hub list/detail, API đọc cơ hội và API provider Major đã có sau PR #11–#13. Luồng Hub được kiểm tra tích hợp trên MySQL thử nghiệm; xem [báo cáo](opportunities-integration-test.md).
 
 ## 1. Phạm vi và căn cứ
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Sau scaffold có hai npm workspace, một lockfile gốc, frontend React, backend Express, schema Prisma và initial migration đã merge qua PR #4. Prisma runtime bổ sung adapter MySQL, Prisma Client singleton và readiness probe; migration/runtime được kiểm thử trên MySQL 8.4 dùng một lần, không truy cập database nhóm. Frontend Public Hub list/detail và consumer Major đã có trên `main` sau PR #12; API đọc cơ hội cũng có trên `main`. API provider Major đang được review tại PR #13. Chưa có dữ liệu mẫu, xác thực hoặc API ghi/Admin; chưa triển khai hosting. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md), [database-runtime.md](database-runtime.md) và [README](../README.md).
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Sau scaffold có hai npm workspace, một lockfile gốc, frontend React, backend Express, schema Prisma và initial migration đã merge qua PR #4. Prisma runtime bổ sung adapter MySQL, Prisma Client singleton và readiness probe; migration/runtime được kiểm thử trên MySQL 8.4 dùng một lần, không truy cập database nhóm. Frontend Public Hub list/detail, API đọc cơ hội và provider/consumer Major đã có trên `main` sau PR #11–#13. Luồng này được kiểm tra với MySQL thử nghiệm riêng; chưa có dữ liệu nghiệp vụ thật, xác thực hoặc API ghi/Admin; chưa triển khai hosting. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md), [database-runtime.md](database-runtime.md) và [README](../README.md).
 
 Các tài liệu thực sự đã đọc, với số trang tính theo thứ tự trong PDF:
 

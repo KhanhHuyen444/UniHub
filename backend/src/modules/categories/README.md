@@ -2,8 +2,7 @@
 
 TV3 owns `backend/src/modules/categories` for shared categories, guidance and
 future category administration. The public Major read endpoint is implemented
-on `feat/categories-major-api`; it becomes available from `main` after review
-and merge.
+on `main` after PR #13.
 
 ## Major options endpoint
 
@@ -24,9 +23,10 @@ Implementation:
 - `backend/test/categories.test.mjs` covers request validation, response
   shape, safe errors and an opt-in MySQL integration case.
 
-The TV1 Hub consumer already sends `type=Major` and parses `{ items: [...] }`
-with `id`, `name` and `type`. It has been compared with this endpoint contract;
-the frontend and backend have not yet been tested together end to end.
+The TV1 Hub consumer sends `type=Major` and parses `{ items: [...] }` with
+`id`, `name` and `type`. The Public Hub consumer and endpoint were exercised
+together with Express and a temporary MySQL 8.4 database; see the
+[integration report](../../../../docs/opportunities-integration-test.md).
 
 ## Windows PowerShell
 
