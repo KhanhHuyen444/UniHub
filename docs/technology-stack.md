@@ -1,6 +1,6 @@
 # Công nghệ UniHub
 
-Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI/Hub cơ hội/auth schema **28/10/2026**. Trạng thái `main`: bộ khung React/Express, API client, router, shell preview, Public Hub list/detail, API đọc cơ hội và API provider Major đã có sau PR #11–#13. Luồng Hub được kiểm tra tích hợp trên MySQL thử nghiệm; xem [báo cáo](opportunities-integration-test.md). Nhánh auth hiện bổ sung schema/migration/GRANT; đăng nhập và middleware chưa triển khai.
+Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI/Hub cơ hội/auth schema **28/10/2026**. Trạng thái `main`: bộ khung React/Express, API client, router, shell preview, Public Hub list/detail, API đọc cơ hội và API provider Major đã có sau PR #11–#13. Luồng Hub được kiểm tra tích hợp trên MySQL thử nghiệm; xem [báo cáo](opportunities-integration-test.md). Auth schema/migration/GRANT có trên `main`. Nhánh `feat/auth-google-login` có Google login, JWT/middleware, refresh, `/me` và logout; các endpoint này chưa có trên `main` trước khi PR được merge.
 
 ## 1. Phạm vi và căn cứ
 

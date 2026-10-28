@@ -2,7 +2,7 @@
 
 Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật Prisma runtime, API/router frontend, Hub cơ hội và auth schema **28/10/2026**. Đã có frontend kỹ thuật React, backend Express, schema, initial migration và adapter MySQL. Prisma Client dùng singleton lazy; `GET /api/health` chỉ kiểm tra HTTP còn `GET /api/ready` truy vấn MySQL. Migration/runtime được kiểm thử trên MySQL tạm ở Codex/Linux; không truy cập database thành viên. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md) và [database-runtime.md](database-runtime.md).
 
-Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md); phiên bản Chương 3–4 vừa đối chiếu và hash nằm trong [api-contracts.md](api-contracts.md). **Chương 4 hiện mô tả 13 bảng, `users.google_sub` và `auth_sessions`; `origin/main` baseline có 12 model/83 cột và deadline metadata nhưng chưa có auth. Nhánh `feat/auth-schema-migration` bổ sung auth bằng schema/migration riêng (13 model/90 cột); chưa merge hoặc áp dụng vào database nhóm.** PDF chưa ghi hai deadline metadata đã được duyệt. Đây là chênh lệch nguồn; tài liệu này nêu trạng thái nhánh, không thay thế việc cập nhật báo cáo Chương 4. Auth không chạy trên database đích cho tới khi PR được review/merge, migration/GRANT được áp dụng và code auth được triển khai.
+Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md); phiên bản Chương 3–4 vừa đối chiếu và hash nằm trong [api-contracts.md](api-contracts.md). **Chương 4 mô tả `users.google_sub` và `auth_sessions`; auth schema/migration/GRANT đã có trên `main`. Leader xác nhận database phát triển trên máy mình đã áp dụng migration; các database thành viên khác cần xác minh riêng.** PDF chưa ghi hai deadline metadata đã được duyệt. Đây là chênh lệch nguồn; tài liệu này nêu trạng thái nhánh, không thay thế việc cập nhật báo cáo Chương 4. Auth code hiện có trên `feat/auth-google-login`, chưa trên `main` cho tới khi PR được merge.
 
 ## 1. Thành phần và trách nhiệm
 
@@ -79,7 +79,7 @@ Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tố
 **Các điểm trước implementation:**
 
 - Chương 3 hiện đã mô tả Google ID token; giữ flow đó, không đổi sang Authorization Code.
-- Nhánh `feat/auth-schema-migration` bổ sung `google_sub` và `auth_sessions` bằng migration riêng; không sửa initial/deadline migration hoặc suy đoán `sub` từ email. Cần review/merge, áp dụng migration/GRANT rồi triển khai auth code. Đây là blocker cho database execution của auth.
+- Migration auth trên `main` bổ sung `google_sub` và `auth_sessions` bằng migration riêng; không sửa initial/deadline migration hoặc suy đoán `sub` từ email. Trước khi dùng auth code trên một database, xác nhận migration/GRANT đã áp dụng. Đây là điều kiện vận hành cho database đích.
 - Không có yêu cầu khóa tài khoản/domain allowlist; không thêm `account_status` hoặc lock API.
 - Giữ seed Admin theo UC-04/BR-04.2, không hardcode định danh cá nhân hoặc public bootstrap. Contract không tạo Admin/seed.
 

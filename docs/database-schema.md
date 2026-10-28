@@ -1,6 +1,6 @@
 # Schema Prisma của UniHub
 
-Ngày cập nhật schema: **28/10/2026**. Initial migration đã merge vào `main` qua PR #4; deadline metadata migration qua PR #8. Nhánh `feat/auth-schema-migration` bổ sung `users.google_sub`, `auth_sessions` và mẫu quyền runtime bằng migration riêng; chưa có trên `main` hoặc database nhóm. Database phát triển của leader đã xác nhận có deadline metadata; các database thành viên khác chưa được xác nhận. Chi tiết và giới hạn xem [database-migrations.md](database-migrations.md); runtime/readiness xem [database-runtime.md](database-runtime.md).
+Ngày cập nhật schema: **28/10/2026**. Initial migration đã merge vào `main` qua PR #4; deadline metadata migration qua PR #8; auth migration bổ sung `users.google_sub`, `auth_sessions` và mẫu quyền runtime cũng đã merge vào `main`. Leader xác nhận database phát triển của mình đã áp dụng auth migration; trạng thái database của thành viên khác cần tự kiểm tra. Database phát triển của leader đã xác nhận có deadline metadata. Chi tiết và giới hạn xem [database-migrations.md](database-migrations.md); runtime/readiness xem [database-runtime.md](database-runtime.md).
 
 ## 1. Nguồn và trạng thái
 
@@ -149,15 +149,7 @@ FK `reviewed_by`/`admin_id` không xác nhận người được tham chiếu l�
 
 Các lệnh đều chạy tại **gốc UniHub**, nơi có package.json và package-lock.json gốc. `validate` kiểm tra cấu trúc/ngữ nghĩa schema theo Prisma; `generate` sinh mã TypeScript. Migration initial đã được merge qua PR #4; hướng dẫn kiểm tra migration nằm riêng trong [database-migrations.md](database-migrations.md). Các lệnh generate/validate dưới đây không áp dụng migration hay kết nối database.
 
-Trước khi chuyển nhánh, chạy `git status`. Nếu có mã chưa commit, lưu an toàn và không reset/clean để chuyển nhánh. Khi working tree sạch:
-
-```powershell
-git fetch origin refs/heads/feat/auth-schema-migration:refs/remotes/origin/feat/auth-schema-migration
-git switch feat/auth-schema-migration
-npm.cmd ci
-```
-
-Nếu Git chưa tự tạo nhánh local, dùng `git switch --track origin/feat/auth-schema-migration`. Lấy nhánh sau khi nó được push và chỉ chuyển nhánh khi working tree đã sạch.
+Auth schema/migration đã có trên `main`; chạy lệnh Prisma từ checkout có phiên bản repository hiện hành. Trước khi chuyển nhánh, kiểm tra `git status`; không làm mất mã chưa commit.
 
 ```powershell
 npm.cmd run prisma:format
@@ -206,7 +198,7 @@ Initial migration đã bổ sung các CHECK, collation, hai `ON UPDATE` và thi�
 
 Các quyết định FK/timestamp/auth schema đã được lưu trong schema/migration. Những phụ thuộc sau chưa phải quyết định schema mới:
 
-- Migration auth hiện có trên nhánh `feat/auth-schema-migration`, chưa trên `main` hoặc database thành viên. Sau review/merge, từng máy phải kiểm tra migration status và chạy migration riêng; không backfill Google sub từ email. Login/JWT/refresh/logout và middleware vẫn chưa được triển khai.
+- Migration auth đã có trên `main`; leader xác nhận đã áp dụng trên database phát triển của mình, còn trạng thái database của thành viên khác cần tự kiểm tra. Không backfill Google sub từ email. Login/JWT/middleware, refresh, `/me` và logout có implementation trên `feat/auth-google-login`, nhưng chưa có trên `main` trước khi PR được merge.
 - Xác nhận môi trường môn học hỗ trợ phiên bản đã chọn và kiểm thử trên máy Windows của nhóm.
 - Các thay đổi lược đồ mới vẫn cần migration riêng và review theo quy trình trong database-migrations.md.
 
