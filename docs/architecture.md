@@ -38,7 +38,7 @@ Các route sản phẩm bên dưới được chuyển từ sitemap Chương 4 m
 | `/roadmaps/:id` | Guest, Student | TV3 | Kế hoạch |
 | `/login` | Guest | TV2 | Kế hoạch |
 | `/profile` | Student | TV2 | Kế hoạch |
-| `/recommendations` | Student | TV3 | Kế hoạch |
+| `/recommendations` | Student | TV3 | Contract đã duyệt; route/page chưa triển khai |
 | `/calendar` | Student | TV4 | Kế hoạch |
 | `/forum` | Guest đọc, Student | TV5 | Kế hoạch |
 | `/forum/:id` | Guest đọc, Student | TV5 | Kế hoạch |
@@ -68,7 +68,7 @@ Luồng đã được nhóm chốt:
 4. Backend xử lý tra cứu tài khoản theo thiết kế đã thống nhất, lấy quyền từ dữ liệu UniHub và phát token **của UniHub**. Google ID token không được dùng thay JWT UniHub cho các API nghiệp vụ.
 5. Mọi API được bảo vệ kiểm tra token UniHub, quyền và quyền sở hữu tài nguyên ở backend; frontend guard không phải biện pháp bảo vệ dữ liệu.
 
-Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật. BR-14.5 quy định role mới có hiệu lực ở lần cấp token kế tiếp. Phương án contract nằm tại [auth-api-contract.md](auth-api-contract.md) và còn chờ leader duyệt. Endpoint/cookie/security implementation chưa có trên main. Chương 4 mới có `google_sub`/`auth_sessions`, trong khi main schema chưa; mismatch này không chặn hoàn thiện contract nhưng chặn chạy auth trên database thật cho tới khi migration riêng được duyệt, merge và áp dụng.
+Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật. BR-14.5 quy định role mới có hiệu lực ở lần cấp token kế tiếp. Contract tại [auth-api-contract.md](auth-api-contract.md) đã được leader duyệt; endpoint/cookie/security implementation chưa có trên main. Chương 4 mới có `google_sub`/`auth_sessions`, trong khi main schema chưa; chênh lệch này không ngăn phê duyệt hợp đồng nhưng chặn chạy auth trên database thật cho tới khi migration riêng được duyệt, merge và áp dụng.
 
 | Đối tượng | Ý nghĩa và nguồn quyền |
 | --- | --- |
