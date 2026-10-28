@@ -14,7 +14,7 @@
 
 `admin_id` lấy từ middleware identity, không từ request. `target_id` là scalar logical target; schema không tạo FK theo target_type. Các thao tác cần log là Admin-only. `activity_logs` append-only: backend không sửa/xóa log; runtime GRANT hiện chỉ SELECT/INSERT. `old_value`, `new_value` và `reason` là `VARCHAR(500)` trong Prisma schema và initial migration (`schema.prisma` `ActivityLog`, migration `activity_logs`).
 
-## Payload tối thiểu theo action — đề xuất chờ leader review
+## Payload tối thiểu theo action — đã được duyệt
 
 `old_value`/`new_value` là JSON compact chỉ chứa field bị action thay đổi, với key ổn định; không chứa toàn bộ row, nội dung bài viết/bình luận, token, Google claims, bí mật hoặc PII không cần thiết. `reason` được lưu riêng, không lặp lại trong JSON. Ví dụ dưới đây biểu thị giá trị thực ngay trước/sau thao tác, không phải chuỗi template được lưu nguyên văn.
 
@@ -32,10 +32,10 @@
 
 Các enum/giá trị trong ví dụ cần lấy từ row thật/request đã validate; không giả định giá trị cũ nếu DB trả khác. `target_id`, `admin_id`, `action_type`, `target_type`, `created_at` tiếp tục ở cột riêng.
 
-Trước khi ghi, backend phải serialize compact rồi kiểm tra độ dài từng chuỗi không vượt 500 ký tự; nếu không phù hợp thì từ chối action trước khi commit hoặc rollback toàn bộ transaction. **Không cắt chuỗi/JSON tùy ý** vì sẽ làm payload không hợp lệ hoặc mất nghĩa. Các payload trên được thiết kế ngắn; reason tối đa 500 ký tự được validate riêng. Không thay schema hay kích thước cột trong đề xuất này.
+Trước khi ghi, backend phải serialize compact rồi kiểm tra độ dài từng chuỗi không vượt 500 ký tự; nếu không phù hợp thì từ chối action trước khi commit hoặc rollback toàn bộ transaction. **Không cắt chuỗi/JSON tùy ý** vì sẽ làm payload không hợp lệ hoặc mất nghĩa. Các payload trên được thiết kế ngắn; reason tối đa 500 ký tự được validate riêng. Không thay schema hay kích thước cột.
 
 ## Transaction boundary
 
 Mỗi feature sở hữu transaction cùng với log: approve/reject opportunity + log; soft-delete forum content + log + Violation notification; category change + log; role update + log. Tất cả thành công hoặc rollback cùng nhau. Timestamp UTC. `reason` bắt buộc khi REJECT_OPPORTUNITY, DELETE_POST, DELETE_COMMENT theo Chương 3; các thao tác Category reason chỉ khi có nhập theo use case.
 
-Database CHECK giới hạn action_type/target_type, FK admin_id và giới hạn cột; nó không xác minh caller là Admin, target/action pair đúng, tính append-only ở API hay atomicity. Backend phải enforce role, action-target mapping và transaction. Dashboard views không tạo audit log; không có GET log trong Chương 3. Tests ở từng module phải inject log failure và chứng minh rollback; runtime account không được UPDATE/DELETE.
+Database CHECK giới hạn action_type/target_type, FK admin_id và giới hạn cột; nó không xác minh caller là Admin, target/action pair đúng, tính append-only ở API hay atomicity. Backend phải enforce role, action-target mapping và transaction. Dashboard views không tạo audit log; không có GET log trong Chương 3. **Ma trận kiểm thử dự kiến:** payload action đúng key/value và chỉ chứa field tối thiểu; reason nằm riêng; mọi serialized value ≤500 ký tự; payload vượt giới hạn bị từ chối hoặc rollback mà không bị cắt; lỗi ghi activity log rollback thay đổi nghiệp vụ và Violation notification cùng transaction; runtime account bị từ chối UPDATE/DELETE. Runtime account vẫn chỉ SELECT/INSERT trên activity_logs.

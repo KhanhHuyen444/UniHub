@@ -121,7 +121,7 @@ Ví dụ nguồn có giờ cụ thể `05/11/2026 12:00 Asia/Ho_Chi_Minh`: respo
 | 503  | `SERVICE_UNAVAILABLE` | Backend nhận diện database không sẵn sàng; thông báo chung, không lộ MySQL/Prisma. |
 | 500  | `INTERNAL_ERROR`      | Lỗi bất ngờ; envelope hiện có, không lộ stack/SQL/configuration.                   |
 
-Mọi lỗi của API cơ hội giữ envelope hiện hành `error.code`/`error.message` theo `api-conventions.md`. Đề xuất `fieldErrors` là phần mở rộng tương thích đang chờ leader review và không tự thay đổi response/error contract của API cơ hội đã triển khai; nếu sau này áp dụng phải được review riêng theo endpoint.
+API cơ hội hiện vẫn trả envelope `error.code`/`error.message`. Contract `fieldErrors` tùy chọn đã được duyệt như phần mở rộng cộng thêm; khi PR code riêng triển khai, giữ nguyên `code/message` và không thay đổi các quyết định hoặc response thành công đã có của Public opportunities.
 
 ### Phụ thuộc danh mục bộ lọc — TV1 đã triển khai, TV3 tiếp quản
 
