@@ -1,6 +1,6 @@
 # activity-logs
 
-**Chưa triển khai.** Cơ chế ghi nhật ký dùng chung; TV2/TV3/TV1 ghi log cho nghiệp vụ quản trị mình phụ trách.
+**Chưa triển khai.** Cơ chế ghi nhật ký dùng chung; TV1/TV2/TV3 ghi log cho thao tác quản trị họ sở hữu. Quy tắc: [activity-logs-contract.md](../../../../docs/activity-logs-contract.md).
 
 Phụ trách dự kiến: **TV5; phối hợp TV1**. Chưa gán tên người hoặc deadline.
 

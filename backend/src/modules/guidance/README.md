@@ -1,6 +1,6 @@
 # guidance
 
-**Chưa triển khai.** API lộ trình và bài viết định hướng, dùng bảng opportunities theo thiết kế.
+**Chưa triển khai.** API lộ trình và bài viết định hướng, dùng opportunities cùng các bảng nối theo thiết kế. Contract dự thảo: [guidance-api-contract.md](../../../../docs/guidance-api-contract.md).
 
 Phụ trách dự kiến: **TV3**. Chưa gán tên người hoặc deadline.
 

@@ -60,7 +60,8 @@ migrations; never point it at a group database.
 
 ## Outside this endpoint
 
-`type=Skill`, profile rules for Closed categories, Admin CRUD/auth, seeds and
-real category data are not implemented here. Skill and profile decisions
-remain subject to TV2/TV3 review. Do not infer Skill permissions from the
-public Major contract.
+`type=Skill`, profile rules for Closed categories and Admin CRUD are not
+implemented. Their contract proposals are in
+[categories-api-contract.md](../../../../docs/categories-api-contract.md).
+They await leader review; TV2/TV3 provide module feedback. Do not infer Skill
+permissions from the public Major contract.

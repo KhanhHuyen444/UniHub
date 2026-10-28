@@ -2,6 +2,8 @@
 
 Initial migration **25/10/2026** đã merge vào `main` qua PR #4 tại `d7c2cefc79754728a6731498a33f4d3ebfe40c48`. Migration deadline ngày **26/10/2026** đã merge qua PR #8. Theo xác nhận của nhóm ngày 26/10/2026, database phát triển trên máy leader có hai cột `deadline_source_date` và `deadline_source_timezone`; chưa xác nhận database của các thành viên khác. Đây là ghi nhận từ nhóm, Codex không tự kết nối để kiểm chứng. Kiểm thử trong tài liệu chỉ dùng MySQL 8.4 tạm ở Codex; nhiệm vụ cập nhật tài liệu này không mở hoặc thay đổi database nào của nhóm.
 
+Chương 4 PDF mới đính kèm ngày 28/10/2026 mô tả `users.google_sub` và bảng `auth_sessions`, nhưng hai phần này chưa có trong Prisma schema/migrations trên `main`; ngược lại, PDF đó chưa ghi deadline metadata/constraint đã merge ở PR #8. Đây là mismatch cần giải quyết bằng cập nhật báo cáo và schema/migration PR riêng trước auth. Không có migration nào được tạo/chạy trong nhánh tài liệu này. Xem [bảng đồng bộ Chương 3–4](api-contracts.md#đối-chiếu-chương-3–4-với-repository).
+
 ## Quyết định đã xác nhận
 
 - Charset `utf8mb4`; collation mặc định `utf8mb4_0900_as_ci` cho schema và các bảng. So sánh không phân biệt hoa/thường, nhưng có phân biệt dấu. UNIQUE email xem chữ hoa/thường là cùng một email; backend vẫn phải chuẩn hóa email trước khi lưu. UNIQUE `(type, name)` không cho tên khác nhau chỉ bởi hoa/thường, nhưng cho phép khác dấu.

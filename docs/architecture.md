@@ -2,7 +2,7 @@
 
 Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật Prisma runtime, API/router frontend và Hub cơ hội **27/10/2026**. Đã có frontend kỹ thuật React, backend Express, schema, initial migration và adapter MySQL. Prisma Client dùng singleton lazy; `GET /api/health` chỉ kiểm tra HTTP còn `GET /api/ready` truy vấn MySQL. Migration/runtime được kiểm thử trên MySQL tạm ở Codex/Linux; không truy cập database thành viên. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md) và [database-runtime.md](database-runtime.md).
 
-Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md). Đối chiếu dữ liệu dùng Chương 4 trang 6–30; quy tắc nghiệp vụ dùng Chương 3. Quyết định mới của nhóm về Google ID token được ưu tiên so với luồng Authorization Code cũ trong Chương 3.
+Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md); phiên bản Chương 3–4 vừa đối chiếu và hash nằm trong [api-contracts.md](api-contracts.md). **Chương 4 mới mô tả 13 bảng, `users.google_sub` và `auth_sessions`; Prisma/migrations trên `main` hiện có 12 model và chưa có hai phần auth, đồng thời đã có hai deadline metadata chưa ghi trong PDF mới.** Đây là chênh lệch nguồn; schema diagram/route list trong tài liệu này mô tả implementation hiện tại, không thay thế quyết định nhóm về bản Chương 4. Cần review/sync riêng trước khi triển khai auth; không có schema change trong nhiệm vụ này.
 
 ## 1. Thành phần và trách nhiệm
 
@@ -68,7 +68,7 @@ Luồng đã được nhóm chốt:
 4. Backend xử lý tra cứu tài khoản theo thiết kế đã thống nhất, lấy quyền từ dữ liệu UniHub và phát token **của UniHub**. Google ID token không được dùng thay JWT UniHub cho các API nghiệp vụ.
 5. Mọi API được bảo vệ kiểm tra token UniHub, quyền và quyền sở hữu tài nguyên ở backend; frontend guard không phải biện pháp bảo vệ dữ liệu.
 
-Chương 3 trang 7 và UC-04 trang 38–40 quy định access token tối đa 15 phút, refresh token tối đa 7 ngày trong cookie `HttpOnly`, `Secure`, `SameSite=Strict`; khi refresh phải đọc lại role từ database. Đây là yêu cầu cho bước triển khai, chưa có cookie hoặc token được tạo trong nhiệm vụ này. Origin/CORS, chống CSRF, lưu access token, refresh rotation/thu hồi và cấu hình HTTPS cục bộ cần thiết kế khi làm xác thực; không tự thêm bảng hoặc dịch vụ để giải quyết ngay.
+Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật. BR-14.5 quy định role mới có hiệu lực ở lần cấp token kế tiếp. Đề xuất contract cụ thể nằm tại [auth-api-contract.md](auth-api-contract.md): signed role snapshot, middleware không đọc role DB mỗi request, refresh lấy role mới. Endpoint/cookie/security implementation chưa có trên main. Chương 4 mới có `google_sub`/`auth_sessions`, trong khi main schema chưa; cần xử lý qua schema/migration PR riêng.
 
 | Đối tượng | Ý nghĩa và nguồn quyền |
 | --- | --- |
@@ -76,12 +76,12 @@ Chương 3 trang 7 và UC-04 trang 38–40 quy định access token tối đa 15
 | Student | Tài khoản có `users.role = 'Student'`; backend kiểm tra chủ sở hữu khi thao tác hồ sơ, sự kiện, thông báo. |
 | Admin | Tài khoản có `users.role = 'Admin'`; backend kiểm tra quyền cho mọi thao tác quản trị và ghi nhật ký theo use case. |
 
-**Các điểm cần xử lý trước khi triển khai xác thực, không tự đổi schema:**
+**Các điểm trước implementation:**
 
-- UC-04 đang mô tả nhận Authorization Code rồi đổi token; cập nhật tài liệu nghiệp vụ sang Google ID token theo quyết định mới. Không tự thêm bước trao đổi code hoặc yêu cầu client secret cho luồng mới.
-- Chương 4 có `users.email UNIQUE`, chưa có cột lưu Google `sub`. `sub` trong ID token là định danh chủ thể Google; email không phải định danh bất biến. Cần nhóm xác nhận cách gắn danh tính Google lâu dài trước khi viết đăng nhập. Hiện giữ nguyên 12 bảng và mọi cột, **không tự thêm `google_sub`** hoặc giả vờ đã giải quyết liên kết tài khoản.
-- Chưa có bảng/cột lưu refresh session hoặc token bị thu hồi trong Chương 4. Cơ chế rotation/thu hồi phải được thảo luận khi làm xác thực; không tự bổ sung `sessions`, `refresh_tokens` hoặc kho dữ liệu khác.
-- Yêu cầu khởi tạo Admin trong UC-04 là công việc triển khai sau. Không tạo Admin, tài khoản mẫu hoặc seed trong đợt này.
+- Chương 3 hiện đã mô tả Google ID token; giữ flow đó, không đổi sang Authorization Code.
+- Chương 4 mới đã có `google_sub` và `auth_sessions`, nhưng Prisma/migrations trên `main` chưa có chúng. Bổ sung bằng migration riêng sau khi review; không sửa initial migration hoặc suy đoán `sub` từ email.
+- Không có yêu cầu khóa tài khoản/domain allowlist; không thêm `account_status` hoặc lock API.
+- Giữ seed Admin theo UC-04/BR-04.2, không hardcode định danh cá nhân hoặc public bootstrap. Contract không tạo Admin/seed.
 
 ## 3. Cấu trúc scaffold và vị trí Prisma sau này
 
@@ -209,8 +209,8 @@ Nguồn Chương 4: mục 4.3.2.3, trang 15–18, có **15 cột**. Nhóm đã d
 | `location` | VARCHAR(100) → String? | NULL |
 | `work_format` | VARCHAR(10) → String? | NULL |
 | `deadline` | DATETIME → DateTime? | NULL |
-| `deadline_source_date` | DATE → DateTime? | NULL; metadata nhóm đã duyệt, chưa có trong PDF Chương 4 hiện tại |
-| `deadline_source_timezone` | VARCHAR(64) → String? | NULL; metadata nhóm đã duyệt, chưa có trong PDF Chương 4 hiện tại |
+| `deadline_source_date` | DATE → DateTime? | NULL; migration đã duyệt, chưa có trong bản Chương 4 mới đính kèm |
+| `deadline_source_timezone` | VARCHAR(64) → String? | NULL; migration đã duyệt, chưa có trong bản Chương 4 mới đính kèm |
 | `status` | VARCHAR(10) → String | `'Pending'` |
 | `is_verified` | BOOLEAN → Boolean | false |
 | `source_url` | VARCHAR(500) → String? | NULL |
@@ -379,7 +379,7 @@ SQL `CHECK` theo thiết kế cũng không bảo đảm mọi điều kiện ngh
 
 ## 7. Kiểm tra trước khi chuyển sang mã nguồn
 
-Đã kiểm tra tài liệu ở mức tĩnh: Chương 4 baseline có 12 bảng/**81 cột**; schema sau phần mở rộng deadline đã duyệt có 12 bảng/**83 cột nghiệp vụ**, 8 PK tự tăng, 4 PK ghép và 16 FK. `activity_logs.target_id` không được tính là FK. Có 13 nhóm quan hệ trong bảng 4.2.1 của Chương 4; một quan hệ nhiều-nhiều dùng hai FK ở bảng trung gian nên số nhóm quan hệ khác số FK vật lý. PDF §4.3.2.3 chưa được sửa.
+Đã kiểm tra tài liệu ở mức tĩnh từ hai phiên bản: Chương 4 lịch sử có 12 bảng/81 cột; Prisma main sau deadline migration có 12 bảng/83 cột, 8 PK tự tăng, 4 PK ghép và 16 FK. Chương 4 mới đính kèm mô tả 13 bảng, thêm `google_sub`/`auth_sessions`, nhưng bỏ sót deadline metadata. `activity_logs.target_id` không phải FK. Đây là mismatch báo cáo; xem [api-contracts.md](api-contracts.md). Chưa sửa PDF.
 
 Sau scaffold, các bước tiếp theo và phạm vi kiểm tra:
 

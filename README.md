@@ -4,6 +4,8 @@ UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghi�
 
 Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4, Prisma runtime qua PR #5. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Chưa có đăng nhập Google, JWT, tài khoản mẫu hoặc API ghi/Admin; API Hub cơ hội chỉ đọc. Shared UI preview chỉ dùng kiểm tra shell/component, không phải giao diện sản phẩm. Có thể chạy frontend health/preview mà không cần MySQL hoặc Docker.
 
+TV1 đang điều phối mục lục và trạng thái các hợp đồng API tại [docs/api-contracts.md](docs/api-contracts.md). Hợp đồng không đồng nghĩa endpoint đã có code; mục lục phân biệt contract đã duyệt/implemented với draft. Chương 4 mới đính kèm và Prisma schema trên main có một số khác biệt cần review riêng trước auth; xem bảng đồng bộ trong mục lục.
+
 ## 1. Công nghệ và điều kiện môi trường
 
 | Thành phần        | Phiên bản / vai trò                                                      |

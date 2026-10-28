@@ -1,6 +1,6 @@
 # forum
 
-**Chưa triển khai.** Bài đăng, bình luận, kiểm duyệt và xóa mềm.
+**Chưa triển khai.** Bài đăng, bình luận, kiểm duyệt và xóa mềm. Contract draft: [forum-api-contract.md](../../../../docs/forum-api-contract.md).
 
 Phụ trách dự kiến: **TV5**. Chưa gán tên người hoặc deadline.
 

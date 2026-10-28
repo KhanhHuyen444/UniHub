@@ -1,6 +1,6 @@
 # events
 
-**Chưa triển khai.** Sự kiện, deadline, trạng thái hoàn thành và tác vụ nhắc hạn.
+**Chưa triển khai.** Sự kiện, deadline, trạng thái hoàn thành và tác vụ nhắc hạn. Contract draft: [events-notifications-api-contract.md](../../../../docs/events-notifications-api-contract.md).
 
 Phụ trách dự kiến: **TV4**. Chưa gán tên người hoặc deadline.
 

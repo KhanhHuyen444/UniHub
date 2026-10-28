@@ -1,5 +1,7 @@
 # Quy ước API UniHub
 
+Mục lục và endpoint × role matrix nằm trong [api-contracts.md](api-contracts.md). Tài liệu này ghi hành vi HTTP đang có trên `main` và quy ước chung; module-specific proposals chưa được coi là approved hoặc implemented.
+
 ## Các endpoint đã triển khai
 
 ### `GET /api/health` — liveness
@@ -50,13 +52,29 @@ Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi đọc `e
 ## Hợp đồng theo chức năng
 
 - [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` cùng frontend list/detail đã có trên `main` sau PR #12. Consumer Major của Hub cũng có trên `main`; API cơ hội vẫn tự kiểm tra Major Active trong database.
-- [API đọc danh mục dùng chung](categories-api-contract.md): contract và `GET /api/categories?type=Major` đã có trên `main` sau PR #13. Endpoint chỉ trả Major Active với shape `{items:[{id,name,type}]}`. Luồng Major consumer/API cùng Public Hub đã được kiểm thử tích hợp; xem [báo cáo](opportunities-integration-test.md). Skill và hồ sơ Closed vẫn ngoài phạm vi/chờ TV2/TV3.
+- [API đọc danh mục dùng chung](categories-api-contract.md): contract và `GET /api/categories?type=Major` đã có trên `main` sau PR #13. Endpoint chỉ trả Major Active, ví dụ `{"items":[{"id":12,"name":"Kỹ thuật phần mềm","type":"Major"}]}`. Luồng Major consumer/API cùng Public Hub đã được kiểm thử tích hợp; xem [báo cáo](opportunities-integration-test.md). Skill và hồ sơ Closed vẫn là draft chờ leader review.
 - `page=1`, `pageSize=20`, tối đa 100 là baseline kỹ thuật đang đề xuất chung; endpoint phải ghi giới hạn thực tế và khóa sort ổn định. Contract cơ hội đã duyệt các giá trị này cùng trần page 1,000,000; quyết định đó không mặc nhiên áp dụng cho API khác.
 - Thời gian lưu/trao đổi đã thống nhất UTC; giao diện dùng `Asia/Ho_Chi_Minh`. Chính sách date-only theo từng nghiệp vụ và biểu diễn trong `DATETIME(0)` được ghi ở hợp đồng tương ứng.
 
-## Dự thảo cho API nghiệp vụ — cần nhóm thống nhất
+### Endpoint × role hiện có và trạng thái hợp đồng
 
-Các quy ước dưới đây **chưa phải endpoint hoặc hợp đồng nghiệp vụ đã được triển khai**. Mỗi PR chức năng cần ghi contract cụ thể trước khi code.
+| Endpoint                                               |            Guest |            Student |                  Admin | Trạng thái trên `main`                                                 |
+| ------------------------------------------------------ | ---------------: | -----------------: | ---------------------: | ---------------------------------------------------------------------- |
+| `GET /api/health`, `GET /api/ready`                    |               Có |                 Có |                     Có | Đã triển khai; readiness truy vấn DB nhưng không xác thực user.        |
+| `GET /api/opportunities`, `GET /api/opportunities/:id` |               Có |                 Có |    Cùng dữ liệu public | Đã triển khai và kiểm thử tích hợp.                                    |
+| `GET /api/categories?type=Major`                       |               Có |                 Có |  Cùng danh sách Active | Đã triển khai; Major Active only.                                      |
+| Auth login/refresh/me/logout                           |                — |                  — |                      — | Chưa triển khai; contract đề xuất tại `auth-api-contract.md`.          |
+| Profile, admin users/roles, Skill/Admin categories     |                — |                  — |                      — | Chưa triển khai; contract proposals.                                   |
+| Guidance, recommendations                              | Public / Student |            Student |                      — | Chưa triển khai; guidance public, recommendation Student-only dự thảo. |
+| Admin opportunities/moderation/categories/dashboard    |                — |                  — |                  Admin | Chưa triển khai; endpoint roles đề xuất ở module docs.                 |
+| Events/notifications                                   |                — |            Student |                      — | Chưa triển khai; Student-only proposal.                                |
+| Forum reads/posts/comments                             |       Guest read | Student read/write | Guest-like read per UC | Chưa triển khai; proposal.                                             |
+
+Guest indicates no UniHub access token; it is not stored in `users.role`. All protected endpoint permission rows above are contract intent, not implemented middleware. Do not infer that an Admin may use Student-only endpoints.
+
+## Quy ước đề xuất cho API chưa triển khai
+
+Các quy ước dưới đây là baseline kỹ thuật; contract theo module ở [api-contracts.md](api-contracts.md) mới quyết định field, role, status, pagination và thứ tự cụ thể. Draft/proposal chưa được tự nâng thành quyết định nhóm. Endpoint/API đã triển khai và contract approved được ghi riêng ở trên.
 
 | Chủ đề       | Đề xuất để review                                                                                                                                                                                                                                                                                   |
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -69,10 +87,10 @@ Các quy ước dưới đây **chưa phải endpoint hoặc hợp đồng nghi�
 | Ngày giờ     | JSON API dùng ISO 8601 có `Z` cho instant; DB và session MySQL theo UTC; giao diện hiển thị `Asia/Ho_Chi_Minh`. MySQL `DATETIME` không tự lưu timezone. Schema/migration cơ hội có metadata ngày nguồn/timezone; dữ liệu cũ thiếu metadata trả unknown, không suy đoán. API lịch cần contract riêng |
 | Lỗi          | Giữ cấu trúc error.code/error.message; nếu cần lỗi từng field, thống nhất fieldErrors trước. Không trả stack, SQL, mật khẩu hoặc token                                                                                                                                                              |
 
-401/403 ở bảng trên là dự thảo HTTP API. Các trang 403/404 của UI và mô tả quyền trong Chương 3–4 cần đối chiếu khi viết contract, không lấy bảng này để tự ghi đè nghiệp vụ.
+401/403 là quy ước HTTP cho API, nhưng quyền và mã lỗi từng route phải theo contract module. Không dùng bảng baseline để tự ghi đè nghiệp vụ Chương 3–4.
 
-## Ranh giới bảo mật đã chốt và phần còn mở
+## Ranh giới bảo mật và hợp đồng auth
 
-Frontend nhận Google ID token từ Google Identity Services, backend xác minh rồi phát JWT riêng UniHub. Guest là trạng thái chưa đăng nhập, không lưu trong users.role. Server kiểm tra quyền và ownership; guard frontend chỉ giúp điều hướng. Chỉ backend được kết nối MySQL.
+Frontend nhận Google ID token; backend xác minh token trước khi cấp JWT UniHub. Guest không phải role trong `users`. Backend kiểm tra token, role và ownership; frontend route guard chỉ giúp điều hướng. Chỉ backend kết nối MySQL. BR-14.5 quy định role mới có hiệu lực tại lần cấp token tiếp theo: middleware dùng role snapshot đã ký, không đọc `users.role` cho mỗi request.
 
-Thời hạn token/cookie đã ghi trong architecture và Chương 3 được giữ nguyên. Tài liệu này **không tự chốt thêm** lưu access token, refresh rotation/thu hồi, CSRF, CORS/origin hay liên kết Google sub; phải xử lý các điểm mở trước khi làm auth. Chưa có endpoint login/refresh/logout hoặc middleware xác thực trong scaffold.
+Thời hạn Access 15 phút/Refresh 7 ngày, Google `sub`, `auth_sessions`, refresh rotation/revoke và session-bound access token đã được ghi trong [auth-api-contract.md](auth-api-contract.md), nhưng đó vẫn là contract chưa triển khai. Endpoint paths/error details/cookie-origin-CSRF là technical proposals cần review. Chương 4 mới đã có `google_sub` và `auth_sessions`; `origin/main` schema/migrations chưa có — xem [bảng sync Chương 3–4](api-contracts.md#8-ch3-ch4-source-sync).
