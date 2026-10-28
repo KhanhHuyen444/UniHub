@@ -1,6 +1,6 @@
 # notifications
 
-**Chưa triển khai.** API thông báo; phối hợp TV5 cho thông báo vi phạm trong transaction.
+**Chưa triển khai.** API thông báo; phối hợp TV5 cho Violation trong transaction. Contract draft: [events-notifications-api-contract.md](../../../../docs/events-notifications-api-contract.md).
 
 Phụ trách dự kiến: **TV4**. Chưa gán tên người hoặc deadline.
 

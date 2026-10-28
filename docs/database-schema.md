@@ -6,12 +6,12 @@ Ngày đối chiếu schema: **24/10/2026**; ghi nhận trạng thái máy thàn
 
 Scaffold được merge qua PR #2; schema qua PR #3; initial migration qua PR #4 vào `main` tại `d7c2cefc`. Schema vẫn là nguồn mô hình duy nhất. Đã đọc AGENTS.md, README, technology-stack, architecture và team-workflow trong repository.
 
-Đã truy cập lại hai nguồn gốc trong phiên làm việc:
+Đã truy cập các PDF lịch sử của nhiệm vụ schema trước đó:
 
 - **Chương 4**, 30 trang: `/workspace/attachments/c9e7867e-3c02-4ed7-8528-e2fd832c6079/CHƯƠNG 4.pdf`. Mục 4.2 và 4.3 là căn cứ bảng/cột/khóa, đặc biệt đặc tả 4.3.2.1–4.3.2.12, trang 12–30.
 - **Chương 3**, 65 trang: `/workspace/attachments/8eaba411-7586-4eae-aa59-4464586214e5/CHƯƠNG 3.pdf`. Dùng để phân biệt quy tắc hồ sơ, quản trị, sự kiện, giao dịch với ràng buộc database.
 
-Đường dẫn PDF là dấu vết nguồn trong môi trường Codex, không phải tệp được chép vào repository. Chương 4 hiện mô tả baseline 81 cột; schema hiện tại trên `main` có thêm hai cột metadata deadline đã được nhóm duyệt, nên có 83 cột. Nhóm xác nhận hai cột này tồn tại trong database phát triển của leader; database thành viên khác chưa được xác nhận. Cần cập nhật §4.3.2.3 của PDF; tài liệu này không tuyên bố PDF đã được sửa. Xem bảng đối chiếu trong [architecture.md](architecture.md#5-đối-chiếu-prisma-với-12-bảng-chương-4).
+Đường dẫn PDF là dấu vết nguồn trong môi trường làm việc, không phải tệp được chép vào repository. Bộ Chương 3/4 mới đính kèm ngày 28/10/2026 được kiểm kê trong [api-contracts.md](api-contracts.md). **Bản Chương 4 mới khác với schema hiện tại trên `main`:** PDF liệt kê 13 bảng, thêm `users.google_sub` và `auth_sessions`, nhưng bảng `opportunities` chưa ghi hai cột deadline metadata đã duyệt; main vẫn có 12 Prisma model, 83 scalar columns, `deadline_source_date`/`deadline_source_timezone`, nhưng chưa có `google_sub`/`auth_sessions`. Hai tài liệu/implementations không thể được tuyên bố đồng bộ. Cần xác nhận PDF này là thiết kế mới được nhóm phê duyệt và xử lý schema bằng PR/migration riêng. Không thay Prisma/schema/migration trong nhiệm vụ contract. Database phát triển leader đã được xác nhận có deadline metadata; database thành viên khác chưa được xác nhận. Không tuyên bố PDF đã sửa.
 
 Hai quyết định bổ sung đã được người dùng xác nhận trong nhiệm vụ này:
 
@@ -189,8 +189,7 @@ Initial migration đã bổ sung các CHECK, collation, hai `ON UPDATE` và thi�
 
 Các quyết định FK/timestamp đã được xác nhận và lưu trong schema/migration. Các điểm sau thuộc nhiệm vụ kế tiếp, không tự mở rộng mô hình 12 bảng:
 
-- Liên kết tài khoản Google lâu dài bằng sub và cơ chế refresh session/thu hồi: users hiện chưa có google_sub, không có bảng session/identity/token.
-- Liên kết tài khoản Google lâu dài bằng sub, session/thu hồi token; xem xét khi làm xác thực.
+- Chương 4 mới mô tả `google_sub` và `auth_sessions`, nhưng model/migration trên `main` chưa có. Đây không ngăn duyệt tài liệu auth contract, nhưng chặn chạy auth trên database thật. Thực hiện qua schema/migration PR riêng sau khi leader review; không backfill Google sub từ email.
 - Xác nhận môi trường môn học hỗ trợ phiên bản đã chọn và kiểm thử trên máy Windows của nhóm.
 - Các thay đổi lược đồ mới vẫn cần migration riêng và review theo quy trình trong database-migrations.md.
 

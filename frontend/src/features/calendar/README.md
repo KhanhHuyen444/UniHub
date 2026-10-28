@@ -1,6 +1,6 @@
 # calendar
 
-Sự kiện và deadline; chưa triển khai.
+Sự kiện và deadline; chưa triển khai. Contract draft: [events-notifications-api-contract.md](../../../../docs/events-notifications-api-contract.md); phân biệt event due_date instant với opportunity source deadline.
 
 Phụ trách dự kiến: **TV4**, cả frontend và backend tương ứng. Chưa gán tên người hoặc deadline.
 

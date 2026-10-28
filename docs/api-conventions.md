@@ -1,5 +1,7 @@
 # Quy ước API UniHub
 
+Mục lục và endpoint × role matrix nằm trong [api-contracts.md](api-contracts.md). Tài liệu này ghi hành vi HTTP trên main và quy ước chung; trạng thái contract và implementation được theo dõi riêng.
+
 ## Các endpoint đã triển khai
 
 ### `GET /api/health` — liveness
@@ -45,18 +47,28 @@ Frontend gọi `/api/health` qua `frontend/src/lib/api.ts`, kiểm tra HTTP stat
 
 Đã triển khai `apiRequest` trong `frontend/src/lib/api.ts`. Client nhận path cùng tiền tố `/api`, hỗ trợ `GET`, `POST`, `PATCH`, `DELETE`, query qua `URLSearchParams`, JSON body, `AbortSignal` và các tùy chọn `fetch` cần thiết. Client không tự chuyển tên field, gắn JWT, lưu token, ghi log hoặc tạo thông báo UI; từng feature phải dùng đúng contract đã review. Không truyền URL tuyệt đối để tránh bỏ qua Vite proxy và gọi nhầm origin.
 
-Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi đọc `error.code`/`error.message` theo envelope hiện tại; body lỗi không phải JSON chỉ trả thông báo HTTP tổng quát, không đưa HTML hoặc nội dung upstream ra UI. Lỗi mạng được chuẩn hóa thành `ApiError`; lỗi hủy `AbortError` được giữ nguyên để caller xử lý riêng. Phản hồi thành công rỗng (204 hoặc body rỗng) trả `undefined`; phản hồi thành công có body không phải JSON tạo `INVALID_RESPONSE`. Client không kiểm tra schema nghiệp vụ: caller vẫn cần xác thực shape dữ liệu khi sử dụng.
+Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi hiện đọc `error.code`/`error.message` theo envelope hiện tại; body lỗi không phải JSON chỉ trả thông báo HTTP tổng quát, không đưa HTML hoặc nội dung upstream ra UI. Lỗi mạng được chuẩn hóa thành `ApiError`; lỗi hủy `AbortError` được giữ nguyên để caller xử lý riêng. Phản hồi thành công rỗng (204 hoặc body rỗng) trả `undefined`; phản hồi thành công có body không phải JSON tạo `INVALID_RESPONSE`. Client không kiểm tra schema nghiệp vụ: caller vẫn cần xác thực shape dữ liệu khi sử dụng. Contract `fieldErrors` đã được duyệt nhưng chưa triển khai; API client hiện chưa giữ trường này. Parser/client và error middleware/server sẽ được mở rộng trong PR code riêng, không đổi `code`, `kind`, `status` hoặc cách xử lý lỗi tổng quát hiện tại.
 
 ## Hợp đồng theo chức năng
 
 - [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` cùng frontend list/detail đã có trên `main` sau PR #12. Consumer Major của Hub cũng có trên `main`; API cơ hội vẫn tự kiểm tra Major Active trong database.
-- [API đọc danh mục dùng chung](categories-api-contract.md): contract và `GET /api/categories?type=Major` đã có trên `main` sau PR #13. Endpoint chỉ trả Major Active với shape `{items:[{id,name,type}]}`. Luồng Major consumer/API cùng Public Hub đã được kiểm thử tích hợp; xem [báo cáo](opportunities-integration-test.md). Skill và hồ sơ Closed vẫn ngoài phạm vi/chờ TV2/TV3.
-- `page=1`, `pageSize=20`, tối đa 100 là baseline kỹ thuật đang đề xuất chung; endpoint phải ghi giới hạn thực tế và khóa sort ổn định. Contract cơ hội đã duyệt các giá trị này cùng trần page 1,000,000; quyết định đó không mặc nhiên áp dụng cho API khác.
+- [API đọc danh mục dùng chung](categories-api-contract.md): TV1 triển khai và merge contract/`GET /api/categories?type=Major` qua PR #13; TV3 tiếp quản provider dùng chung. Endpoint chỉ trả Major Active, ví dụ `{"items":[{"id":12,"name":"Kỹ thuật phần mềm","type":"Major"}]}`. Luồng Major consumer/API cùng Public Hub đã được kiểm thử tích hợp; xem [báo cáo](opportunities-integration-test.md). Contract Skill Student-only, Admin category routes và profile Closed policy đã được leader duyệt, nhưng chưa triển khai.
+- Không tự áp dụng một baseline pagination cho mọi route. Từng contract ghi cụ thể page/pageSize, giới hạn, trang ngoài phạm vi và thứ tự ổn định.
 - Thời gian lưu/trao đổi đã thống nhất UTC; giao diện dùng `Asia/Ho_Chi_Minh`. Chính sách date-only theo từng nghiệp vụ và biểu diễn trong `DATETIME(0)` được ghi ở hợp đồng tương ứng.
 
-## Dự thảo cho API nghiệp vụ — cần nhóm thống nhất
+### Endpoint × role và request inventory
 
-Các quy ước dưới đây **chưa phải endpoint hoặc hợp đồng nghiệp vụ đã được triển khai**. Mỗi PR chức năng cần ghi contract cụ thể trước khi code.
+Danh sách canonical gồm từng HTTP method/path, query/body, vai trò và liên kết tới response/error/transaction contract nằm tại [api-contracts.md §3](api-contracts.md). Không duy trì bảng route rút gọn thứ hai ở đây để tránh path hoặc method sai lệch. Các contract riêng ghi trạng thái implementation độc lập; “Approved” không khẳng định đã có code.
+
+Guest không phải giá trị `users.role`. Backend kiểm tra role và ownership cho mọi route được bảo vệ; frontend route guard chỉ phục vụ điều hướng.
+
+## Quy ước path ID dùng schema INT
+
+Với path parameter ánh xạ tới cột ID MySQL `INT` có dấu, chỉ chấp nhận chuỗi thập phân biểu diễn số nguyên dương trong đoạn 1–2,147,483,647; không nhận dấu cộng/trừ, số thập phân, khoảng trắng hoặc giá trị ngoài miền. Trả 400 `INVALID_ID` trước truy vấn. Contract module có thể nêu giới hạn hẹp hơn nếu schema/nghiệp vụ yêu cầu.
+
+## Quy ước đề xuất cho API chưa triển khai
+
+Các quy ước dưới đây là baseline; hợp đồng module đã leader duyệt quyết định field, role, status, pagination và thứ tự cụ thể. Không dùng baseline để ghi đè contract. Endpoint/API đã triển khai và contract approved được ghi riêng ở trên.
 
 | Chủ đề       | Đề xuất để review                                                                                                                                                                                                                                                                                   |
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -67,12 +79,39 @@ Các quy ước dưới đây **chưa phải endpoint hoặc hợp đồng nghi�
 | Phân trang   | Đề xuất page bắt đầu từ 1, pageSize mặc định 20 và tối đa 100; response có items và meta gồm page/pageSize/total/totalPages. Cần chốt thứ tự sắp xếp ổn định trước khi triển khai                                                                                                                   |
 | Tìm kiếm/lọc | Nêu rõ tham số hỗ trợ, khoảng giá trị, chuẩn hóa chuỗi và hành vi tham số không hợp lệ; không nhận tùy tiện tên cột/SQL từ client                                                                                                                                                                   |
 | Ngày giờ     | JSON API dùng ISO 8601 có `Z` cho instant; DB và session MySQL theo UTC; giao diện hiển thị `Asia/Ho_Chi_Minh`. MySQL `DATETIME` không tự lưu timezone. Schema/migration cơ hội có metadata ngày nguồn/timezone; dữ liệu cũ thiếu metadata trả unknown, không suy đoán. API lịch cần contract riêng |
-| Lỗi          | Giữ cấu trúc error.code/error.message; nếu cần lỗi từng field, thống nhất fieldErrors trước. Không trả stack, SQL, mật khẩu hoặc token                                                                                                                                                              |
+| Lỗi          | Giữ `error.code`/`error.message`; contract đã duyệt cho phép `error.fieldErrors` tùy chọn với `source`, `field`, `code`, `message` ổn định như ví dụ dưới. Không trả stack, SQL, mật khẩu hoặc token. `message` chỉ để hiển thị; client không phân tích nội dung tiếng Việt.                        |
 
-401/403 ở bảng trên là dự thảo HTTP API. Các trang 403/404 của UI và mô tả quyền trong Chương 3–4 cần đối chiếu khi viết contract, không lấy bảng này để tự ghi đè nghiệp vụ.
+### Lỗi validation theo field — contract đã duyệt, triển khai ở PR code riêng
 
-## Ranh giới bảo mật đã chốt và phần còn mở
+Giữ HTTP status, `error.code` và `error.message` hiện có. Với validation trả `400` và `error.code: "VALIDATION_ERROR"`, server có thể trả thêm mảng tùy chọn:
 
-Frontend nhận Google ID token từ Google Identity Services, backend xác minh rồi phát JWT riêng UniHub. Guest là trạng thái chưa đăng nhập, không lưu trong users.role. Server kiểm tra quyền và ownership; guard frontend chỉ giúp điều hướng. Chỉ backend được kết nối MySQL.
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Dữ liệu gửi lên chưa hợp lệ.",
+    "fieldErrors": [
+      {
+        "source": "body",
+        "field": "title",
+        "code": "REQUIRED",
+        "message": "Vui lòng nhập tiêu đề."
+      }
+    ]
+  }
+}
+```
 
-Thời hạn token/cookie đã ghi trong architecture và Chương 3 được giữ nguyên. Tài liệu này **không tự chốt thêm** lưu access token, refresh rotation/thu hồi, CSRF, CORS/origin hay liên kết Google sub; phải xử lý các điểm mở trước khi làm auth. Chưa có endpoint login/refresh/logout hoặc middleware xác thực trong scaffold.
+`source` thuộc `body`, `query` hoặc `path`; `field` là tên field API/path ổn định, không phải tên cột SQL; `code` là mã máy ổn định do endpoint quy định. Có thể có nhiều lỗi cho cùng field. Frontend ánh xạ bằng cặp `source` + `field` và quyết định UI bằng `code`; chỉ hiển thị `message`, không suy luận lỗi bằng cách phân tích message tiếng Việt. Không hợp thức hóa bằng cách nhét field name vào message.
+
+Đây là phần mở rộng cộng thêm, không bỏ/đổi field cũ. Consumer hiện tại tiếp tục nhận `ApiError.code`, `kind`, `status` và message như trước nhưng chưa thể hiển thị lỗi cạnh field. PR code riêng sẽ bổ sung `fieldErrors` tùy chọn vào backend `ApiError`/error middleware và frontend `ApiError`/parser. Parser phải xác thực shape; thiếu hoặc sai shape thì bỏ qua phần field details nhưng vẫn xử lý lỗi tổng quát cũ.
+
+**Ma trận kiểm thử:** lỗi cũ chỉ có `code/message` vẫn parse như trước; `fieldErrors` hợp lệ được giữ nguyên theo từng `source/field/code`; field có nhiều lỗi ánh xạ đúng; message tiếng Việt không bị dùng để phân nhánh; `fieldErrors` thiếu, sai kiểu hoặc sai shape không làm hỏng `ApiError` tổng quát; HTTP status và `code/kind` cũ không đổi.
+
+401/403 là quy ước HTTP cho API, nhưng quyền và mã lỗi từng route phải theo contract module. Không dùng bảng baseline để tự ghi đè nghiệp vụ Chương 3–4.
+
+## Ranh giới bảo mật và hợp đồng auth
+
+Frontend nhận Google ID token; backend xác minh token trước khi cấp JWT UniHub. Guest không phải role trong `users`. Backend kiểm tra token, role và ownership; frontend route guard chỉ giúp điều hướng. Chỉ backend kết nối MySQL. BR-14.5 quy định role mới có hiệu lực tại lần cấp token tiếp theo: middleware dùng role snapshot đã ký, không đọc `users.role` cho mỗi request.
+
+Thời hạn Access 15 phút/Refresh 7 ngày, Google `sub`, `auth_sessions`, refresh rotation/revoke và session-bound access token đã được ghi trong [auth-api-contract.md](auth-api-contract.md), và auth contract đã được leader duyệt, nhưng chưa triển khai. Chương 4 mới có `google_sub`/`auth_sessions`, còn schema/migration trên `origin/main` chưa có. Đây không chặn hoàn thiện/duyệt contract; chặn chạy auth trên database thật tới khi migration được review, merge, áp dụng và GRANT được xác nhận. Xem [bảng tổng hợp](api-contracts.md).

@@ -1,6 +1,6 @@
 # guidance
 
-Lộ trình kỹ năng và bài viết định hướng; chưa triển khai.
+Lộ trình kỹ năng và bài viết định hướng; chưa triển khai. Contract draft: [guidance-api-contract.md](../../../../docs/guidance-api-contract.md).
 
 Phụ trách dự kiến: **TV3**, cả frontend và backend tương ứng. Chưa gán tên người hoặc deadline.
 

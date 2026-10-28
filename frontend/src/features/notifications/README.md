@@ -1,6 +1,6 @@
 # notifications
 
-Thông báo và trạng thái đã đọc; chưa triển khai.
+Thông báo và trạng thái đã đọc; chưa triển khai. Contract draft: [events-notifications-api-contract.md](../../../../docs/events-notifications-api-contract.md); Violation destination chưa được quyết định.
 
 Phụ trách dự kiến: **TV4**, cả frontend và backend tương ứng. Chưa gán tên người hoặc deadline.
 
