@@ -127,6 +127,12 @@ function unauthorized(): ApiError {
   return new ApiError(401, 'UNAUTHORIZED', 'Thông tin phiên không hợp lệ.');
 }
 
+class StaleRefreshCredentialError extends ApiError {
+  constructor() {
+    super(401, 'UNAUTHORIZED', 'Thông tin phiên không hợp lệ.');
+  }
+}
+
 function forbiddenOrigin(): ApiError {
   return new ApiError(403, 'FORBIDDEN', 'Nguồn gửi yêu cầu không được phép.');
 }
@@ -586,13 +592,14 @@ export function createAuthRouter({
             revoked_at: true,
           },
         });
-        if (
-          !session ||
-          session.revoked_at !== null ||
-          session.expires_at.getTime() <= evaluatedAt.getTime() ||
-          !hashesMatch(session.refresh_token_hash, oldHash)
-        ) {
+        if (!session || session.revoked_at !== null) {
           throw unauthorized();
+        }
+        if (session.expires_at.getTime() <= evaluatedAt.getTime()) {
+          throw unauthorized();
+        }
+        if (!hashesMatch(session.refresh_token_hash, oldHash)) {
+          throw new StaleRefreshCredentialError();
         }
 
         const rotation = await transaction.authSession.updateMany({
@@ -604,7 +611,7 @@ export function createAuthRouter({
           },
           data: { refresh_token_hash: newHash },
         });
-        if (rotation.count !== 1) throw unauthorized();
+        if (rotation.count !== 1) throw new StaleRefreshCredentialError();
 
         const user = await transaction.user.findUnique({
           where: { user_id: session.user_id },
@@ -631,6 +638,10 @@ export function createAuthRouter({
       });
 
       response.set('Cache-Control', 'no-store');
+      const remainingSessionMs = Math.max(
+        0,
+        result.expiresAt.getTime() - evaluatedAt.getTime(),
+      );
       response.cookie(
         REFRESH_COOKIE_NAME,
         `${credential.sessionId}.${newSecret}`,
@@ -639,7 +650,7 @@ export function createAuthRouter({
           secure: true,
           sameSite: 'strict',
           path: '/api/auth',
-          maxAge: REFRESH_SESSION_TTL_SECONDS * 1000,
+          maxAge: remainingSessionMs,
         },
       );
       response.status(200).json({
@@ -655,7 +666,11 @@ export function createAuthRouter({
         },
       });
     } catch (error) {
-      if (error instanceof ApiError && error.status === 401) {
+      if (
+        error instanceof ApiError &&
+        error.status === 401 &&
+        !(error instanceof StaleRefreshCredentialError)
+      ) {
         clearRefreshCookie(response);
         next(error);
       } else {

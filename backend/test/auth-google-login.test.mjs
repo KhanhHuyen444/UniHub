@@ -590,7 +590,11 @@ test('hai refresh đồng thời cùng secret chỉ một request thành công',
   });
   const app = testApp({
     getPrismaClient: () => database.client,
-    createRefreshSecret: () => ROTATED_REFRESH_SECRET,
+    createRefreshSecret: (() => {
+      const secrets = [ROTATED_REFRESH_SECRET, 'C'.repeat(43)];
+      let index = 0;
+      return () => secrets[index++ % secrets.length];
+    })(),
   });
 
   await withServer(app, async (url) => {
@@ -609,6 +613,22 @@ test('hai refresh đồng thời cùng secret chỉ một request thành công',
       responses.map((response) => response.status).sort(),
       [200, 401],
     );
+    const winner = responses.find((response) => response.status === 200);
+    const loser = responses.find((response) => response.status === 401);
+    assert.match(winner.headers.get('set-cookie'), /unihub_refresh=/);
+    assert.equal(loser.headers.get('set-cookie'), null);
+
+    const nextCookie = winner.headers.get('set-cookie').split(';', 1)[0];
+    const nextResponse = await fetch(`${url}/api/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        Origin: origin,
+        'Sec-Fetch-Site': 'same-origin',
+        'Content-Type': 'application/json',
+        Cookie: nextCookie,
+      },
+    });
+    assert.equal(nextResponse.status, 200);
   });
 
   assert.equal(
@@ -621,17 +641,54 @@ test('hai refresh đồng thời cùng secret chỉ một request thành công',
   );
 });
 
-test('refresh secret sai/revoked/hết hạn trả 401 và xóa cookie', async () => {
-  const cases = [
-    activeSession(LOGIN_REFRESH_SECRET, {
-      refresh_token_hash: createHash('sha256')
-        .update(ROTATED_REFRESH_SECRET)
-        .digest('hex'),
+test('refresh cookie lifetime matches remaining absolute session lifetime', async () => {
+  const expiresAt = new Date(now.getTime() + 10 * 60 * 1000);
+  const database = makeDatabase({
+    initialUsers: [validExistingGoogleUser()],
+    initialSessions: [
+      activeSession(LOGIN_REFRESH_SECRET, { expires_at: expiresAt }),
+    ],
+  });
+  const response = await postCookieEndpoint(
+    testApp({
+      getPrismaClient: () => database.client,
+      createRefreshSecret: () => ROTATED_REFRESH_SECRET,
     }),
-    activeSession(LOGIN_REFRESH_SECRET, { revoked_at: now }),
-    activeSession(LOGIN_REFRESH_SECRET, { expires_at: now }),
+    'refresh',
+    { cookie: cookieFor() },
+  );
+
+  assert.equal(response.status, 200);
+  const setCookie = response.headers.get('set-cookie');
+  const maxAge = Number(/Max-Age=(\d+)/i.exec(setCookie)?.[1]);
+  assert.ok(maxAge > 0 && maxAge <= 600);
+  assert.ok(maxAge < 7 * 24 * 60 * 60);
+  assert.equal(
+    database.sessions()[0].expires_at.getTime(),
+    expiresAt.getTime(),
+  );
+});
+
+test('refresh hash cũ không xóa cookie; session revoked/hết hạn xóa cookie', async () => {
+  const cases = [
+    {
+      session: activeSession(LOGIN_REFRESH_SECRET, {
+        refresh_token_hash: createHash('sha256')
+          .update(ROTATED_REFRESH_SECRET)
+          .digest('hex'),
+      }),
+      clearsCookie: false,
+    },
+    {
+      session: activeSession(LOGIN_REFRESH_SECRET, { revoked_at: now }),
+      clearsCookie: true,
+    },
+    {
+      session: activeSession(LOGIN_REFRESH_SECRET, { expires_at: now }),
+      clearsCookie: true,
+    },
   ];
-  for (const session of cases) {
+  for (const { session, clearsCookie } of cases) {
     const database = makeDatabase({
       initialUsers: [validExistingGoogleUser()],
       initialSessions: [session],
@@ -643,10 +700,14 @@ test('refresh secret sai/revoked/hết hạn trả 401 và xóa cookie', async (
     );
     assert.equal(response.status, 401);
     assert.equal((await response.json()).error.code, 'UNAUTHORIZED');
-    assert.match(
-      response.headers.get('set-cookie'),
-      /Expires=Thu, 01 Jan 1970 00:00:00 GMT/,
-    );
+    if (clearsCookie) {
+      assert.match(
+        response.headers.get('set-cookie'),
+        /Expires=Thu, 01 Jan 1970 00:00:00 GMT/,
+      );
+    } else {
+      assert.equal(response.headers.get('set-cookie'), null);
+    }
     assert.equal(
       database.sessions()[0].refresh_token_hash,
       session.refresh_token_hash,

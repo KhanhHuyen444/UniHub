@@ -9,7 +9,7 @@ Tài liệu này mô tả Prisma runtime của backend, cấu hình MySQL cục 
 - `GET /api/health` xác nhận HTTP server đang phản hồi. `GET /api/ready` chạy `SELECT 1` và chỉ trả sẵn sàng khi truy vấn thành công. Xem [quy ước API](api-conventions.md).
 - Prisma CLI migration dùng `MIGRATION_DATABASE_URL` riêng trong `backend/prisma.config.ts`. Runtime tuyệt đối không dùng biến này làm fallback. Không cần chạy lại migration nếu database đã được cập nhật.
 - Backend có API đọc công khai Hub cơ hội; chưa có API ghi/Admin, đăng nhập, JWT hoặc xử lý Reminder. Kiểm thử runtime bên dưới chỉ chứng minh kết nối, quyền MySQL và transaction truy cập dữ liệu, không thay thế kiểm thử endpoint cơ hội.
-- `google_sub`/`auth_sessions` và quyền runtime cho session đang được thêm trên nhánh `feat/auth-schema-migration`, chưa có trên `main` hoặc database nhóm. Migration/GRANT được kiểm thử riêng trên MySQL tạm 8.4.13; điều đó chưa triển khai Google login, JWT, refresh/logout hoặc middleware.
+- `google_sub`/`auth_sessions` và quyền runtime cho session đã có trên `main`; leader xác nhận database phát triển của mình đã áp dụng. Google login, JWT/middleware, refresh, `/me` và logout có implementation trên `feat/auth-google-login`, nhưng chưa trên `main` trước khi PR được merge. Migration/GRANT đã được kiểm thử riêng trên MySQL tạm 8.4.13.
 
 ## Pool, thời gian và xác thực MySQL
 
