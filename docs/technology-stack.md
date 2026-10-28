@@ -1,6 +1,6 @@
 # Công nghệ UniHub
 
-Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI/Hub cơ hội **27/10/2026**. Trạng thái `main`: bộ khung React/Express, API client, router, shell preview, Public Hub list/detail, API đọc cơ hội và API provider Major đã có sau PR #11–#13. Luồng Hub được kiểm tra tích hợp trên MySQL thử nghiệm; xem [báo cáo](opportunities-integration-test.md).
+Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI/Hub cơ hội/auth schema **28/10/2026**. Trạng thái `main`: bộ khung React/Express, API client, router, shell preview, Public Hub list/detail, API đọc cơ hội và API provider Major đã có sau PR #11–#13. Luồng Hub được kiểm tra tích hợp trên MySQL thử nghiệm; xem [báo cáo](opportunities-integration-test.md). Nhánh auth hiện bổ sung schema/migration/GRANT; đăng nhập và middleware chưa triển khai.
 
 ## 1. Phạm vi và căn cứ
 
@@ -11,7 +11,7 @@ Các tài liệu thực sự đã đọc, với số trang tính theo thứ tự
 | Tài liệu | Nội dung dùng làm căn cứ | Đường dẫn tệp đã đọc trong phiên làm việc |
 | --- | --- | --- |
 | `CHƯƠNG 3.pdf` — 65 trang | Chức năng, use case, quy tắc nghiệp vụ; NFR về xác thực, trình duyệt và desktop | `/workspace/attachments/8eaba411-7586-4eae-aa59-4464586214e5/CHƯƠNG 3.pdf` |
-| `CHƯƠNG 4.pdf` — 30 trang | Sitemap, quan hệ và đặc tả đủ 12 bảng; đặc biệt mục 4.2 và 4.3 | `/workspace/attachments/c9e7867e-3c02-4ed7-8528-e2fd832c6079/CHƯƠNG 4.pdf` |
+| `CHƯƠNG 4.pdf` — 33 trang | Sitemap, quan hệ và đặc tả 13 bảng; đặc biệt mục 4.2, 4.3.2.1 và 4.3.2.13 | `/workspace/attachments/0f2b1457-a5f4-4627-a091-38fd8f2078e8/CHƯƠNG 4.pdf` |
 | `PCCV-UNIHUB - Trang tính4.pdf` — 2 trang | Phân công, các giai đoạn phân tích, thiết kế và UI/UX | `/workspace/attachments/fdb579f1-d6a6-4906-9ce6-0f522e5be612/PCCV-UNIHUB - Trang tính4.pdf` |
 
 Các đường dẫn trên chỉ ghi nguồn đã đọc trong môi trường làm việc, không phải tệp được đưa vào repository. PCCV là căn cứ phân công, không tự thay thế quy tắc nghiệp vụ trong Chương 3–4. Chương 2 chưa chốt và sẽ cập nhật theo công nghệ thực tế. Tài liệu nhóm khác không được coi là yêu cầu bắt buộc.
@@ -28,7 +28,7 @@ Khi có khác biệt, quyết định chính thức mới của nhóm được g
 | Routing frontend | React Router declarative mode | Một router tập trung cho route kỹ thuật và các route tính năng sẽ triển khai sau |
 | CSS | Tailwind CSS | Xây dựng giao diện theo Figma; chưa chọn thêm UI kit |
 | Backend | Node.js + Express + TypeScript | REST API; xác thực, phân quyền, kiểm tra dữ liệu và thực hiện nghiệp vụ tại server |
-| Database | MySQL dòng 8.4 LTS | Lưu mô hình quan hệ 12 bảng trong Chương 4 |
+| Database | MySQL dòng 8.4 LTS | Lưu mô hình quan hệ 13 bảng trong Chương 4 |
 | Truy cập dữ liệu | Prisma ORM + Prisma Migrate | Truy vấn có kiểu và quản lý thay đổi schema; giữ các ràng buộc SQL của thiết kế |
 | Dependency | npm workspaces | Một repository, hai workspace ứng dụng và một lockfile ở gốc |
 | Mã nguồn | Git / GitHub | Nhánh công việc, commit, pull request; không tự merge vào `main` |

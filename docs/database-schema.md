@@ -1,17 +1,17 @@
 # Schema Prisma của UniHub
 
-Ngày đối chiếu schema: **24/10/2026**; ghi nhận trạng thái máy thành viên được cập nhật **26/10/2026**. Tài liệu ghi lại phạm vi tạo schema; initial migration sau đó được merge vào `main` qua PR #4. Nhóm xác nhận database phát triển của leader có `deadline_source_date` và `deadline_source_timezone`; trạng thái database của thành viên khác chưa xác nhận. Chi tiết và giới hạn ghi nhận xem [database-migrations.md](database-migrations.md). Runtime kết nối/readiness được mô tả trong [database-runtime.md](database-runtime.md).
+Ngày cập nhật schema: **28/10/2026**. Initial migration đã merge vào `main` qua PR #4; deadline metadata migration qua PR #8. Nhánh `feat/auth-schema-migration` bổ sung `users.google_sub`, `auth_sessions` và mẫu quyền runtime bằng migration riêng; chưa có trên `main` hoặc database nhóm. Database phát triển của leader đã xác nhận có deadline metadata; các database thành viên khác chưa được xác nhận. Chi tiết và giới hạn xem [database-migrations.md](database-migrations.md); runtime/readiness xem [database-runtime.md](database-runtime.md).
 
 ## 1. Nguồn và trạng thái
 
 Scaffold được merge qua PR #2; schema qua PR #3; initial migration qua PR #4 vào `main` tại `d7c2cefc`. Schema vẫn là nguồn mô hình duy nhất. Đã đọc AGENTS.md, README, technology-stack, architecture và team-workflow trong repository.
 
-Đã truy cập các PDF lịch sử của nhiệm vụ schema trước đó:
+Đã đối chiếu các nguồn sau:
 
-- **Chương 4**, 30 trang: `/workspace/attachments/c9e7867e-3c02-4ed7-8528-e2fd832c6079/CHƯƠNG 4.pdf`. Mục 4.2 và 4.3 là căn cứ bảng/cột/khóa, đặc biệt đặc tả 4.3.2.1–4.3.2.12, trang 12–30.
+- **Chương 4** hiện hành, 33 trang, SHA-256 `a3bc5fd958411c129e0895eba1412f63e848abda0de3d3eefcd3f1a765225bb5`: `/workspace/attachments/0f2b1457-a5f4-4627-a091-38fd8f2078e8/CHƯƠNG 4.pdf`. Mục 4.2 và 4.3 là căn cứ bảng/cột/khóa, gồm `users.google_sub` và §4.3.2.13 `auth_sessions`.
 - **Chương 3**, 65 trang: `/workspace/attachments/8eaba411-7586-4eae-aa59-4464586214e5/CHƯƠNG 3.pdf`. Dùng để phân biệt quy tắc hồ sơ, quản trị, sự kiện, giao dịch với ràng buộc database.
 
-Đường dẫn PDF là dấu vết nguồn trong môi trường làm việc, không phải tệp được chép vào repository. Bộ Chương 3/4 mới đính kèm ngày 28/10/2026 được kiểm kê trong [api-contracts.md](api-contracts.md). **Bản Chương 4 mới khác với schema hiện tại trên `main`:** PDF liệt kê 13 bảng, thêm `users.google_sub` và `auth_sessions`, nhưng bảng `opportunities` chưa ghi hai cột deadline metadata đã duyệt; main vẫn có 12 Prisma model, 83 scalar columns, `deadline_source_date`/`deadline_source_timezone`, nhưng chưa có `google_sub`/`auth_sessions`. Hai tài liệu/implementations không thể được tuyên bố đồng bộ. Cần xác nhận PDF này là thiết kế mới được nhóm phê duyệt và xử lý schema bằng PR/migration riêng. Không thay Prisma/schema/migration trong nhiệm vụ contract. Database phát triển leader đã được xác nhận có deadline metadata; database thành viên khác chưa được xác nhận. Không tuyên bố PDF đã sửa.
+Đường dẫn PDF là dấu vết nguồn trong môi trường làm việc, không phải tệp được chép vào repository. Bộ Chương 3/4 mới được kiểm kê trong [api-contracts.md](api-contracts.md). Chương 4 hiện hành mô tả 13 bảng, có `users.google_sub`/`auth_sessions`, nhưng chưa ghi deadline metadata đã merge. `origin/main` tại commit nền `14dfda6` có 12 model/83 cột và deadline metadata; nhánh này cập nhật lên 13 model/90 cột bằng auth migration mới. PDF Chương 4 chưa được sửa; đối chiếu báo cáo được liệt kê tại [api-contracts.md](api-contracts.md). Không có backfill hoặc thay đổi dữ liệu legacy.
 
 Hai quyết định bổ sung đã được người dùng xác nhận trong nhiệm vụ này:
 
@@ -22,7 +22,7 @@ Hai quyết định bổ sung đã được người dùng xác nhận trong nhi
 
 | File / thành phần                      | Mục đích                                                                                       |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `backend/prisma/schema.prisma`         | Nguồn schema duy nhất: 12 model, native type MySQL, khóa và quan hệ hai phía                   |
+| `backend/prisma/schema.prisma`         | Nguồn schema duy nhất: 13 model, native type MySQL, khóa và quan hệ hai phía                   |
 | `backend/prisma.config.ts`             | Cấu hình Prisma CLI 7: vị trí schema, đường dẫn migration và URL riêng của tài khoản migration |
 | `backend/src/generated/prisma/`        | Output TypeScript ESM của generator; sinh tự động, không commit, không chỉnh tay               |
 | `backend/.env.example`                 | PORT và DATABASE_URL mẫu; không có tài khoản hoặc database thật                                |
@@ -40,34 +40,49 @@ Prisma 7 đặt URL của Prisma CLI ở `prisma.config.ts`, không ở block da
 
 Đã kiểm đếm từ các khai báo trong file schema, tách scalar field khỏi relation field, đồng thời so tên/thứ tự cột, native type, nullable và mặc định với bản thiết kế. Relation field hai phía phục vụ Prisma không phải cột vật lý.
 
-| Bảng MySQL         | Model Prisma     | Cột vật lý | PK                                |     FK | UNIQUE ngoài PK |
-| ------------------ | ---------------- | ---------: | --------------------------------- | -----: | --------------- |
-| users              | User             |         10 | user_id, tự tăng                  |      1 | email           |
-| categories         | Category         |          5 | category_id, tự tăng              |      0 | (type, name)    |
-| opportunities      | Opportunity      |         17 | item_id, tự tăng                  |      1 | —               |
-| events             | Event            |         10 | event_id, tự tăng                 |      1 | —               |
-| forum_posts        | ForumPost        |          9 | post_id, tự tăng                  |      1 | —               |
-| comments           | Comment          |          8 | comment_id, tự tăng               |      2 | —               |
-| activity_logs      | ActivityLog      |          9 | log_id, tự tăng                   |      1 | —               |
-| notifications      | Notification     |          7 | notification_id, tự tăng          |      2 | —               |
-| user_skills        | UserSkill        |          2 | (user_id, skill_id)               |      2 | —               |
-| opportunity_majors | OpportunityMajor |          2 | (item_id, major_id)               |      2 | —               |
-| opportunity_skills | OpportunitySkill |          2 | (item_id, skill_id)               |      2 | —               |
-| opportunity_years  | OpportunityYear  |          2 | (item_id, academic_year)          |      1 | —               |
-| **Tổng**           | **12 model**     |     **83** | **12 PK: 8 đơn tự tăng + 4 ghép** | **16** | **2**           |
+| Bảng MySQL         | Model Prisma     | Cột vật lý | PK                        |     FK | UNIQUE ngoài PK    |
+| ------------------ | ---------------- | ---------: | ------------------------- | -----: | ------------------ |
+| users              | User             |         11 | user_id, tự tăng          |      1 | email, google_sub  |
+| categories         | Category         |          5 | category_id, tự tăng      |      0 | (type, name)       |
+| opportunities      | Opportunity      |         17 | item_id, tự tăng          |      1 | —                  |
+| events             | Event            |         10 | event_id, tự tăng         |      1 | —                  |
+| forum_posts        | ForumPost        |          9 | post_id, tự tăng          |      1 | —                  |
+| comments           | Comment          |          8 | comment_id, tự tăng       |      2 | —                  |
+| activity_logs      | ActivityLog      |          9 | log_id, tự tăng           |      1 | —                  |
+| notifications      | Notification     |          7 | notification_id, tự tăng  |      2 | —                  |
+| user_skills        | UserSkill        |          2 | (user_id, skill_id)       |      2 | —                  |
+| opportunity_majors | OpportunityMajor |          2 | (item_id, major_id)       |      2 | —                  |
+| opportunity_skills | OpportunitySkill |          2 | (item_id, skill_id)       |      2 | —                  |
+| opportunity_years  | OpportunityYear  |          2 | (item_id, academic_year)  |      1 | —                  |
+| auth_sessions      | AuthSession      |          6 | session_id                |      1 | refresh_token_hash |
+| **Tổng**           | **13 model**     |     **90** | **13 PK: 9 đơn + 4 ghép** | **17** | **4**              |
 
-UNIQUE ở đây không đếm lại tính duy nhất vốn có của PK. Không thêm id vào bảng trung gian, không có many-to-many ngầm định hoặc bảng identity/session. `activity_logs.target_id` là scalar tham chiếu logic, không được tính là FK. Prisma Migrate tạo `_prisma_migrations` để ghi lịch sử khi áp dụng; đây là bảng kỹ thuật, không phải bảng nghiệp vụ thứ 13 hoặc một model Prisma trong 12 bảng thiết kế.
+UNIQUE ở đây không đếm lại tính duy nhất vốn có của PK. Không thêm id vào bảng trung gian hoặc many-to-many ngầm định; `auth_sessions` là bảng session rõ ràng theo Chương 4. `activity_logs.target_id` là scalar tham chiếu logic, không được tính là FK. Prisma Migrate tạo `_prisma_migrations` để ghi lịch sử khi áp dụng; đây là bảng kỹ thuật, không phải bảng nghiệp vụ thứ 14 hoặc một model Prisma.
+
+### Bổ sung auth identity/session theo Chương 4
+
+| Bảng/cột                           | Kiểu và constraint                                                              | Ghi chú                                                                                                                                                                                                                                                       |
+| ---------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `users.google_sub`                 | `VARCHAR(255) NULL UNIQUE`, column collation `utf8mb4_0900_as_cs`               | Index `users_google_sub_key`; nullable để giữ legacy; UNIQUE MySQL cho phép nhiều NULL. Collation cột cụ thể giữ so sánh phân biệt hoa/thường theo Chương 4 và hợp đồng, dù default bảng là `utf8mb4_0900_as_ci`. Không backfill hoặc tự liên kết theo email. |
+| `auth_sessions.session_id`         | `CHAR(36) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY`                    | `PRIMARY` key; UUID do backend tạo.                                                                                                                                                                                                                           |
+| `auth_sessions.user_id`            | `INT NOT NULL`, FK tới `users.user_id`, `ON DELETE RESTRICT ON UPDATE RESTRICT` | FK `auth_sessions_user_id_fkey` và index `auth_sessions_user_id_idx`.                                                                                                                                                                                         |
+| `auth_sessions.refresh_token_hash` | `CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL UNIQUE`                | Index `auth_sessions_refresh_token_hash_key`; SHA-256 dạng hex; không lưu refresh secret thô.                                                                                                                                                                 |
+| `auth_sessions.expires_at`         | `DATETIME(0) NOT NULL`                                                          | UTC; backend bảo đảm không quá 7 ngày từ lúc tạo và không gia hạn khi refresh.                                                                                                                                                                                |
+| `auth_sessions.revoked_at`         | `DATETIME(0) NULL DEFAULT NULL`                                                 | Backend ghi thời điểm logout; revoked session không dùng lại.                                                                                                                                                                                                 |
+| `auth_sessions.created_at`         | `DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0)`                             | UTC theo migration/session.                                                                                                                                                                                                                                   |
+
+Schema không thêm account status, metadata thiết bị/IP/user-agent, refresh-token family, CHECK thời hạn hoặc API quản lý phiên. Database bảo đảm kiểu/nullability/PK/FK/UNIQUE/default; backend auth phải xác minh Google claims, tạo UUID/hash an toàn, ràng buộc session với user, kiểm tra UTC/thời hạn/revocation và xoay hash trong transaction.
 
 ### A. Schema Prisma biểu diễn trực tiếp
 
 - Model dùng tên PascalCase và `@@map` giữ nguyên tên bảng; scalar field giữ `snake_case`, không cần `@map` để đổi cột.
 - `Int @db.Int`, `Int @db.TinyInt`, `String @db.VarChar(n)`, `String @db.Text`, `DateTime @db.DateTime(0)` giữ kiểu/độ dài của thiết kế. `Boolean` là BOOLEAN/TINYINT(1) theo connector MySQL.
 - `?` giữ nullable; không thay NULL bằng chuỗi rỗng. `@default(now())`, số 24, các chuỗi Student/Active/Pending/Upcoming và false chỉ được gắn ở cột có mặc định tương ứng.
-- 8 `@id` tự tăng, 4 `@@id` ghép, `users.email @unique`, `categories @@unique([type, name])`.
-- 16 quan hệ khai báo `fields`, `references`, `onDelete`, `onUpdate` tường minh; tất cả có relation field chiều ngược. Nullable của relation khớp scalar FK.
+- 8 `@id` tự tăng, `AuthSession.session_id` là `@id` do backend cấp, 4 `@@id` ghép; unique gồm email, google_sub, refresh_token_hash và `(type, name)`.
+- 17 quan hệ khai báo `fields`, `references`, `onDelete`, `onUpdate` tường minh; tất cả có relation field chiều ngược. Nullable của relation khớp scalar FK.
 - `role`, loại nội dung và trạng thái vẫn là VARCHAR/String. Không có enum mới, không đổi giá trị tiếng Việt thành mã tiếng Anh. **String trong Prisma chưa tự giới hạn role về Student/Admin; CHECK ở phần B mới thực thi giới hạn tại MySQL.**
 
-### Hành vi của 16 FK đã được xác nhận
+### Hành vi của 17 FK đã được xác nhận
 
 RESTRICT từ chối xóa bản ghi cha hoặc đổi khóa đang được tham chiếu. Nó không cấm xóa bản ghi con, xóa dòng bảng trung gian hoặc cập nhật cột không phải khóa theo nghiệp vụ. ID định danh không được tự đổi kéo theo toàn bộ liên kết. CASCADE dưới đây chỉ áp dụng khi xóa sự kiện.
 
@@ -89,6 +104,7 @@ RESTRICT từ chối xóa bản ghi cha hoặc đổi khóa đang được tham 
 | opportunity_skills.item_id  | opportunities.item_id  | RESTRICT    | RESTRICT  |
 | opportunity_skills.skill_id | categories.category_id | RESTRICT    | RESTRICT  |
 | opportunity_years.item_id   | opportunities.item_id  | RESTRICT    | RESTRICT  |
+| auth_sessions.user_id       | users.user_id          | RESTRICT    | RESTRICT  |
 
 ### B. Ràng buộc SQL không được Prisma schema biểu diễn
 
@@ -116,7 +132,8 @@ Migration `20261026150000_add_opportunity_deadline_metadata` thêm đúng một 
 
 | Nhóm quy tắc                 | Phần backend cần bảo đảm                                                                                                                                                                                                                         |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Danh tính, role và ownership | Google token/JWT được xác minh; Guest không lưu như role; kiểm tra đúng Student/Admin và chủ sở hữu từng request; FK chỉ kiểm tra bản ghi tồn tại                                                                                                |
+| Danh tính, role và ownership | Google ID token/JWT được backend xác minh; `google_sub` của tài khoản mới phải do verifier cung cấp; Guest không lưu như role; kiểm tra đúng Student/Admin và chủ sở hữu từng request; FK chỉ kiểm tra bản ghi tồn tại                           |
+| Phiên xác thực               | Refresh chỉ lưu hash; backend kiểm tra owner, `expires_at`, `revoked_at`, rotate hash trong transaction và không kéo dài hạn; DB không áp quy tắc tối đa 7 ngày hoặc xác minh token                                                              |
 | Major/Skill                  | major_id phải trỏ category type Major, skill_id phải trỏ Skill; trạng thái Active/Closed theo use case. FK không kiểm tra type/status của danh mục                                                                                               |
 | Hồ sơ và danh mục            | Điều kiện hồ sơ đầy đủ; giữ ít nhất một mục Active mỗi loại; không xóa cứng danh mục; kiểm tra tên không rỗng ngoài UNIQUE                                                                                                                       |
 | Cơ hội và duyệt tin          | Miền loại nội dung, format/location, URL nguồn hợp lệ trước duyệt, is_verified, người/thời điểm duyệt, chuyển trạng thái; CHECK publisher IS NOT NULL không loại chuỗi toàn khoảng trắng                                                         |
@@ -135,12 +152,12 @@ Các lệnh đều chạy tại **gốc UniHub**, nơi có package.json và pack
 Trước khi chuyển nhánh, chạy `git status`. Nếu có mã chưa commit, lưu an toàn và không reset/clean để chuyển nhánh. Khi working tree sạch:
 
 ```powershell
-git fetch origin refs/heads/feat/prisma-schema:refs/remotes/origin/feat/prisma-schema
-git switch feat/prisma-schema
+git fetch origin refs/heads/feat/auth-schema-migration:refs/remotes/origin/feat/auth-schema-migration
+git switch feat/auth-schema-migration
 npm.cmd ci
 ```
 
-Nếu Git chưa tự tạo nhánh local, dùng `git switch --track origin/feat/prisma-schema`. Hướng dẫn lấy nhánh chỉ dùng sau khi nhánh được push; báo cáo bàn giao xác nhận trạng thái push thực tế.
+Nếu Git chưa tự tạo nhánh local, dùng `git switch --track origin/feat/auth-schema-migration`. Lấy nhánh sau khi nó được push và chỉ chuyển nhánh khi working tree đã sạch.
 
 ```powershell
 npm.cmd run prisma:format
@@ -159,7 +176,7 @@ Kiểm tra cấu trúc SQL **chỉ để xem trước**, không nối database:
 npm.cmd run prisma:diff
 ```
 
-Script cố định đầu vào là `--from-empty --to-schema prisma/schema.prisma --script`. Nó không áp dụng SQL và không tạo migration trong repository. Nếu chạy được, output vẫn chưa có các CHECK/ON UPDATE/GRANT ở phần B. Không thay các cờ bằng `--from-config-datasource`, `--to-config-datasource` hoặc lệnh truy cập database trong nhiệm vụ này.
+Script cố định đầu vào là `--from-empty --to-schema prisma/schema.prisma --script`. Nó không áp dụng SQL và không tạo migration trong repository. Output Prisma không thể hiện column collation, CHECK, ON UPDATE hoặc GRANT ở SQL migration. Không thay các cờ này bằng `--from-config-datasource`/`--to-config-datasource` cho lệnh xem trước; muốn áp dụng migration thì dùng `db:migrate:status`/`db:migrate:deploy` theo hướng dẫn ở [database-migrations.md](database-migrations.md) sau khi PR được review/merge.
 
 Các kiểm tra ứng dụng hiện có, vẫn tại gốc:
 
@@ -174,10 +191,10 @@ npm.cmd run format:check
 
 ## 5. Trạng thái kiểm tra schema và giới hạn
 
-- **Đạt kiểm tra schema:** 12 model, 83 scalar columns (81 cột baseline Chương 4 + 2 metadata deadline đã duyệt), 12 PK, 16 FK, 2 UNIQUE. Database sau hai migration có 14 CHECK: 13 CHECK Chương 4 trong initial migration và một CHECK metadata riêng.
-- **Prisma format, validate và generate đạt** với Prisma 7.10.1 sau khi thêm metadata. Offline diff xác nhận hai cột `DATE`/`VARCHAR(64)`; SQL CHECK tùy chỉnh không được Prisma diff biểu diễn.
-- **MySQL tạm 8.4.13 đạt** trên database trống và database đã có initial migration cùng bản ghi cũ: deadline cũ giữ nguyên, metadata cũ NULL, các tổ hợp hợp lệ/không hợp lệ được kiểm tra và migrate deploy lần hai không chạy lại migration. Chi tiết ở [database-migrations.md](database-migrations.md). Đây không phải kiểm thử API/UI; backend chưa triển khai validation timezone/cutoff.
-- **Typecheck, build, test HTTP và Prettier đạt** sau thay đổi: frontend 13/13, backend 13/13. `.prisma` dùng formatter Prisma riêng. Generated client, node_modules, dist và `.env` thật đều được ignore. Kiểm thử Codex/Linux không kiểm tra MySQL Windows hoặc NFR.
+- **Prisma schema của nhánh:** 13 model, 90 scalar columns (83 cột trên main gồm deadline metadata + 7 cột auth), 13 PK, 17 FK và 4 UNIQUE ngoài PK. Fresh database sau ba migration có 14 CHECK: 13 CHECK trong initial migration và một CHECK metadata.
+- **Prisma format, validate và generate:** đạt với Prisma 7.10.1 sau auth schema; typecheck và build cũng đạt. Prisma diff kiểm tra cấu trúc biểu diễn được, còn column collation và CHECK tùy chỉnh được xác minh bằng SQL metadata/MySQL vì Prisma schema không biểu diễn chúng.
+- **MySQL tạm 8.4.13:** database trống và database upgrade qua initial + deadline, có dữ liệu cũ, đều đạt auth migration. Deadline/user cũ được giữ nguyên; `google_sub` legacy NULL; constraints/collation, session defaults/FK, quyền runtime và deploy lần hai được kiểm tra. Chi tiết pass/fail ở [database-migrations.md](database-migrations.md). Đây không phải kiểm thử API auth/UI.
+- **`npm test` từ gốc repository:** frontend 25 pass, 0 fail, 0 skip; backend 19 pass, 0 fail, 9 skip; tổng 44 pass, 0 fail, 9 skip. Chín ca bị bỏ qua là MySQL integration tests của Major/opportunities vì `TEST_DATABASE_URL` và `TEST_CATEGORIES_DATABASE_URL` không được đặt. Đính chính báo cáo trước: suite frontend có script `node --test` và đã chạy; lần trước tôi chỉ báo kết quả backend. Auth schema/GRANT được kiểm thử SQL riêng trên hai schema MySQL tạm như ghi ở [database-migrations.md](database-migrations.md); không gọi API auth. **`npm run format:check` đạt sau khi chuẩn hóa Markdown.** Generated client, node_modules, dist và `.env` thật đều được ignore. Kiểm thử Codex/Linux không kiểm tra MySQL Windows hoặc NFR.
 
 Lần thử đầu gặp 403 khi tải checksum engine từ **binaries.prisma.sh**. Lần kiểm tra cuối đã tải/chạy được bằng CLI chính thức, không bỏ xác minh checksum hoặc TLS. Nếu môi trường khác gặp lỗi này, cần cho phép hostname nguồn engine chính thức trên; đây không phải máy chủ database. Bản nháp cấu hình mạng Codex đã được lưu để review, nhưng lưu draft không tự chứng minh runtime đã áp dụng cấu hình; kết quả đạt ở trên dựa trên exit code thực tế.
 
@@ -185,11 +202,11 @@ SQL diff thuần từ schema sinh mặc định `utf8mb4`/`utf8mb4_unicode_ci`; 
 
 Initial migration đã bổ sung các CHECK, collation, hai `ON UPDATE` và thiết lập timezone đã được xác nhận; chi tiết và kết quả MySQL thật của container test ở [database-migrations.md](database-migrations.md). SQL diff ở trên vẫn chỉ là nền Prisma trước phần SQL tùy chỉnh, không phải nội dung migration hoàn chỉnh.
 
-## 6. Việc còn cần quyết định trước triển khai tiếp
+## 6. Việc còn cần xác minh trước triển khai tiếp
 
-Các quyết định FK/timestamp đã được xác nhận và lưu trong schema/migration. Các điểm sau thuộc nhiệm vụ kế tiếp, không tự mở rộng mô hình 12 bảng:
+Các quyết định FK/timestamp/auth schema đã được lưu trong schema/migration. Những phụ thuộc sau chưa phải quyết định schema mới:
 
-- Chương 4 mới mô tả `google_sub` và `auth_sessions`, nhưng model/migration trên `main` chưa có. Đây không ngăn duyệt tài liệu auth contract, nhưng chặn chạy auth trên database thật. Thực hiện qua schema/migration PR riêng sau khi leader review; không backfill Google sub từ email.
+- Migration auth hiện có trên nhánh `feat/auth-schema-migration`, chưa trên `main` hoặc database thành viên. Sau review/merge, từng máy phải kiểm tra migration status và chạy migration riêng; không backfill Google sub từ email. Login/JWT/refresh/logout và middleware vẫn chưa được triển khai.
 - Xác nhận môi trường môn học hỗ trợ phiên bản đã chọn và kiểm thử trên máy Windows của nhóm.
 - Các thay đổi lược đồ mới vẫn cần migration riêng và review theo quy trình trong database-migrations.md.
 

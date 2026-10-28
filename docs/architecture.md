@@ -1,8 +1,8 @@
 # Kiến trúc UniHub
 
-Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật Prisma runtime, API/router frontend và Hub cơ hội **27/10/2026**. Đã có frontend kỹ thuật React, backend Express, schema, initial migration và adapter MySQL. Prisma Client dùng singleton lazy; `GET /api/health` chỉ kiểm tra HTTP còn `GET /api/ready` truy vấn MySQL. Migration/runtime được kiểm thử trên MySQL tạm ở Codex/Linux; không truy cập database thành viên. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md) và [database-runtime.md](database-runtime.md).
+Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật Prisma runtime, API/router frontend, Hub cơ hội và auth schema **28/10/2026**. Đã có frontend kỹ thuật React, backend Express, schema, initial migration và adapter MySQL. Prisma Client dùng singleton lazy; `GET /api/health` chỉ kiểm tra HTTP còn `GET /api/ready` truy vấn MySQL. Migration/runtime được kiểm thử trên MySQL tạm ở Codex/Linux; không truy cập database thành viên. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md) và [database-runtime.md](database-runtime.md).
 
-Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md); phiên bản Chương 3–4 vừa đối chiếu và hash nằm trong [api-contracts.md](api-contracts.md). **Chương 4 mới mô tả 13 bảng, `users.google_sub` và `auth_sessions`; Prisma/migrations trên `main` hiện có 12 model và chưa có hai phần auth, đồng thời đã có hai deadline metadata chưa ghi trong PDF mới.** Đây là chênh lệch nguồn; schema diagram/route list trong tài liệu này mô tả implementation hiện tại, không thay thế quyết định nhóm về bản Chương 4. Chênh lệch này không chặn hoàn thiện/duyệt tài liệu auth, nhưng chặn chạy auth trên database thật cho tới khi migration riêng được duyệt, merge, áp dụng và GRANT được xác nhận.
+Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md); phiên bản Chương 3–4 vừa đối chiếu và hash nằm trong [api-contracts.md](api-contracts.md). **Chương 4 hiện mô tả 13 bảng, `users.google_sub` và `auth_sessions`; `origin/main` baseline có 12 model/83 cột và deadline metadata nhưng chưa có auth. Nhánh `feat/auth-schema-migration` bổ sung auth bằng schema/migration riêng (13 model/90 cột); chưa merge hoặc áp dụng vào database nhóm.** PDF chưa ghi hai deadline metadata đã được duyệt. Đây là chênh lệch nguồn; tài liệu này nêu trạng thái nhánh, không thay thế việc cập nhật báo cáo Chương 4. Auth không chạy trên database đích cho tới khi PR được review/merge, migration/GRANT được áp dụng và code auth được triển khai.
 
 ## 1. Thành phần và trách nhiệm
 
@@ -15,7 +15,7 @@ flowchart LR
     B --> A[Xác thực / phân quyền / kiểm tra input]
     A --> S[Dịch vụ nghiệp vụ và giao dịch]
     S --> P[Prisma Client + adapter MySQL]
-    P --> D[(MySQL: 12 bảng nghiệp vụ)]
+    P --> D[(MySQL: 13 bảng theo schema nhánh)]
     B -->|JWT UniHub / dữ liệu / lỗi| F
 ```
 
@@ -68,7 +68,7 @@ Luồng đã được nhóm chốt:
 4. Backend xử lý tra cứu tài khoản theo thiết kế đã thống nhất, lấy quyền từ dữ liệu UniHub và phát token **của UniHub**. Google ID token không được dùng thay JWT UniHub cho các API nghiệp vụ.
 5. Mọi API được bảo vệ kiểm tra token UniHub, quyền và quyền sở hữu tài nguyên ở backend; frontend guard không phải biện pháp bảo vệ dữ liệu.
 
-Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật. BR-14.5 quy định role mới có hiệu lực ở lần cấp token kế tiếp. Contract tại [auth-api-contract.md](auth-api-contract.md) đã được leader duyệt; endpoint/cookie/security implementation chưa có trên main. Chương 4 mới có `google_sub`/`auth_sessions`, trong khi main schema chưa; chênh lệch này không ngăn phê duyệt hợp đồng nhưng chặn chạy auth trên database thật cho tới khi migration riêng được duyệt, merge và áp dụng.
+Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật. BR-14.5 quy định role mới có hiệu lực ở lần cấp token kế tiếp. Contract tại [auth-api-contract.md](auth-api-contract.md) đã được leader duyệt; endpoint/cookie/security implementation chưa có. Chương 4 mô tả `google_sub`/`auth_sessions`; nhánh hiện tại thêm chúng bằng migration mới nhưng PR chưa merge hoặc áp dụng lên database đích. Vì vậy code auth chưa thể chạy trên database thật.
 
 | Đối tượng | Ý nghĩa và nguồn quyền |
 | --- | --- |
@@ -79,7 +79,7 @@ Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tố
 **Các điểm trước implementation:**
 
 - Chương 3 hiện đã mô tả Google ID token; giữ flow đó, không đổi sang Authorization Code.
-- Chương 4 mới đã có `google_sub` và `auth_sessions`, nhưng Prisma/migrations trên `main` chưa có chúng. Bổ sung bằng migration riêng sau khi leader review; không sửa initial migration hoặc suy đoán `sub` từ email. Đây là blocker cho database execution, không blocker để hoàn tất/duyệt contract docs.
+- Nhánh `feat/auth-schema-migration` bổ sung `google_sub` và `auth_sessions` bằng migration riêng; không sửa initial/deadline migration hoặc suy đoán `sub` từ email. Cần review/merge, áp dụng migration/GRANT rồi triển khai auth code. Đây là blocker cho database execution của auth.
 - Không có yêu cầu khóa tài khoản/domain allowlist; không thêm `account_status` hoặc lock API.
 - Giữ seed Admin theo UC-04/BR-04.2, không hardcode định danh cá nhân hoặc public bootstrap. Contract không tạo Admin/seed.
 
@@ -113,7 +113,7 @@ UniHub/
 │   └── README.md                # chỉ dẫn đến backend/prisma/ sau này
 ├── docs/
 │   ├── technology-stack.md      # phiên bản và phạm vi
-│   ├── architecture.md          # tài liệu này; giữ đối chiếu 12 bảng
+│   ├── architecture.md          # tài liệu kiến trúc; trạng thái schema nhánh 13 bảng
 │   ├── team-workflow.md         # TV1–TV5, nhánh/commit/PR
 │   ├── development-roadmap.md   # thứ tự công việc sau scaffold
 │   ├── api-conventions.md       # health đã chạy, quy ước nghiệp vụ dự thảo
@@ -133,7 +133,7 @@ Các scripts tại root gồm `dev:frontend`, `dev:backend`, `typecheck`, `build
 
 ## 4. Nguyên tắc giữ nguyên mô hình dữ liệu
 
-Đã đối chiếu **8 bảng thực thể + 4 bảng trung gian = 12 bảng nghiệp vụ** ở Chương 4 mục 4.3.2.1–4.3.2.12. Phần dưới là **đặc tả gốc dùng đối chiếu file schema đã tạo**, không phải bằng chứng migration đã chạy. Kết quả kiểm đếm/công cụ thực tế, quyết định FK và timestamp đã xác nhận được ghi riêng trong [database-schema.md](database-schema.md).
+Chương 4 phiên bản trước mô tả **8 bảng thực thể + 4 bảng trung gian = 12 bảng** (§4.3.2.1–§4.3.2.12); PDF hiện hành thêm `users.google_sub` và `auth_sessions` ở §4.3.2.1/§4.3.2.13, thành 13 bảng. Phần dưới đối chiếu 12 bảng nghiệp vụ nền; bổ sung auth và trạng thái schema nhánh được ghi tại [database-schema.md](database-schema.md). Số cột và ràng buộc chạy thực tế cần xem [database-migrations.md](database-migrations.md).
 
 - Giữ nguyên tên bảng/cột `snake_case`, tên khóa và kiểu MySQL, độ dài, nullable, mặc định, unique, khóa ghép, khóa ngoại. Model Prisma có thể dùng tên PascalCase với `@@map`; tên field giữ `snake_case` để dễ đối chiếu. Nếu sau này đổi tên field TypeScript sang camelCase, phải có `@map` để tên cột MySQL không đổi.
 - Dùng provider `mysql` với khóa ngoại thật (`relationMode = "foreignKeys"`). Không chuyển sang quan hệ chỉ do Prisma mô phỏng.
@@ -159,15 +159,16 @@ Các scripts tại root gồm `dev:frontend`, `dev:backend`, `typecheck`, `build
 | UNIQUE | `@unique` hoặc `@@unique([...])` |
 | FK | Scalar khóa ngoại và trường `@relation(fields: [...], references: [...])`; chiều ngược là relation field, không tạo thêm cột |
 
-## 5. Đối chiếu Prisma với 12 bảng Chương 4
+## 5. Đối chiếu Prisma với các bảng Chương 4
 
 ### 5.1. `users` → model `User`, `@@map("users")`
 
-Nguồn: mục 4.3.2.1, trang 12–14. Có **10 cột**.
+Nguồn: mục 4.3.2.1, trang 12–14. Bảng nền có **10 cột**; schema hiện tại của nhánh thêm `google_sub` thành 11.
 
 | Cột | Kiểu MySQL → scalar Prisma | Khóa / mặc định |
 | --- | --- | --- |
 | `user_id` | INT → Int | PK, AI |
+| `google_sub` | VARCHAR(255) → String? | UNIQUE; nullable legacy; cột dùng collation `utf8mb4_0900_as_cs` trong migration SQL |
 | `email` | VARCHAR(255) → String | UNIQUE |
 | `full_name` | VARCHAR(150) → String | — |
 | `avatar_url` | VARCHAR(500) → String? | NULL |
@@ -178,7 +179,7 @@ Nguồn: mục 4.3.2.1, trang 12–14. Có **10 cột**.
 | `created_at` | DATETIME → DateTime | now |
 | `updated_at` | DATETIME → DateTime | now; cập nhật khi bản ghi thay đổi |
 
-Database: CHECK role thuộc `Student`, `Admin`; CHECK academic_year từ 1 đến 4 khi có giá trị. Backend: `major_id` phải trỏ danh mục type `Major`; hồ sơ đầy đủ gồm chuyên ngành, năm học và kỹ năng theo Chương 3. `career_goal` không tham gia điểm gợi ý. Chương 4 cho phép cập nhật `users.updated_at` ở DB hoặc ứng dụng; khi triển khai phải chọn rõ cơ chế, không nhầm `@updatedAt` là trigger database. Không có mật khẩu, `Guest`, Google sub hoặc cột session trong bảng hiện tại.
+Database: CHECK role thuộc `Student`, `Admin`; CHECK academic_year từ 1 đến 4 khi có giá trị. Backend: `major_id` phải trỏ danh mục type `Major`; hồ sơ đầy đủ gồm chuyên ngành, năm học và kỹ năng theo Chương 3. `career_goal` không tham gia điểm gợi ý. Chương 4 cho phép cập nhật `users.updated_at` ở DB hoặc ứng dụng; khi triển khai phải chọn rõ cơ chế, không nhầm `@updatedAt` là trigger database. Không có mật khẩu hoặc role `Guest` trong bảng.
 
 ### 5.2. `categories` → model `Category`, `@@map("categories")`
 
@@ -358,6 +359,10 @@ Nguồn: mục 4.3.2.12, trang 29–30. Có **2 cột**.
 
 Database: `@@id([item_id, academic_year])`, CHECK academic_year BETWEEN 1 AND 4. Không FK từ academic_year tới categories hoặc bảng khác.
 
+### 5.13. `auth_sessions` → model `AuthSession`, `@@map("auth_sessions")`
+
+Nguồn: Chương 4 §4.3.2.13. Bảng session có sáu cột theo [bảng schema chi tiết](database-schema.md#bổ-sung-auth-identity-session-theo-chương-4). FK tới `users.user_id` dùng RESTRICT/RESTRICT; `session_id` là UUID, `refresh_token_hash` được lưu thay cho secret thô, timestamp UTC dùng `DATETIME(0)`. Nhánh auth hiện thêm model/migration; middleware, login, refresh và logout chưa có.
+
 ## 6. Ranh giới database và backend
 
 | Nhóm ràng buộc | Nơi bảo đảm chính | Cách đưa vào triển khai sau này |
@@ -379,7 +384,7 @@ SQL `CHECK` theo thiết kế cũng không bảo đảm mọi điều kiện ngh
 
 ## 7. Kiểm tra trước khi chuyển sang mã nguồn
 
-Đã kiểm tra tài liệu ở mức tĩnh từ hai phiên bản: Chương 4 lịch sử có 12 bảng/81 cột; Prisma main sau deadline migration có 12 bảng/83 cột, 8 PK tự tăng, 4 PK ghép và 16 FK. Chương 4 mới đính kèm mô tả 13 bảng, thêm `google_sub`/`auth_sessions`, nhưng bỏ sót deadline metadata. `activity_logs.target_id` không phải FK. Đây là mismatch báo cáo; xem [api-contracts.md](api-contracts.md). Chưa sửa PDF.
+Kiểm đếm tĩnh: Prisma `origin/main` baseline có 12 model/83 cột, 12 PK, 16 FK và hai UNIQUE ngoài PK. Nhánh auth có 13 model/90 cột, 13 PK, 17 FK và bốn UNIQUE ngoài PK. PDF Chương 4 hiện hành mô tả 13 bảng, có `google_sub`/`auth_sessions`, nhưng chưa ghi hai deadline metadata. `activity_logs.target_id` không phải FK. Đây là nội dung cần đồng bộ trong báo cáo; PDF chưa được sửa. Kiểm thử DDL thực tế và giới hạn ở [database-migrations.md](database-migrations.md).
 
 Sau scaffold, các bước tiếp theo và phạm vi kiểm tra:
 

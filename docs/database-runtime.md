@@ -9,6 +9,7 @@ Tài liệu này mô tả Prisma runtime của backend, cấu hình MySQL cục 
 - `GET /api/health` xác nhận HTTP server đang phản hồi. `GET /api/ready` chạy `SELECT 1` và chỉ trả sẵn sàng khi truy vấn thành công. Xem [quy ước API](api-conventions.md).
 - Prisma CLI migration dùng `MIGRATION_DATABASE_URL` riêng trong `backend/prisma.config.ts`. Runtime tuyệt đối không dùng biến này làm fallback. Không cần chạy lại migration nếu database đã được cập nhật.
 - Backend có API đọc công khai Hub cơ hội; chưa có API ghi/Admin, đăng nhập, JWT hoặc xử lý Reminder. Kiểm thử runtime bên dưới chỉ chứng minh kết nối, quyền MySQL và transaction truy cập dữ liệu, không thay thế kiểm thử endpoint cơ hội.
+- `google_sub`/`auth_sessions` và quyền runtime cho session đang được thêm trên nhánh `feat/auth-schema-migration`, chưa có trên `main` hoặc database nhóm. Migration/GRANT được kiểm thử riêng trên MySQL tạm 8.4.13; điều đó chưa triển khai Google login, JWT, refresh/logout hoặc middleware.
 
 ## Pool, thời gian và xác thực MySQL
 
@@ -80,6 +81,7 @@ Health phải trả HTTP 200 dù MySQL chưa cấu hình. Readiness trả HTTP 2
 - Runtime user tạo/đọc notification và xóa Reminder mà không xóa event. Trong một transaction, xóa notification rồi reset `reminded_at`; chủ động rollback và xác nhận cả notification lẫn giá trị timestamp được phục hồi.
 - Runtime user `INSERT`/`SELECT` được `activity_logs`; MySQL từ chối `UPDATE` và `DELETE` trên bảng này.
 - MySQL thật không tham gia test HTTP không cần DB: các test HTTP độc lập xác nhận thiếu/sai cấu hình và lỗi kết nối trả 503 an toàn, không lộ URL hoặc thông tin driver; health vẫn trả 200 khi server không có DATABASE_URL.
+- Auth schema trong nhánh được kiểm thử riêng trên MySQL 8.4.13: fresh deploy cả ba migrations và upgrade database có hai migrations cùng bản ghi cũ; xác nhận dữ liệu cũ giữ nguyên, `google_sub` và deadline metadata legacy NULL, collation case-sensitive, UNIQUE/FK/RESTRICT/defaults, timestamp UTC, runtime `auth_sessions` SELECT/INSERT/UPDATE, cấm DELETE/DDL, và `activity_logs` chỉ SELECT/INSERT. Lần deploy lặp không chạy lại migration. Đây là SQL/schema/GRANT test, không gọi endpoint auth.
 
 > Đây là kiểm thử adapter, readiness, quyền SQL và transaction Prisma trên database dùng một lần. Nó **không phải kiểm thử API nghiệp vụ Reminder**: chưa xác nhận validation due date/remind-before, ownership, điều kiện chọn Reminder cũ hay nghiệp vụ ở route/service.
 
