@@ -1,6 +1,6 @@
 # Hợp đồng API diễn đàn và kiểm duyệt
 
-> **Trạng thái: public author fields đã được leader chốt; endpoints và moderation còn là dự thảo cho TV5.** Chưa có endpoint forum/moderation trên `main`. Phạm vi chỉ đọc, đăng bài, bình luận và Admin xóa mềm nội dung vi phạm theo UC-08–UC-11.
+> **Trạng thái: public author fields đã được leader chốt; toàn bộ endpoint/forum moderation draft chờ leader review.** Chưa có endpoint forum/moderation trên `main`. TV5 triển khai sau khi leader duyệt; phạm vi chỉ đọc, đăng bài, bình luận và Admin xóa mềm nội dung vi phạm theo UC-08–UC-11.
 
 ## Forum public/Student
 
@@ -17,6 +17,8 @@
 Example fabricated post response: `{ "post": {"id": 7, "title": "Cách học SQL", "topic": "Học tập", "content": "Nội dung văn bản", "author": {"fullName":"Sinh viên minh họa","avatarUrl":null}, "createdAt":"2026-10-28T00:00:00Z"} }`. **Quyết định đã duyệt:** public author object chỉ gồm `fullName` và `avatarUrl`; tuyệt đối không trả email, `userId` hoặc Google sub. `author_id` vẫn là khóa nội bộ để ghi nhận actor và không được serialize ra response.
 
 No edit or student-delete operations are in source; do not add them. 400 `INVALID_REQUEST`/`VALIDATION_ERROR`, 401 `UNAUTHORIZED`, 403 `FORBIDDEN`, 404 `NOT_FOUND`, 503 `SERVICE_UNAVAILABLE`, 500 `INTERNAL_ERROR`. `topic` domain is backend checked; Ch4 CHECK does not enforce it. Error envelope shared. Empty list returns 200 with [] and meta; DB failure remains error.
+
+Đề xuất chờ leader review: nội dung forum là plain text, không hỗ trợ HTML tùy ý; backend lưu/serialize an toàn và frontend render như text. Không dùng nội dung người dùng như HTML tin cậy.
 
 Tables: forum_posts, comments, users. Reads/writes use authenticated actor IDs. DB PK/FK and length/null constraints are structural; backend enforces role, non-empty sanitized text, allowed topic, visibility and ownership.
 

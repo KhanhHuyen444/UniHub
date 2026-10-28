@@ -1,6 +1,6 @@
 # Hợp đồng API Admin tài khoản và phân quyền
 
-> **Trạng thái: dự thảo theo UC-14; chưa có endpoint quản trị tài khoản trên main.** Không thêm khóa tài khoản, password login hoặc chỉnh schema ở đây.
+> **Trạng thái: draft chờ leader review theo UC-14; chưa có endpoint quản trị tài khoản trên main.** TV2 triển khai sau khi leader duyệt. Không thêm khóa tài khoản, password login hoặc chỉnh schema ở đây.
 
 ## Nguồn và ranh giới
 

@@ -16,7 +16,7 @@ Các thư mục Admin con là ranh giới sở hữu **khi triển khai**, chưa
 
 ### Điều phối hợp đồng API
 
-Theo phân công mới nhất, TV1 soạn/duy trì toàn bộ hợp đồng API, quy ước response/lỗi/quyền và bảng phụ thuộc để TV2–TV5 triển khai. TV2–TV5 review hợp đồng thuộc module mình nhưng không cần viết lại hoặc tạo bản song song. Trạng thái “draft/proposal” chỉ thành “đã duyệt” khi có quyết định nhóm ghi nhận; trạng thái “implemented” chỉ khi code/test/commit thực tế chứng minh.
+Theo phân công mới nhất, TV1 soạn/duy trì toàn bộ hợp đồng API, quy ước response/lỗi/quyền và bảng phụ thuộc; leader là người duyệt cuối cùng mọi hợp đồng. TV2–TV5 có thể gửi bằng chứng và góp ý module, nhưng không tự review để đóng/duyệt contract. Thành viên chỉ triển khai theo hợp đồng sau khi leader duyệt. Trạng thái “implemented” chỉ khi code/test/commit thực tế chứng minh.
 
 Mục lục endpoint/role matrix, dependency map, handoff checklist và PR sequence ở [api-contracts.md](api-contracts.md). Người sở hữu module chịu trách nhiệm code/test; TV1 giữ các file phối hợp dùng chung (`docs/api-conventions.md`, contract auth nền tảng, app/router mount và tích hợp). Nếu đề xuất ảnh hưởng dữ liệu, quyền hoặc Chương 3–4, dừng phần phụ thuộc và xin quyết định; có thể tiếp tục phần độc lập.
 

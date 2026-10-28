@@ -1,10 +1,10 @@
 # Hợp đồng API đọc danh mục dùng chung
 
-> **Major phục vụ Hub đã được nhóm duyệt và triển khai trên `main` sau PR #13; consumer frontend có trên `main` sau PR #12.** Contract Skill, hồ sơ Closed và các thao tác Admin phía dưới là dự thảo chờ leader review; TV2/TV3 phối hợp phản hồi theo phân công mới. Quyết định về liên kết Major/Skill Closed trong cơ hội đã được chốt riêng và không tự áp dụng cho hồ sơ.
+> **Major phục vụ Hub do TV1 triển khai và merge vào `main` qua PR #13; TV3 tiếp quản và tái sử dụng module/API này.** Consumer frontend có trên `main` sau PR #12. Contract Skill, hồ sơ Closed và các thao tác Admin phía dưới là dự thảo chờ leader review; TV2/TV3 có thể gửi góp ý nhưng leader duyệt cuối. Quyết định về liên kết Major/Skill Closed trong cơ hội đã được chốt riêng và không tự áp dụng cho hồ sơ.
 
 ## 1. Mục tiêu, phạm vi và nguồn
 
-TV3 sở hữu module `categories` và cung cấp danh mục dùng chung. TV1 tiêu thụ Major Active cho bộ lọc Hub. Không tạo endpoint danh mục trong `opportunities`. Module `backend/src/modules/categories` triển khai phần đọc Major đã duyệt; Skill options và Admin CRUD dưới đây vẫn là dự thảo. Không bao gồm seed hoặc thay đổi schema/migration/GRANT.
+TV1 đã triển khai và merge Major API qua PR #13; TV3 tiếp quản module `categories` để duy trì/tái sử dụng endpoint dùng chung và thực hiện các phần khác sau khi leader duyệt contract. TV1 là consumer Major Active cho bộ lọc Hub. Không tạo endpoint danh mục trong `opportunities`. Skill options và Admin CRUD dưới đây vẫn là dự thảo. Không bao gồm seed hoặc thay đổi schema/migration/GRANT.
 
 Nguồn đã đối chiếu:
 
@@ -24,7 +24,7 @@ Phân công TV1–TV5 dùng trong tài liệu theo yêu cầu hiện tại: TV1 
 
 **Quyết định nhóm đã duyệt:** bộ chọn Hub dùng `GET /api/categories?type=Major`, công khai và chỉ trả Major Active; response có `id`, `name`, `type`, sắp xếp `name ASC, category_id ASC`. `type` bắt buộc; không nhận `status` hoặc query không hỗ trợ. Không có kết quả trả 200 với `items: []`; chưa có phân trang/tìm kiếm. Major/Skill Closed đã liên kết với cơ hội vẫn giữ liên kết và tên; tìm kiếm theo Skill đã gắn vẫn tính cả Skill Closed. Hub gửi `majorId` Closed nhận 400/`INVALID_FILTER`; frontend cho người dùng xóa bộ lọc, không tự bỏ điều kiện. Quyết định trong Hub không đặt quy tắc hiển thị Closed cho hồ sơ.
 
-**Còn là dự thảo:** API đọc Skill cho hồ sơ; xử lý hồ sơ đang tham chiếu Major/Skill Closed; endpoints Admin categories; error codes/validation cụ thể của các phần chưa triển khai. Theo UC-05, Skill options phục vụ Student profile, nhưng quyền/response cần TV2/TV3 review. Không lấy quy tắc Major public của Hub làm căn cứ để Guest đọc Skill.
+**Chờ leader review:** API đọc Skill cho hồ sơ; xử lý hồ sơ đang tham chiếu Major/Skill Closed; endpoints Admin categories; error codes/validation cụ thể của các phần chưa triển khai. Theo UC-05, Skill options phục vụ Student profile, nhưng quyền/response chưa được chốt. Không lấy quy tắc Major public của Hub làm căn cứ để Guest đọc Skill.
 
 ## 3. Contract đã duyệt: Major cho Hub
 
@@ -42,7 +42,7 @@ Phân công TV1–TV5 dùng trong tài liệu theo yêu cầu hiện tại: TV1 
 | Phân trang/tìm kiếm | Không có trong contract Hub đã duyệt.                                                                       |
 | Không có kết quả    | HTTP 200, `items: []`. Lỗi database không được giả thành danh sách rỗng.                                    |
 
-Không tạo endpoint danh mục trong module `opportunities`; TV1 dùng API chung do TV3 cung cấp. `type=Skill` chưa thuộc phần contract đã duyệt.
+Không tạo endpoint danh mục trong module `opportunities`; TV1 dùng API Major đã triển khai và merge, TV3 tiếp quản provider chung. `type=Skill` chưa thuộc phần contract đã duyệt.
 
 ### Query lỗi và lỗi server
 
@@ -78,13 +78,13 @@ Nếu không có Major Active thì trả HTTP 200 với `{"items": []}` theo quy
 
 ### Ánh xạ và trường trả về
 
-| API                         | Schema / database        | Trả?  | Ghi chú                                                                             |
-| --------------------------- | ------------------------ | ----- | ----------------------------------------------------------------------------------- |
-| `id`                        | `categories.category_id` | Có    | Số nguyên; client gửi `id` Major qua `majorId` cho API cơ hội.                      |
-| `name`                      | `categories.name`        | Có    | Tên hiện tại của danh mục.                                                          |
-| `type`                      | `categories.type`        | Có    | Giá trị luôn là `Major` trong contract đã duyệt. Contract Skill còn chờ thống nhất. |
-| điều kiện `status = Active` | `categories.status`      | Không | Server lọc; không trả status vì endpoint chỉ cung cấp lựa chọn hiện hành.           |
-| `created_at`                | `categories.created_at`  | Không | Không cần cho option, không phải metadata quản trị.                                 |
+| API                         | Schema / database        | Trả?  | Ghi chú                                                                                |
+| --------------------------- | ------------------------ | ----- | -------------------------------------------------------------------------------------- |
+| `id`                        | `categories.category_id` | Có    | Số nguyên; client gửi `id` Major qua `majorId` cho API cơ hội.                         |
+| `name`                      | `categories.name`        | Có    | Tên hiện tại của danh mục.                                                             |
+| `type`                      | `categories.type`        | Có    | Giá trị luôn là `Major` trong contract đã duyệt. Contract Skill còn chờ leader review. |
+| điều kiện `status = Active` | `categories.status`      | Không | Server lọc; không trả status vì endpoint chỉ cung cấp lựa chọn hiện hành.              |
+| `created_at`                | `categories.created_at`  | Không | Không cần cho option, không phải metadata quản trị.                                    |
 
 Major API không trả thông tin quản trị hoặc Closed. Đổi tên danh mục có hiệu lực trên liên kết theo Chương 4; các response nội dung/detail phải lấy tên hiện hành. Quy tắc đó không biến endpoint options thành nguồn dữ liệu lịch sử.
 
@@ -98,13 +98,13 @@ Backend phải xác thực query Major chính xác trước truy vấn. Không d
 
 ## 6. Phối hợp module
 
-| Nhu cầu                                                         | Bên cung cấp                            | Bên sử dụng                          | Hợp đồng/phụ thuộc                                                                                                                                                                                           |
-| --------------------------------------------------------------- | --------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Major Active cho bộ lọc Hub cơ hội                              | TV3 — `categories`                      | TV1 — `opportunities`                | Contract Major đã được nhóm duyệt; backend endpoint và frontend consumer đã có trên `main` sau PR #13 và PR #12; luồng được kiểm tra end-to-end trong [báo cáo tích hợp](opportunities-integration-test.md). |
-| Major Active cho lựa chọn chuyên ngành trong lộ trình công khai | TV3 — `categories`/`guidance`           | TV3 — `guidance`                     | Chương 3 UC-03/BR-03.3 yêu cầu Major Active; không tạo endpoint category thứ hai trong guidance.                                                                                                             |
-| Major/Skill Active cho hồ sơ                                    | TV3 — `categories`                      | TV2 — `profile`                      | UC-05 yêu cầu Major và Skill Active; Skill options Student-only và cách giữ giá trị hồ sơ Closed hiện là proposal chờ leader review.                                                                         |
-| Skill trong lộ trình/chi tiết cơ hội                            | TV3 — `guidance`, TV1 — `opportunities` | Guest/Student đọc nội dung tương ứng | Lấy skill đã gắn từ response nội dung; API options Active không được dùng để xóa/ẩn link Closed. Closed link trong cơ hội tiếp tục theo quyết định nhóm đã chốt.                                             |
-| Quản trị danh mục                                               | TV3 — `categories`                      | Admin                                | Tạo/sửa/đóng/mở/đọc Closed thuộc contract Admin riêng; không thêm vào API đọc options này.                                                                                                                   |
+| Nhu cầu                                                         | Bên cung cấp                                  | Bên sử dụng                          | Hợp đồng/phụ thuộc                                                                                                                                                                                           |
+| --------------------------------------------------------------- | --------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Major Active cho bộ lọc Hub cơ hội                              | TV1 đã triển khai; TV3 tiếp quản `categories` | TV1 — `opportunities`                | Contract Major đã được nhóm duyệt; backend endpoint và frontend consumer đã có trên `main` sau PR #13 và PR #12; luồng được kiểm tra end-to-end trong [báo cáo tích hợp](opportunities-integration-test.md). |
+| Major Active cho lựa chọn chuyên ngành trong lộ trình công khai | TV3 — `categories`/`guidance`                 | TV3 — `guidance`                     | Chương 3 UC-03/BR-03.3 yêu cầu Major Active; không tạo endpoint category thứ hai trong guidance.                                                                                                             |
+| Major/Skill Active cho hồ sơ                                    | TV3 tiếp quản `categories` sau PR Major       | TV2 — `profile`                      | UC-05 yêu cầu Major và Skill Active; Skill options Student-only và cách giữ giá trị hồ sơ Closed hiện chờ leader review.                                                                                     |
+| Skill trong lộ trình/chi tiết cơ hội                            | TV3 — `guidance`, TV1 — `opportunities`       | Guest/Student đọc nội dung tương ứng | Lấy skill đã gắn từ response nội dung; API options Active không được dùng để xóa/ẩn link Closed. Closed link trong cơ hội tiếp tục theo quyết định nhóm đã chốt.                                             |
+| Quản trị danh mục                                               | TV3 — `categories`                            | Admin                                | Tạo/sửa/đóng/mở/đọc Closed thuộc contract Admin riêng; không thêm vào API đọc options này.                                                                                                                   |
 
 Frontend consumer trên `main` gọi `GET /api/categories?type=Major` và parse `{"items":[{"id":12,"name":"Kỹ thuật phần mềm","type":"Major"}]}`. Provider Major đã có trên `main` sau PR #13. Kiểm thử tích hợp đã xác nhận endpoint chỉ trả Major Active, xử lý thành công danh sách rỗng tách biệt với lỗi tải, và consumer hiển thị trạng thái tương ứng. Frontend không giả định option luôn còn Active. Nếu category bị đóng sau khi tải option, API cơ hội trả 400/`INVALID_FILTER`; UI báo bộ lọc không còn hợp lệ và cho người dùng xóa. Lỗi tải categories có error/retry state riêng, không hiển thị như `items: []`.
 Đối với bản ghi liên kết Closed, tách rõ ba việc: endpoint options chỉ trả Active; endpoint nội dung có thể trả liên kết đã tồn tại theo quy tắc của module; endpoint Admin quản lý Closed ngoài phạm vi. Không suy ra rằng mọi module phải xóa hoặc ẩn liên kết cũ.
@@ -129,35 +129,28 @@ Backend tests cho route Major nằm tại `backend/test/categories.test.mjs`. C�
 
 ## 8. Phần còn dự thảo — leader review trước khi triển khai
 
-### Skill options cho hồ sơ
+### Skill options cho hồ sơ — chờ leader review
 
-Đề xuất dùng `GET /api/categories?type=Skill`, cùng resource Major nhưng **khác quyền**: Student-only theo UC-05; Guest → 401, Admin → 403. Chỉ trả Skill Active, ví dụ `{"items":[{"id":31,"name":"TypeScript","type":"Skill"}]}`; `type` bắt buộc và chỉ xuất hiện một lần; query khác/lặp/sai → 400 `INVALID_QUERY`; rỗng → 200 `{"items":[]}`; lỗi DB → 503. Không pagination/search. Đây là đề xuất contract, chưa được nhóm duyệt hoặc triển khai. Closed Skills đã liên kết trong hồ sơ cần giữ khi đọc; UI không cho chọn lại Closed. Nếu danh mục đã đóng giữa lúc load và save, backend từ chối thao tác thêm mới.
+Phương án chờ leader duyệt: `GET /api/categories?type=Skill`, Student-only theo UC-05; Guest → 401, Admin → 403; chỉ Skill Active; shape `items[{id,name,type}]`; `type` bắt buộc và đúng một lần; query khác/lặp/sai → 400 `INVALID_QUERY`; rỗng → 200 `items:[]`; lỗi DB → 503; không phân trang/tìm kiếm; sort `name ASC,category_id ASC`. Không tự áp dụng quyền public của Major. Cách giữ liên kết Closed trong hồ sơ là quyết định riêng tại bảng tổng hợp [api-contracts.md](api-contracts.md#7-quyết-định-còn-chờ-leader-xác-nhận).
 
 ### Admin categories
 
-Đề xuất TV3 API Admin-only:
+Phương án API Admin-only chờ leader duyệt:
 
-| Method/path                              | Request                          | Kết quả/validation                                             |
-| ---------------------------------------- | -------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `GET /api/admin/categories?type=Major    | Skill`                           | `type` bắt buộc, đúng một giá trị; chỉ Admin.                  | 200 danh sách theo `name ASC, category_id ASC`, gồm `id,name,type,status`; cả Active và Closed. |
-| `POST /api/admin/categories`             | `{ "type":"Major                 | Skill", "name":"..." }`; không nhận status, default Active.    | 201 item; reject blank/trimmed duplicate.                                                       |
-| `PATCH /api/admin/categories/:id`        | `{ "name":"..." }`; positive id. | 200 đổi tên; reject blank, missing, duplicate trong cùng type. |
-| `PATCH /api/admin/categories/:id/status` | `{ "status":"Active              | Closed" }`; positive id.                                       | 200 đổi trạng thái; không cho đóng Active cuối cùng của type; không xóa cứng.                   |
+| Method/path                                   | Request                                                                            | Kết quả/validation                                                                              |
+| --------------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `GET /api/admin/categories?type=Major\|Skill` | `type` bắt buộc, đúng một giá trị; chỉ Admin.                                      | 200 danh sách theo `name ASC, category_id ASC`, gồm `id,name,type,status`; cả Active và Closed. |
+| `POST /api/admin/categories`                  | `{ "type": "Major\|Skill", "name": "..." }`; không nhận `status`, mặc định Active. | 201 item; từ chối tên rỗng sau trim hoặc trùng trong cùng type.                                 |
+| `PATCH /api/admin/categories/:id`             | `{ "name": "..." }`; ID dương.                                                     | 200 đổi tên; từ chối tên rỗng, ID không tồn tại, tên trùng trong cùng type.                     |
+| `PATCH /api/admin/categories/:id/status`      | `{ "status": "Active\|Closed" }`; ID dương.                                        | 200 đổi trạng thái; không cho đóng Active cuối cùng của type; không xóa cứng.                   |
 
 Đề xuất lỗi: 400 `INVALID_REQUEST`/`INVALID_QUERY`/`INVALID_ID`, 401 `UNAUTHORIZED`, 403 `FORBIDDEN`, 404 `NOT_FOUND`, 409 `DUPLICATE_CATEGORY`/`LAST_ACTIVE_CATEGORY`, 503 DB. Mỗi thay đổi D6 cùng INSERT log D5 trong một transaction: CREATE_CATEGORY, RENAME_CATEGORY, CLOSE_CATEGORY hoặc REOPEN_CATEGORY; target Category, old/new value, actor từ JWT, reason nếu có. Database UNIQUE(type,name), CHECK type/status và FK giới hạn cấu trúc; backend xác nhận Admin, name nonblank, giữ ít nhất một Active và action/log cùng transaction.
 
-Các path, permission cụ thể cho Skill, error codes/status, sort Admin, và body/status route là dự thảo để leader review cùng TV2/TV3. Không có endpoint DELETE.
-
-| Quyết định                        | Phương án để TV2/TV3 review                                                                                                                | Tác động                                                                                   | Có chặn triển khai không                       |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ---------------------------------------------- |
-| Đọc danh sách Skill               | Đề xuất `GET /api/categories?type=Skill`, Student-only, Active-only, cùng response/validation/sort Major. Chưa được nhóm duyệt.            | Ảnh hưởng TV2 profile và TV3 categories/guidance; không ảnh hưởng contract Major đã duyệt. | Chặn Skill options, không chặn Major Hub.      |
-| Hồ sơ có Major/Skill cũ đã Closed | Đề xuất giữ và trả label Closed trong hồ sơ, cấm chọn cho liên kết mới; cho phép giữ lại id cũ khi lưu các trường khác. Cần TV2/TV3 duyệt. | Ảnh hưởng đọc/cập nhật hồ sơ và recommendations.                                           | Chặn hoàn thiện profile; không chặn Major Hub. |
-| Admin category endpoints          | Paths/body/error proposal ở trên; cần TV3/TV1 review trước khi implementation.                                                             | Ảnh hưởng Admin categories, Activity Logs và consumer options.                             | Chặn code Admin categories.                    |
-| Pagination/search/order cho Skill | Đề xuất giống Major: không pagination/search, `name ASC, category_id ASC`; chờ leader review cùng module owners.                           | Nếu khác, cần shape/query/giới hạn riêng cho consumer Skill.                               | Chỉ chặn API/consumer Skill.                   |
+Các path, permissions, error codes/status, sort Admin và request bodies ở đây là phương án chờ leader duyệt; không có endpoint DELETE. Bảng quyết định tổng hợp duy nhất nằm ở [api-contracts.md](api-contracts.md#7-quyết-định-còn-chờ-leader-xác-nhận).
 
 ## 9. Ngoài phạm vi API Major
 
-Endpoint Major `GET /api/categories?type=Major`, backend tests và frontend consumer đã có trên `main` sau PR #13 và PR #12. Luồng Public Hub đã được kiểm tra end-to-end; xem [báo cáo tích hợp](opportunities-integration-test.md). Skill options, Admin CRUD và profile Closed chưa được nhóm duyệt hoặc triển khai. TV3 sở hữu `backend/src/modules/categories`; xem [team-workflow.md](team-workflow.md).
+TV1 triển khai và merge endpoint Major `GET /api/categories?type=Major` qua PR #13; TV3 tiếp quản và tái sử dụng `backend/src/modules/categories`. Frontend consumer có trên `main` sau PR #12. Luồng Public Hub đã được kiểm tra end-to-end; xem [báo cáo tích hợp](opportunities-integration-test.md). Skill options, Admin CRUD và profile Closed vẫn chờ leader duyệt, chưa triển khai. Xem [team-workflow.md](team-workflow.md).
 
 ## 10. Trạng thái triển khai và kết quả kiểm tra
 

@@ -1,6 +1,6 @@
 # Hợp đồng API gợi ý cơ hội cá nhân hóa
 
-> **Trạng thái: contract draft theo UC-06; chưa triển khai.** Chỉ Student, không phải Guest; không ghi dữ liệu. Nhóm đã duyệt loại deadline legacy unknown khỏi recommendations cho tới khi nguồn được xác minh.
+> **Trạng thái: draft chờ leader review; chưa triển khai.** Chỉ Student, không phải Guest; không ghi dữ liệu. Nhóm đã duyệt loại deadline legacy unknown, `Year=0` cho `opportunity_years=[]` và vẫn xét score.
 
 ## GET /api/recommendations (đường dẫn đề xuất)
 

@@ -1,6 +1,6 @@
 # Hợp đồng Admin duyệt cơ hội
 
-> **Trạng thái: dự thảo theo Chương 3 UC-10; phần đọc công khai /api/opportunities đã triển khai và không đổi.** Không thêm tạo/sửa/xóa cơ hội hoặc tự thu thập/seed dữ liệu.
+> **Trạng thái: draft chờ leader review theo Chương 3 UC-10; phần đọc công khai /api/opportunities đã triển khai và không đổi.** TV1 triển khai Admin review sau khi leader duyệt. Không thêm tạo/sửa/xóa cơ hội hoặc tự thu thập/seed dữ liệu.
 
 ## Endpoints dự kiến
 

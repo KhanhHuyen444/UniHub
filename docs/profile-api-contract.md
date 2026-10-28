@@ -1,6 +1,6 @@
 # Hợp đồng API hồ sơ Student
 
-> **Trạng thái: policy lưu hồ sơ đã được leader chốt; chi tiết HTTP còn là dự thảo kỹ thuật để TV2 và leader review.** Chưa có endpoint hồ sơ trên `main`; tài liệu này không triển khai API hay thay đổi schema.
+> **Trạng thái: policy lưu hồ sơ đã được leader chốt; toàn bộ chi tiết HTTP còn chờ leader review.** TV2 có thể góp ý/triển khai sau khi contract được duyệt. Chưa có endpoint hồ sơ trên `main`; tài liệu này không triển khai API hay thay đổi schema.
 
 ## Nguồn và quyết định
 
@@ -33,4 +33,4 @@ Nguồn chính là Chương 3 UC-04, UC-05, BR-05.1–05.4 và Chương 4 §4.3.
 
 DB: users.major_id FK, year CHECK 1–4, unique (user_id, skill_id); FK không xác nhận category type/status, không bảo đảm hồ sơ đủ. Backend: Student ownership, Major/Skill đúng type, trạng thái Active cho lựa chọn mới, tính completeness. Test: Guest/Admin, own user only, year boundaries, wrong type/Closed, closed value retained, duplicate skills, transaction rollback, empty/incomplete GET, không lộ google_sub.
 
-**Đã chốt:** complete-only PUT và được bỏ qua toàn bộ setup. **Cần TV2/leader review:** path chính thức, exact error code/field-level validation response và cách điều hướng UI sau khi người dùng chọn “Để sau”. Schema hiện tại không lưu lịch sử trạng thái Major/Skill; Closed link vẫn được định danh qua `category_id`.
+**Đã chốt:** complete-only PUT và được bỏ qua toàn bộ setup. **Chờ leader review:** path chính thức, error code/field-level validation response và hành vi UI sau khi người dùng chọn “Để sau”; phương án tổng hợp nằm trong [bảng quyết định](api-contracts.md#7-quyết-định-còn-chờ-leader-xác-nhận). Schema hiện tại không lưu lịch sử trạng thái Major/Skill; cách giữ link Closed cũng đang chờ leader quyết định.

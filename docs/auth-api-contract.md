@@ -1,6 +1,6 @@
 # Hợp đồng xác thực và phân quyền UniHub
 
-> **Trạng thái: dự thảo để nhóm review.** Đây là tài liệu hợp đồng, không phải bằng chứng endpoint, middleware, cookie, khóa ký hay schema xác thực đã được triển khai. Nhiệm vụ hiện tại chỉ sửa tài liệu; không thay schema/migration/GRANT, không cấp Admin và không ghi database.
+> **Trạng thái: draft chờ leader review.** Đây là tài liệu hợp đồng, không phải bằng chứng endpoint, middleware, cookie, khóa ký hay schema xác thực đã được triển khai. Nhiệm vụ hiện tại chỉ sửa tài liệu; không thay schema/migration/GRANT, không cấp Admin và không ghi database.
 
 ## 1. Căn cứ và mức độ quyết định
 
@@ -33,7 +33,7 @@
 
 ## 3. Danh tính, role và session
 
-Schema trên `origin/main` có email UNIQUE nhưng chưa có Google `sub` hoặc bảng session; Chương 4 đính kèm mới đã đề xuất/mô tả hai cấu trúc này. Đây là khác biệt tài liệu–repository cần được giải quyết bằng thay đổi schema/migration riêng trước khi triển khai auth. Tài liệu hiện tại không thay schema, migration, GRANT hoặc dữ liệu.
+Schema trên `origin/main` có email UNIQUE nhưng chưa có Google `sub` hoặc bảng session; Chương 4 đính kèm mới đã mô tả hai cấu trúc này. Khác biệt tài liệu–repository không cản trở leader hoàn thiện/duyệt contract. Cần thay đổi schema/migration riêng trước khi tích hợp hoặc chạy auth trên database thật. Tài liệu hiện tại không thay schema, migration, GRANT hoặc dữ liệu.
 
 | Nội dung         | Thiết kế tối thiểu đề xuất                                                                                                                                                                                                                                                              | Tác động                                                                                                                 |
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -59,7 +59,7 @@ Một dòng đại diện cho một lần đăng nhập. Cookie chứa `session_
 | `revoked_at`         | `DATETIME(0) NULL`                                                            | NULL khi còn hoạt động; ghi thời điểm logout.                                           |
 | `created_at`         | `DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP`                              | Thời điểm tạo session theo UTC.                                                         |
 
-Chương 3 không yêu cầu khóa tài khoản; UC-11 BR-11.7 ghi rõ khóa/vô hiệu hóa không thuộc use case đó, UC-14 chỉ quản lý role. Vì vậy thiết kế không bổ sung trường trạng thái tài khoản. Chương 4 mới đã mô tả `google_sub`/`auth_sessions`, nhưng bản Prisma/migrations trên `origin/main` chưa biểu diễn chúng. Cần đối chiếu và đưa migration riêng qua review trước khi auth có thể chạy trên schema repository. Dữ liệu cũ không được suy đoán `sub` từ email. Không sửa initial migration đã áp dụng.
+Chương 3 không yêu cầu khóa tài khoản; UC-11 BR-11.7 ghi rõ khóa/vô hiệu hóa không thuộc use case đó, UC-14 chỉ quản lý role. Vì vậy thiết kế không bổ sung trường trạng thái tài khoản. Chương 4 mới đã mô tả `google_sub`/`auth_sessions`, nhưng bản Prisma/migrations trên `origin/main` chưa biểu diễn chúng. Đây là implementation dependency: không ngăn đóng tài liệu, nhưng auth không thể chạy trên database thật trước khi migration riêng được leader duyệt, merge, áp dụng và GRANT được xác nhận. Dữ liệu cũ không được suy đoán `sub` từ email. Không sửa initial migration đã áp dụng.
 
 ## 4. Quy ước lỗi chung cho API auth
 
@@ -174,8 +174,8 @@ Schema hiện có CHECK `users.role` chỉ nhận Student/Admin. CHECK không x�
 
 ## 9. Bàn giao leader → TV2 và phụ thuộc Admin cơ hội
 
-- Leader làm trước nền backend dùng chung theo contract review: module `backend/src/modules/auth/`, middleware `backend/src/middleware/require-auth.ts` và `require-role.ts` (tên file có thể theo quy ước code sau này), cấu hình/kiểm tra JWT và Google verifier, API login/refresh/me/logout, test auth và audit/transaction cần thiết.
-- TV2 tiếp quản chính module/middleware/API đã có; hoàn thiện `frontend/src/features/auth/` cho login/logout/session, `frontend/src/features/profile/` và `backend/src/modules/users/` cho hồ sơ/tài khoản. Không tạo JWT client-side hoặc auth API thứ hai; dùng `frontend/src/lib/api.ts` cùng một provider/token-in-memory strategy sau khi contract được chốt.
+- Sau khi leader duyệt contract, leader làm trước nền backend dùng chung: module `backend/src/modules/auth/`, middleware `backend/src/middleware/require-auth.ts` và `require-role.ts` (tên file có thể theo quy ước code sau này), cấu hình/kiểm tra JWT và Google verifier, API login/refresh/me/logout, test auth và audit/transaction cần thiết.
+- Sau handoff và cùng contract đã duyệt, TV2 tiếp quản module/middleware/API nền; hoàn thiện `frontend/src/features/auth/` cho login/logout/session, `frontend/src/features/profile/` và `backend/src/modules/users/` cho hồ sơ/tài khoản. Không tạo JWT client-side hoặc auth API thứ hai; dùng `frontend/src/lib/api.ts` cùng một provider/token-in-memory strategy.
 - Admin cơ hội TV1 phụ thuộc `requireAuth` + `requireRole('Admin')`, role từ claim server ký và session do backend kiểm tra, xử lý 401/403 và ghi activity log trong transaction của thao tác duyệt. Không tự tin Admin preview/UI là quyền server.
 - API Major TV3 và các API Admin TV3–TV5 sẽ tái sử dụng cùng middleware; không tự triển khai Skill hoặc module account trong nhánh này.
 - Migration bổ sung `users.google_sub` và bảng `auth_sessions` là dependency trước khi auth chạy trên schema thật; không thêm account status. Chưa thay schema/migration/GRANT hoặc database trong công việc hợp đồng này.
@@ -223,5 +223,5 @@ Ngày đối chiếu: **27/10/2026**. Không nâng Node/Express/Prisma đã ch�
 
 ### Nguồn cần review trước triển khai
 
-- Không còn điểm nghiệp vụ về domain email, account lock, role timing, Google ID token, `google_sub`/`auth_sessions` hoặc refresh TTL cần nhóm chốt theo nguồn đã đọc. **Schema/migration/repository mismatch** phải được xử lý qua PR riêng trước implementation. Origin/CSRF/cookie settings remain implementation/security review items; endpoint/library details in this contract are proposed, not approved.
+- Các điểm nghiệp vụ về domain email, account lock, role timing, Google ID token, `google_sub`/`auth_sessions` và refresh TTL đã được giữ theo quyết định/nguồn đã đọc. **Toàn bộ contract auth vẫn chờ leader review**, bao gồm origin/CSRF/cookie và endpoint/library details. Schema/migration mismatch là dependency triển khai riêng; không chặn duyệt contract nhưng chặn chạy auth trên database thật.
 - Trước triển khai trên schema thật, review migration và quyền runtime/migration; kiểm thử trên MySQL cô lập. Với user legacy chưa có `google_sub`, cần quy trình operator đối soát riêng trước khi cho tài khoản đó dùng Google login; không tự liên kết theo email.

@@ -1,10 +1,10 @@
 # Hợp đồng API Admin Dashboard
 
-> **Trạng thái: dự thảo theo UC-12; chưa triển khai.** Chỉ các số liệu Chương 3 yêu cầu, không thêm KPI/biểu đồ.
+> **Trạng thái: draft chờ leader review theo UC-12; chưa triển khai.** Chỉ các số liệu Chương 3 yêu cầu, không thêm KPI/biểu đồ.
 
 ## Endpoint proposal
 
-Chương 3 nêu ba truy vấn song song và yêu cầu lỗi chỉ đánh dấu các thẻ bị lỗi. Để thực hiện partial error đúng nghĩa, đề xuất ba Admin-only endpoint thay vì một response nguyên khối:
+Chương 3 nêu ba truy vấn song song và yêu cầu lỗi chỉ đánh dấu các thẻ bị lỗi. Phương án chờ leader review là ba Admin-only endpoint thay vì một response nguyên khối:
 
 | Method/path                            | Dữ liệu và success shape                                                                                                                                |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |

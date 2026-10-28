@@ -189,7 +189,7 @@ Initial migration đã bổ sung các CHECK, collation, hai `ON UPDATE` và thi�
 
 Các quyết định FK/timestamp đã được xác nhận và lưu trong schema/migration. Các điểm sau thuộc nhiệm vụ kế tiếp, không tự mở rộng mô hình 12 bảng:
 
-- Chương 4 mới mô tả `google_sub` và `auth_sessions`, nhưng model/migration trên `main` chưa có. Thực hiện qua schema/migration PR riêng sau khi nhóm review; không backfill Google sub từ email.
+- Chương 4 mới mô tả `google_sub` và `auth_sessions`, nhưng model/migration trên `main` chưa có. Đây không ngăn duyệt tài liệu auth contract, nhưng chặn chạy auth trên database thật. Thực hiện qua schema/migration PR riêng sau khi leader review; không backfill Google sub từ email.
 - Xác nhận môi trường môn học hỗ trợ phiên bản đã chọn và kiểm thử trên máy Windows của nhóm.
 - Các thay đổi lược đồ mới vẫn cần migration riêng và review theo quy trình trong database-migrations.md.
 
