@@ -18,6 +18,8 @@ datasource db {
 
 model User {
   user_id       Int      @id @default(autoincrement()) @db.Int
+  // Column collation utf8mb4_0900_as_cs is set by SQL migration; Prisma schema cannot express it.
+  google_sub    String?  @unique @db.VarChar(255)
   email         String   @unique @db.VarChar(255)
   full_name     String   @db.VarChar(150)
   avatar_url    String?  @db.VarChar(500)
@@ -38,6 +40,7 @@ model User {
   activity_logs          ActivityLog[]
   notifications          Notification[]
   skills                 UserSkill[]
+  auth_sessions          AuthSession[]
 
   @@map("users")
 }
@@ -168,6 +171,20 @@ model Notification {
   event Event? @relation(fields: [event_id], references: [event_id], onDelete: Cascade, onUpdate: Restrict)
 
   @@map("notifications")
+}
+
+model AuthSession {
+  session_id         String    @id @db.Char(36)
+  user_id            Int       @db.Int
+  refresh_token_hash String    @unique @db.Char(64)
+  expires_at         DateTime  @db.DateTime(0)
+  revoked_at         DateTime? @db.DateTime(0)
+  created_at         DateTime  @default(now()) @db.DateTime(0)
+
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([user_id], map: "auth_sessions_user_id_idx")
+  @@map("auth_sessions")
 }
 
 model UserSkill {
