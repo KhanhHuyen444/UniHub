@@ -3,6 +3,10 @@ import { errorHandler, notFound } from './middleware/errors.js';
 import { healthRouter } from './modules/health/health.routes.js';
 import { createReadyRouter } from './modules/health/ready.routes.js';
 import {
+  createAuthRouter,
+  type GoogleAuthDependencies,
+} from './modules/auth/auth.routes.js';
+import {
   createCategoriesRouter,
   type CategoriesRouterDependencies,
 } from './modules/categories/categories.routes.js';
@@ -16,6 +20,7 @@ interface AppDependencies {
   logDatabaseFailure?: () => void;
   categories?: CategoriesRouterDependencies;
   opportunities?: OpportunitiesRouterDependencies;
+  auth?: GoogleAuthDependencies;
 }
 
 export function createApp(dependencies: AppDependencies = {}) {
@@ -25,6 +30,7 @@ export function createApp(dependencies: AppDependencies = {}) {
   app.use(express.json({ limit: '100kb' }));
   app.use('/api/health', healthRouter);
   app.use('/api/ready', createReadyRouter(dependencies));
+  app.use('/api/auth', createAuthRouter(dependencies.auth));
   app.use('/api/categories', createCategoriesRouter(dependencies.categories));
   app.use(
     '/api/opportunities',

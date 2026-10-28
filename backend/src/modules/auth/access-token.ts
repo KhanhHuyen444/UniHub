@@ -60,6 +60,10 @@ function getKey(configuration: JwtConfiguration): Uint8Array {
   return new TextEncoder().encode(signingSecret);
 }
 
+export function assertAccessTokenConfiguration(): void {
+  getKey(readConfiguration());
+}
+
 function isRole(value: unknown): value is AuthRole {
   return value === 'Student' || value === 'Admin';
 }
