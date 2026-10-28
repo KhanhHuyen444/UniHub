@@ -45,15 +45,19 @@ function readConfiguration(): JwtConfiguration {
 }
 
 function getKey(configuration: JwtConfiguration): Uint8Array {
+  const signingSecret = configuration.signingSecret;
   if (
-    new TextEncoder().encode(configuration.signingSecret).byteLength < 32 ||
+    !signingSecret.trim() ||
+    signingSecret.trim() ===
+      'replace-with-a-random-secret-of-at-least-32-bytes' ||
+    new TextEncoder().encode(signingSecret).byteLength < 32 ||
     !configuration.issuer.trim() ||
     !configuration.audience.trim()
   ) {
     throw new InvalidJwtConfigurationError();
   }
 
-  return new TextEncoder().encode(configuration.signingSecret);
+  return new TextEncoder().encode(signingSecret);
 }
 
 function isRole(value: unknown): value is AuthRole {

@@ -11,6 +11,7 @@ import {
 import {
   ACCESS_TOKEN_TTL_SECONDS,
   createAccessTokenService,
+  InvalidJwtConfigurationError,
 } from '../dist/modules/auth/access-token.js';
 
 const now = new Date('2026-10-28T12:00:00.000Z');
@@ -84,6 +85,31 @@ test('JWT ký HS256 hợp lệ mang identity đã xác minh và access tối đa
     issuedAt: Math.floor(now.getTime() / 1000),
     expiresAt: Math.floor(now.getTime() / 1000) + ACCESS_TOKEN_TTL_SECONDS,
   });
+});
+
+test('JWT config từ chối secret mẫu, secret rỗng và secret dưới 32 byte', async () => {
+  const invalidSecrets = [
+    'replace-with-a-random-secret-of-at-least-32-bytes',
+    '',
+    'short-secret',
+  ];
+  for (const signingSecret of invalidSecrets) {
+    assert.throws(
+      () => createAccessTokenService({ ...config, signingSecret }),
+      InvalidJwtConfigurationError,
+    );
+  }
+
+  const middleware = createRequireAuth({
+    verifyToken: async () =>
+      createAccessTokenService({
+        ...config,
+        signingSecret: 'replace-with-a-random-secret-of-at-least-32-bytes',
+      }).verify('unused'),
+  });
+  const response = await requestWithToken('a.b.c', middleware);
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).error.code, 'SERVICE_UNAVAILABLE');
 });
 
 test('JWT bị sửa chữ ký, sai issuer/audience, claim hoặc thời hạn đều không hợp lệ', async () => {
