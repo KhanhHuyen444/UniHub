@@ -1,6 +1,6 @@
 # Hợp đồng xác thực và phân quyền UniHub
 
-> **Contract đã được duyệt.** Nhánh `feat/auth-schema-migration` bổ sung schema, migration mới và mẫu GRANT; các thay đổi này chưa có trên `main` và chưa áp dụng lên database của nhóm. Google login, JWT, refresh/logout, endpoint và middleware vẫn chưa triển khai.
+> **Contract đã được duyệt.** Schema, migration và mẫu GRANT cho `google_sub`/`auth_sessions` đã có trên `main`; leader xác nhận đã áp dụng lên database phát triển của mình. Nền access JWT và middleware xác thực/phân quyền đang được triển khai trong nhánh hiện tại. Google login, refresh/logout và API hồ sơ vẫn chưa triển khai.
 
 ## 1. Căn cứ và mức độ quyết định
 
@@ -20,7 +20,7 @@
 - `PCCV-UNIHUB - Trang tính4 (1).pdf` mới đính kèm, SHA-256 `880eeb35ddbc04900611d0d71c24d47eb3007fcffc57079f1d35350362c7615a`. PCCV cũ không thay thế phân công TV1–TV5 mới được leader xác nhận trong yêu cầu hiện tại.
 - Quy ước lỗi và endpoint hiện có: [api-conventions.md](api-conventions.md); kiến trúc, schema Prisma, runtime và migration: [architecture.md](architecture.md), [database-schema.md](database-schema.md), [database-runtime.md](database-runtime.md), [database-migrations.md](database-migrations.md).
 
-**Đối chiếu nguồn:** Chương 3 hiện mô tả đúng luồng Google ID token; không còn sai khác Authorization Code cần đề xuất sửa. Chương 4 mới có `google_sub` và `auth_sessions`; hai cấu trúc được thêm vào schema/migration trong nhánh này nhưng chưa có trên `origin/main`. Chương 4 §4.3.2.1 vẫn mô tả email là UNIQUE, nhưng phần đăng nhập theo `sub` xác nhận email không phải định danh liên kết. Hợp đồng giữ không tự liên kết theo email. BR-14.5 giữ nguyên: role mới có hiệu lực ở lần cấp token tiếp theo; middleware dùng role đã ký và không truy vấn role hiện hành mỗi request. UC-11 BR-11.7 loại khóa/vô hiệu hóa khỏi phạm vi; không có yêu cầu allowlist domain email.
+**Đối chiếu nguồn:** Chương 3 hiện mô tả đúng luồng Google ID token; không còn sai khác Authorization Code cần đề xuất sửa. Schema/migration cho `users.google_sub` và `auth_sessions` hiện có trên `origin/main`; trạng thái áp dụng trên database phát triển đã được leader xác nhận. Chương 4 §4.3.2.1 vẫn mô tả email là UNIQUE, nhưng phần đăng nhập theo `sub` xác nhận email không phải định danh liên kết. Hợp đồng giữ không tự liên kết theo email. BR-14.5 giữ nguyên: role mới có hiệu lực ở lần cấp token tiếp theo; middleware dùng role đã ký và không truy vấn role hiện hành mỗi request. UC-11 BR-11.7 loại khóa/vô hiệu hóa khỏi phạm vi; không có yêu cầu allowlist domain email.
 
 ## 2. Phạm vi dùng chung và vai trò
 
@@ -59,7 +59,7 @@ Một dòng đại diện cho một lần đăng nhập. Cookie chứa `session_
 | `revoked_at`         | `DATETIME(0) NULL`                                                            | NULL khi còn hoạt động; ghi thời điểm logout.                                           |
 | `created_at`         | `DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP`                              | Thời điểm tạo session theo UTC.                                                         |
 
-Chương 3 không yêu cầu khóa tài khoản; UC-11 BR-11.7 ghi rõ khóa/vô hiệu hóa không thuộc use case đó, UC-14 chỉ quản lý role. Vì vậy thiết kế không bổ sung trường trạng thái tài khoản. Migration riêng cho `google_sub`/`auth_sessions` và mẫu GRANT nằm trong nhánh `feat/auth-schema-migration`; đến khi PR được merge và migration/GRANT được áp dụng cho database đích, auth vẫn chưa thể chạy trên database đó. Dữ liệu cũ giữ `google_sub = NULL`; không suy đoán `sub` từ email. Initial migration đã áp dụng không bị sửa.
+Chương 3 không yêu cầu khóa tài khoản; UC-11 BR-11.7 ghi rõ khóa/vô hiệu hóa không thuộc use case đó, UC-14 chỉ quản lý role. Vì vậy thiết kế không bổ sung trường trạng thái tài khoản. Migration riêng cho `google_sub`/`auth_sessions` và mẫu GRANT đã được merge vào `main`; leader xác nhận đã áp dụng lên database phát triển của mình. Môi trường thành viên khác cần đối chiếu riêng trước khi chạy auth. Dữ liệu cũ giữ `google_sub = NULL`; không suy đoán `sub` từ email. Initial migration đã áp dụng không bị sửa.
 
 ## 4. Quy ước lỗi chung cho API auth
 
@@ -178,7 +178,7 @@ Schema hiện có CHECK `users.role` chỉ nhận Student/Admin. CHECK không x�
 - Sau handoff và cùng contract đã duyệt, TV2 tiếp quản module/middleware/API nền; hoàn thiện `frontend/src/features/auth/` cho login/logout/session, `frontend/src/features/profile/` và `backend/src/modules/users/` cho hồ sơ/tài khoản. Không tạo JWT client-side hoặc auth API thứ hai; dùng `frontend/src/lib/api.ts` cùng một provider/token-in-memory strategy.
 - Admin cơ hội TV1 phụ thuộc `requireAuth` + `requireRole('Admin')`, role từ claim server ký và session do backend kiểm tra, xử lý 401/403 và ghi activity log trong transaction của thao tác duyệt. Không tự tin Admin preview/UI là quyền server.
 - API Major TV3 và các API Admin TV3–TV5 sẽ tái sử dụng cùng middleware; không tự triển khai Skill hoặc module account trong nhánh này.
-- Migration bổ sung `users.google_sub`, bảng `auth_sessions` và GRANT runtime là dependency trước khi auth chạy trên schema thật; không thêm account status. Nhánh hiện tại chuẩn bị các thay đổi này, nhưng chưa merge hoặc áp dụng vào database nhóm.
+- Migration bổ sung `users.google_sub`, bảng `auth_sessions` và GRANT runtime đã có trên `main`; leader xác nhận database phát triển của mình đã áp dụng. Từng môi trường khác cần xác minh migration/GRANT riêng trước khi chạy auth; không thêm account status.
 
 ## 10. Ma trận kiểm thử cần có khi triển khai
 
@@ -228,5 +228,5 @@ Ngày đối chiếu: **27/10/2026**. Không nâng Node/Express/Prisma đã ch�
 
 ### Nguồn cần review trước triển khai
 
-- Các điểm nghiệp vụ về domain email, account lock, role timing, Google ID token, `google_sub`/`auth_sessions` và refresh TTL đã được giữ theo quyết định/nguồn đã đọc. Contract auth đã được leader duyệt; schema/migration/GRANT đã chuẩn bị trong nhánh này, còn endpoint/middleware chưa triển khai và migration chưa có trên `main`.
+- Các điểm nghiệp vụ về domain email, account lock, role timing, Google ID token, `google_sub`/`auth_sessions` và refresh TTL đã được giữ theo quyết định/nguồn đã đọc. Contract auth đã được leader duyệt; schema/migration/GRANT đã merge vào `main`. Nền access middleware được triển khai một phần trong nhánh hiện tại; Google login, refresh/logout và API hồ sơ chưa triển khai.
 - Trước triển khai trên schema thật, review migration và quyền runtime/migration; kiểm thử trên MySQL cô lập. Với user legacy chưa có `google_sub`, cần quy trình operator đối soát riêng trước khi cho tài khoản đó dùng Google login; không tự liên kết theo email.
