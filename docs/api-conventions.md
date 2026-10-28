@@ -47,7 +47,7 @@ Frontend gọi `/api/health` qua `frontend/src/lib/api.ts`, kiểm tra HTTP stat
 
 Đã triển khai `apiRequest` trong `frontend/src/lib/api.ts`. Client nhận path cùng tiền tố `/api`, hỗ trợ `GET`, `POST`, `PATCH`, `DELETE`, query qua `URLSearchParams`, JSON body, `AbortSignal` và các tùy chọn `fetch` cần thiết. Client không tự chuyển tên field, gắn JWT, lưu token, ghi log hoặc tạo thông báo UI; từng feature phải dùng đúng contract đã review. Không truyền URL tuyệt đối để tránh bỏ qua Vite proxy và gọi nhầm origin.
 
-Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi đọc `error.code`/`error.message` theo envelope hiện tại; body lỗi không phải JSON chỉ trả thông báo HTTP tổng quát, không đưa HTML hoặc nội dung upstream ra UI. Lỗi mạng được chuẩn hóa thành `ApiError`; lỗi hủy `AbortError` được giữ nguyên để caller xử lý riêng. Phản hồi thành công rỗng (204 hoặc body rỗng) trả `undefined`; phản hồi thành công có body không phải JSON tạo `INVALID_RESPONSE`. Client không kiểm tra schema nghiệp vụ: caller vẫn cần xác thực shape dữ liệu khi sử dụng.
+Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi hiện đọc `error.code`/`error.message` theo envelope hiện tại; body lỗi không phải JSON chỉ trả thông báo HTTP tổng quát, không đưa HTML hoặc nội dung upstream ra UI. Lỗi mạng được chuẩn hóa thành `ApiError`; lỗi hủy `AbortError` được giữ nguyên để caller xử lý riêng. Phản hồi thành công rỗng (204 hoặc body rỗng) trả `undefined`; phản hồi thành công có body không phải JSON tạo `INVALID_RESPONSE`. Client không kiểm tra schema nghiệp vụ: caller vẫn cần xác thực shape dữ liệu khi sử dụng. Client hiện không giữ `fieldErrors`; nếu leader duyệt phần mở rộng dưới đây, cần bổ sung property tùy chọn theo kiểu an toàn mà không đổi `code`, `kind`, `status` hoặc cách xử lý lỗi hiện tại.
 
 ## Hợp đồng theo chức năng
 
@@ -85,7 +85,32 @@ Các quy ước dưới đây là baseline kỹ thuật; contract theo module �
 | Phân trang   | Đề xuất page bắt đầu từ 1, pageSize mặc định 20 và tối đa 100; response có items và meta gồm page/pageSize/total/totalPages. Cần chốt thứ tự sắp xếp ổn định trước khi triển khai                                                                                                                   |
 | Tìm kiếm/lọc | Nêu rõ tham số hỗ trợ, khoảng giá trị, chuẩn hóa chuỗi và hành vi tham số không hợp lệ; không nhận tùy tiện tên cột/SQL từ client                                                                                                                                                                   |
 | Ngày giờ     | JSON API dùng ISO 8601 có `Z` cho instant; DB và session MySQL theo UTC; giao diện hiển thị `Asia/Ho_Chi_Minh`. MySQL `DATETIME` không tự lưu timezone. Schema/migration cơ hội có metadata ngày nguồn/timezone; dữ liệu cũ thiếu metadata trả unknown, không suy đoán. API lịch cần contract riêng |
-| Lỗi          | Giữ cấu trúc error.code/error.message; nếu cần lỗi từng field, thống nhất fieldErrors trước. Không trả stack, SQL, mật khẩu hoặc token                                                                                                                                                              |
+| Lỗi          | Giữ `error.code`/`error.message`; đề xuất thêm `error.fieldErrors` tùy chọn với `source`, `field`, `code`, `message` ổn định như ví dụ dưới. Không trả stack, SQL, mật khẩu hoặc token. `message` chỉ để hiển thị; client không phân tích nội dung tiếng Việt.                                      |
+
+### Lỗi validation theo field — đề xuất tương thích ngược
+
+Giữ HTTP status, `error.code` và `error.message` hiện có. Với validation trả `400` và `error.code: "VALIDATION_ERROR"`, có thể thêm mảng tùy chọn:
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Dữ liệu gửi lên chưa hợp lệ.",
+    "fieldErrors": [
+      {
+        "source": "body",
+        "field": "title",
+        "code": "REQUIRED",
+        "message": "Vui lòng nhập tiêu đề."
+      }
+    ]
+  }
+}
+```
+
+`source` thuộc `body`, `query` hoặc `path`; `field` là tên field API/path ổn định, không phải tên cột SQL; `code` là mã máy ổn định do endpoint quy định. Có thể có nhiều lỗi cho cùng field. Frontend ánh xạ bằng cặp `source` + `field` và quyết định UI bằng `code`; chỉ hiển thị `message`, không suy luận lỗi bằng cách phân tích message tiếng Việt. Không hợp thức hóa bằng cách nhét field name vào message.
+
+Đây là phần mở rộng cộng thêm, không bỏ/đổi field cũ. Consumer hiện tại tiếp tục nhận `ApiError.code`, `kind`, `status` và message như trước nhưng chưa thể hiển thị lỗi cạnh field. Khi duyệt, backend `ApiError`/error middleware sẽ mang `fieldErrors` đã kiểm tra; frontend `ApiError`/parser sẽ nhận diện shape đúng và giữ property tùy chọn. Parser bỏ qua `fieldErrors` thiếu hoặc sai shape, vẫn xử lý lỗi tổng quát cũ. Đây là thay đổi cần review cả client và server; chưa được triển khai.
 
 401/403 là quy ước HTTP cho API, nhưng quyền và mã lỗi từng route phải theo contract module. Không dùng bảng baseline để tự ghi đè nghiệp vụ Chương 3–4.
 

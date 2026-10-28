@@ -121,7 +121,7 @@ Ví dụ nguồn có giờ cụ thể `05/11/2026 12:00 Asia/Ho_Chi_Minh`: respo
 | 503  | `SERVICE_UNAVAILABLE` | Backend nhận diện database không sẵn sàng; thông báo chung, không lộ MySQL/Prisma. |
 | 500  | `INTERNAL_ERROR`      | Lỗi bất ngờ; envelope hiện có, không lộ stack/SQL/configuration.                   |
 
-Mọi lỗi giữ envelope `error.code`/`error.message` của `api-conventions.md`; chưa đề xuất `fieldErrors`.
+Mọi lỗi của API cơ hội giữ envelope hiện hành `error.code`/`error.message` theo `api-conventions.md`. Đề xuất `fieldErrors` là phần mở rộng tương thích đang chờ leader review và không tự thay đổi response/error contract của API cơ hội đã triển khai; nếu sau này áp dụng phải được review riêng theo endpoint.
 
 ### Phụ thuộc danh mục bộ lọc — TV1 đã triển khai, TV3 tiếp quản
 
@@ -169,9 +169,11 @@ Truy vấn chỉ trả `Approved` thuộc ba loại công khai. Không phân bi�
 }
 ```
 
-`descriptionText`/`requirementsText` là text thường, nullable, có thể chứa tiêu đề mục `## Tên mục` theo BR-01.8; không trả HTML. UI sắp xếp và đặt tiêu đề mục theo `type` và bảng quy tắc BR-01.8. Khi thiếu trường/mục thì bỏ khỏi giao diện. `majors`, `skills`, `eligibleAcademicYears` luôn là mảng; không có liên kết trả `[]`. Major/Skill Closed vẫn được trả nếu đã gắn với item, theo quyết định nhóm. `eligibleAcademicYears: []` chỉ nói không có liên kết năm học; UI ẩn mục, không diễn giải thành “mọi năm”. Để ổn định thứ tự mảng, đề xuất sort `majors`/`skills` theo tên rồi ID, `eligibleAcademicYears` tăng dần.
+`descriptionText`/`requirementsText` là text thường, nullable, có thể chứa tiêu đề mục `## Tên mục` theo BR-01.8; không trả HTML. UI sắp xếp và đặt tiêu đề mục theo `type` và bảng quy tắc BR-01.8. Khi thiếu trường/mục thì bỏ khỏi giao diện. `majors`, `skills`, `eligibleAcademicYears` luôn là mảng; không có liên kết trả `[]`. Major/Skill Closed vẫn được trả nếu đã gắn với item, theo quyết định nhóm. `eligibleAcademicYears: []` chỉ nói không có liên kết năm học; UI ẩn mục, không diễn giải thành “mọi năm”. **Đã triển khai:** truy vấn Prisma trong [`opportunities.service.ts`](../backend/src/modules/opportunities/opportunities.service.ts) sort `majors` theo `major.name ASC, major_id ASC`, `skills` theo `skill.name ASC, skill_id ASC`, và năm học theo `academic_year ASC`; serializer giữ thứ tự truy vấn. Đây không còn là quyết định mở.
 
-`sourceUrl` là chuỗi URL hoặc `null`. UI chỉ hiển thị “Xem nguồn tin” nếu có URL hợp lệ; mở nguồn trực tiếp bằng liên kết ngoài, không qua proxy/redirect của UniHub. Đề xuất backend chỉ cho phép scheme `https:`/`http:` khi xác thực dữ liệu đã duyệt; không fetch URL phía server. Cách mở cửa sổ ngoài nên dùng `rel="noopener noreferrer"` nếu mở tab mới.
+`sourceUrl` là chuỗi URL hoặc `null`. UI chỉ hiển thị “Xem nguồn tin” nếu có URL hợp lệ; mở nguồn trực tiếp bằng liên kết ngoài, không qua proxy/redirect của UniHub. **Đã triển khai:** `safeSourceUrl` trong [`opportunities.service.ts`](../backend/src/modules/opportunities/opportunities.service.ts) chỉ trả URL parse được dưới dạng absolute URL và có protocol `http:` hoặc `https:`; giá trị khác thành `null`, backend không fetch hay redirect URL. Hàm trả lại chuỗi gốc khi hợp lệ, không chuẩn hóa URL. Frontend phải tiếp tục render link an toàn và dùng `rel="noopener noreferrer"` nếu mở tab mới. Đây không còn là quyết định mở.
+
+**Giới hạn kiểm thử hiện tại:** test chi tiết xác nhận tên/liên kết Major/Skill nhưng sort ID trước khi so sánh nên chưa khẳng định thứ tự name+ID; test fixture dùng URL HTTPS hợp lệ nhưng chưa có assertion riêng cho scheme/URL xấu. Việc triển khai đã được đối chiếu trực tiếp trong service; cần bổ sung assertion khi module có đợt thay đổi test, không đổi hợp đồng chỉ vì thiếu assertion.
 
 ### Trường API và ánh xạ schema
 
