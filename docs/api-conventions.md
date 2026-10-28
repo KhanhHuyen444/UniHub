@@ -1,6 +1,6 @@
 # Quy ước API UniHub
 
-Mục lục và endpoint × role matrix nằm trong [api-contracts.md](api-contracts.md). Tài liệu này ghi hành vi HTTP đang có trên `main` và quy ước chung; module-specific proposals chưa được coi là approved hoặc implemented.
+Mục lục và endpoint × role matrix nằm trong [api-contracts.md](api-contracts.md). Tài liệu này ghi hành vi HTTP trên main và quy ước chung; trạng thái contract và implementation được theo dõi riêng.
 
 ## Các endpoint đã triển khai
 
@@ -52,29 +52,23 @@ Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi hiện đ
 ## Hợp đồng theo chức năng
 
 - [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` cùng frontend list/detail đã có trên `main` sau PR #12. Consumer Major của Hub cũng có trên `main`; API cơ hội vẫn tự kiểm tra Major Active trong database.
-- [API đọc danh mục dùng chung](categories-api-contract.md): TV1 triển khai và merge contract/`GET /api/categories?type=Major` qua PR #13; TV3 tiếp quản provider dùng chung. Endpoint chỉ trả Major Active, ví dụ `{"items":[{"id":12,"name":"Kỹ thuật phần mềm","type":"Major"}]}`. Luồng Major consumer/API cùng Public Hub đã được kiểm thử tích hợp; xem [báo cáo](opportunities-integration-test.md). Skill và hồ sơ Closed vẫn là draft chờ leader review.
-- `page=1`, `pageSize=20`, tối đa 100 là baseline kỹ thuật đang đề xuất chung; endpoint phải ghi giới hạn thực tế và khóa sort ổn định. Contract cơ hội đã duyệt các giá trị này cùng trần page 1,000,000; quyết định đó không mặc nhiên áp dụng cho API khác.
+- [API đọc danh mục dùng chung](categories-api-contract.md): TV1 triển khai và merge contract/`GET /api/categories?type=Major` qua PR #13; TV3 tiếp quản provider dùng chung. Endpoint chỉ trả Major Active, ví dụ `{"items":[{"id":12,"name":"Kỹ thuật phần mềm","type":"Major"}]}`. Luồng Major consumer/API cùng Public Hub đã được kiểm thử tích hợp; xem [báo cáo](opportunities-integration-test.md). Contract Skill Student-only, Admin category routes và profile Closed policy đã được leader duyệt, nhưng chưa triển khai.
+- Không tự áp dụng một baseline pagination cho mọi route. Từng contract ghi cụ thể page/pageSize, giới hạn, trang ngoài phạm vi và thứ tự ổn định.
 - Thời gian lưu/trao đổi đã thống nhất UTC; giao diện dùng `Asia/Ho_Chi_Minh`. Chính sách date-only theo từng nghiệp vụ và biểu diễn trong `DATETIME(0)` được ghi ở hợp đồng tương ứng.
 
-### Endpoint × role hiện có và trạng thái hợp đồng
+### Endpoint × role và request inventory
 
-| Endpoint                                               |            Guest |            Student |                  Admin | Trạng thái trên `main`                                                 |
-| ------------------------------------------------------ | ---------------: | -----------------: | ---------------------: | ---------------------------------------------------------------------- |
-| `GET /api/health`, `GET /api/ready`                    |               Có |                 Có |                     Có | Đã triển khai; readiness truy vấn DB nhưng không xác thực user.        |
-| `GET /api/opportunities`, `GET /api/opportunities/:id` |               Có |                 Có |    Cùng dữ liệu public | Đã triển khai và kiểm thử tích hợp.                                    |
-| `GET /api/categories?type=Major`                       |               Có |                 Có |  Cùng danh sách Active | Đã triển khai; Major Active only.                                      |
-| Auth login/refresh/me/logout                           |                — |                  — |                      — | Chưa triển khai; contract đề xuất tại `auth-api-contract.md`.          |
-| Profile, admin users/roles, Skill/Admin categories     |                — |                  — |                      — | Chưa triển khai; contract proposals.                                   |
-| Guidance, recommendations                              | Public / Student |            Student |                      — | Chưa triển khai; guidance public, recommendation Student-only dự thảo. |
-| Admin opportunities/moderation/categories/dashboard    |                — |                  — |                  Admin | Chưa triển khai; endpoint roles đề xuất ở module docs.                 |
-| Events/notifications                                   |                — |            Student |                      — | Chưa triển khai; Student-only proposal.                                |
-| Forum reads/posts/comments                             |       Guest read | Student read/write | Guest-like read per UC | Chưa triển khai; proposal.                                             |
+Danh sách canonical gồm từng HTTP method/path, query/body, vai trò và liên kết tới response/error/transaction contract nằm tại [api-contracts.md §3](api-contracts.md). Không duy trì bảng route rút gọn thứ hai ở đây để tránh path hoặc method sai lệch. Các contract riêng ghi trạng thái implementation độc lập; “Approved” không khẳng định đã có code.
 
-Guest indicates no UniHub access token; it is not stored in `users.role`. All protected endpoint permission rows above are contract intent, not implemented middleware. Do not infer that an Admin may use Student-only endpoints.
+Guest không phải giá trị `users.role`. Backend kiểm tra role và ownership cho mọi route được bảo vệ; frontend route guard chỉ phục vụ điều hướng.
+
+## Quy ước path ID dùng schema INT
+
+Với path parameter ánh xạ tới cột ID MySQL `INT` có dấu, chỉ chấp nhận chuỗi thập phân biểu diễn số nguyên dương trong đoạn 1–2,147,483,647; không nhận dấu cộng/trừ, số thập phân, khoảng trắng hoặc giá trị ngoài miền. Trả 400 `INVALID_ID` trước truy vấn. Contract module có thể nêu giới hạn hẹp hơn nếu schema/nghiệp vụ yêu cầu.
 
 ## Quy ước đề xuất cho API chưa triển khai
 
-Các quy ước dưới đây là baseline kỹ thuật; contract theo module ở [api-contracts.md](api-contracts.md) mới quyết định field, role, status, pagination và thứ tự cụ thể. Draft/proposal chưa được tự nâng thành quyết định nhóm. Endpoint/API đã triển khai và contract approved được ghi riêng ở trên.
+Các quy ước dưới đây là baseline; hợp đồng module đã leader duyệt quyết định field, role, status, pagination và thứ tự cụ thể. Không dùng baseline để ghi đè contract. Endpoint/API đã triển khai và contract approved được ghi riêng ở trên.
 
 | Chủ đề       | Đề xuất để review                                                                                                                                                                                                                                                                                   |
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -120,4 +114,4 @@ Giữ HTTP status, `error.code` và `error.message` hiện có. Với validation
 
 Frontend nhận Google ID token; backend xác minh token trước khi cấp JWT UniHub. Guest không phải role trong `users`. Backend kiểm tra token, role và ownership; frontend route guard chỉ giúp điều hướng. Chỉ backend kết nối MySQL. BR-14.5 quy định role mới có hiệu lực tại lần cấp token tiếp theo: middleware dùng role snapshot đã ký, không đọc `users.role` cho mỗi request.
 
-Thời hạn Access 15 phút/Refresh 7 ngày, Google `sub`, `auth_sessions`, refresh rotation/revoke và session-bound access token đã được ghi trong [auth-api-contract.md](auth-api-contract.md), nhưng toàn bộ auth contract vẫn chờ leader duyệt và chưa triển khai. Chương 4 mới có `google_sub`/`auth_sessions`, còn schema/migration trên `origin/main` chưa có. Đây không chặn hoàn thiện/duyệt contract; chặn chạy auth trên database thật tới khi migration được review, merge, áp dụng và GRANT được xác nhận. Xem [bảng tổng hợp](api-contracts.md).
+Thời hạn Access 15 phút/Refresh 7 ngày, Google `sub`, `auth_sessions`, refresh rotation/revoke và session-bound access token đã được ghi trong [auth-api-contract.md](auth-api-contract.md), và auth contract đã được leader duyệt, nhưng chưa triển khai. Chương 4 mới có `google_sub`/`auth_sessions`, còn schema/migration trên `origin/main` chưa có. Đây không chặn hoàn thiện/duyệt contract; chặn chạy auth trên database thật tới khi migration được review, merge, áp dụng và GRANT được xác nhận. Xem [bảng tổng hợp](api-contracts.md).

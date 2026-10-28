@@ -1,19 +1,19 @@
 # Hợp đồng API Admin Dashboard
 
-> **Trạng thái: draft chờ leader review theo UC-12; chưa triển khai.** Chỉ các số liệu Chương 3 yêu cầu, không thêm KPI/biểu đồ.
+> **Contract: leader đã duyệt. Implementation: chưa có trên main.** Chỉ trả đúng số liệu Chương 3 UC-12; không thêm KPI/biểu đồ.
 
-## Endpoint proposal
+## Quyền và endpoints
 
-Chương 3 nêu ba truy vấn song song và yêu cầu lỗi chỉ đánh dấu các thẻ bị lỗi. Phương án chờ leader review là ba Admin-only endpoint thay vì một response nguyên khối:
+Mỗi endpoint yêu cầu access JWT hợp lệ và role Admin qua backend. Guest → 401 UNAUTHORIZED; Student → 403 FORBIDDEN. Không nhận body/query; GET mỗi metric độc lập để lỗi chỉ ảnh hưởng card tương ứng. Mỗi response có evaluatedAt UTC tại thời điểm query; các endpoint không hứa snapshot đồng bộ với nhau.
 
-| Method/path                            | Dữ liệu và success shape                                                                                                                                |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET /api/admin/dashboard/accounts      | `{ "totalAccounts": 28, "evaluatedAt": "2026-10-28T00:00:00Z" }`; count users rows.                                                                     |
-| GET /api/admin/dashboard/opportunities | `{ "byStatus": {"Pending":2,"Approved":12,"Rejected":1}, "evaluatedAt":"..." }`; count only types Thực tập/Việc làm/Học bổng, exactly these 3 statuses. |
-| GET /api/admin/dashboard/forum         | `{ "posts":5,"comments":14,"evaluatedAt":"..." }`; posts nondeleted; comments nondeleted under nondeleted posts.                                        |
+| Method/path                            | Data predicate                                                                                                                                          | 200 response                                                                               |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| GET /api/admin/dashboard/accounts      | COUNT mọi users rows.                                                                                                                                   | {"totalAccounts":28,"evaluatedAt":"2026-10-28T00:00:00Z"}                                  |
+| GET /api/admin/dashboard/opportunities | COUNT opportunities thuộc Thực tập/Việc làm/Học bổng, theo đúng các status Pending, Approved, Rejected; bài định hướng bị loại. Các count 0 vẫn có mặt. | {"byStatus":{"Pending":2,"Approved":12,"Rejected":1},"evaluatedAt":"2026-10-28T00:00:00Z"} |
+| GET /api/admin/dashboard/forum         | posts count chỉ forum_posts.is_deleted=false; comments count is_deleted=false và parent post còn public (is_deleted=false).                             | {"posts":5,"comments":14,"evaluatedAt":"2026-10-28T00:00:00Z"}                             |
 
-All require Admin token server-side. Guest 401, Student 403, DB failure 503 or `500` generic depending on error; no partial count presented as zero. Each is read-only, no activity log. Client loads in parallel, associates error/retry with the affected card; if one fails, render other successful cards; refresh only failed card or all is UI proposal.
+Examples are fictional. No user details, post/comment content, or account PII. Each is a read-only query, no activity log and no cross-module transaction. Frontend requests all three in parallel; each card owns its loading/error/retry state. A failed metric is never represented as zero; successful cards may still render.
 
-Data source tables: users; opportunities; forum_posts/comments. No writes or transaction across modules; each count reflects DB at query time, not a synchronized snapshot across three endpoints. If a single `/api/admin/dashboard` is chosen, Chương 3 partial-card retry requires either per-section results/errors or separate endpoints; this is an open implementation choice.
+Errors per endpoint: Guest 401 UNAUTHORIZED; Student 403 FORBIDDEN; DB unavailable 503 SERVICE_UNAVAILABLE; unexpected 500 INTERNAL_ERROR. Error body uses shared envelope, no partial count or database details. No parameters are supported; adding any query is 400 INVALID_QUERY.
 
-Examples are fabricated and only shape examples. Error envelope remains common. Tests: role matrix, exact predicates/counts, excluded guidance and other types, deleted parent excludes its comments, no log/write, errors remain per metric, time-of-query and refresh, no added KPI. NFR target from UC-12: full Dashboard ≤2s; API aggregation ≤500ms under normal load; performance needs measured test, not contract review.
+Data sources: users; opportunities; forum_posts/comments. Count uses DB at evaluation time; not a synchronized snapshot. DB constraints do not implement these predicates; backend query must. Tests: permission matrix; account count; all three opportunity types/statuses including zero statuses and exclude guidance; hide deleted posts/comments and comments of deleted parent; each endpoint fails independently and does not display error as zero; no writes/log; no extra metric. NFR target from UC-12 (Dashboard ≤2s, API aggregation ≤500ms under normal load) remains a measured performance requirement, not implied by contract approval.

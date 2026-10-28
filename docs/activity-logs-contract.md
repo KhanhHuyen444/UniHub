@@ -1,6 +1,6 @@
 # Quy ước ghi Activity Logs
 
-> **Trạng thái: dự thảo quy tắc nội bộ chung theo Chương 3 UC-10–14, chờ leader review; chưa có API xem log và không đề xuất thêm endpoint.** TV5 triển khai shared helper theo contract sau khi được duyệt.
+> **Contract: leader đã duyệt payload/transaction rules theo Chương 3 UC-10–14.** Implementation: chưa có shared writer trên main; không có API xem log. TV5 triển khai helper dùng chung trong transaction của module sở hữu thao tác.
 
 ## Các hành động có căn cứ
 
@@ -24,7 +24,7 @@
 | `REJECT_OPPORTUNITY`  | `{"status":"Pending","is_verified":false}` (đọc giá trị cũ thật) | `{"status":"Rejected","is_verified":false}`                                | `reason` riêng, bắt buộc theo UC-10.                                                 |
 | `DELETE_POST`         | `{"is_deleted":false}`                                           | `{"is_deleted":true}`                                                      | Lưu soft-delete state; `reason` riêng, bắt buộc; không lưu title/body.               |
 | `DELETE_COMMENT`      | `{"is_deleted":false}`                                           | `{"is_deleted":true}`                                                      | Lưu soft-delete state; `reason` riêng, bắt buộc; không lưu comment body.             |
-| `CREATE_CATEGORY`     | `NULL`                                                           | `{"type":"Major","name":"...","status":"Active"}`                          | Chỉ các giá trị cần nhận diện category mới; tên bị giới hạn theo schema (100 ký tự). |
+| `CREATE_CATEGORY`     | `NULL`                                                           | `{"type":"Major","name":"Kỹ thuật phần mềm","status":"Active"}`            | Chỉ các giá trị cần nhận diện category mới; tên bị giới hạn theo schema (100 ký tự). |
 | `RENAME_CATEGORY`     | `{"name":"Tên cũ"}`                                              | `{"name":"Tên mới"}`                                                       | Ghi tên cũ/mới, không ghi toàn bộ category row.                                      |
 | `CLOSE_CATEGORY`      | `{"status":"Active"}`                                            | `{"status":"Closed"}`                                                      | Không có lý do tùy ý trong JSON.                                                     |
 | `REOPEN_CATEGORY`     | `{"status":"Closed"}`                                            | `{"status":"Active"}`                                                      | Không có lý do tùy ý trong JSON.                                                     |
@@ -32,7 +32,7 @@
 
 Các enum/giá trị trong ví dụ cần lấy từ row thật/request đã validate; không giả định giá trị cũ nếu DB trả khác. `target_id`, `admin_id`, `action_type`, `target_type`, `created_at` tiếp tục ở cột riêng.
 
-Trước khi ghi, backend phải serialize compact rồi kiểm tra độ dài từng chuỗi không vượt 500 ký tự; nếu không phù hợp thì từ chối action trước khi commit hoặc rollback toàn bộ transaction. **Không cắt chuỗi/JSON tùy ý** vì sẽ làm payload không hợp lệ hoặc mất nghĩa. Các payload trên được thiết kế ngắn; reason tối đa 500 ký tự được validate riêng. Không thay schema hay kích thước cột.
+Trước khi ghi, backend phải serialize compact rồi kiểm tra độ dài từng chuỗi không vượt 500 ký tự; nếu không phù hợp thì từ chối action trước khi commit hoặc rollback toàn bộ transaction. **Không cắt chuỗi/JSON tùy ý** vì sẽ làm payload không hợp lệ hoặc mất nghĩa. Các payload trên được thiết kế ngắn; reason tối đa 500 ký tự được validate riêng. Chuỗi old/new được serialize compact và kiểm tra trước khi commit; payload vượt giới hạn làm thất bại thao tác. Không thay schema hay kích thước cột.
 
 ## Transaction boundary
 

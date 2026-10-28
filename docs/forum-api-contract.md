@@ -1,33 +1,69 @@
 # Hợp đồng API diễn đàn và kiểm duyệt
 
-> **Trạng thái: public author fields đã được leader chốt; toàn bộ endpoint/forum moderation draft chờ leader review.** Chưa có endpoint forum/moderation trên `main`. TV5 triển khai sau khi leader duyệt; phạm vi chỉ đọc, đăng bài, bình luận và Admin xóa mềm nội dung vi phạm theo UC-08–UC-11.
+> **Contract: leader đã duyệt. Implementation: chưa có forum/moderation routes trên main.** Phạm vi Chương 3 UC-08–UC-11: đọc public, Student đăng bài/bình luận, Admin xóa mềm nội dung vi phạm. Không có edit post, student-delete, rich HTML hoặc account lock.
 
-## Forum public/Student
+## Chuẩn hóa và pagination
 
-Đề xuất endpoints:
+Guest/Student đọc public. Chỉ Student tạo post/comment; Guest 401 UNAUTHORIZED, Admin 403 FORBIDDEN. Admin moderation yêu cầu access token + requireRole(Admin). Query page mặc định 1, pageSize mặc định 20, pageSize 1–100, page tối đa 1,000,000; mỗi query đúng một lần; query lạ/lặp/sai → 400 INVALID_QUERY. totalPages=ceil(total/pageSize), bằng 0 nếu total=0; page ngoài phạm vi trả items=[] cùng total thực.
 
-| Method/path                        | Quyền                                                                                                                                        | Request/query và response                                                                                                                            |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET /api/forum/posts               | Public Guest/Student. Query topic optional, page=1/pageSize=20 max100 đề xuất; sort created_at DESC,post_id DESC.                            | 200 `{"items":[],"meta":{"page":1,"pageSize":20,"total":0,"totalPages":0}}`; chỉ is_deleted=false. Topic chỉ Học tập/Thực tập/Kinh nghiệm phỏng vấn. |
-| GET /api/forum/posts/:id           | Public.                                                                                                                                      | 200 object có `post` và `comments`, hoặc `GET comments` riêng nếu quá dài; chỉ bài chưa xóa và bình luận chưa xóa. Không công khai nội dung đã gỡ.   |
-| POST /api/forum/posts              | Student only; Guest 401, Admin 403. JSON: topic/title/content; title 1–255, content required; trim, không rỗng. Field lạ bị từ chối.         | 201 object có `post`; author_id từ JWT; backend sanitize plain text trước lưu.                                                                       |
-| GET /api/forum/posts/:id/comments  | Public; page=1/pageSize=20 max100 đề xuất; sort created_at ASC,comment_id ASC để hội thoại ổn định.                                          | 200 `{"items":[],"meta":{"page":1,"pageSize":20,"total":0,"totalPages":0}}`; bài không tồn tại/đã gỡ cùng 404.                                       |
-| POST /api/forum/posts/:id/comments | Student only; Guest 401, Admin 403. JSON `{ "content": "Nội dung văn bản" }` required, nonblank, sanitized. Bài cha phải tồn tại và chưa gỡ. | 201 object có `comment`; author_id từ JWT. Admin 403.                                                                                                |
+Topic hợp lệ chính xác: Học tập, Thực tập, Kinh nghiệm phỏng vấn. Title trim, 1–255 ký tự. Content/comment trim, không rỗng, tối đa 65,535 UTF-8 bytes theo giới hạn MySQL TEXT; JSON sai cú pháp trả 400 `INVALID_JSON`; body sai shape/field thừa trả 400 `INVALID_REQUEST`; giá trị field không hợp lệ trả 400 `VALIDATION_ERROR` với `error.fieldErrors` tùy chọn. Content là text, không nhận HTML tin cậy; server lưu plain text, client render bằng text node/escaping, không dùng innerHTML. Author public chỉ gồm fullName và avatarUrl; không trả email, userId hoặc Google sub.
 
-Example fabricated post response: `{ "post": {"id": 7, "title": "Cách học SQL", "topic": "Học tập", "content": "Nội dung văn bản", "author": {"fullName":"Sinh viên minh họa","avatarUrl":null}, "createdAt":"2026-10-28T00:00:00Z"} }`. **Quyết định đã duyệt:** public author object chỉ gồm `fullName` và `avatarUrl`; tuyệt đối không trả email, `userId` hoặc Google sub. `author_id` vẫn là khóa nội bộ để ghi nhận actor và không được serialize ra response.
+## API public
 
-No edit or student-delete operations are in source; do not add them. 400 `INVALID_REQUEST`/`VALIDATION_ERROR`, 401 `UNAUTHORIZED`, 403 `FORBIDDEN`, 404 `NOT_FOUND`, 503 `SERVICE_UNAVAILABLE`, 500 `INTERNAL_ERROR`. `topic` domain is backend checked; Ch4 CHECK does not enforce it. Error envelope shared. Empty list returns 200 with [] and meta; DB failure remains error.
+| Method/path                                             | Query/body                                                                                                                                                | Response                                                                                                                                                                                                              |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET /api/forum/posts?page=1&pageSize=20&topic=Học%20tập | page/pageSize tùy chọn; topic tùy chọn, chỉ một lần và thuộc enum. Không body.                                                                            | HTTP 200; `items` là mảng Post DTO đầy đủ được định nghĩa ngay dưới bảng, `meta` gồm `page`, `pageSize`, `total`, `totalPages`; chỉ post chưa xóa. Sort `created_at DESC, post_id DESC`.                              |
+| GET /api/forum/posts/:id                                | ID số nguyên dương; không query/body. Trả post chưa xóa. Không nhúng comments; comments có endpoint riêng.                                                | HTTP 200; body key `post` có object đúng toàn bộ Post DTO được định nghĩa ngay dưới bảng.                                                                                                                             |
+| POST /api/forum/posts                                   | JSON chính xác {"topic":"Học tập","title":"Cách ôn môn cơ sở dữ liệu","content":"Nội dung dạng văn bản."}. Chỉ Student; author_id lấy từ JWT.             | HTTP 201; body key `post` có object đúng toàn bộ Post DTO được định nghĩa ngay dưới bảng.                                                                                                                             |
+| GET /api/forum/posts/:id/comments?page=1&pageSize=20    | ID parent dương; page/pageSize như trên; không query khác/body. Parent không tồn tại/đã xóa → 404.                                                        | HTTP 200; `items` là mảng Comment DTO đầy đủ được định nghĩa ngay dưới bảng, `meta` gồm `page`, `pageSize`, `total`, `totalPages`; chỉ comment chưa xóa thuộc post còn public. Sort `created_at ASC, comment_id ASC`. |
+| POST /api/forum/posts/:id/comments                      | ID parent dương; JSON chính xác {"content":"Nội dung bình luận."}. Chỉ Student; không nhận author_id/post_id ngoài path. Parent phải tồn tại và chưa xóa. | HTTP 201; body key `comment` có object đúng toàn bộ Comment DTO được định nghĩa ngay dưới bảng.                                                                                                                       |
 
-Đề xuất chờ leader review: nội dung forum là plain text, không hỗ trợ HTML tùy ý; backend lưu/serialize an toàn và frontend render như text. Không dùng nội dung người dùng như HTML tin cậy.
+Post response shape:
 
-Tables: forum_posts, comments, users. Reads/writes use authenticated actor IDs. DB PK/FK and length/null constraints are structural; backend enforces role, non-empty sanitized text, allowed topic, visibility and ownership.
+```json
+{
+  "id": 7,
+  "title": "Cách ôn môn cơ sở dữ liệu",
+  "topic": "Học tập",
+  "content": "Nội dung dạng văn bản.",
+  "author": { "fullName": "Sinh viên minh họa", "avatarUrl": null },
+  "createdAt": "2026-10-28T00:00:00Z"
+}
+```
+
+Comment response shape:
+
+```json
+{
+  "id": 18,
+  "content": "Bình luận dạng văn bản.",
+  "author": { "fullName": "Sinh viên minh họa", "avatarUrl": null },
+  "createdAt": "2026-10-28T00:00:00Z"
+}
+```
+
+Examples are fabricated. Public endpoints never return author ID/email/google_sub, deleted content, deleted reason, activity data, or reviewer/admin metadata. A deleted parent suppresses its comments from public reads even if comment.is_deleted=false.
+
+Errors: malformed ID → 400 INVALID_ID; unsupported/repeated query → 400 INVALID_QUERY; invalid JSON → 400 `INVALID_JSON`; wrong body shape/extra field → 400 `INVALID_REQUEST`; invalid field value → 400 `VALIDATION_ERROR`; missing/deleted post → 404 NOT_FOUND; Guest on write → 401 UNAUTHORIZED; Admin on Student write → 403 FORBIDDEN; DB unavailable → 503 SERVICE_UNAVAILABLE; unexpected → 500 INTERNAL_ERROR. Empty lists are 200 with empty items; database errors are not empty lists.
 
 ## Admin community moderation
 
-Proposed `GET /api/admin/moderation/forum` returns undeleted posts/comments newest first (tie by IDs); `POST /api/admin/moderation/forum/posts/:id/remove` and `/comments/:id/remove` accept `{ "reason": "..." }`. Admin only via backend. Reject blank/whitespace; max 500 to fit deleted_reason/activity_logs.reason. No edit-content operation. A non-violation “keep” does not write log. Missing/deleted target → 404/409 and refresh queue; repeated moderation is not a second action.
+All endpoints require Admin. Queue shows undeleted target posts/comments, newest first. Pagination uses the same 1/20/max100/page max1,000,000 rules; no search/filter/body. Unified queue sort is created_at DESC, targetType ASC (Comment before Post by lexical order), target id ASC.
 
-On delete, one DB transaction sets is_deleted/deleted_at/deleted_reason; inserts append-only activity_logs with DELETE_POST/DELETE_COMMENT, target_type/target_id, reason; creates Violation notification for the content author with content explaining moderation and reason, is_read=false, event_id=NULL. Any failure rolls back all. Soft-deleted post hides all its comments even if comment.is_deleted=false. No PII or deleted content is public after moderation.
+| Method/path                                          | Request                                                                        | Success                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET /api/admin/moderation/forum?page=1&pageSize=20   | Admin access JWT; no other query/body. Returns undeleted post/comment targets. | 200 {"items":[{"targetType":"Post","id":7,"title":"Cách ôn môn cơ sở dữ liệu","topic":"Học tập","content":"Nội dung dạng văn bản.","author":{"id":12,"fullName":"Sinh viên minh họa","avatarUrl":null},"createdAt":"2026-10-28T00:00:00Z"},{"targetType":"Comment","id":18,"post":{"id":7,"title":"Cách ôn môn cơ sở dữ liệu"},"content":"Bình luận dạng văn bản.","author":{"id":13,"fullName":"Sinh viên khác","avatarUrl":null},"createdAt":"2026-10-28T00:00:00Z"}],"meta":{"page":1,"pageSize":20,"total":2,"totalPages":1}}. |
+| POST /api/admin/moderation/forum/posts/:id/remove    | ID dương; JSON chính xác {"reason":"Lý do vi phạm"}; trim, 1–500 ký tự.        | 200 {"removed":{"targetType":"Post","id":7,"isDeleted":true,"deletedAt":"2026-10-28T00:00:00Z"}}.                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| POST /api/admin/moderation/forum/comments/:id/remove | ID dương; JSON chính xác {"reason":"Lý do vi phạm"}; trim, 1–500 ký tự.        | 200 {"removed":{"targetType":"Comment","id":18,"isDeleted":true,"deletedAt":"2026-10-28T00:00:00Z"}}.                                                                                                                                                                                                                                                                                                                                                                                                                              |
 
-Current notifications schema cannot identify a post/comment destination; see [events-notifications-api-contract.md](events-notifications-api-contract.md). **Quyết định đã duyệt:** Violation notification dùng đích chung `/forum`; không deep-link đến post/comment. A direct resource link would require schema/report review. Ch3 does not require user lock; no lock behavior or Admin content editing.
+Admin queue does not expose email, google_sub, session data or other account PII. For a comment, its parent title/id are included for context. A post soft-delete hides all its comments publicly but does not hard-delete or rewrite their rows.
 
-Tests: Guest/Student/Admin permissions; response author contains only fullName/avatarUrl (no email/userId/Google sub); pagination/sort and topic validation; removed post/comments hidden; cannot comment on missing/deleted post; sanitize; deleted parent suppresses comments; Admin keep has no writes; reason required/length; concurrent double moderation; audit+notification exact payload; rollback when either insert fails; generic destination limitation; no user lock.
+Errors: invalid ID → 400 INVALID_ID; malformed/empty/too-long reason → 400 VALIDATION_ERROR with fieldErrors; Guest 401; Student 403; missing target → 404 NOT_FOUND; a target concurrently removed after queue load → 409 CONTENT_ALREADY_REMOVED; DB unavailable → 503 SERVICE_UNAVAILABLE; unexpected → 500 INTERNAL_ERROR. “Giữ lại” is a UI-only action: it makes no request and writes no log.
+
+## Data, transaction, tests and status
+
+Public read touches forum_posts/comments/users and is read-only. Create writes the target row with author_id from JWT. Moderation of a post/comment is a single transaction: conditional soft-delete (is_deleted=true, deleted_at, deleted_reason), append-only activity_logs row (DELETE_POST/DELETE_COMMENT, old/new is_deleted only), and Violation notification to that target's author with reason. Any write failure rolls back all three. Notification event_id=NULL; UI destination is the approved common route /forum. There is no post/comment deep link in current schema. Runtime activity_logs stays SELECT/INSERT only.
+
+Database PK/FK/NOT NULL/TEXT length do not enforce role, allowed topic, visibility, reason, author privacy, or transaction; backend enforces them.
+
+Test matrix: Guest/Student/Admin per route; query/body/length boundaries; topic enum; empty list vs DB error; ordering/page ties; public author fields exactly fullName/avatarUrl; plain text rendering; missing/deleted parent; comment under removed post hidden publicly; Admin queue fields and ordering; reason trim and 1/500 boundaries; concurrent removal; audit payload ≤500; Violation content/reason and destination; transaction rollback if either audit or notification write fails; no hard delete or account lock. **Contract đã duyệt; API chưa triển khai trên main.**

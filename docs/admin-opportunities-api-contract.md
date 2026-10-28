@@ -1,24 +1,64 @@
 # Hợp đồng Admin duyệt cơ hội
 
-> **Trạng thái: draft chờ leader review theo Chương 3 UC-10; phần đọc công khai /api/opportunities đã triển khai và không đổi.** TV1 triển khai Admin review sau khi leader duyệt. Không thêm tạo/sửa/xóa cơ hội hoặc tự thu thập/seed dữ liệu.
+> **Contract: leader đã duyệt theo Chương 3 UC-10. Implementation: chưa có Admin review routes trên main.** Public GET opportunities đã triển khai và không đổi. Không thêm API tạo/sửa/xóa cơ hội, Admin source fetch, hoặc seed dữ liệu.
 
-## Endpoints dự kiến
+## Quyền và response item
 
-All endpoints below require a valid access token and server-side Admin role from the signed token/session. Guest receives 401; Student receives 403; a frontend guard is not authorization.
+Tất cả endpoint yêu cầu access JWT hợp lệ và requireRole(Admin) ở backend. Guest → 401 UNAUTHORIZED; Student → 403 FORBIDDEN. Public UI guard không phải authorization. Queue/detail là chỉ đọc; chỉ POST approve/reject thay đổi dữ liệu.
 
-| Method/path (proposal)                      | Request/validation                                                                                                                                            | Success                                                                                                                                                                                 |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| GET /api/admin/opportunities?status=Pending | Default and only queue status initially Pending; proposed pagination 1/20/max100, sort created_at ASC,item_id ASC (queue order not specified by Ch3; review). | 200 `{"items":[],"meta":{"page":1,"pageSize":20,"total":0,"totalPages":0}}` with review fields needed for the queue.                                                                    |
-| GET /api/admin/opportunities/:id            | Positive integer; may read Pending or reviewed item for status/conflict context; return content/source/target data, no user session secrets.                  | 200 {item}; missing → 404.                                                                                                                                                              |
-| POST /api/admin/opportunities/:id/approve   | Body exactly { "verified": true                                                                                                                               | false }; only Pending can transition; confirm UI is not a security check. Before approval require valid source URL and successful verification; Offline/Hybrid require usable location. | 200 {item:{id,status:"Approved",isVerified,reviewedAt}}. |
-| POST /api/admin/opportunities/:id/reject    | Body exactly { "reason": "..." }; trimmed nonempty, max 500 to fit activity_logs.reason; Pending only.                                                        | 200 {item:{id,status:"Rejected",isVerified:false,reviewedAt}}.                                                                                                                          |
+AdminOpportunity là một DTO đầy đủ gồm đúng các field sau; ví dụ dùng dữ liệu hư cấu. `deadline` theo deadline object/null trong opportunities contract. Không trả `reviewedBy`, submitter identity/profile, JWT hoặc session data.
 
-Errors: malformed ID/body 400 INVALID_ID/INVALID_REQUEST; non-Pending/currently handled item 409 OPPORTUNITY_NOT_PENDING; missing item 404; missing/invalid/unverifiable source or required location 422 OPPORTUNITY_NOT_REVIEWABLE; Guest 401, non-Admin 403, DB unavailable 503, unexpected 500. A public list/detail must continue to expose only Approved of the three public opportunity types; Approved isVerified=false remains valid.
+```json
+{
+  "id": 41,
+  "type": "Thực tập",
+  "title": "Cơ hội minh họa",
+  "publisher": "Đơn vị minh họa",
+  "descriptionText": "Mô tả văn bản",
+  "requirementsText": "Yêu cầu văn bản",
+  "workFormat": "Hybrid",
+  "location": "Thành phố Hồ Chí Minh",
+  "deadline": {
+    "precision": "date",
+    "date": "2026-11-05",
+    "sourceTimeZone": null,
+    "instant": "2026-11-05T17:00:00Z",
+    "state": "open"
+  },
+  "isVerified": false,
+  "sourceUrl": "https://example.invalid/opportunity",
+  "majors": [{ "id": 12, "name": "Kỹ thuật phần mềm" }],
+  "skills": [{ "id": 33, "name": "TypeScript" }],
+  "eligibleAcademicYears": [2, 3],
+  "createdAt": "2026-10-28T00:00:00Z",
+  "status": "Pending",
+  "reviewedAt": null
+}
+```
 
-## Transaction and data boundary
+`descriptionText`, `requirementsText`, `workFormat`, `location`, `deadline`, `sourceUrl` và `reviewedAt` có nullability theo schema/public contract. `majors`, `skills` và `eligibleAcademicYears` luôn là mảng. Detail trả status Pending/Approved/Rejected. Public endpoints tiếp tục chỉ trả Approved thuộc ba loại công khai; `isVerified` độc lập với Approved.
 
-Approve writes opportunities.status=Approved, is_verified from Admin choice, reviewed_by from auth context, reviewed_at UTC; inserts activity_logs APPROVE_OPPORTUNITY, target_type=Opportunity, target_id=item_id, old/new values for status/is_verified and optional reason. Reject writes Rejected/false/reviewer/time and inserts REJECT_OPPORTUNITY with required reason. Both changes + log are one transaction; conditional transition checks current Pending status to prevent double review; any failure rolls back all. reason is not stored in a nonexistent opportunity column. No network call to the source URL on the server is implied; “source verified” is Admin’s human review.
+## Endpoints
 
-Source fields are opportunities, opportunity_majors, opportunity_skills, opportunity_years, categories, and activity_logs. DB CHECK/NOT NULL/FK do not enforce review workflow, Verified policy, valid reachable source, status transition, Admin privilege, or audit atomicity; backend must. Deadline metadata uses current approved contract: date-only retains source date/cutoff, datetime retains instant+source zone, legacy rows stay unknown, no data rewrite. No schema/migration change is proposed.
+| Method/path                                       | Request                                                                                                                                              | Success                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /api/admin/opportunities?page=1&pageSize=20` | Query `page` optional (mặc định 1, integer 1–1,000,000), `pageSize` optional (mặc định 20, integer 1–100); không body, status, search hoặc query lạ. | HTTP 200; response object có `items` là array gồm 0..n DTO đầy đủ đã định nghĩa phía trên và `meta` chính xác gồm integer `page`, `pageSize`, `total`, `totalPages`. `totalPages=0` nếu total=0; trang vượt phạm vi trả `items: []` cùng total thật. Queue lọc Pending; sort `created_at ASC, item_id ASC`. |
+| `GET /api/admin/opportunities/:id`                | `:id` số nguyên dương; không query/body.                                                                                                             | HTTP 200; response envelope có key `item`, value đúng toàn bộ field và type của `AdminOpportunity` đã định nghĩa phía trên, kể cả khi trạng thái hiện tại đã là Approved hoặc Rejected.                                                                                                                     |
+| `POST /api/admin/opportunities/:id/approve`       | JSON chính xác `{"verified":true}` hoặc `{"verified":false}`; chỉ Pending transition. Không nhận reviewer, status, reviewedAt hoặc reason.           | HTTP 200 `{"item":{"id":41,"status":"Approved","isVerified":true,"reviewedAt":"2026-10-28T00:00:00Z"}}`; item mutation chỉ gồm bốn field này.                                                                                                                                                               |
+| `POST /api/admin/opportunities/:id/reject`        | JSON chính xác `{"reason":"Nguồn không xác minh được"}`; trim, 1–500 ký tự. Chỉ Pending transition.                                                  | HTTP 200 `{"item":{"id":41,"status":"Rejected","isVerified":false,"reviewedAt":"2026-10-28T00:00:00Z"}}`; item mutation chỉ gồm bốn field này.                                                                                                                                                              |
 
-Frontend handles Pending queue, detail, confirmation, reject reason, stale status/reload and transaction failure; no mutation before confirm. Tests: no auth/Student/Admin, Pending list only, detail not found, valid source + approve true/false, reject reason required, source failure, Offline/Hybrid location, double-review race, exact audit, rollback if audit fails, public visibility only after Approved, and no reviewer fields in public API. DB tables written within transaction; no separate audit HTTP API.
+## Review rules, errors and transaction
+
+Before approval, Admin human-review checks source, content sections from BR-01.8, publisher, and location for Offline/Hybrid. Backend validates sourceUrl as an absolute URL with http or https and required location; it does not fetch the source, follow redirects, or assert external availability. Missing/unacceptable source or required location/content returns 422 OPPORTUNITY_NOT_REVIEWABLE. The Verified flag is true only when Admin chooses it; an Approved item may have isVerified=false. Rejection requires a reason.
+
+Malformed path ID → 400 INVALID_ID; invalid JSON → 400 `INVALID_JSON`; wrong body shape/extra field → 400 `INVALID_REQUEST`; invalid field value → 400 `VALIDATION_ERROR` with fieldErrors; valid item not found → 404 NOT_FOUND; current status no longer Pending → 409 OPPORTUNITY_NOT_PENDING; not reviewable → 422 OPPORTUNITY_NOT_REVIEWABLE; DB unavailable → 503 SERVICE_UNAVAILABLE; unexpected → 500 INTERNAL_ERROR. Errors use shared envelope, never leak SQL/stack.
+
+Approve transaction conditionally verifies current Pending, updates status=Approved, is_verified from request, reviewed_by from verified auth context, reviewed_at UTC, then inserts activity_logs APPROVE_OPPORTUNITY with target Opportunity/item_id and compact old/new status/is_verified. Reject similarly writes Rejected/false/reviewer/time and REJECT_OPPORTUNITY, required reason stored only in activity_logs.reason. Any audit failure rolls back status/reviewer update. Conditional update prevents double review; racing second request returns 409. Do not modify public data fields.
+
+Data touched: opportunities and activity_logs; relations are read from opportunities, opportunity_majors/skills/years and categories. DB constraints do not establish Admin authorization, workflow transition, Verified policy, source validity or audit atomicity; backend must. No network call to source URL.
+
+## Frontend and test matrix
+
+Admin UI loads Pending queue, then detail; confirm before mutation; reject form requires reason. Stale conflict reloads queue/detail; 401/403 is distinct from API error. No-op “keep” or cancel makes no request and no log.
+
+Tests: Guest/Student/Admin; pagination/order; Pending only; detail not found and reviewed statuses; invalid body/ID; approve verified true/false; reject reason empty/whitespace/1/500/501; invalid/missing source and required location without server fetch; public visibility only after approval; isVerified independent; double review race; exact old/new audit; activity payload size; rollback if audit insert fails; no reviewer fields on public API. **Contract đã duyệt; Admin routes chưa triển khai trên main.**
