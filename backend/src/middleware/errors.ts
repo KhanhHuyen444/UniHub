@@ -5,14 +5,25 @@ import {
 } from '../lib/prisma.js';
 
 export class ApiError extends Error {
+  readonly fieldErrors?: readonly ApiFieldError[];
+
   constructor(
     readonly status: number,
     readonly code: string,
     message: string,
+    fieldErrors?: readonly ApiFieldError[],
   ) {
     super(message);
     this.name = 'ApiError';
+    this.fieldErrors = fieldErrors;
   }
+}
+
+export interface ApiFieldError {
+  source: 'body' | 'path' | 'query';
+  field: string;
+  code: string;
+  message: string;
 }
 
 function isDatabaseUnavailable(error: unknown): boolean {
@@ -101,7 +112,11 @@ export const errorHandler: ErrorRequestHandler = (
 
   if (error instanceof ApiError) {
     response.status(error.status).json({
-      error: { code: error.code, message: error.message },
+      error: {
+        code: error.code,
+        message: error.message,
+        ...(error.fieldErrors ? { fieldErrors: error.fieldErrors } : {}),
+      },
     });
     return;
   }

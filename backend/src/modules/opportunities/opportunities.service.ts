@@ -178,7 +178,7 @@ function formatVietnamDate(value: Date): string {
 
 function deadlineDto(
   row: Pick<
-    PublicOpportunityRow,
+    OpportunityWithRelations,
     'deadline' | 'deadline_source_date' | 'deadline_source_timezone'
   >,
   evaluatedAt: Date,
@@ -229,7 +229,7 @@ function safeSourceUrl(value: string | null): string | null {
   }
 }
 
-function toPublicItem(row: PublicOpportunityRow, evaluatedAt: Date) {
+function toPublicItem(row: OpportunityWithRelations, evaluatedAt: Date) {
   return {
     id: row.item_id,
     type: row.opportunity_type,
@@ -254,6 +254,18 @@ function toPublicItem(row: PublicOpportunityRow, evaluatedAt: Date) {
   };
 }
 
+export function toAdminOpportunityItem(
+  row: OpportunityWithRelations,
+  evaluatedAt: Date,
+) {
+  return {
+    ...toPublicItem(row, evaluatedAt),
+    createdAt: formatInstant(row.created_at),
+    status: row.status,
+    reviewedAt: row.reviewed_at ? formatInstant(row.reviewed_at) : null,
+  };
+}
+
 function toListItem(row: PublicOpportunityListRow, evaluatedAt: Date) {
   return {
     id: row.item_id,
@@ -272,7 +284,7 @@ const publicOpportunityWhere = {
   opportunity_type: { in: [...PUBLIC_TYPES] },
 } satisfies Prisma.OpportunityWhereInput;
 
-const publicOpportunityInclude = {
+export const opportunityRelationsInclude = {
   majors: {
     where: { major: { type: 'Major' } },
     select: { major: { select: { category_id: true, name: true } } },
@@ -289,8 +301,8 @@ const publicOpportunityInclude = {
   },
 } as const satisfies Prisma.OpportunityInclude;
 
-type PublicOpportunityRow = Prisma.OpportunityGetPayload<{
-  include: typeof publicOpportunityInclude;
+export type OpportunityWithRelations = Prisma.OpportunityGetPayload<{
+  include: typeof opportunityRelationsInclude;
 }>;
 
 const publicOpportunityListSelect = {
@@ -424,7 +436,7 @@ export async function getPublicOpportunity(
 
     return transaction.opportunity.findUnique({
       where: { item_id: id },
-      include: publicOpportunityInclude,
+      include: opportunityRelationsInclude,
     });
   });
 
