@@ -31,16 +31,11 @@ function assertNoBody(request: Request): void {
     );
   }
 
-  const contentType = request.get('content-type');
-  if (contentType !== undefined) {
-    throw new ApiError(
-      400,
-      'INVALID_REQUEST',
-      'Yêu cầu không được chứa nội dung.',
-    );
-  }
-
-  if (request.body !== undefined && request.body !== null) {
+  if (
+    contentLength !== '0' &&
+    request.body !== undefined &&
+    request.body !== null
+  ) {
     throw new ApiError(
       400,
       'INVALID_REQUEST',

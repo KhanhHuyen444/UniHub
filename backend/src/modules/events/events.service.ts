@@ -389,7 +389,28 @@ export function toEventDto(event: {
 async function runInTransaction<T>(
   client: EventPrismaClient,
   operation: (tx: any) => Promise<T>,
+  serializable = false,
 ): Promise<T> {
+  if (serializable && typeof client.$transaction === 'function') {
+    // Retry the entire read/compute/write operation on serialization conflicts.
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await client.$transaction(operation, {
+          isolationLevel: 'Serializable',
+        });
+      } catch (error) {
+        if (
+          attempt >= 2 ||
+          typeof error !== 'object' ||
+          error === null ||
+          !('code' in error) ||
+          error.code !== 'P2034'
+        ) {
+          throw error;
+        }
+      }
+    }
+  }
   if (typeof client.$transaction === 'function') {
     return client.$transaction(operation);
   }
@@ -461,76 +482,45 @@ export async function patchEvent(
   const eventId = parseEventId(rawId);
   const input = parsePatchEventInput(body, evaluatedAt);
 
-  return runInTransaction(client, async (tx) => {
-    const existing = await tx.event.findFirst({
-      where: { event_id: eventId, user_id: userId },
-    });
-    if (!existing) {
-      throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy sự kiện.');
-    }
-
-    const dueDateChanged =
-      input.dueDate !== undefined &&
-      input.dueDate.getTime() !== existing.due_date.getTime();
-    const remindBeforeChanged =
-      input.remindBefore !== undefined &&
-      input.remindBefore !== existing.remind_before;
-    const shouldResetReminder = dueDateChanged || remindBeforeChanged;
-
-    if (shouldResetReminder) {
-      await tx.notification.deleteMany({
-        where: {
-          event_id: eventId,
-          user_id: userId,
-          type: 'Reminder',
-        },
-      });
-    }
-
-    const updateFields = {
-      ...(input.title !== undefined ? { title: input.title } : {}),
-      ...(input.dueDate !== undefined ? { due_date: input.dueDate } : {}),
-      ...(input.remindBefore !== undefined
-        ? { remind_before: input.remindBefore }
-        : {}),
-      ...(input.notes !== undefined ? { notes: input.notes } : {}),
-      ...(shouldResetReminder ? { reminded_at: null } : {}),
-    };
-
-    if (existing.status === 'Completed') {
-      await tx.event.updateMany({
+  return runInTransaction(
+    client,
+    async (tx) => {
+      const existing = await tx.event.findFirst({
         where: { event_id: eventId, user_id: userId },
-        data: {
-          ...updateFields,
-          status: 'Completed',
-        },
       });
-    } else {
-      const effectiveDueDate = input.dueDate ?? existing.due_date;
-      const calculatedStatus: EventStatus =
-        effectiveDueDate.getTime() > evaluatedAt.getTime()
-          ? 'Upcoming'
-          : 'Overdue';
+      if (!existing) {
+        throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy sự kiện.');
+      }
 
-      const updateResult = await tx.event.updateMany({
-        where: {
-          event_id: eventId,
-          user_id: userId,
-          status: { not: 'Completed' },
-        },
-        data: {
-          ...updateFields,
-          status: calculatedStatus,
-        },
-      });
+      const dueDateChanged =
+        input.dueDate !== undefined &&
+        input.dueDate.getTime() !== existing.due_date.getTime();
+      const remindBeforeChanged =
+        input.remindBefore !== undefined &&
+        input.remindBefore !== existing.remind_before;
+      const shouldResetReminder = dueDateChanged || remindBeforeChanged;
 
-      if (updateResult.count === 0) {
-        const recheck = await tx.event.findFirst({
-          where: { event_id: eventId, user_id: userId },
+      if (shouldResetReminder) {
+        await tx.notification.deleteMany({
+          where: {
+            event_id: eventId,
+            user_id: userId,
+            type: 'Reminder',
+          },
         });
-        if (!recheck) {
-          throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy sự kiện.');
-        }
+      }
+
+      const updateFields = {
+        ...(input.title !== undefined ? { title: input.title } : {}),
+        ...(input.dueDate !== undefined ? { due_date: input.dueDate } : {}),
+        ...(input.remindBefore !== undefined
+          ? { remind_before: input.remindBefore }
+          : {}),
+        ...(input.notes !== undefined ? { notes: input.notes } : {}),
+        ...(shouldResetReminder ? { reminded_at: null } : {}),
+      };
+
+      if (existing.status === 'Completed') {
         await tx.event.updateMany({
           where: { event_id: eventId, user_id: userId },
           data: {
@@ -538,18 +528,53 @@ export async function patchEvent(
             status: 'Completed',
           },
         });
+      } else {
+        const effectiveDueDate = input.dueDate ?? existing.due_date;
+        const calculatedStatus: EventStatus =
+          effectiveDueDate.getTime() > evaluatedAt.getTime()
+            ? 'Upcoming'
+            : 'Overdue';
+
+        const updateResult = await tx.event.updateMany({
+          where: {
+            event_id: eventId,
+            user_id: userId,
+            status: { not: 'Completed' },
+          },
+          data: {
+            ...updateFields,
+            status: calculatedStatus,
+          },
+        });
+
+        if (updateResult.count === 0) {
+          const recheck = await tx.event.findFirst({
+            where: { event_id: eventId, user_id: userId },
+          });
+          if (!recheck) {
+            throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy sự kiện.');
+          }
+          await tx.event.updateMany({
+            where: { event_id: eventId, user_id: userId },
+            data: {
+              ...updateFields,
+              status: 'Completed',
+            },
+          });
+        }
       }
-    }
 
-    const updated = await tx.event.findFirst({
-      where: { event_id: eventId, user_id: userId },
-    });
-    if (!updated) {
-      throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy sự kiện.');
-    }
+      const updated = await tx.event.findFirst({
+        where: { event_id: eventId, user_id: userId },
+      });
+      if (!updated) {
+        throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy sự kiện.');
+      }
 
-    return { event: toEventDto(updated) };
-  });
+      return { event: toEventDto(updated) };
+    },
+    true,
+  );
 }
 
 export async function patchEventStatus(

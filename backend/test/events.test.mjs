@@ -511,7 +511,9 @@ test('GET và DELETE từ chối mọi body (JSON {}, text/plain, v.v.)', async 
     ]) {
       for (const [contentType, body] of [
         ['application/json', '{}'],
+        ['application/json', '{"title":"Nonempty"}'],
         ['text/plain', 'text body'],
+        ['text/plain', '{}'],
         [undefined, 'untyped body'],
       ]) {
         for (const chunked of [false, true]) {
@@ -1220,6 +1222,149 @@ test('DELETE /api/events/:id: xóa sự kiện và cascade Reminder notification
 });
 
 const isolatedDatabaseUrl = process.env.TEST_EVENTS_DATABASE_URL;
+
+test('GET and DELETE accept an empty JSON request with Content-Length: 0', async () => {
+  const prisma = createMockPrisma();
+  await prisma.event.create({
+    data: {
+      user_id: 10,
+      title: 'Empty body',
+      due_date: new Date('2026-11-05T17:00:00Z'),
+      remind_before: 24,
+      status: 'Upcoming',
+    },
+  });
+  const id = prisma._getEvents()[0].event_id;
+  const token = await tokenService.sign(studentIdentity);
+  await withServer(testApp(prisma), async (baseUrl) => {
+    for (const [method, path, status] of [
+      [
+        'GET',
+        '/api/events?from=2026-10-25T17:00:00Z&to=2026-11-15T17:00:00Z',
+        200,
+      ],
+      ['GET', `/api/events/${id}`, 200],
+      ['DELETE', `/api/events/${id}`, 204],
+    ]) {
+      const actual = await new Promise((resolve, reject) => {
+        const req = request(
+          baseUrl + path,
+          {
+            method,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Content-Length': '0',
+            },
+          },
+          (res) => {
+            res.resume();
+            res.on('end', () => resolve(res.statusCode));
+            res.on('error', reject);
+          },
+        );
+        req.on('error', reject);
+        req.end();
+      });
+      assert.equal(actual, status, `${method} ${path}`);
+    }
+    assert.equal(prisma._getEvents().length, 0);
+  });
+});
+
+for (const first of ['deadline', 'content']) {
+  test(`Concurrent deadline/content PATCH: ${first} commits first`, async () => {
+    let committed = createMockPrisma();
+    await committed.event.create({
+      data: {
+        user_id: 10,
+        title: 'Before',
+        due_date: new Date('2026-10-01T17:00:00Z'),
+        remind_before: 24,
+        status: 'Overdue',
+      },
+    });
+    const id = String(committed._getEvents()[0].event_id);
+    let version = 0;
+    let attempts = 0;
+    let ready = 0;
+    let releaseBoth;
+    const bothReady = new Promise((resolve) => {
+      releaseBoth = resolve;
+    });
+    let releaseFirst;
+    const firstCommitted = new Promise((resolve) => {
+      releaseFirst = resolve;
+    });
+    // Model overlapping snapshots and a database serialization conflict. The
+    // losing transaction must reread committed data, not reuse its stale result.
+    const client = {
+      $transaction: async (operation, options) => {
+        assert.equal(options?.isolationLevel, 'Serializable');
+        const attempt = attempts++;
+        const snapshotVersion = version;
+        const tx = createMockPrisma({ initialEvents: committed._getEvents() });
+        const result = await operation(tx);
+        if (attempt < 2) {
+          if (++ready === 2) releaseBoth();
+          await bothReady;
+          if (attempt === 1) await firstCommitted;
+        }
+        if (snapshotVersion !== version) {
+          throw Object.assign(new Error('Serialization conflict'), {
+            code: 'P2034',
+          });
+        }
+        committed = tx;
+        version++;
+        if (attempt === 0) releaseFirst();
+        return result;
+      },
+    };
+    const inputs = {
+      deadline: { dueDate: '2026-11-15T17:00:00Z' },
+      content: { title: 'After', notes: 'Content only' },
+    };
+    const second = first === 'deadline' ? 'content' : 'deadline';
+    await Promise.all(
+      [first, second].map((kind) =>
+        patchEvent(client, 10, id, inputs[kind], fixedNow),
+      ),
+    );
+    assert.equal(attempts, 3);
+    const event = committed._getEvents()[0];
+    assert.equal(event.due_date.toISOString(), '2026-11-15T17:00:00.000Z');
+    assert.equal(event.status, 'Upcoming');
+    assert.equal(event.title, 'After');
+    assert.equal(event.notes, 'Content only');
+  });
+}
+
+test('PATCH serialization retries are bounded and other errors are not retried', async () => {
+  for (const [code, expectedAttempts] of [
+    ['P2034', 3],
+    ['P2028', 1],
+  ]) {
+    let attempts = 0;
+    const error = Object.assign(new Error('Transaction failure'), { code });
+    await assert.rejects(
+      patchEvent(
+        {
+          $transaction: async () => {
+            attempts++;
+            throw error;
+          },
+        },
+        10,
+        '1',
+        { title: 'After' },
+        fixedNow,
+      ),
+      (actual) => actual === error,
+    );
+    assert.equal(attempts, expectedAttempts);
+  }
+});
 
 function assertIsolatedDatabase(urlString) {
   let url;
