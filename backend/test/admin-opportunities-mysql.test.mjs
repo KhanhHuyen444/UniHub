@@ -10,7 +10,7 @@ import {
   writeActivityLog,
 } from '../dist/modules/activity-logs/activity-log.writer.js';
 
-const databaseUrl = process.env.TEST_DATABASE_URL;
+const databaseUrl = process.env.TEST_ADMIN_OPPORTUNITIES_DATABASE_URL;
 const enabled = Boolean(databaseUrl);
 const nonce = randomUUID();
 const now = new Date();
@@ -77,7 +77,7 @@ before(async () => {
     !schema.startsWith('unihub_admin_opportunities_test')
   ) {
     throw new Error(
-      'TEST_DATABASE_URL must use a loopback-only, isolated unihub_admin_opportunities_test* database.',
+      'TEST_ADMIN_OPPORTUNITIES_DATABASE_URL must use a loopback-only, isolated unihub_admin_opportunities_test* database.',
     );
   }
 

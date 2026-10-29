@@ -61,4 +61,13 @@ Data touched: opportunities and activity_logs; relations are read from opportuni
 
 Admin UI loads Pending queue, then detail; confirm before mutation; reject form requires reason. Stale conflict reloads queue/detail; 401/403 is distinct from API error. No-op “keep” or cancel makes no request and no log.
 
-Tests: Guest/Student/Admin; pagination/order; Pending only; detail not found and reviewed statuses; invalid body/ID; approve verified true/false; reject reason empty/whitespace/1/500/501; invalid/missing source, content and required location without server fetch; public visibility only after approval; isVerified independent; double review race; exact old/new audit; activity payload size; rollback if audit insert fails; no reviewer fields on public API. Unit tests use a Prisma test double; opt-in MySQL tests cover authorization, Pending queue, approval/rejection, audit writes, concurrent review and public visibility. The branch implementation is not yet on main.
+Tests: Guest/Student/Admin; pagination/order; Pending only; detail not found and reviewed statuses; invalid body/ID; approve verified true/false; reject reason empty/whitespace/1/500/501; invalid/missing source, content and required location without server fetch; public visibility only after approval; isVerified independent; double review race; exact old/new audit; activity payload size; rollback if audit insert fails; no reviewer fields on public API. Unit tests use a Prisma test double; opt-in MySQL tests cover authorization, Pending queue, approval/rejection, audit writes, concurrent review and public visibility. The Admin MySQL test reads only `TEST_ADMIN_OPPORTUNITIES_DATABASE_URL`, requires a loopback URL and a database name beginning `unihub_admin_opportunities_test`, and skips when that variable is absent; it is separate from the Public suite's `TEST_DATABASE_URL`. On Windows, after applying the existing migrations to an isolated local test database, run:
+
+```powershell
+$env:TEST_ADMIN_OPPORTUNITIES_DATABASE_URL = 'mysql://user:password@127.0.0.1:3306/unihub_admin_opportunities_test_local'
+npm.cmd run build --workspace @unihub/backend
+node --test backend/test/admin-opportunities-mysql.test.mjs
+Remove-Item Env:TEST_ADMIN_OPPORTUNITIES_DATABASE_URL
+```
+
+The branch implementation is not yet on main.
