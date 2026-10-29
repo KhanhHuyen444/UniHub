@@ -3,6 +3,10 @@ import {
   type RecommendationsRouterDependencies,
 } from './modules/recommendations/recommendations.routes.js';
 import {
+  createAdminCategoriesRouter,
+  type AdminCategoriesRouterDependencies,
+} from './modules/categories/admin-categories.routes.js';
+import {
   createGuidanceRouter,
   type GuidanceRouterDependencies,
 } from './modules/guidance/guidance.routes.js';
@@ -33,6 +37,7 @@ interface AppDependencies {
   checkDatabase?: () => Promise<void>;
   logDatabaseFailure?: () => void;
   categories?: CategoriesRouterDependencies;
+  adminCategories?: AdminCategoriesRouterDependencies;
   guidance?: GuidanceRouterDependencies;
   recommendations?: RecommendationsRouterDependencies;
   opportunities?: OpportunitiesRouterDependencies;
@@ -45,6 +50,10 @@ export function createApp(dependencies: AppDependencies = {}) {
   const app = express();
 
   app.disable('x-powered-by');
+  app.use(
+    '/api/admin/categories',
+    createAdminCategoriesRouter(dependencies.adminCategories),
+  );
   app.use(express.json({ limit: '100kb' }));
   app.use('/api/health', healthRouter);
   app.use('/api/ready', createReadyRouter(dependencies));
