@@ -10,6 +10,11 @@ opportunities/category relations without schema changes or writes.
 - `GET /api/guidance/:id`: Approved guidance detail, including existing Closed
   Major/Skill links and an empty year array when no year is linked. Text fields
   are plain text, not trusted HTML. Only contract fields are serialized.
+- Both reads select the stored `opportunity_type` and enforce JavaScript strict
+  equality with `Bài viết định hướng` before serialization. Prisma's MySQL string
+  predicate remains a preliminary filter; database collation cannot admit case,
+  accent, normalization or trailing-space variants into either API response.
+  The internal type field is not exposed in the response.
 - Both routes are public. A valid Student access token and live session allow
   the list to default to the profile's Active Major when no query is supplied.
   Missing/Closed profile Major, Guest and Admin use the first Active Major
@@ -42,7 +47,12 @@ read doubles. They assert query predicates/order, grouping, serializers, default
 Major selection, validation and error handling. They do not establish real MySQL
 collation, Google login, Windows runtime readiness or performance NFRs. Existing
 Categories tests have an opt-in MySQL case; without its dedicated test database
-configuration it is skipped. No Guidance MySQL integration case is included yet.
+configuration it is skipped. Guidance has its own opt-in integration case:
+`TEST_GUIDANCE_DATABASE_URL` must target a loopback-only `unihub_guidance_test*`
+database with the existing migrations applied and empty categories/opportunities.
+The case inserts valid and wrong-type articles, verifies list/detail over HTTP,
+and rolls back its own transaction; it never clears existing data. Without that
+variable the integration case is SKIP, not PASS.
 
 ## Local HTTP checks
 

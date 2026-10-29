@@ -2,8 +2,9 @@
 
 Hợp đồng [guidance-api-contract.md](../../../../docs/guidance-api-contract.md) đã
 được duyệt. Phần này triển khai types, runtime response parsers và API functions;
-đã có hai trang React với bố cục chức năng tối thiểu, chưa đăng ký routes ứng dụng
-và chưa xác nhận thiết kế cuối cùng.
+đã có hai trang React với bố cục chức năng tối thiểu. `/roadmaps` và
+`/roadmaps/:id` đã được đăng ký trong router ứng dụng; UI hiện tại chưa được
+xác nhận theo thiết kế Figma.
 
 ## Đã triển khai
 
@@ -44,14 +45,15 @@ không gọi backend/MySQL/Google thật và không xác nhận UI hoặc NFR.
 
 ## Còn chờ và phụ thuộc
 
-- TV1 cần đăng ký `/roadmaps` và `/roadmaps/:id` trong router ứng dụng. Chưa sửa
-  router/navigation. Handoff UI chi tiết vẫn cần được xác minh trước khi hoàn thiện
-  thiết kế; bố cục hiện tại chỉ phục vụ chức năng.
+- `/roadmaps` và `/roadmaps/:id` đã được đăng ký trong router ứng dụng.
+  Handoff UI chi tiết vẫn cần được xác minh trước khi hoàn thiện thiết kế;
+  bố cục hiện tại chỉ phục vụ chức năng.
 - Backend Guidance đã có trên nhánh backend trong workflow này; deployment/merge
   và HTTP end-to-end phải kiểm tra riêng. HTTP Guest có thể chạy độc lập Auth.
 - Hai hàm hiện gọi public API, không tự lấy/lưu/gắn token, refresh hoặc đọc Profile.
   Luồng Student ưu tiên Major hồ sơ cần cơ chế Auth/session frontend dùng chung
-  của TV2 và backend cấu hình hợp lệ; không tự xây cơ chế JWT thứ hai.
+  của Bình (TV2), hiện đang chờ tích hợp frontend Auth, và backend cấu hình
+  hợp lệ; không tự xây cơ chế JWT thứ hai.
 - Major options cho UI tương lai dùng API Categories public hiện có; không dùng
   Skill Options Active để lọc/xóa các liên kết Skill Closed của nội dung Guidance.
 - Không có mock API/dữ liệu production, dependency mới, schema hoặc môi trường mới.

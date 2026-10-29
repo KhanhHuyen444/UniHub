@@ -7,8 +7,9 @@ export type GuidanceReadClient = Pick<
   'category' | 'user' | 'opportunity'
 >;
 
+const guidanceOpportunityType = 'Bài viết định hướng';
 const publicGuidanceWhere = {
-  opportunity_type: 'Bài viết định hướng',
+  opportunity_type: guidanceOpportunityType,
   status: 'Approved',
 } as const;
 const majorSelect = { category_id: true, name: true } as const;
@@ -101,6 +102,7 @@ export async function listPublicGuidance(
     },
     select: {
       item_id: true,
+      opportunity_type: true,
       title: true,
       created_at: true,
       skills: skillRelation,
@@ -108,8 +110,13 @@ export async function listPublicGuidance(
     },
     orderBy: { item_id: 'asc' },
   });
+  // MySQL's string equality can admit case variants. Enforce the exact stored
+  // value in JavaScript, independently of database collation, before serializing.
+  const exactRows = rows.filter(
+    (row) => row.opportunity_type === guidanceOpportunityType,
+  );
   const stages = [1, 2, 3, 4].flatMap((academicYear) => {
-    const items = rows
+    const items = exactRows
       .filter((row) =>
         row.years.some((year) => year.academic_year === academicYear),
       )
@@ -142,6 +149,7 @@ export async function getPublicGuidance(
     where: { ...publicGuidanceWhere, item_id: id },
     select: {
       item_id: true,
+      opportunity_type: true,
       title: true,
       publisher: true,
       description: true,
@@ -158,7 +166,8 @@ export async function getPublicGuidance(
       years: yearsRelation,
     },
   });
-  if (!row) throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy tài nguyên.');
+  if (!row || row.opportunity_type !== guidanceOpportunityType)
+    throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy tài nguyên.');
   return {
     item: {
       id: row.item_id,

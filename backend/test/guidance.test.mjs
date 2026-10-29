@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { once } from 'node:events';
 import { createApp } from '../dist/app.js';
+import { createPrismaClient } from '../dist/lib/prisma.js';
 import {
   createAccessTokenService,
   InvalidJwtConfigurationError,
@@ -23,6 +24,7 @@ const major = { category_id: 4, name: 'Major' };
 const category = { category_id: 31, name: 'Closed Skill', status: 'Closed' };
 const article = (id, years = [2]) => ({
   item_id: id,
+  opportunity_type: 'Bài viết định hướng',
   title: `Article ${id}`,
   created_at: now,
   years: years.map((academic_year) => ({ academic_year })),
@@ -397,3 +399,156 @@ test('invalid Auth configuration propagates 503 instead of Guest fallback', asyn
   });
   assert.equal(calls.length, 0);
 });
+
+const wrongGuidanceTypes = [
+  'bài viết định hướng',
+  'BÀI VIẾT ĐỊNH HƯỚNG',
+  'Bài Viết Định Hướng',
+  'Bai viet dinh huong',
+  'Bài viết đinh hướng',
+  'Bài viết định hướng ',
+  'Bài viết định hướng'.normalize('NFD'),
+  'Học bổng',
+];
+
+test('list/detail reject every non-exact opportunity_type even if MySQL equality admits it', async () => {
+  const rows = [
+    article(1),
+    ...wrongGuidanceTypes.map((opportunity_type, index) => ({
+      ...article(index + 2),
+      opportunity_type,
+    })),
+  ];
+  const { app } = fixture({
+    list: async ({ select }) => {
+      assert.equal(select.opportunity_type, true);
+      return rows;
+    },
+    detail: async ({ where, select }) => {
+      assert.equal(select.opportunity_type, true);
+      return {
+        ...rows.find((row) => row.item_id === where.item_id),
+        publisher: null,
+        description: null,
+        requirements: null,
+        majors: [],
+      };
+    },
+  });
+  await withServer(app, async (url) => {
+    const response = await fetch(`${url}/api/guidance`);
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    assert.deepEqual(
+      body.stages.map((stage) => stage.items.map((item) => item.id)),
+      [[1]],
+    );
+    assert.equal(JSON.stringify(body).includes('opportunity_type'), false);
+    for (const row of rows) {
+      const detail = await fetch(`${url}/api/guidance/${row.item_id}`);
+      assert.equal(
+        detail.status,
+        row.item_id === 1 ? 200 : 404,
+        row.opportunity_type,
+      );
+      const result = await detail.json();
+      if (row.item_id === 1) assert.equal(result.item.id, 1);
+      else assert.equal(result.error.code, 'NOT_FOUND');
+    }
+  });
+});
+
+const guidanceDatabaseUrl = process.env.TEST_GUIDANCE_DATABASE_URL;
+test(
+  'MySQL integration: exact guidance type for list/detail with collation variants',
+  {
+    skip:
+      !guidanceDatabaseUrl && 'TEST_GUIDANCE_DATABASE_URL is not configured.',
+  },
+  async () => {
+    const url = new URL(guidanceDatabaseUrl);
+    assert.ok(
+      url.protocol === 'mysql:' &&
+        ['127.0.0.1', 'localhost'].includes(url.hostname) &&
+        /^unihub_guidance_test[A-Za-z0-9_]*$/.test(
+          decodeURIComponent(url.pathname.slice(1)),
+        ),
+      'Use only an isolated loopback unihub_guidance_test* database.',
+    );
+    const client = createPrismaClient(guidanceDatabaseUrl);
+    const rollback = new Error('Rollback only this test transaction');
+    try {
+      await client.$transaction(
+        async (tx) => {
+          assert.equal(
+            await tx.category.count(),
+            0,
+            'Refuse a populated test database.',
+          );
+          assert.equal(
+            await tx.opportunity.count(),
+            0,
+            'Refuse a populated test database.',
+          );
+          const major = await tx.category.create({
+            data: {
+              type: 'Major',
+              name: 'Guidance exact type integration',
+              status: 'Active',
+            },
+          });
+          const rows = [];
+          for (const opportunity_type of [
+            'Bài viết định hướng',
+            ...wrongGuidanceTypes,
+          ]) {
+            rows.push(
+              await tx.opportunity.create({
+                data: {
+                  opportunity_type,
+                  title: 'Guidance exact type test',
+                  publisher: 'Test only',
+                  status: 'Approved',
+                  majors: { create: { major_id: major.category_id } },
+                  years: { create: { academic_year: 2 } },
+                },
+              }),
+            );
+          }
+          const app = createApp({ guidance: { getPrismaClient: () => tx } });
+          await withServer(app, async (baseUrl) => {
+            const response = await fetch(
+              `${baseUrl}/api/guidance?majorId=${major.category_id}`,
+            );
+            assert.equal(response.status, 200);
+            const body = await response.json();
+            assert.deepEqual(
+              body.stages.map((stage) => stage.items.map((item) => item.id)),
+              [[rows[0].item_id]],
+            );
+            for (const [index, row] of rows.entries()) {
+              const detail = await fetch(
+                `${baseUrl}/api/guidance/${row.item_id}`,
+              );
+              assert.equal(
+                detail.status,
+                index === 0 ? 200 : 404,
+                row.opportunity_type,
+              );
+              const result = await detail.json();
+              if (index === 0) assert.equal(result.item.id, row.item_id);
+              else assert.equal(result.error.code, 'NOT_FOUND');
+            }
+          });
+          throw rollback;
+        },
+        { timeout: 30000 },
+      );
+      assert.fail('Test transaction must roll back.');
+    } catch (error) {
+      if (error !== rollback) throw error;
+    } finally {
+      await client.$disconnect();
+    }
+  },
+);
