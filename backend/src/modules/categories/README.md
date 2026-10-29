@@ -114,10 +114,66 @@ skipped. Mock query assertions do not establish actual MySQL collation behavior.
 ## Outside this endpoint
 
 Skill Options is implemented as the Student-only read endpoint described above.
-Admin CRUD and profile rules for retaining existing Closed category links are
-separate features outside this implementation; their approved contracts are in
+Admin management is implemented separately below. Profile rules for retaining
+existing Closed category links remain outside this module; approved contracts are in
 [categories-api-contract.md](../../../../docs/categories-api-contract.md).
 The options endpoint reuses the existing Auth middleware and live sessions.
 It does not implement Google login, profile editing or a frontend profile
 consumer; those integrations depend on the Auth/Profile modules. Admin must use
 the separate category management API, not Skill Options.
+
+## Admin Categories management
+
+Implemented under `/api/admin/categories`, using the existing shared
+`requireAuth` then `requireRole('Admin')`. Guest/invalid credentials return 401;
+Student returns 403. Public Major and Student Skill Options routes are unchanged.
+
+- `GET ?type=Major|Skill`: exact, required query; returns Active and Closed rows
+  sorted by `name ASC, category_id ASC`, with only `id/name/type/status`.
+- `POST /`: `{type,name,reason?}` creates an Active category (201).
+- `PATCH /:id`: `{name,reason?}` renames either Active or Closed categories.
+- `PATCH /:id/status`: `{status,reason?}` closes/reopens a category.
+- No DELETE route, type change, reference replacement, search or pagination.
+  Existing IDs and all profile/opportunity/skill references are preserved.
+
+Names are trimmed, nonempty and at most 100 Unicode code points. Reasons are
+optional/null or strings of at most 500 code points and are stored separately.
+Unknown/duplicate JSON fields, unsupported/repeated query fields, GET bodies and
+invalid IDs are rejected. The router uses its own JSON parser before the shared
+app parser to detect duplicate keys; size/encoding/syntax errors still use the
+shared error handler. Database UNIQUE `(type,name)` enforces the existing MySQL
+collation, including case-insensitive, accent-sensitive name uniqueness; P2002
+maps to 409 `DUPLICATE_CATEGORY`. No schema or migration is changed.
+
+Each mutation uses an interactive RepeatableRead transaction with an ordered
+`SELECT ... FOR UPDATE` over category rows before reading lifecycle state. All
+Admin category mutations take these same locks, serializing status changes and
+rechecking that at least one Active remains for the target type. This deliberately
+serializes writes across both types for the small unpaginated category set.
+InnoDB deadlocks retry the whole rolled-back transaction up to three attempts;
+exhaustion returns safe 503. The last Active close returns 409
+`LAST_ACTIVE_CATEGORY`. A missing target returns 404 `NOT_FOUND`.
+
+Shared `writeActivityLog` records exactly one CREATE/RENAME/CLOSE/REOPEN_CATEGORY
+entry with the authenticated actor and compact old/new fields in that same
+transaction. Log insertion/validation failure rolls back the category mutation;
+serialized values are never truncated. Shared writer validation failures return
+400 `VALIDATION_ERROR`. Exact no-op rename/status returns `changed:false` and
+writes no log. Other errors use the common safe 503/500 mapping.
+
+After building, run from the repository root:
+
+```powershell
+node --test backend/test/admin-categories.test.mjs backend/test/categories.test.mjs backend/test/auth-middleware.test.mjs backend/test/activity-log-writer.test.mjs
+node --test backend/test/admin-categories-mysql.test.mjs
+```
+
+HTTP tests use real signed JWTs/shared Auth and audit writer with transactional
+Prisma doubles. They do not prove MySQL locking or collation. The MySQL test is
+opt-in via `TEST_ADMIN_CATEGORIES_DATABASE_URL`: only a disposable loopback
+`unihub_admin_categories_test*` database with existing migrations applied and
+empty users/categories/activity_logs is accepted. It tests real uniqueness,
+concurrent final-Active closes, preserved references and audit rollback. It never
+clears pre-existing data or deletes audit entries; fixtures remain in this private
+test database, which its owner must dispose of after the run. Never use a shared
+or group database. Without that variable the MySQL test reports SKIP.
