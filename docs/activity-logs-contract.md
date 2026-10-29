@@ -1,6 +1,6 @@
 # Quy ước ghi Activity Logs
 
-> **Contract: leader đã duyệt payload/transaction rules theo Chương 3 UC-10–14.** Shared writer đang được triển khai trên `feat/shared-activity-logs`; chưa có trên `main` cho đến khi PR được merge. Không có API xem log. Mỗi module gọi writer trong transaction của thao tác sở hữu.
+> **Contract: leader đã duyệt payload/transaction rules theo Chương 3 UC-10–14.** Shared writer đã merge vào `main` qua PR #22. Không có API xem log. Mỗi module gọi writer trong transaction của thao tác sở hữu.
 
 ## Các hành động có căn cứ
 

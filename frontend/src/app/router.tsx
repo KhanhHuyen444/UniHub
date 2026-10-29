@@ -5,6 +5,8 @@ import { SharedUiPreviewPage } from './SharedUiPreviewPage';
 import { sharedUiPreviewPath } from '../layouts/navigation';
 import { OpportunityHubPage } from '../features/opportunities/OpportunityHubPage';
 import { OpportunityDetailPage } from '../features/opportunities/OpportunityDetailPage';
+import { GuidanceRoadmapPage } from '../features/guidance/GuidanceRoadmapPage';
+import { GuidanceDetailPage } from '../features/guidance/GuidanceDetailPage';
 import { AuthProvider } from '../features/auth/AuthProvider';
 import { ForbiddenPage } from '../features/auth/AuthGuard';
 import { LoginPage } from '../features/auth/LoginPage';
@@ -15,6 +17,7 @@ export const appPaths = {
   developmentHealth: '/_dev/health',
   sharedUiPreview: sharedUiPreviewPath,
   opportunities: '/opportunities',
+  roadmaps: '/roadmaps',
   notFound: '/404',
 } as const;
 
@@ -42,6 +45,11 @@ export function AppRouter() {
           <Route
             path={`${appPaths.opportunities}/:id`}
             element={<OpportunityDetailPage />}
+          />
+          <Route path={appPaths.roadmaps} element={<GuidanceRoadmapPage />} />
+          <Route
+            path={`${appPaths.roadmaps}/:id`}
+            element={<GuidanceDetailPage />}
           />
           <Route path={appPaths.notFound} element={<NotFoundPage />} />
           <Route
