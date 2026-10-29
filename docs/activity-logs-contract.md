@@ -1,6 +1,6 @@
 # Quy ước ghi Activity Logs
 
-> **Contract: leader đã duyệt payload/transaction rules theo Chương 3 UC-10–14.** Implementation: chưa có shared writer trên main; không có API xem log. TV5 triển khai helper dùng chung trong transaction của module sở hữu thao tác.
+> **Contract: leader đã duyệt payload/transaction rules theo Chương 3 UC-10–14.** Shared writer đang được triển khai trên `feat/shared-activity-logs`; chưa có trên `main` cho đến khi PR được merge. Không có API xem log. Mỗi module gọi writer trong transaction của thao tác sở hữu.
 
 ## Các hành động có căn cứ
 
