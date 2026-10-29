@@ -1,3 +1,7 @@
+import {
+  createGuidanceRouter,
+  type GuidanceRouterDependencies,
+} from './modules/guidance/guidance.routes.js';
 import express from 'express';
 import { errorHandler, notFound } from './middleware/errors.js';
 import { healthRouter } from './modules/health/health.routes.js';
@@ -14,6 +18,8 @@ import {
   createOpportunitiesRouter,
   type OpportunitiesRouterDependencies,
 } from './modules/opportunities/opportunities.routes.js';
+import { createEventsRouter } from './modules/events/events.routes.js';
+import type { EventsRouterDependencies } from './modules/events/events.types.js';
 import {
   createAdminOpportunitiesRouter,
   type AdminOpportunitiesRouterDependencies,
@@ -23,8 +29,10 @@ interface AppDependencies {
   checkDatabase?: () => Promise<void>;
   logDatabaseFailure?: () => void;
   categories?: CategoriesRouterDependencies;
+  guidance?: GuidanceRouterDependencies;
   opportunities?: OpportunitiesRouterDependencies;
   auth?: GoogleAuthDependencies;
+  events?: EventsRouterDependencies;
   adminOpportunities?: AdminOpportunitiesRouterDependencies;
 }
 
@@ -37,10 +45,12 @@ export function createApp(dependencies: AppDependencies = {}) {
   app.use('/api/ready', createReadyRouter(dependencies));
   app.use('/api/auth', createAuthRouter(dependencies.auth));
   app.use('/api/categories', createCategoriesRouter(dependencies.categories));
+  app.use('/api/guidance', createGuidanceRouter(dependencies.guidance));
   app.use(
     '/api/opportunities',
     createOpportunitiesRouter(dependencies.opportunities),
   );
+  app.use('/api/events', createEventsRouter(dependencies.events));
   app.use(
     '/api/admin/opportunities',
     createAdminOpportunitiesRouter(dependencies.adminOpportunities),
