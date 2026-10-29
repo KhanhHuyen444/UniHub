@@ -1,6 +1,6 @@
 # Hợp đồng Admin duyệt cơ hội
 
-> **Contract: leader đã duyệt theo Chương 3 UC-10. Implementation: chưa có Admin review routes trên main.** Public GET opportunities đã triển khai và không đổi. Không thêm API tạo/sửa/xóa cơ hội, Admin source fetch, hoặc seed dữ liệu.
+> **Contract: leader đã duyệt theo Chương 3 UC-10. Implementation: đã có trên nhánh `feat/admin-opportunities`; chưa merge vào `main`.** Public GET opportunities giữ nguyên. Không thêm API tạo/sửa/xóa cơ hội, Admin source fetch, hoặc seed dữ liệu.
 
 ## Quyền và response item
 
@@ -49,7 +49,7 @@ AdminOpportunity là một DTO đầy đủ gồm đúng các field sau; ví d�
 
 ## Review rules, errors and transaction
 
-Before approval, Admin human-review checks source, content sections from BR-01.8, publisher, and location for Offline/Hybrid. Backend validates sourceUrl as an absolute URL with http or https and required location; it does not fetch the source, follow redirects, or assert external availability. Missing/unacceptable source or required location/content returns 422 OPPORTUNITY_NOT_REVIEWABLE. The Verified flag is true only when Admin chooses it; an Approved item may have isVerified=false. Rejection requires a reason.
+Before approval, Admin human-review checks source, content sections from BR-01.8, publisher, and location for Offline/Hybrid. Backend checks that `descriptionText`, `requirementsText`, and `publisher` contain non-whitespace text, validates `sourceUrl` as an absolute URL with http or https, and requires a non-empty `location` for Offline/Hybrid. Human review still decides whether the sections meet BR-01.8; the API does not parse or infer section headings. It does not fetch the source, follow redirects, or assert external availability. Missing/unacceptable source or required location/content returns 422 OPPORTUNITY_NOT_REVIEWABLE. The Verified flag is true only when Admin chooses it; an Approved item may have isVerified=false. Rejection requires a reason.
 
 Malformed path ID → 400 INVALID_ID; invalid JSON → 400 `INVALID_JSON`; wrong body shape/extra field → 400 `INVALID_REQUEST`; invalid field value → 400 `VALIDATION_ERROR` with fieldErrors; valid item not found → 404 NOT_FOUND; current status no longer Pending → 409 OPPORTUNITY_NOT_PENDING; not reviewable → 422 OPPORTUNITY_NOT_REVIEWABLE; DB unavailable → 503 SERVICE_UNAVAILABLE; unexpected → 500 INTERNAL_ERROR. Errors use shared envelope, never leak SQL/stack.
 
@@ -61,4 +61,13 @@ Data touched: opportunities and activity_logs; relations are read from opportuni
 
 Admin UI loads Pending queue, then detail; confirm before mutation; reject form requires reason. Stale conflict reloads queue/detail; 401/403 is distinct from API error. No-op “keep” or cancel makes no request and no log.
 
-Tests: Guest/Student/Admin; pagination/order; Pending only; detail not found and reviewed statuses; invalid body/ID; approve verified true/false; reject reason empty/whitespace/1/500/501; invalid/missing source and required location without server fetch; public visibility only after approval; isVerified independent; double review race; exact old/new audit; activity payload size; rollback if audit insert fails; no reviewer fields on public API. **Contract đã duyệt; Admin routes chưa triển khai trên main.**
+Tests: Guest/Student/Admin; pagination/order; Pending only; detail not found and reviewed statuses; invalid body/ID; approve verified true/false; reject reason empty/whitespace/1/500/501; invalid/missing source, content and required location without server fetch; public visibility only after approval; isVerified independent; double review race; exact old/new audit; activity payload size; rollback if audit insert fails; no reviewer fields on public API. Unit tests use a Prisma test double; opt-in MySQL tests cover authorization, Pending queue, approval/rejection, audit writes, concurrent review and public visibility. The Admin MySQL test reads only `TEST_ADMIN_OPPORTUNITIES_DATABASE_URL`, requires a loopback URL and a database name beginning `unihub_admin_opportunities_test`, and skips when that variable is absent; it is separate from the Public suite's `TEST_DATABASE_URL`. On Windows, after applying the existing migrations to an isolated local test database, run:
+
+```powershell
+$env:TEST_ADMIN_OPPORTUNITIES_DATABASE_URL = 'mysql://user:password@127.0.0.1:3306/unihub_admin_opportunities_test_local'
+npm.cmd run build --workspace @unihub/backend
+node --test backend/test/admin-opportunities-mysql.test.mjs
+Remove-Item Env:TEST_ADMIN_OPPORTUNITIES_DATABASE_URL
+```
+
+The branch implementation is not yet on main.
