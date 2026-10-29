@@ -1,7 +1,6 @@
 import { ApiError, apiRequest, type ApiRequestOptions } from '../../lib/api';
 import {
   getAccessToken,
-  setAccessToken,
   setAuthRestoring,
   setAuthUnavailable,
   setAuthenticated,
@@ -86,6 +85,29 @@ function parseMeResponse(value: unknown): MeResponse {
 
 let refreshInFlight: Promise<string> | null = null;
 let restoreInFlight: Promise<void> | null = null;
+let logoutInFlight: Promise<void> | null = null;
+let authRevision = 0;
+const pendingCookieMutations = new Set<Promise<unknown>>();
+
+class AuthOperationInvalidatedError extends Error {
+  constructor() {
+    super('Phiên xác thực đã bị thay đổi.');
+    this.name = 'AuthOperationInvalidatedError';
+  }
+}
+
+function assertCurrentRevision(revision: number): void {
+  if (revision !== authRevision) throw new AuthOperationInvalidatedError();
+}
+
+function trackCookieMutation<T>(operation: Promise<T>): Promise<T> {
+  pendingCookieMutations.add(operation);
+  void operation.then(
+    () => pendingCookieMutations.delete(operation),
+    () => pendingCookieMutations.delete(operation),
+  );
+  return operation;
+}
 
 async function readCurrentUser(token: string): Promise<AuthUser> {
   const value = await apiRequest<unknown>('/api/auth/me', {
@@ -95,28 +117,36 @@ async function readCurrentUser(token: string): Promise<AuthUser> {
 }
 
 async function rotateSession(): Promise<string> {
+  if (logoutInFlight) throw new AuthOperationInvalidatedError();
   if (refreshInFlight) return refreshInFlight;
-  refreshInFlight = (async () => {
-    const value = await apiRequest<unknown>('/api/auth/refresh', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    const response = parseTokenResponse(value);
-    setAccessToken(response.accessToken);
-    const user = await readCurrentUser(response.accessToken);
-    setAuthenticated(response.accessToken, user);
-    return response.accessToken;
-  })().finally(() => {
-    refreshInFlight = null;
+  const revision = authRevision;
+  const operation = trackCookieMutation(
+    (async () => {
+      const value = await apiRequest<unknown>('/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      assertCurrentRevision(revision);
+      const response = parseTokenResponse(value);
+      const user = await readCurrentUser(response.accessToken);
+      assertCurrentRevision(revision);
+      setAuthenticated(response.accessToken, user);
+      return response.accessToken;
+    })(),
+  );
+  const sharedOperation = operation.finally(() => {
+    if (refreshInFlight === sharedOperation) refreshInFlight = null;
   });
-  return refreshInFlight;
+  refreshInFlight = sharedOperation;
+  return sharedOperation;
 }
 
 async function refreshForProtectedRequest(): Promise<string> {
   try {
     return await rotateSession();
   } catch (error) {
+    if (error instanceof AuthOperationInvalidatedError) throw error;
     if (error instanceof ApiError && error.status === 401) {
       setGuest();
     } else {
@@ -131,12 +161,23 @@ async function refreshForProtectedRequest(): Promise<string> {
 }
 
 export async function restoreAuthSession(): Promise<void> {
+  if (logoutInFlight) {
+    await logoutInFlight.catch(() => undefined);
+    return;
+  }
   if (restoreInFlight) return restoreInFlight;
+  const revision = authRevision;
   setAuthRestoring();
   restoreInFlight = (async () => {
     try {
       await rotateSession();
     } catch (error) {
+      if (
+        error instanceof AuthOperationInvalidatedError ||
+        revision !== authRevision
+      ) {
+        return;
+      }
       if (error instanceof ApiError && error.status === 401) {
         setGuest();
       } else {
@@ -154,42 +195,71 @@ export async function restoreAuthSession(): Promise<void> {
 }
 
 export async function loginWithGoogleIdToken(idToken: string): Promise<void> {
-  const value = await apiRequest<unknown>('/api/auth/google', {
-    method: 'POST',
-    credentials: 'include',
-    body: { idToken },
-  });
-  const response = parseTokenResponse(value);
-  setAccessToken(response.accessToken);
+  if (logoutInFlight) await logoutInFlight.catch(() => undefined);
+  const revision = authRevision;
+  const loginOperation = trackCookieMutation(
+    apiRequest<unknown>('/api/auth/google', {
+      method: 'POST',
+      credentials: 'include',
+      body: { idToken },
+    }),
+  );
   try {
+    const value = await loginOperation;
+    assertCurrentRevision(revision);
+    const response = parseTokenResponse(value);
     const user = await readCurrentUser(response.accessToken);
+    assertCurrentRevision(revision);
     setAuthenticated(response.accessToken, user);
   } catch (error) {
-    setGuest();
+    if (
+      !(error instanceof AuthOperationInvalidatedError) &&
+      revision === authRevision
+    ) {
+      setGuest();
+    }
     throw error;
   }
 }
 
 export async function logoutCurrentSession(): Promise<void> {
+  if (logoutInFlight) return logoutInFlight;
+  authRevision += 1;
+  const revision = authRevision;
   setGuest();
-  try {
+  const operation = (async () => {
+    // Drain refresh/login responses first so logout uses the latest cookie.
+    while (pendingCookieMutations.size > 0) {
+      await Promise.allSettled([...pendingCookieMutations]);
+    }
+    assertCurrentRevision(revision);
     await apiRequest<void>('/api/auth/logout', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
     });
-  } catch (error) {
-    setGuest(
-      'Đã đăng xuất trên thiết bị này; máy chủ chưa xác nhận thu hồi phiên.',
-    );
-    throw error;
-  }
+  })();
+  const sharedOperation = operation
+    .catch((error: unknown) => {
+      if (revision === authRevision) {
+        setGuest(
+          'Đã đăng xuất trên thiết bị này; máy chủ chưa xác nhận thu hồi phiên.',
+        );
+      }
+      throw error;
+    })
+    .finally(() => {
+      if (logoutInFlight === sharedOperation) logoutInFlight = null;
+    });
+  logoutInFlight = sharedOperation;
+  return sharedOperation;
 }
 
 export async function protectedApiRequest<T>(
   path: string,
   options: ApiRequestOptions = {},
 ): Promise<T> {
+  const revision = authRevision;
   let token = getAccessToken();
   if (!token) token = await refreshForProtectedRequest();
 
@@ -209,18 +279,36 @@ export async function protectedApiRequest<T>(
     const latest = getAccessToken();
     if (latest && latest !== token) {
       try {
-        return await requestWith(latest);
+        assertCurrentRevision(revision);
+        const result = await requestWith(latest);
+        assertCurrentRevision(revision);
+        return result;
       } catch (retryError) {
-        if (retryError instanceof ApiError && retryError.status === 401) {
+        if (
+          retryError instanceof ApiError &&
+          retryError.status === 401 &&
+          revision === authRevision
+        ) {
           setGuest();
         }
         throw retryError;
       }
     }
+    const refreshedToken = await refreshForProtectedRequest();
     try {
-      return await requestWith(await refreshForProtectedRequest());
-    } catch (refreshError) {
-      throw refreshError;
+      assertCurrentRevision(revision);
+      const result = await requestWith(refreshedToken);
+      assertCurrentRevision(revision);
+      return result;
+    } catch (retryError) {
+      if (
+        retryError instanceof ApiError &&
+        retryError.status === 401 &&
+        revision === authRevision
+      ) {
+        setGuest();
+      }
+      throw retryError;
     }
   }
 }
