@@ -58,6 +58,58 @@ already present. The test refuses a populated categories table and never
 clears pre-existing rows. Use a disposable database with the current
 migrations; never point it at a group database.
 
+## Skill options endpoint
+
+`GET /api/categories?type=Skill` requires a valid UniHub access JWT and a live
+session through the shared `requireAuth`, followed by `requireRole('Student')`.
+Guest or invalid/expired tokens receive 401 `UNAUTHORIZED`; Admin receives 403
+`FORBIDDEN`. Major remains public, including when an Authorization header exists.
+Query validation runs before authentication: exactly one `type=Major` or
+`type=Skill` is accepted; unsupported, repeated or missing query fields return
+400 `INVALID_QUERY` before any database access. No body, search or pagination is
+part of the options contract.
+
+Both types reuse the same Prisma query/serializer: Active only, ordered by
+`name ASC, category_id ASC`, selecting only `id`, `name`, `type` for the response.
+An empty Skill list returns 200 with `{ "items": [] }`. Database failures return
+503 `SERVICE_UNAVAILABLE`; unexpected failures return 500 `INTERNAL_ERROR`.
+Closed links on existing profiles are outside this endpoint's scope.
+
+### Try Skill locally (PowerShell, repository root)
+
+Use Node 24.19.0 and npm 11.9.0. Run `npm.cmd ci`. Configure the existing backend
+local environment according to the auth module README (JWT signing configuration,
+Google client ID and allowed origins) and a private development MySQL database
+with the current migrations and runtime grants. Preserve existing `.env` files;
+never share credentials or use the group database for tests.
+
+```powershell
+npm.cmd run dev:backend
+```
+
+In a second terminal, obtain a valid Student access token through the existing
+Google login flow, with a live session in that same development database. Keep it
+in the local `$studentAccessToken` variable; do not paste it into logs or commits.
+
+```powershell
+Invoke-RestMethod -Method Get -Uri "http://127.0.0.1:3001/api/categories?type=Skill" -Headers @{ Authorization = "Bearer $studentAccessToken" }
+Invoke-RestMethod -Method Get -Uri "http://127.0.0.1:3001/api/categories?type=Major"
+```
+
+Without the header, Skill must return 401. Repeat with a valid Admin token for 403. PowerShell reports non-2xx responses as errors. An empty development category
+table produces `items: []`, not an authentication error.
+
+### Tests and limits
+
+After `npm.cmd run build`, run
+`node --test backend/test/categories.test.mjs backend/test/auth-middleware.test.mjs`.
+Categories HTTP tests use real signed JWTs and the shared auth middleware with
+Prisma/session doubles. They verify query predicates, select/order, authorization,
+safe errors and public Major regression. The opt-in MySQL case checks real category
+filtering, type isolation, sorting and empty results for both types; its Skill auth
+session is a test double. Without `TEST_CATEGORIES_DATABASE_URL`, that case is
+skipped. Mock query assertions do not establish actual MySQL collation behavior.
+
 ## Outside this endpoint
 
 `type=Skill`, profile rules for Closed categories and Admin CRUD are not
