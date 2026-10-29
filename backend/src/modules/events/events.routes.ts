@@ -13,11 +13,34 @@ import {
 } from './events.service.js';
 
 function assertNoBody(request: Request): void {
-  if (
-    request.body &&
-    typeof request.body === 'object' &&
-    Object.keys(request.body).length > 0
-  ) {
+  const contentLength = request.get('content-length');
+  if (contentLength !== undefined && contentLength !== '0') {
+    throw new ApiError(
+      400,
+      'INVALID_REQUEST',
+      'Yêu cầu không được chứa nội dung.',
+    );
+  }
+
+  const transferEncoding = request.get('transfer-encoding');
+  if (transferEncoding !== undefined) {
+    throw new ApiError(
+      400,
+      'INVALID_REQUEST',
+      'Yêu cầu không được chứa nội dung.',
+    );
+  }
+
+  const contentType = request.get('content-type');
+  if (contentType !== undefined) {
+    throw new ApiError(
+      400,
+      'INVALID_REQUEST',
+      'Yêu cầu không được chứa nội dung.',
+    );
+  }
+
+  if (request.body !== undefined && request.body !== null) {
     throw new ApiError(
       400,
       'INVALID_REQUEST',

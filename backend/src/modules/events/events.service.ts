@@ -17,6 +17,51 @@ export function formatInstant(value: Date): string {
   return value.toISOString().replace('.000Z', 'Z');
 }
 
+export function parseStrictUtcIsoDate(raw: string): Date | null {
+  const match =
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,3}))?Z$/.exec(
+      raw,
+    );
+  if (!match) return null;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const hour = Number(match[4]);
+  const minute = Number(match[5]);
+  const second = Number(match[6]);
+  const ms = match[7] ? Number(match[7].padEnd(3, '0').slice(0, 3)) : 0;
+
+  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+  if (
+    hour < 0 ||
+    hour > 23 ||
+    minute < 0 ||
+    minute > 59 ||
+    second < 0 ||
+    second > 59
+  ) {
+    return null;
+  }
+
+  const date = new Date(raw);
+  if (isNaN(date.getTime())) return null;
+
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() + 1 !== month ||
+    date.getUTCDate() !== day ||
+    date.getUTCHours() !== hour ||
+    date.getUTCMinutes() !== minute ||
+    date.getUTCSeconds() !== second ||
+    date.getUTCMilliseconds() !== ms
+  ) {
+    return null;
+  }
+
+  return date;
+}
+
 export function isVietnamMidnight(date: Date): boolean {
   if (date.getUTCMilliseconds() !== 0) return false;
   const parts = new Intl.DateTimeFormat('en-GB', {
@@ -51,14 +96,10 @@ export function parseEventsQuery(originalUrl: string): {
   const rawFrom = fromList[0];
   const rawTo = toList[0];
 
-  if (!ISO_Z_REGEX.test(rawFrom) || !ISO_Z_REGEX.test(rawTo)) {
-    throw new ApiError(400, 'INVALID_QUERY', 'Tham số truy vấn không hợp lệ.');
-  }
+  const from = parseStrictUtcIsoDate(rawFrom);
+  const to = parseStrictUtcIsoDate(rawTo);
 
-  const from = new Date(rawFrom);
-  const to = new Date(rawTo);
-
-  if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+  if (!from || !to) {
     throw new ApiError(400, 'INVALID_QUERY', 'Tham số truy vấn không hợp lệ.');
   }
 
@@ -132,16 +173,20 @@ export function parseCreateEventInput(
     );
   }
 
-  if (typeof raw.dueDate !== 'string' || !ISO_Z_REGEX.test(raw.dueDate)) {
+  if (typeof raw.dueDate !== 'string') {
     throw new ApiError(
       400,
       'VALIDATION_ERROR',
       'Hạn chót phải theo định dạng UTC ISO 8601.',
     );
   }
-  const dueDate = new Date(raw.dueDate);
-  if (isNaN(dueDate.getTime())) {
-    throw new ApiError(400, 'VALIDATION_ERROR', 'Hạn chót không hợp lệ.');
+  const dueDate = parseStrictUtcIsoDate(raw.dueDate);
+  if (!dueDate) {
+    throw new ApiError(
+      400,
+      'VALIDATION_ERROR',
+      'Hạn chót không hợp lệ hoặc không phải ngày lịch tồn tại.',
+    );
   }
   if (dueDate.getTime() <= evaluatedAt.getTime()) {
     throw new ApiError(
@@ -156,12 +201,13 @@ export function parseCreateEventInput(
     if (
       typeof raw.remindBefore !== 'number' ||
       !Number.isInteger(raw.remindBefore) ||
-      raw.remindBefore < 0
+      raw.remindBefore < 0 ||
+      raw.remindBefore > MAX_MYSQL_INT
     ) {
       throw new ApiError(
         400,
         'VALIDATION_ERROR',
-        'Thời gian nhắc trước phải là số nguyên không âm.',
+        'Thời gian nhắc trước phải là số nguyên trong khoảng 0 đến 2147483647.',
       );
     }
     remindBefore = raw.remindBefore;
@@ -236,16 +282,20 @@ export function parsePatchEventInput(
   }
 
   if ('dueDate' in raw) {
-    if (typeof raw.dueDate !== 'string' || !ISO_Z_REGEX.test(raw.dueDate)) {
+    if (typeof raw.dueDate !== 'string') {
       throw new ApiError(
         400,
         'VALIDATION_ERROR',
         'Hạn chót phải theo định dạng UTC ISO 8601.',
       );
     }
-    const parsed = new Date(raw.dueDate);
-    if (isNaN(parsed.getTime())) {
-      throw new ApiError(400, 'VALIDATION_ERROR', 'Hạn chót không hợp lệ.');
+    const parsed = parseStrictUtcIsoDate(raw.dueDate);
+    if (!parsed) {
+      throw new ApiError(
+        400,
+        'VALIDATION_ERROR',
+        'Hạn chót không hợp lệ hoặc không phải ngày lịch tồn tại.',
+      );
     }
     if (parsed.getTime() <= evaluatedAt.getTime()) {
       throw new ApiError(
@@ -261,12 +311,13 @@ export function parsePatchEventInput(
     if (
       typeof raw.remindBefore !== 'number' ||
       !Number.isInteger(raw.remindBefore) ||
-      raw.remindBefore < 0
+      raw.remindBefore < 0 ||
+      raw.remindBefore > MAX_MYSQL_INT
     ) {
       throw new ApiError(
         400,
         'VALIDATION_ERROR',
-        'Thời gian nhắc trước phải là số nguyên không âm.',
+        'Thời gian nhắc trước phải là số nguyên trong khoảng 0 đến 2147483647.',
       );
     }
     remindBefore = raw.remindBefore;
@@ -418,52 +469,84 @@ export async function patchEvent(
       throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy sự kiện.');
     }
 
-    let nextStatus: EventStatus;
-    if (existing.status === 'Completed') {
-      nextStatus = 'Completed';
-    } else {
-      const effectiveDueDate = input.dueDate ?? existing.due_date;
-      if (effectiveDueDate.getTime() > evaluatedAt.getTime()) {
-        nextStatus = 'Upcoming';
-      } else {
-        nextStatus = 'Overdue';
-      }
-    }
-
     const dueDateChanged =
       input.dueDate !== undefined &&
       input.dueDate.getTime() !== existing.due_date.getTime();
     const remindBeforeChanged =
       input.remindBefore !== undefined &&
       input.remindBefore !== existing.remind_before;
-    const shouldResetReminder =
-      dueDateChanged ||
-      remindBeforeChanged ||
-      (input.dueDate !== undefined && existing.reminded_at !== null) ||
-      (input.remindBefore !== undefined && existing.reminded_at !== null);
+    const shouldResetReminder = dueDateChanged || remindBeforeChanged;
 
     if (shouldResetReminder) {
       await tx.notification.deleteMany({
         where: {
           event_id: eventId,
+          user_id: userId,
           type: 'Reminder',
         },
       });
     }
 
-    const updated = await tx.event.update({
-      where: { event_id: eventId },
-      data: {
-        ...(input.title !== undefined ? { title: input.title } : {}),
-        ...(input.dueDate !== undefined ? { due_date: input.dueDate } : {}),
-        ...(input.remindBefore !== undefined
-          ? { remind_before: input.remindBefore }
-          : {}),
-        ...(input.notes !== undefined ? { notes: input.notes } : {}),
-        status: nextStatus,
-        ...(shouldResetReminder ? { reminded_at: null } : {}),
-      },
+    const updateFields = {
+      ...(input.title !== undefined ? { title: input.title } : {}),
+      ...(input.dueDate !== undefined ? { due_date: input.dueDate } : {}),
+      ...(input.remindBefore !== undefined
+        ? { remind_before: input.remindBefore }
+        : {}),
+      ...(input.notes !== undefined ? { notes: input.notes } : {}),
+      ...(shouldResetReminder ? { reminded_at: null } : {}),
+    };
+
+    if (existing.status === 'Completed') {
+      await tx.event.updateMany({
+        where: { event_id: eventId, user_id: userId },
+        data: {
+          ...updateFields,
+          status: 'Completed',
+        },
+      });
+    } else {
+      const effectiveDueDate = input.dueDate ?? existing.due_date;
+      const calculatedStatus: EventStatus =
+        effectiveDueDate.getTime() > evaluatedAt.getTime()
+          ? 'Upcoming'
+          : 'Overdue';
+
+      const updateResult = await tx.event.updateMany({
+        where: {
+          event_id: eventId,
+          user_id: userId,
+          status: { not: 'Completed' },
+        },
+        data: {
+          ...updateFields,
+          status: calculatedStatus,
+        },
+      });
+
+      if (updateResult.count === 0) {
+        const recheck = await tx.event.findFirst({
+          where: { event_id: eventId, user_id: userId },
+        });
+        if (!recheck) {
+          throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy sự kiện.');
+        }
+        await tx.event.updateMany({
+          where: { event_id: eventId, user_id: userId },
+          data: {
+            ...updateFields,
+            status: 'Completed',
+          },
+        });
+      }
+    }
+
+    const updated = await tx.event.findFirst({
+      where: { event_id: eventId, user_id: userId },
     });
+    if (!updated) {
+      throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy sự kiện.');
+    }
 
     return { event: toEventDto(updated) };
   });
@@ -490,10 +573,17 @@ export async function patchEventStatus(
       return { event: toEventDto(existing) };
     }
 
-    const updated = await tx.event.update({
-      where: { event_id: eventId },
+    await tx.event.updateMany({
+      where: { event_id: eventId, user_id: userId },
       data: { status: 'Completed' },
     });
+
+    const updated = await tx.event.findFirst({
+      where: { event_id: eventId, user_id: userId },
+    });
+    if (!updated) {
+      throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy sự kiện.');
+    }
 
     return { event: toEventDto(updated) };
   });

@@ -1,8 +1,17 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { once } from 'node:events';
+import { request } from 'node:http';
+import {
+  patchEvent,
+  patchEventStatus,
+  parseCreateEventInput,
+  parsePatchEventInput,
+  parseStrictUtcIsoDate,
+} from '../dist/modules/events/events.service.js';
 import { createApp } from '../dist/app.js';
 import { createAccessTokenService } from '../dist/modules/auth/access-token.js';
+import { createPrismaClient } from '../dist/lib/prisma.js';
 
 const config = {
   signingSecret: 'test-only-secret-with-at-least-32-bytes',
@@ -136,6 +145,34 @@ function createMockPrisma({
         events.push(created);
         return { ...created };
       },
+      updateMany: async ({ where, data }) => {
+        let matched = 0;
+        events = events.map((e) => {
+          if (where.event_id !== undefined && e.event_id !== where.event_id) {
+            return e;
+          }
+          if (where.user_id !== undefined && e.user_id !== where.user_id) {
+            return e;
+          }
+          if (where.status !== undefined) {
+            if (
+              typeof where.status === 'object' &&
+              where.status.not !== undefined
+            ) {
+              if (e.status === where.status.not) return e;
+            } else if (e.status !== where.status) {
+              return e;
+            }
+          }
+          matched++;
+          return {
+            ...e,
+            ...data,
+            updated_at: new Date(),
+          };
+        });
+        return { count: matched };
+      },
       update: async ({ where, data }) => {
         const idx = events.findIndex((e) => e.event_id === where.event_id);
         if (idx === -1) throw new Error('Not found');
@@ -164,6 +201,9 @@ function createMockPrisma({
           if (where.event_id !== undefined && n.event_id !== where.event_id) {
             return false;
           }
+          if (where.user_id !== undefined && n.user_id !== where.user_id) {
+            return false;
+          }
           if (where.type !== undefined && n.type !== where.type) {
             return false;
           }
@@ -173,17 +213,30 @@ function createMockPrisma({
       deleteMany: async ({ where }) => {
         const before = notifications.length;
         notifications = notifications.filter((n) => {
-          if (where.event_id !== undefined && n.event_id === where.event_id) {
-            if (where.type !== undefined && n.type === where.type) return false;
-            if (where.type === undefined) return false;
+          if (where.event_id !== undefined && n.event_id !== where.event_id) {
+            return true;
           }
-          return true;
+          if (where.user_id !== undefined && n.user_id !== where.user_id) {
+            return true;
+          }
+          if (where.type !== undefined && n.type !== where.type) {
+            return true;
+          }
+          return false;
         });
         return { count: before - notifications.length };
       },
     },
     $transaction: async (callback) => {
-      return callback(mock);
+      const eventsSnapshot = events.map((e) => ({ ...e }));
+      const notificationsSnapshot = notifications.map((n) => ({ ...n }));
+      try {
+        return await callback(mock);
+      } catch (error) {
+        events = eventsSnapshot;
+        notifications = notificationsSnapshot;
+        throw error;
+      }
     },
     _getEvents: () => events,
     _getNotifications: () => notifications,
@@ -294,7 +347,7 @@ test('Quyền truy cập: Admin bị từ chối 403 trên mọi endpoint sự k
   });
 });
 
-test('GET /api/events: kiểm tra validation tham số truy vấn khoảng lịch', async () => {
+test('GET /api/events: kiểm tra validation tham số truy vấn khoảng lịch và ngày không tồn tại', async () => {
   const prisma = createMockPrisma();
   const app = testApp(prisma);
   const studentToken = await tokenService.sign(studentIdentity);
@@ -313,6 +366,10 @@ test('GET /api/events: kiểm tra validation tham số truy vấn khoảng lịc
       '?from=2026-10-25T17:00:00Z&to=2026-10-25T17:00:00Z', // Range bằng nhau (from == to)
       // 43 ngày: từ 2026-10-25T17:00:00Z (26/10 VN) đến 2026-12-07T17:00:00Z (08/12 VN) -> 43 ngày
       '?from=2026-10-25T17:00:00Z&to=2026-12-07T17:00:00Z',
+      // Strict date validation: ngày không tồn tại (2026-02-30)
+      '?from=2026-02-30T17:00:00Z&to=2026-03-10T17:00:00Z',
+      '?from=2026-02-25T17:00:00Z&to=2026-02-30T17:00:00Z',
+      '?from=2026-04-31T17:00:00Z&to=2026-05-10T17:00:00Z',
     ];
 
     for (const q of invalidQueries) {
@@ -423,6 +480,82 @@ test('GET /api/events: truy vấn thành công với range 42 ngày, sắp xếp
   });
 });
 
+test('GET và DELETE từ chối mọi body (JSON {}, text/plain, v.v.)', async () => {
+  const initialEvents = [
+    {
+      event_id: 1,
+      user_id: 10,
+      title: 'Hạn kiểm tra',
+      due_date: new Date('2026-11-05T17:00:00.000Z'),
+      remind_before: 24,
+      notes: null,
+      status: 'Upcoming',
+      reminded_at: null,
+      created_at: new Date('2026-10-28T00:00:00.000Z'),
+      updated_at: new Date('2026-10-28T00:00:00.000Z'),
+    },
+  ];
+
+  const prisma = createMockPrisma({ initialEvents });
+  const app = testApp(prisma);
+  const studentToken = await tokenService.sign(studentIdentity);
+
+  await withServer(app, async (baseUrl) => {
+    const from = '2026-10-25T17:00:00Z';
+    const to = '2026-11-15T17:00:00Z';
+
+    for (const [method, path] of [
+      ['GET', '/api/events?from=' + from + '&to=' + to],
+      ['GET', '/api/events/1'],
+      ['DELETE', '/api/events/1'],
+    ]) {
+      for (const [contentType, body] of [
+        ['application/json', '{}'],
+        ['text/plain', 'text body'],
+        [undefined, 'untyped body'],
+      ]) {
+        for (const chunked of [false, true]) {
+          const result = await new Promise((resolve, reject) => {
+            const req = request(
+              baseUrl + path,
+              {
+                method,
+                headers: {
+                  Authorization: 'Bearer ' + studentToken,
+                  ...(contentType ? { 'Content-Type': contentType } : {}),
+                  ...(chunked
+                    ? { 'Transfer-Encoding': 'chunked' }
+                    : { 'Content-Length': Buffer.byteLength(body) }),
+                },
+              },
+              (res) => {
+                let text = '';
+                res.setEncoding('utf8');
+                res.on('data', (chunk) => {
+                  text += chunk;
+                });
+                res.on('error', reject);
+                res.on('end', () =>
+                  resolve({ status: res.statusCode, body: text }),
+                );
+              },
+            );
+            req.on('error', reject);
+            req.end(body);
+          });
+          assert.equal(
+            result.status,
+            400,
+            method + ' ' + path + ', chunked=' + chunked,
+          );
+          assert.equal(JSON.parse(result.body).error.code, 'INVALID_REQUEST');
+        }
+      }
+    }
+    assert.equal(prisma._getEvents().length, 1);
+  });
+});
+
 test('POST /api/events: tạo sự kiện thành công và xác thực dữ liệu', async () => {
   const prisma = createMockPrisma();
   const evaluatedAt = new Date('2026-10-28T12:00:00.000Z');
@@ -527,18 +660,90 @@ test('POST /api/events: tạo sự kiện thành công và xác thực dữ li�
       assert.equal(res.status, 400);
       assert.equal((await res.json()).error.code, 'VALIDATION_ERROR');
     }
+  });
+});
 
-    // 6. Lỗi 400 VALIDATION_ERROR: remindBefore âm
-    const resNeg = await fetch(`${baseUrl}/api/events`, {
+test('POST và PATCH kiểm tra nghiêm ngặt ngày lịch không tồn tại và giới hạn remindBefore', async () => {
+  const initialEvents = [
+    {
+      event_id: 1,
+      user_id: 10,
+      title: 'Sự kiện 1',
+      due_date: new Date('2026-11-05T17:00:00.000Z'),
+      remind_before: 24,
+      notes: null,
+      status: 'Upcoming',
+      reminded_at: null,
+      created_at: new Date('2026-10-28T00:00:00.000Z'),
+      updated_at: new Date('2026-10-28T00:00:00.000Z'),
+    },
+  ];
+
+  const prisma = createMockPrisma({ initialEvents });
+  const app = testApp(prisma);
+  const studentToken = await tokenService.sign(studentIdentity);
+
+  await withServer(app, async (baseUrl) => {
+    // 1. POST: ngày lịch không tồn tại (2026-02-30)
+    const resPostBadDate = await fetch(`${baseUrl}/api/events`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${studentToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...minimalPayload, remindBefore: -1 }),
+      body: JSON.stringify({
+        title: 'Hạn sai ngày',
+        dueDate: '2026-02-30T17:00:00Z',
+      }),
     });
-    assert.equal(resNeg.status, 400);
-    assert.equal((await resNeg.json()).error.code, 'VALIDATION_ERROR');
+    assert.equal(resPostBadDate.status, 400);
+    assert.equal((await resPostBadDate.json()).error.code, 'VALIDATION_ERROR');
+
+    // 2. POST: remindBefore vượt 2147483647 hoặc số thực
+    for (const badRemind of [2147483648, 12.5, -1]) {
+      const res = await fetch(`${baseUrl}/api/events`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${studentToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: 'Hạn',
+          dueDate: '2026-11-10T17:00:00Z',
+          remindBefore: badRemind,
+        }),
+      });
+      assert.equal(res.status, 400, `remindBefore ${badRemind} phải trả 400`);
+      assert.equal((await res.json()).error.code, 'VALIDATION_ERROR');
+    }
+
+    // 3. PATCH: ngày lịch không tồn tại (2026-04-31)
+    const resPatchBadDate = await fetch(`${baseUrl}/api/events/1`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${studentToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        dueDate: '2026-04-31T17:00:00Z',
+      }),
+    });
+    assert.equal(resPatchBadDate.status, 400);
+    assert.equal((await resPatchBadDate.json()).error.code, 'VALIDATION_ERROR');
+
+    // 4. PATCH: remindBefore vượt 2147483647 hoặc số thực
+    for (const badRemind of [2147483648, 24.5, -5]) {
+      const res = await fetch(`${baseUrl}/api/events/1`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${studentToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ remindBefore: badRemind }),
+      });
+      assert.equal(res.status, 400);
+      assert.equal((await res.json()).error.code, 'VALIDATION_ERROR');
+    }
   });
 });
 
@@ -609,12 +814,12 @@ test('GET /api/events/:id: lấy chi tiết, kiểm tra ID và cách ly người
   });
 });
 
-test('PATCH /api/events/:id: cập nhật sự kiện, chuyển status và transaction reset Reminder', async () => {
+test('No-op reminder updates: PATCH cùng giá trị giữ nguyên Reminder và reminded_at', async () => {
   const initialEvents = [
     {
       event_id: 5,
       user_id: 10,
-      title: 'Hạn ban đầu',
+      title: 'Hạn kiểm tra',
       due_date: new Date('2026-11-05T17:00:00.000Z'),
       remind_before: 24,
       notes: null,
@@ -622,30 +827,6 @@ test('PATCH /api/events/:id: cập nhật sự kiện, chuyển status và trans
       reminded_at: new Date('2026-11-04T17:00:00.000Z'),
       created_at: new Date('2026-10-28T00:00:00.000Z'),
       updated_at: new Date('2026-10-28T00:00:00.000Z'),
-    },
-    {
-      event_id: 6,
-      user_id: 10,
-      title: 'Sự kiện đã hoàn thành',
-      due_date: new Date('2026-10-20T00:00:00.000Z'), // Quá hạn
-      remind_before: 24,
-      notes: null,
-      status: 'Completed',
-      reminded_at: null,
-      created_at: new Date('2026-10-18T00:00:00.000Z'),
-      updated_at: new Date('2026-10-18T00:00:00.000Z'),
-    },
-    {
-      event_id: 7,
-      user_id: 10,
-      title: 'Sự kiện quá hạn chưa xong',
-      due_date: new Date('2026-10-20T00:00:00.000Z'), // Quá hạn so với evaluatedAt
-      remind_before: 24,
-      notes: 'Cũ',
-      status: 'Overdue',
-      reminded_at: null,
-      created_at: new Date('2026-10-18T00:00:00.000Z'),
-      updated_at: new Date('2026-10-18T00:00:00.000Z'),
     },
   ];
 
@@ -660,6 +841,14 @@ test('PATCH /api/events/:id: cập nhật sự kiện, chuyển status và trans
     },
     {
       notification_id: 2,
+      event_id: 99,
+      type: 'Reminder',
+      user_id: 10,
+      content: 'Nhắc event khác',
+      is_read: false,
+    },
+    {
+      notification_id: 3,
       event_id: null,
       type: 'Violation',
       user_id: 10,
@@ -669,32 +858,48 @@ test('PATCH /api/events/:id: cập nhật sự kiện, chuyển status và trans
   ];
 
   const prisma = createMockPrisma({ initialEvents, initialNotifications });
-  const evaluatedAt = new Date('2026-10-28T12:00:00.000Z');
-  const app = testApp(prisma, evaluatedAt);
+  const app = testApp(prisma);
   const studentToken = await tokenService.sign(studentIdentity);
 
   await withServer(app, async (baseUrl) => {
-    // 1. Chỉ sửa nội dung (title/notes) của event 5: KHÔNG reset reminded_at và KHÔNG xóa Reminder
+    // 1. PATCH gửi cùng dueDate '2026-11-05T17:00:00Z' -> No-op: giữ nguyên reminded_at và Reminder
     const res1 = await fetch(`${baseUrl}/api/events/5`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${studentToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ notes: 'Ghi chú mới' }),
+      body: JSON.stringify({ dueDate: '2026-11-05T17:00:00Z' }),
     });
     assert.equal(res1.status, 200);
     const body1 = await res1.json();
-    assert.equal(body1.event.notes, 'Ghi chú mới');
-    assert.notEqual(body1.event.remindedAt, null); // Vẫn giữ reminded_at
+    assert.equal(body1.event.remindedAt, '2026-11-04T17:00:00Z'); // KHÔNG bị reset!
     const notifs1 = prisma._getNotifications();
     assert.equal(
       notifs1.some((n) => n.notification_id === 1),
       true,
-    ); // Vẫn giữ notification Reminder
+    ); // Reminder 5 còn nguyên!
 
-    // 2. Sửa dueDate sang thời điểm tương lai mới: reset reminded_at = null và XÓA Reminder notification
+    // 2. PATCH gửi cùng remindBefore 24 -> No-op: giữ nguyên reminded_at và Reminder
     const res2 = await fetch(`${baseUrl}/api/events/5`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${studentToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ remindBefore: 24 }),
+    });
+    assert.equal(res2.status, 200);
+    const body2 = await res2.json();
+    assert.equal(body2.event.remindedAt, '2026-11-04T17:00:00Z');
+    const notifs2 = prisma._getNotifications();
+    assert.equal(
+      notifs2.some((n) => n.notification_id === 1),
+      true,
+    );
+
+    // 3. PATCH gửi dueDate thực sự khác -> Đổi thật: reset reminded_at và chỉ xóa Reminder của event 5
+    const res3 = await fetch(`${baseUrl}/api/events/5`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${studentToken}`,
@@ -702,50 +907,113 @@ test('PATCH /api/events/:id: cập nhật sự kiện, chuyển status và trans
       },
       body: JSON.stringify({ dueDate: '2026-11-12T17:00:00Z' }),
     });
-    assert.equal(res2.status, 200);
-    const body2 = await res2.json();
-    assert.equal(body2.event.dueDate, '2026-11-12T17:00:00Z');
-    assert.equal(body2.event.remindedAt, null); // Đã reset thành null
-    assert.equal(body2.event.status, 'Upcoming');
-    const notifs2 = prisma._getNotifications();
-    assert.equal(
-      notifs2.some((n) => n.event_id === 5 && n.type === 'Reminder'),
-      false,
-    ); // Reminder đã bị xóa
-    assert.equal(
-      notifs2.some((n) => n.notification_id === 2),
-      true,
-    ); // Violation không bị ảnh hưởng
-
-    // 3. Sửa nội dung sự kiện đã quá hạn (event 7): cho phép giữ dueDate cũ, status giữ Overdue
-    const res3 = await fetch(`${baseUrl}/api/events/7`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${studentToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ notes: 'Sửa nội dung sau hạn' }),
-    });
     assert.equal(res3.status, 200);
     const body3 = await res3.json();
-    assert.equal(body3.event.notes, 'Sửa nội dung sau hạn');
-    assert.equal(body3.event.status, 'Overdue'); // Giữ Overdue theo flow 3a3
+    assert.equal(body3.event.remindedAt, null); // Đã reset
+    const notifs3 = prisma._getNotifications();
+    assert.equal(
+      notifs3.some((n) => n.event_id === 5 && n.type === 'Reminder'),
+      false,
+    ); // Reminder của event 5 đã xóa
+    assert.equal(
+      notifs3.some((n) => n.notification_id === 2),
+      true,
+    ); // Reminder event 99 KHÔNG bị xóa
+    assert.equal(
+      notifs3.some((n) => n.notification_id === 3),
+      true,
+    ); // Violation KHÔNG bị xóa
+  });
+});
 
-    // 4. Sửa sự kiện đã Completed (event 6): giữ nguyên Completed
-    const res4 = await fetch(`${baseUrl}/api/events/6`, {
+test('Tính nguyên tử và rollback: lỗi trong transaction khôi phục lại dữ liệu', async () => {
+  const initialEvents = [
+    {
+      event_id: 15,
+      user_id: 10,
+      title: 'Hạn kiểm tra rollback',
+      due_date: new Date('2026-11-05T17:00:00.000Z'),
+      remind_before: 24,
+      notes: null,
+      status: 'Upcoming',
+      reminded_at: new Date('2026-11-04T17:00:00.000Z'),
+      created_at: new Date('2026-10-28T00:00:00.000Z'),
+      updated_at: new Date('2026-10-28T00:00:00.000Z'),
+    },
+  ];
+
+  const initialNotifications = [
+    {
+      notification_id: 10,
+      event_id: 15,
+      type: 'Reminder',
+      user_id: 10,
+      content: 'Nhắc 15',
+      is_read: false,
+    },
+  ];
+
+  const prisma = createMockPrisma({ initialEvents, initialNotifications });
+
+  // Mô phỏng lỗi update trong transaction
+  const originalUpdateMany = prisma.event.updateMany;
+  prisma.event.updateMany = async () => {
+    throw new Error('Database transaction failure simulation');
+  };
+
+  const app = testApp(prisma);
+  const studentToken = await tokenService.sign(studentIdentity);
+
+  await withServer(app, async (baseUrl) => {
+    const res = await fetch(`${baseUrl}/api/events/15`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${studentToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ notes: 'Ghi chú cho Completed' }),
+      body: JSON.stringify({ dueDate: '2026-11-12T17:00:00Z' }),
     });
-    assert.equal(res4.status, 200);
-    const body4 = await res4.json();
-    assert.equal(body4.event.status, 'Completed');
 
-    // 5. Thử truyền status hoặc owner qua PATCH /api/events/:id -> 400 INVALID_REQUEST
-    const res5 = await fetch(`${baseUrl}/api/events/5`, {
+    assert.equal(res.status, 500); // Lỗi ném ra
+    // Rollback: Reminder notification và event không bị xóa mất
+    const notifs = prisma._getNotifications();
+    assert.equal(
+      notifs.some((n) => n.notification_id === 10),
+      true,
+    );
+    const events = prisma._getEvents();
+    assert.equal(
+      events.find((e) => e.event_id === 15).due_date.toISOString(),
+      '2026-11-05T17:00:00.000Z',
+    );
+  });
+
+  prisma.event.updateMany = originalUpdateMany;
+});
+
+test('Concurrent PATCH vs Completed: Completed đã commit không bị đưa về Upcoming/Overdue', async () => {
+  const initialEvents = [
+    {
+      event_id: 30,
+      user_id: 10,
+      title: 'Sự kiện kiểm tra concurrency',
+      due_date: new Date('2026-11-05T17:00:00.000Z'),
+      remind_before: 24,
+      notes: null,
+      status: 'Upcoming',
+      reminded_at: null,
+      created_at: new Date('2026-10-28T00:00:00.000Z'),
+      updated_at: new Date('2026-10-28T00:00:00.000Z'),
+    },
+  ];
+
+  const prisma = createMockPrisma({ initialEvents });
+  const app = testApp(prisma);
+  const studentToken = await tokenService.sign(studentIdentity);
+
+  await withServer(app, async (baseUrl) => {
+    // 1. Sự kiện được Completed trước
+    const resCompleted = await fetch(`${baseUrl}/api/events/30/status`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${studentToken}`,
@@ -753,9 +1021,69 @@ test('PATCH /api/events/:id: cập nhật sự kiện, chuyển status và trans
       },
       body: JSON.stringify({ status: 'Completed' }),
     });
-    assert.equal(res5.status, 400);
-    assert.equal((await res5.json()).error.code, 'INVALID_REQUEST');
+    assert.equal(resCompleted.status, 200);
+    assert.equal((await resCompleted.json()).event.status, 'Completed');
+
+    // 2. PATCH thông thường chạy sau: cập nhật title và dueDate mới
+    const resPatch = await fetch(`${baseUrl}/api/events/30`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${studentToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: 'Tiêu đề mới',
+        dueDate: '2026-11-15T17:00:00Z',
+      }),
+    });
+    assert.equal(resPatch.status, 200);
+    const bodyPatch = await resPatch.json();
+    assert.equal(bodyPatch.event.title, 'Tiêu đề mới');
+    assert.equal(bodyPatch.event.dueDate, '2026-11-15T17:00:00Z');
+    // BẮT BUỘC giữ nguyên Completed, không bị đưa về Upcoming!
+    assert.equal(bodyPatch.event.status, 'Completed');
   });
+});
+
+test('Concurrent PATCH: Completed commits between the read and conditional write', async () => {
+  for (const dueDate of ['2026-11-05T17:00:00Z', '2026-10-01T17:00:00Z']) {
+    const prisma = createMockPrisma({
+      initialEvents: [
+        {
+          event_id: 30,
+          user_id: 10,
+          title: 'Before',
+          due_date: new Date(dueDate),
+          remind_before: 24,
+          notes: null,
+          status: 'Upcoming',
+          reminded_at: null,
+          created_at: fixedNow,
+          updated_at: fixedNow,
+        },
+      ],
+    });
+    const updateMany = prisma.event.updateMany;
+    let interleaved = false;
+    prisma.event.updateMany = async (args) => {
+      if (!interleaved && args.where.status?.not === 'Completed') {
+        interleaved = true;
+        await patchEventStatus(prisma, 10, '30', { status: 'Completed' });
+      }
+      return updateMany(args);
+    };
+    const result = await patchEvent(
+      prisma,
+      10,
+      '30',
+      { title: 'After' },
+      fixedNow,
+    );
+    assert.equal(interleaved, true);
+    assert.equal(result.event.status, 'Completed');
+    assert.equal(result.event.title, 'After');
+    assert.equal(prisma._getEvents()[0].status, 'Completed');
+  }
 });
 
 test('PATCH /api/events/:id/status: cập nhật hoàn thành sự kiện và tính idempotent', async () => {
@@ -889,4 +1217,197 @@ test('DELETE /api/events/:id: xóa sự kiện và cascade Reminder notification
     assert.equal(resAgain.status, 404);
     assert.equal((await resAgain.json()).error.code, 'NOT_FOUND');
   });
+});
+
+const isolatedDatabaseUrl = process.env.TEST_EVENTS_DATABASE_URL;
+
+function assertIsolatedDatabase(urlString) {
+  let url;
+  try {
+    url = new URL(urlString);
+  } catch {
+    throw new Error('TEST_EVENTS_DATABASE_URL must be a valid MySQL URL.');
+  }
+  const hostname = url.hostname.replace(/^\[|\]$/g, '').toLowerCase();
+  const databaseName = decodeURIComponent(url.pathname.slice(1));
+  if (
+    url.protocol !== 'mysql:' ||
+    !['localhost', '127.0.0.1', '::1'].includes(hostname) ||
+    !databaseName.startsWith('unihub_events_test') ||
+    url.search ||
+    url.hash
+  ) {
+    throw new Error(
+      'TEST_EVENTS_DATABASE_URL must target a loopback-only unihub_events_test* database.',
+    );
+  }
+}
+
+test(
+  'MySQL events integration: concurrent PATCH vs Completed, rollback atomicity and no-op reminders',
+  {
+    skip: !isolatedDatabaseUrl && 'TEST_EVENTS_DATABASE_URL is not configured.',
+  },
+  async () => {
+    assertIsolatedDatabase(isolatedDatabaseUrl);
+    const prisma = createPrismaClient(isolatedDatabaseUrl);
+    await prisma.$connect();
+    let testUserId;
+
+    try {
+      // 1. Tạo test user
+      const user = await prisma.user.create({
+        data: {
+          email: `event_test_${Date.now()}@test.invalid`,
+          full_name: 'Test Event User',
+          role: 'Student',
+        },
+      });
+
+      testUserId = user.user_id;
+
+      // 2. Tạo test event
+      const event = await prisma.event.create({
+        data: {
+          user_id: user.user_id,
+          title: 'MySQL Integration Event',
+          due_date: new Date('2026-11-10T17:00:00.000Z'),
+          status: 'Upcoming',
+          remind_before: 24,
+        },
+      });
+
+      // 3. Tạo Reminder notification
+      await prisma.notification.create({
+        data: {
+          user_id: user.user_id,
+          event_id: event.event_id,
+          type: 'Reminder',
+          content: 'Nhắc hạn test',
+        },
+      });
+
+      const remindedAt = new Date('2026-11-09T17:00:00Z');
+      await prisma.event.update({
+        where: { event_id: event.event_id },
+        data: { reminded_at: remindedAt },
+      });
+      const id = String(event.event_id);
+      const unchanged = await patchEvent(
+        prisma,
+        user.user_id,
+        id,
+        {
+          dueDate: '2026-11-10T17:00:00Z',
+          remindBefore: 24,
+        },
+        fixedNow,
+      );
+      assert.equal(unchanged.event.remindedAt, '2026-11-09T17:00:00Z');
+      assert.equal(
+        await prisma.notification.count({
+          where: { event_id: event.event_id },
+        }),
+        1,
+      );
+
+      // Fail after notification deletion using a real database transaction.
+      const failingClient = {
+        $transaction: (operation) =>
+          prisma.$transaction((tx) =>
+            operation({
+              event: {
+                ...tx.event,
+                updateMany: async () => {
+                  throw new Error('Injected update failure');
+                },
+              },
+              notification: tx.notification,
+            }),
+          ),
+      };
+      await assert.rejects(
+        patchEvent(
+          failingClient,
+          user.user_id,
+          id,
+          {
+            dueDate: '2026-11-12T17:00:00Z',
+          },
+          fixedNow,
+        ),
+        /Injected update failure/,
+      );
+      const rolledBack = await prisma.event.findUnique({
+        where: { event_id: event.event_id },
+      });
+      assert.equal(
+        rolledBack.due_date.toISOString(),
+        '2026-11-10T17:00:00.000Z',
+      );
+      assert.equal(
+        rolledBack.reminded_at.toISOString(),
+        remindedAt.toISOString(),
+      );
+      assert.equal(
+        await prisma.notification.count({
+          where: { event_id: event.event_id },
+        }),
+        1,
+      );
+
+      await Promise.all([
+        patchEvent(
+          prisma,
+          user.user_id,
+          id,
+          { title: 'Concurrent Title Update' },
+          fixedNow,
+        ),
+        patchEventStatus(prisma, user.user_id, id, { status: 'Completed' }),
+      ]);
+      const finalEvent = await prisma.event.findUnique({
+        where: { event_id: event.event_id },
+      });
+      assert.equal(finalEvent.status, 'Completed');
+      assert.equal(finalEvent.title, 'Concurrent Title Update');
+    } finally {
+      try {
+        if (testUserId !== undefined) {
+          await prisma.event.deleteMany({ where: { user_id: testUserId } });
+          await prisma.user.delete({ where: { user_id: testUserId } });
+        }
+      } finally {
+        await prisma.$disconnect();
+      }
+    }
+  },
+);
+
+test('Calendar and signed INT boundaries are validated independently of past-date checks', () => {
+  for (const dueDate of [
+    '2027-02-29T17:00:00Z',
+    '2027-02-30T17:00:00Z',
+    '2027-04-31T17:00:00Z',
+  ]) {
+    assert.equal(parseStrictUtcIsoDate(dueDate), null);
+    assert.throws(() =>
+      parseCreateEventInput({ title: 'Test', dueDate }, fixedNow),
+    );
+    assert.throws(() => parsePatchEventInput({ dueDate }, fixedNow));
+  }
+  assert.ok(parseStrictUtcIsoDate('2028-02-29T17:00:00Z'));
+  for (const remindBefore of [0, 2147483647]) {
+    assert.equal(
+      parseCreateEventInput(
+        { title: 'Test', dueDate: '2027-11-10T17:00:00Z', remindBefore },
+        fixedNow,
+      ).remindBefore,
+      remindBefore,
+    );
+    assert.equal(
+      parsePatchEventInput({ remindBefore }, fixedNow).remindBefore,
+      remindBefore,
+    );
+  }
 });
