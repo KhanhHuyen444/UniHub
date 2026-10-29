@@ -266,7 +266,7 @@ export function toAdminOpportunityItem(
   };
 }
 
-function toListItem(row: PublicOpportunityListRow, evaluatedAt: Date) {
+export function toListItem(row: PublicOpportunityListRow, evaluatedAt: Date) {
   return {
     id: row.item_id,
     type: row.opportunity_type,
@@ -305,7 +305,7 @@ export type OpportunityWithRelations = Prisma.OpportunityGetPayload<{
   include: typeof opportunityRelationsInclude;
 }>;
 
-const publicOpportunityListSelect = {
+export const publicOpportunityListSelect = {
   item_id: true,
   opportunity_type: true,
   title: true,
