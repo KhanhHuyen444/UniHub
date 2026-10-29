@@ -2,7 +2,8 @@
 
 Hợp đồng [guidance-api-contract.md](../../../../docs/guidance-api-contract.md) đã
 được duyệt. Phần này triển khai types, runtime response parsers và API functions;
-chưa có trang React, hook, route hoặc giao diện Roadmap/detail.
+đã có hai trang React với bố cục chức năng tối thiểu, chưa đăng ký routes ứng dụng
+và chưa xác nhận thiết kế cuối cùng.
 
 ## Đã triển khai
 
@@ -43,9 +44,9 @@ không gọi backend/MySQL/Google thật và không xác nhận UI hoặc NFR.
 
 ## Còn chờ và phụ thuộc
 
-- Trang `/roadmaps`, `/roadmaps/:id`, chọn Major, loading/empty/error/retry,
-  navigation và tích hợp layout chưa triển khai. Handoff UI chi tiết cần được xác
-  minh trước khi dựng giao diện; không suy ra từ contract API.
+- TV1 cần đăng ký `/roadmaps` và `/roadmaps/:id` trong router ứng dụng. Chưa sửa
+  router/navigation. Handoff UI chi tiết vẫn cần được xác minh trước khi hoàn thiện
+  thiết kế; bố cục hiện tại chỉ phục vụ chức năng.
 - Backend Guidance đã có trên nhánh backend trong workflow này; deployment/merge
   và HTTP end-to-end phải kiểm tra riêng. HTTP Guest có thể chạy độc lập Auth.
 - Hai hàm hiện gọi public API, không tự lấy/lưu/gắn token, refresh hoặc đọc Profile.
@@ -54,3 +55,39 @@ không gọi backend/MySQL/Google thật và không xác nhận UI hoặc NFR.
 - Major options cho UI tương lai dùng API Categories public hiện có; không dùng
   Skill Options Active để lọc/xóa các liên kết Skill Closed của nội dung Guidance.
 - Không có mock API/dữ liệu production, dependency mới, schema hoặc môi trường mới.
+
+## Logic React Roadmap/detail
+
+- `GuidanceRoadmapPage.tsx` dùng PublicLayout và các component chung. Tải Major
+  Active bằng `getMajorOptions` hiện có (consumer Categories trong Opportunities,
+  chỉ tái sử dụng, không sửa module đó). Categories có loading/error/retry riêng.
+- URL `majorId` là nguồn lựa chọn; thay Select cập nhật query, Back/Forward tải lại.
+  Query sai/lặp không bị tự xóa hoặc chuẩn hóa. Major không còn trong options được
+  giữ dưới dạng lựa chọn disabled; nút xóa lựa chọn chỉ chạy khi người dùng bấm.
+- Chỉ render stages/items/skills được backend trả, đúng thứ tự; không tạo năm hoặc
+  bài giả khi dữ liệu rỗng. Không có Major và Major chưa có bài là hai empty states.
+- `GuidanceDetailPage.tsx` đọc URL ID, hiển thị React text, giữ Closed cùng nhãn
+  “Đã đóng”, giữ năm học rỗng. Không dùng HTML injection. Liên kết quay lại chỉ nhận
+  đường dẫn nội bộ `/roadmaps` và query từ navigation state.
+- `useGuidanceRequest.ts` quản lý loading/error/success, retry và AbortController.
+  Query/ID đổi hoặc unmount sẽ abort; response cũ không được ghi đè state mới.
+  HTTP 400/404/500/503 vẫn là error state có mã lỗi và Retry.
+- Vẫn là public flow; không thêm token hoặc tích hợp Auth/Profile.
+
+### Browser component tests
+
+`frontend/test/guidance-pages.test.mjs` dùng Node test + Vite + Playwright/Chromium
+để mount trang thật trong harness tạm ngoài repository. API được intercept chỉ
+trong test; không thay router hoặc tạo endpoint production. Bao phủ trạng thái,
+Select/query/history, link, Closed/plain text, Retry và abort query/ID/unmount.
+
+```powershell
+node --test frontend/test/guidance-pages.test.mjs frontend/test/guidance-api.test.mjs frontend/test/guidance-contracts.test.mjs
+```
+
+Cần Playwright sẵn có trong môi trường test và browser tương thích; không thêm
+app dependency. Không tìm thấy Playwright thì browser tests báo SKIP rõ lý do,
+không coi là PASS. Có thể dùng browser đã cài qua biến shell
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`; không ghi đường dẫn cá nhân vào repo. Codex
+có Chromium hệ thống. Tests không xác nhận backend/MySQL thật, Student session,
+hiệu năng hoặc độ khớp Figma. Chạy formatting thêm cho hai page, hook và test mới.
