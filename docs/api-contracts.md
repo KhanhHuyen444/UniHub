@@ -29,7 +29,7 @@
 | Events/reminders/notifications     | events-notifications-api-contract.md | Approved                                                    | Chưa có event/notification routes hoặc scheduler.                                                                                                 |
 | Forum/moderation                   | forum-api-contract.md                | Approved                                                    | Chưa có forum/moderation routes.                                                                                                                  |
 | Dashboard                          | dashboard-api-contract.md            | Approved                                                    | Chưa có dashboard routes.                                                                                                                         |
-| Activity logs writer               | activity-logs-contract.md            | Approved                                                    | Chưa có shared writer; không có GET log API. Runtime GRANT append-only.                                                                           |
+| Activity logs writer               | activity-logs-contract.md            | Approved                                                    | Shared writer đang có trên `feat/shared-activity-logs`, chưa trên `main`; không có GET log API. Runtime GRANT append-only.                        |
 
 Không dùng README/module folder làm bằng chứng endpoint. Contract approved không đồng nghĩa test/implementation/NFR đã đạt.
 
