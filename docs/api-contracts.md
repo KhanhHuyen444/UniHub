@@ -89,13 +89,13 @@ Server middleware enforces all protected roles and ownership. UI route guards on
 
 ## 4. Ownership và cross-module dependencies
 
-| TV  | Provider/module                                                         | Consumers                                                                   |
-| --- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| TV1 | Shared auth foundation/RBAC, Hub, Admin opportunity review, integration | TV2–TV5 reuse same auth; TV4 opportunity metrics; TV3 reuses Major provider |
-| TV2 | Auth UI/session handoff, profile, Admin users                           | Shared auth, categories Skill, activity log helper                          |
-| TV3 | Categories, guidance, recommendations                                   | Profile, opportunities, shared auth                                         |
-| TV4 | Events, scheduler, notifications, dashboard                             | Shared auth; TV5 sends Violation notification through shared service        |
-| TV5 | Forum, moderation, activity-log helper coordination                     | Shared auth, TV4 notification service                                       |
+| TV  | Provider/module                                                                                       | Consumers                                                                   |
+| --- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| TV1 | Shared auth foundation/RBAC including frontend session UI, Hub, Admin opportunity review, integration | TV2–TV5 reuse same auth; TV4 opportunity metrics; TV3 reuses Major provider |
+| TV2 | Profile, Admin users                                                                                  | Shared auth, categories Skill, activity log helper                          |
+| TV3 | Categories, guidance, recommendations                                                                 | Profile, opportunities, shared auth                                         |
+| TV4 | Events, scheduler, notifications, dashboard                                                           | Shared auth; TV5 sends Violation notification through shared service        |
+| TV5 | Forum, moderation, activity-log helper coordination                                                   | Shared auth, TV4 notification service                                       |
 
 TV1 has implemented and merged Major provider; TV3 takes over/reuses backend/src/modules/categories. Modules share Prisma Client/services; do not call own backend through localhost HTTP. Cross-module mutations (role/category/opportunity + audit; forum removal + audit + notification; Reminder reset/delete + event update) use one DB transaction as documented.
 
@@ -106,7 +106,7 @@ Each implementation PR consumes only a leader-approved contract, updates its imp
 1. Auth schema/migration/GRANT is already on `main`; each target database must independently confirm migration/GRANT readiness before running auth. This is an implementation dependency, not contract review.
 2. Shared error fieldErrors parser/client/server extension; backward compatible with error.code/message.
 3. Review/merge `feat/admin-bootstrap` for the operator-only first-Admin command; Google verification, shared auth/RBAC, refresh, `/me` and logout are already on `main`.
-4. TV2 auth UI handoff, profile API/UI, Admin users/roles.
+4. Leader shared auth frontend integration; TV2 profile API/UI and Admin users/roles reuse it.
 5. TV3 Skill options, Admin category management, guidance and Recommendations under their approved contracts. Recommendations implementation depends on shared auth/RBAC readiness, not on an open scoring decision.
 6. TV1 Admin opportunity review.
 7. TV4 events, Reminder scheduler, notifications and dashboard.

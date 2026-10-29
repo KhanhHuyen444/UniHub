@@ -16,7 +16,7 @@ Nguồn đã đối chiếu:
 | [Chương trình database](database-schema.md), `backend/prisma/schema.prisma`, migration initial                                                         | Model `Category`, CHECK, UNIQUE và collation MySQL                                | Cấu trúc hiện thực của `categories`; không phải quy tắc phân quyền hay lựa chọn dữ liệu API.                                                                   |
 | [Handoff Figma](shared-ui-design/README.md), frame [36:39 — Hub cơ hội-V2](https://www.figma.com/design/6lTZvLvJfeOhz6D8QltvMe/Untitled?node-id=36-39) | Select bộ lọc Hub và option chuyên ngành minh họa                                 | Có control chọn chuyên ngành; không xác nhận endpoint, tên field, quyền, cách xử lý Closed hoặc nội dung production.                                           |
 
-Phân công TV1–TV5 dùng trong tài liệu theo yêu cầu hiện tại: TV1 làm Hub/chi tiết; TV2 làm auth, hồ sơ/tài khoản; TV3 làm lộ trình, gợi ý và danh mục. Đây là vai trò nhóm đã phân công, không phải dữ liệu suy ra từ Figma.
+Phân công TV1–TV5 dùng trong tài liệu theo yêu cầu hiện tại: TV1 làm nền auth backend/frontend dùng chung và Hub/chi tiết; TV2 làm hồ sơ/tài khoản; TV3 làm lộ trình, gợi ý và danh mục. Đây là vai trò nhóm đã phân công, không phải dữ liệu suy ra từ Figma.
 
 ## 2. Điều đã có căn cứ và quyết định đã chốt
 

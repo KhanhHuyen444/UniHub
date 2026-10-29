@@ -2,9 +2,9 @@
 
 UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Nhánh hiện tại có bộ khung phát triển chung và luồng Public Hub cơ hội gồm danh sách cùng chi tiết; các module khác chưa triển khai. `GET /api/opportunities` và `GET /api/opportunities/:id` là API đọc công khai đã có trên `main`; `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
 
-Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4, Prisma runtime qua PR #5. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Chưa có đăng nhập Google, JWT, tài khoản mẫu hoặc API ghi/Admin; API Hub cơ hội chỉ đọc. Shared UI preview chỉ dùng kiểm tra shell/component, không phải giao diện sản phẩm. Có thể chạy frontend health/preview mà không cần MySQL hoặc Docker.
+Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4, Prisma runtime qua PR #5. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Auth schema/backend bốn API đã có trên `main`; frontend Google login/session đang được triển khai trên nhánh `feat/auth-frontend` và chưa có trên `main` trước khi PR được merge. Chưa có dữ liệu tài khoản mẫu hoặc API ghi/Admin trên `main`; API Hub cơ hội chỉ đọc. Shared UI preview vẫn chỉ là preview, không xác thực. Health/preview không cần MySQL hoặc Docker.
 
-TV1 điều phối mục lục và trạng thái các hợp đồng API tại [docs/api-contracts.md](docs/api-contracts.md); leader duyệt toàn bộ contract trước khi thành viên triển khai. Hợp đồng không đồng nghĩa endpoint đã có code. Khác biệt giữa Chương 4 mới và Prisma main không ngăn việc hoàn thiện/duyệt tài liệu, nhưng auth chưa thể chạy trên database thật cho đến khi schema/migration riêng được duyệt và áp dụng.
+TV1 điều phối mục lục và trạng thái các hợp đồng API tại [docs/api-contracts.md](docs/api-contracts.md); leader duyệt toàn bộ contract trước khi thành viên triển khai. Hợp đồng không đồng nghĩa endpoint đã có code. Auth schema/migration/GRANT đã có trên `main`; mỗi database đích phải xác nhận migration và quyền đã áp dụng trước khi chạy auth.
 
 ## 1. Công nghệ và điều kiện môi trường
 
@@ -177,13 +177,13 @@ UniHub/
 
 Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Phân công theo yêu cầu mới nhất, chưa gán tên/deadline:
 
-| Thành viên | Phần frontend và backend                                                             |
-| ---------- | ------------------------------------------------------------------------------------ |
-| TV1        | Nền tảng chung, Hub cơ hội/tìm kiếm/chi tiết; Admin duyệt cơ hội; điều phối tích hợp |
-| TV2        | Đăng nhập Google/JWT/role, hồ sơ và tài khoản; Admin quản lý tài khoản               |
-| TV3        | Lộ trình kỹ năng, gợi ý/cơ hội dành cho bạn; Admin danh mục                          |
-| TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                  |
-| TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction        |
+| Thành viên | Phần frontend và backend                                                                                        |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| TV1        | Nền tảng auth backend/frontend dùng chung; Hub cơ hội/tìm kiếm/chi tiết; Admin duyệt cơ hội; điều phối tích hợp |
+| TV2        | Hồ sơ và chức năng tài khoản; Admin quản lý tài khoản                                                           |
+| TV3        | Lộ trình kỹ năng, gợi ý/cơ hội dành cho bạn; Admin danh mục                                                     |
+| TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                                             |
+| TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction                                   |
 
 Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3. Trang danh sách, trang chi tiết dùng chung cho ba loại và consumer Major của Hub đã có trên `main` sau PR #12. API provider Major có implementation trên `feat/categories-major-api` tại PR #13, chờ review/merge. Các module sản phẩm khác chưa triển khai. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
 

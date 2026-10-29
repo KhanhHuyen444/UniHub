@@ -178,4 +178,6 @@ export function createApiClient(fetcher: typeof fetch = globalThis.fetch) {
   };
 }
 
-export const apiRequest = createApiClient();
+export const apiRequest = createApiClient((input, init) =>
+  globalThis.fetch(input, init),
+);
