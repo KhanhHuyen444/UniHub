@@ -23,7 +23,7 @@ const options = {
     'Playwright browser runner is not installed in this environment.',
 };
 const root = fileURLToPath(new URL('..', import.meta.url));
-let directory, vite, browser, page, base;
+let directory, vite, browser, page, base, pageErrors;
 const majors = {
   items: [
     { id: 4, name: 'Major A', type: 'Major' },
@@ -87,16 +87,19 @@ before(async () => {
     import React from 'react';
     import {createRoot} from 'react-dom/client';
     import {BrowserRouter, Routes, Route, Link} from 'react-router';
+    import {AuthProvider} from ${JSON.stringify(root + '/src/features/auth/AuthProvider.tsx')};
     import {GuidanceRoadmapPage} from ${JSON.stringify(root + '/src/features/guidance/GuidanceRoadmapPage.tsx')};
     import {GuidanceDetailPage} from ${JSON.stringify(root + '/src/features/guidance/GuidanceDetailPage.tsx')};
     const e = React.createElement;
     createRoot(document.getElementById('root')).render(e(BrowserRouter, null,
-      e(Link, {to:'/off'}, 'Unmount test page'),
-      e(Link, {to:'/roadmaps/82'}, 'Switch detail test page'),
-      e(Routes,null,
-        e(Route,{path:'/roadmaps',element:e(GuidanceRoadmapPage)}),
-        e(Route,{path:'/roadmaps/:id',element:e(GuidanceDetailPage)}),
-        e(Route,{path:'/off',element:e('p',null,'Unmounted')})
+      e(AuthProvider, null,
+        e(Link, {to:'/off'}, 'Unmount test page'),
+        e(Link, {to:'/roadmaps/82'}, 'Switch detail test page'),
+        e(Routes,null,
+          e(Route,{path:'/roadmaps',element:e(GuidanceRoadmapPage)}),
+          e(Route,{path:'/roadmaps/:id',element:e(GuidanceDetailPage)}),
+          e(Route,{path:'/off',element:e('p',null,'Unmounted')})
+        )
       )
     ));
   `,
@@ -140,12 +143,17 @@ before(async () => {
 });
 beforeEach(async () => {
   if (!browser) return;
+  pageErrors = [];
   page = await browser.newPage();
+  page.on('pageerror', (error) => pageErrors.push(error));
   await page.addInitScript(() => {
     window.guidanceSignals = [];
     const original = window.fetch;
     window.fetch = (input, init) => {
-      if (String(input).startsWith('/api/'))
+      if (
+        String(input).startsWith('/api/') &&
+        !String(input).startsWith('/api/auth/')
+      )
         window.guidanceSignals.push({
           path: String(input),
           signal: init?.signal,
@@ -153,12 +161,25 @@ beforeEach(async () => {
       return original(input, init);
     };
   });
+  await page.route('**/api/auth/refresh', (route) =>
+    fulfill(
+      route,
+      { error: { code: 'UNAUTHORIZED', message: 'No test session.' } },
+      401,
+    ),
+  );
   await page.route('**/api/categories?type=Major', (route) =>
     fulfill(route, majors),
   );
 });
 afterEach(async () => {
+  const errors = pageErrors ?? [];
   await page?.close();
+  assert.deepEqual(
+    errors,
+    [],
+    errors.map((error) => error.stack ?? error.message).join('\n'),
+  );
 });
 after(async () => {
   await browser?.close();
@@ -167,7 +188,23 @@ after(async () => {
 });
 
 async function visible(text) {
-  await page.getByText(text, { exact: true }).waitFor();
+  if (pageErrors.length > 0) {
+    throw new Error(
+      `Browser render error: ${pageErrors[0].stack ?? pageErrors[0].message}`,
+    );
+  }
+  try {
+    await page.getByText(text, { exact: true }).waitFor({ timeout: 10000 });
+  } catch (error) {
+    if (pageErrors.length > 0) {
+      throw new Error(
+        `Browser render error while waiting for "${text}": ${pageErrors[0].stack ?? pageErrors[0].message}`,
+        { cause: error },
+      );
+    }
+    throw error;
+  }
+  assert.deepEqual(pageErrors, [], 'browser page must not emit render errors');
 }
 
 test(

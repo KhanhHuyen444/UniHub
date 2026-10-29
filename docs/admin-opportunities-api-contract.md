@@ -6,7 +6,7 @@
 
 Tất cả endpoint yêu cầu access JWT hợp lệ và requireRole(Admin) ở backend. Guest → 401 UNAUTHORIZED; Student → 403 FORBIDDEN. Public UI guard không phải authorization. Queue/detail là chỉ đọc; chỉ POST approve/reject thay đổi dữ liệu.
 
-AdminOpportunity là một DTO đầy đủ gồm đúng các field sau; ví dụ dùng dữ liệu hư cấu. `deadline` theo deadline object/null trong opportunities contract. Không trả `reviewedBy`, submitter identity/profile, JWT hoặc session data.
+AdminOpportunity là một DTO đầy đủ gồm đúng các field sau; ví dụ dùng dữ liệu hư cấu. `type` theo `opportunity_type` trong database và có thể là `Thực tập`, `Việc làm`, `Học bổng` hoặc `Bài viết định hướng`. Queue Admin giữ mọi bản ghi Pending thuộc cả bốn loại; frontend không lọc loại để tránh làm sai `total` hoặc phân trang. `deadline` theo deadline object/null trong opportunities contract. Không trả `reviewedBy`, submitter identity/profile, JWT hoặc session data.
 
 ```json
 {
@@ -36,7 +36,7 @@ AdminOpportunity là một DTO đầy đủ gồm đúng các field sau; ví d�
 }
 ```
 
-`publisher`, `descriptionText`, `requirementsText`, `workFormat`, `location`, `deadline`, `sourceUrl` và `reviewedAt` theo nullability của schema/DTO; `publisher` có thể là `null` trong response dù quy tắc duyệt vẫn yêu cầu giá trị để approve. `majors`, `skills` và `eligibleAcademicYears` luôn là mảng. Detail trả status Pending/Approved/Rejected. Public endpoints tiếp tục chỉ trả Approved thuộc ba loại công khai; `isVerified` độc lập với Approved.
+`publisher`, `descriptionText`, `requirementsText`, `workFormat`, `location`, `deadline`, `sourceUrl` và `reviewedAt` theo nullability của schema/DTO; `publisher` có thể là `null` trong response dù quy tắc duyệt vẫn yêu cầu giá trị để approve. `majors`, `skills` và `eligibleAcademicYears` luôn là mảng. Detail trả status Pending/Approved/Rejected. Bản ghi `Bài viết định hướng` vẫn thuộc phạm vi đọc/hiển thị của Admin; API Public vẫn chỉ công khai Approved thuộc ba loại cơ hội. `isVerified` độc lập với Approved.
 
 ## Endpoints
 

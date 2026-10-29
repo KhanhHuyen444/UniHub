@@ -98,6 +98,22 @@ test('pending queue accepts a missing publisher without dropping the item', () =
   assert.equal(queue.items[1].publisher, 'Đơn vị minh họa');
 });
 
+test('admin queue accepts Pending Guidance without shrinking its page or total', () => {
+  const guidance = opportunity({
+    id: 43,
+    type: 'Bài viết định hướng',
+    title: 'Bài viết kỹ năng minh họa',
+  });
+  const queue = parsePendingOpportunities({
+    items: [opportunity({ id: 41 }), guidance],
+    meta: { page: 1, pageSize: 20, total: 2, totalPages: 1 },
+  });
+
+  assert.equal(queue.items.length, 2);
+  assert.equal(queue.items[1].type, 'Bài viết định hướng');
+  assert.equal(queue.meta.total, 2);
+});
+
 test('review confirmation stays bound to the current route and loaded item', () => {
   assert.equal(isReviewTargetCurrent(41, '41', 41), true);
   assert.equal(isReviewTargetCurrent(41, '42', 41), false);

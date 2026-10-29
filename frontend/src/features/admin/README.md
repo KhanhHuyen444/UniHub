@@ -18,3 +18,5 @@ Handoff chung xác nhận sidebar Admin rộng 260 px, vùng nội dung padding 
 Backend API đã có trên `main` qua PR #24. Auth frontend được kế thừa từ `feat/auth-frontend` và vẫn cần merge trước khi luồng UI này có thể chạy trên `main`.
 
 DTO giữ `publisher` nullable như backend. Khi thiếu, queue/detail hiển thị “Chưa có đơn vị đăng” để Admin vẫn xem và từ chối; điều kiện backend yêu cầu publisher khi duyệt không thay đổi.
+
+DTO Admin giữ cả loại `Bài viết định hướng` khi API trả về trong hàng Pending; không lọc ở frontend để bảo toàn `total` và phân trang. Điều này không mở rộng ba loại được API Public công khai.

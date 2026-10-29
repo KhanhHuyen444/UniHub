@@ -1,12 +1,17 @@
 import type {
   OpportunityDeadline,
-  OpportunityType,
   WorkFormat,
 } from '../../opportunities/contracts';
 
+export type AdminOpportunityType =
+  | 'Thực tập'
+  | 'Việc làm'
+  | 'Học bổng'
+  | 'Bài viết định hướng';
+
 export interface AdminOpportunity {
   id: number;
-  type: OpportunityType;
+  type: AdminOpportunityType;
   title: string;
   publisher: string | null;
   descriptionText: string | null;
@@ -137,7 +142,8 @@ export function parseAdminOpportunity(value: unknown): AdminOpportunity {
     Number(value.id) < 1 ||
     (value.type !== 'Thực tập' &&
       value.type !== 'Việc làm' &&
-      value.type !== 'Học bổng') ||
+      value.type !== 'Học bổng' &&
+      value.type !== 'Bài viết định hướng') ||
     typeof value.title !== 'string' ||
     (value.publisher !== null && typeof value.publisher !== 'string') ||
     (value.descriptionText !== null &&
@@ -175,7 +181,7 @@ export function parseAdminOpportunity(value: unknown): AdminOpportunity {
   }
   return {
     id: Number(value.id),
-    type: value.type as OpportunityType,
+    type: value.type as AdminOpportunityType,
     title: value.title,
     publisher: value.publisher,
     descriptionText: value.descriptionText,
