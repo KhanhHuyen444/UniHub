@@ -1,10 +1,10 @@
 # activity-logs
 
-Writer dùng chung nằm trong `activity-log.writer.ts` trên nhánh `feat/shared-activity-logs`; chưa có API đọc log hoặc endpoint Admin dùng writer trên `main`. TV1–TV5 gọi writer trong transaction của thao tác quản trị họ sở hữu. Quy tắc: [activity-logs-contract.md](../../../../docs/activity-logs-contract.md).
+Writer dùng chung nằm trong `activity-log.writer.ts` và đã có trên `main` sau PR #22; chưa có API đọc log. API Admin duyệt cơ hội hiện đang được thêm trên nhánh `feat/admin-opportunities`. TV1–TV5 gọi writer trong transaction của thao tác quản trị họ sở hữu. Quy tắc: [activity-logs-contract.md](../../../../docs/activity-logs-contract.md).
 
 Phụ trách dự kiến: **TV5; phối hợp TV1**. Chưa gán tên người hoặc deadline.
 
-Gọi `writeActivityLog(transaction, input)` bằng transaction client nhận từ `prisma.$transaction`; không truyền Prisma root client, không tự mở transaction trong writer. Nếu writer ném lỗi, để lỗi thoát khỏi callback để Prisma rollback thao tác nghiệp vụ.
+Gọi `writeActivityLog(transaction, input)` bằng transaction client nhận từ `prisma.$transaction`; không truyền Prisma root client, không tự mở transaction trong writer. Với Prisma 7.10.1, writer phân biệt interactive transaction qua transaction-scope marker (transaction client vẫn có method `$transaction`) và từ chối root client trước INSERT. Nếu writer ném lỗi, để lỗi thoát khỏi callback để Prisma rollback thao tác nghiệp vụ.
 
 Ví dụ đổi role cùng log:
 
