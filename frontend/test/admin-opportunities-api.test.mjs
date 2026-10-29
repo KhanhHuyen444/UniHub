@@ -10,6 +10,8 @@ import {
   parseAdminOpportunity,
   parseAdminOpportunityMutation,
   parsePendingOpportunities,
+  isReviewTargetCurrent,
+  lastValidQueuePage,
 } from '../src/features/admin/opportunities/contracts.ts';
 
 const frontendRoot = fileURLToPath(new URL('..', import.meta.url));
@@ -83,6 +85,31 @@ test('Admin API parsers validate pending items, deadline and mutation envelope',
     () => parsePendingOpportunities({ items: [], meta: { page: 0 } }),
     { code: 'INVALID_RESPONSE' },
   );
+});
+
+test('pending queue accepts a missing publisher without dropping the item', () => {
+  const queue = parsePendingOpportunities({
+    items: [opportunity({ id: 41, publisher: null }), opportunity({ id: 42 })],
+    meta: { page: 1, pageSize: 20, total: 2, totalPages: 1 },
+  });
+
+  assert.equal(queue.items.length, 2);
+  assert.equal(queue.items[0].publisher, null);
+  assert.equal(queue.items[1].publisher, 'Đơn vị minh họa');
+});
+
+test('review confirmation stays bound to the current route and loaded item', () => {
+  assert.equal(isReviewTargetCurrent(41, '41', 41), true);
+  assert.equal(isReviewTargetCurrent(41, '42', 41), false);
+  assert.equal(isReviewTargetCurrent(41, '41', 42), false);
+  assert.equal(isReviewTargetCurrent(null, '41', 41), false);
+  assert.equal(isReviewTargetCurrent(41, undefined, 41), false);
+});
+
+test('queue page correction never renders an invalid final or empty page', () => {
+  assert.equal(lastValidQueuePage(3, 2), 2);
+  assert.equal(lastValidQueuePage(1, 1), 1);
+  assert.equal(lastValidQueuePage(2, 0), 1);
 });
 
 test('admin direct login destination and returnTo stay within the application', () => {

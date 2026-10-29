@@ -8,7 +8,7 @@ export interface AdminOpportunity {
   id: number;
   type: OpportunityType;
   title: string;
-  publisher: string;
+  publisher: string | null;
   descriptionText: string | null;
   requirementsText: string | null;
   workFormat: WorkFormat | null;
@@ -139,7 +139,7 @@ export function parseAdminOpportunity(value: unknown): AdminOpportunity {
       value.type !== 'Việc làm' &&
       value.type !== 'Học bổng') ||
     typeof value.title !== 'string' ||
-    typeof value.publisher !== 'string' ||
+    (value.publisher !== null && typeof value.publisher !== 'string') ||
     (value.descriptionText !== null &&
       typeof value.descriptionText !== 'string') ||
     (value.requirementsText !== null &&
@@ -230,6 +230,25 @@ export function parsePendingOpportunities(
       totalPages: Number(value.meta.totalPages),
     },
   };
+}
+
+export function lastValidQueuePage(
+  requestedPage: number,
+  totalPages: number,
+): number {
+  return Math.min(requestedPage, Math.max(totalPages, 1));
+}
+
+export function isReviewTargetCurrent(
+  targetId: number | null,
+  routeId: string | undefined,
+  loadedItemId: number | undefined,
+): boolean {
+  return (
+    targetId !== null &&
+    routeId === String(targetId) &&
+    loadedItemId === targetId
+  );
 }
 
 export function parseAdminOpportunityMutation(

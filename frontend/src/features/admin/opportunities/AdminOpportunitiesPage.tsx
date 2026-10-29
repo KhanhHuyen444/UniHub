@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useParams, useSearchParams } from 'react-router';
 import { ApiError } from '../../../lib/api';
 import {
@@ -21,6 +21,7 @@ import type {
   AdminOpportunity,
   PendingOpportunitiesResponse,
 } from './contracts';
+import { isReviewTargetCurrent, lastValidQueuePage } from './contracts';
 
 type QueueState =
   | { status: 'loading' }
@@ -33,7 +34,64 @@ type DetailState =
   | { status: 'success'; data: AdminOpportunity }
   | { status: 'invalid-id' };
 
-type ReviewChoice = { verified: boolean } | null;
+type ReviewChoice = { itemId: number; verified: boolean } | null;
+
+function useDialogFocus(open: boolean, onDismiss: () => void) {
+  const dialogRef = useRef<HTMLElement>(null);
+  const dismissRef = useRef(onDismiss);
+
+  useEffect(() => {
+    dismissRef.current = onDismiss;
+  }, [onDismiss]);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousFocus =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    const focusable = () =>
+      Array.from(
+        dialogRef.current?.querySelectorAll<HTMLElement>(
+          'button:not(:disabled), textarea:not(:disabled), input:not(:disabled), select:not(:disabled), a[href], [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+    const animation = window.requestAnimationFrame(() =>
+      focusable()[0]?.focus(),
+    );
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        dismissRef.current();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const targets = focusable();
+      if (targets.length === 0) {
+        event.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
+      const first = targets[0];
+      const last = targets[targets.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.cancelAnimationFrame(animation);
+      document.removeEventListener('keydown', onKeyDown);
+      if (previousFocus?.isConnected) previousFocus.focus();
+    };
+  }, [open]);
+
+  return dialogRef;
+}
 
 function errorCode(error: unknown): string {
   return error instanceof ApiError ? error.code : 'UNKNOWN_ERROR';
@@ -155,7 +213,7 @@ function ReviewQueue({
                       {item.title}
                     </h3>
                     <p className="mt-1 line-clamp-1 type-label text-secondary">
-                      {item.publisher}
+                      {item.publisher ?? 'Chưa có đơn vị đăng'}
                     </p>
                     <div className="mt-3 border-t border-line pt-2 type-caption text-secondary">
                       <p>Hạn nộp: {deadlineLabel(item)}</p>
@@ -233,9 +291,13 @@ function ReviewDialog({
   onConfirm: () => void;
   busy: boolean;
 }) {
+  const dialogRef = useDialogFocus(choice !== null, onCancel);
   if (choice === null) return null;
   return (
     <div
+      ref={(element) => {
+        dialogRef.current = element;
+      }}
       className="fixed inset-0 z-50 grid place-items-center bg-ink/50 p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget && !busy) onCancel();
@@ -251,6 +313,7 @@ function ReviewDialog({
           Xác nhận duyệt cơ hội
         </h2>
         <p className="mt-3 type-body text-secondary">
+          Cơ hội #{choice.itemId}:{' '}
           {choice.verified
             ? 'Cơ hội sẽ được duyệt và cấp nhãn Verified.'
             : 'Cơ hội sẽ được duyệt nhưng không cấp nhãn Verified.'}
@@ -270,8 +333,12 @@ function ReviewDialog({
 
 function AdminOpportunityDetail({
   detail,
+  routeId,
   onRetry,
   onApprove,
+  rejectTargetId,
+  onOpenReject,
+  onCancelReject,
   onReject,
   busy,
   notice,
@@ -281,9 +348,13 @@ function AdminOpportunityDetail({
   onClearErrors,
 }: {
   detail: DetailState;
+  routeId: string | undefined;
   onRetry: () => void;
-  onApprove: (verified: boolean) => void;
-  onReject: (reason: string) => Promise<boolean>;
+  onApprove: (itemId: number, verified: boolean) => void;
+  rejectTargetId: number | null;
+  onOpenReject: (itemId: number) => void;
+  onCancelReject: (itemId: number) => void;
+  onReject: (itemId: number, reason: string) => Promise<boolean>;
   busy: boolean;
   notice: string | null;
   error: string | null;
@@ -291,9 +362,17 @@ function AdminOpportunityDetail({
   onClearNotice: () => void;
   onClearErrors: () => void;
 }) {
-  const [rejectOpen, setRejectOpen] = useState(false);
   const [reason, setReason] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
+  const loadedItemId = detail.status === 'success' ? detail.data.id : undefined;
+  const rejectOpen = isReviewTargetCurrent(
+    rejectTargetId,
+    routeId,
+    loadedItemId,
+  );
+  const rejectDialogRef = useDialogFocus(rejectOpen, () => {
+    if (loadedItemId !== undefined) onCancelReject(loadedItemId);
+  });
 
   if (detail.status === 'loading')
     return <LoadingState title="Đang tải chi tiết cơ hội" />;
@@ -386,7 +465,9 @@ function AdminOpportunityDetail({
         >
           {item.title}
         </h2>
-        <p className="mt-2 type-label text-secondary">{item.publisher}</p>
+        <p className="mt-2 type-label text-secondary">
+          {item.publisher ?? 'Chưa có đơn vị đăng'}
+        </p>
         {item.sourceUrl && (
           <a
             href={item.sourceUrl}
@@ -462,7 +543,8 @@ function AdminOpportunityDetail({
                 onClick={() => {
                   setLocalError(null);
                   onClearErrors();
-                  setRejectOpen(true);
+                  setReason('');
+                  onOpenReject(item.id);
                 }}
               >
                 Từ chối
@@ -470,11 +552,11 @@ function AdminOpportunityDetail({
               <Button
                 variant="outline"
                 disabled={busy}
-                onClick={() => onApprove(false)}
+                onClick={() => onApprove(item.id, false)}
               >
                 Duyệt (không cấp nhãn)
               </Button>
-              <Button loading={busy} onClick={() => onApprove(true)}>
+              <Button loading={busy} onClick={() => onApprove(item.id, true)}>
                 Duyệt và cấp nhãn Verified
               </Button>
             </div>
@@ -485,6 +567,9 @@ function AdminOpportunityDetail({
       {rejectOpen && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-ink/50 p-4">
           <section
+            ref={(element) => {
+              rejectDialogRef.current = element;
+            }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="reject-title"
@@ -522,7 +607,7 @@ function AdminOpportunityDetail({
               <Button
                 variant="outline"
                 disabled={busy}
-                onClick={() => setRejectOpen(false)}
+                onClick={() => onCancelReject(item.id)}
               >
                 Hủy
               </Button>
@@ -541,7 +626,7 @@ function AdminOpportunityDetail({
                     );
                     return;
                   }
-                  if (await onReject(clean)) setRejectOpen(false);
+                  await onReject(item.id, clean);
                 }}
               >
                 Xác nhận từ chối
@@ -592,9 +677,12 @@ export function AdminOpportunitiesPage() {
   const [revision, setRevision] = useState(0);
   const [busy, setBusy] = useState(false);
   const [choice, setChoice] = useState<ReviewChoice>(null);
+  const [rejectTargetId, setRejectTargetId] = useState<number | null>(null);
   const [mutationError, setMutationError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const activeRouteId = useRef(id);
+  activeRouteId.current = id;
   const hasDetail = Boolean(id);
   const validId = !id || isValidId(id);
   const detailRetry = useMemo(
@@ -603,12 +691,33 @@ export function AdminOpportunitiesPage() {
   );
 
   useEffect(() => {
+    setChoice(null);
+    setRejectTargetId(null);
+    setMutationError(null);
+    setValidationError(null);
+    setNotice(null);
+  }, [id]);
+
+  useEffect(() => {
     const controller = new AbortController();
     let active = true;
     setQueue({ status: 'loading' });
     getPendingOpportunities(page, controller.signal)
       .then((data) => {
-        if (active) setQueue({ status: 'success', data });
+        if (!active) return;
+        const correctedPage = lastValidQueuePage(page, data.meta.totalPages);
+        if (correctedPage !== page) {
+          setSearchParams(
+            (current) => {
+              const next = new URLSearchParams(current);
+              next.set('page', String(correctedPage));
+              return next;
+            },
+            { replace: true },
+          );
+          return;
+        }
+        setQueue({ status: 'success', data });
       })
       .catch((error: unknown) => {
         if (active && !controller.signal.aborted)
@@ -652,7 +761,10 @@ export function AdminOpportunitiesPage() {
     setSearchParams(next);
   }
 
-  async function runMutation(run: () => Promise<unknown>): Promise<boolean> {
+  async function runMutation(
+    itemId: number,
+    run: () => Promise<unknown>,
+  ): Promise<boolean> {
     if (busy) return false;
     setBusy(true);
     setMutationError(null);
@@ -660,25 +772,36 @@ export function AdminOpportunitiesPage() {
     setNotice(null);
     try {
       await run();
-      setChoice(null);
-      setNotice('Đã xử lý cơ hội. Hàng chờ và chi tiết đang được cập nhật.');
+      setChoice((current) => (current?.itemId === itemId ? null : current));
+      setRejectTargetId((current) => (current === itemId ? null : current));
+      if (activeRouteId.current === String(itemId)) {
+        setNotice('Đã xử lý cơ hội. Hàng chờ và chi tiết đang được cập nhật.');
+      }
       setRevision((value) => value + 1);
       return true;
     } catch (error) {
       const code = errorCode(error);
       if (code === 'OPPORTUNITY_NOT_PENDING') {
-        setNotice(
-          'Cơ hội vừa được xử lý bởi một quản trị viên khác. Dữ liệu đã được tải lại.',
-        );
+        if (activeRouteId.current === String(itemId)) {
+          setNotice(
+            'Cơ hội vừa được xử lý bởi một quản trị viên khác. Dữ liệu đã được tải lại.',
+          );
+        }
         setRevision((value) => value + 1);
       } else if (code === 'VALIDATION_ERROR' || code === 'INVALID_REQUEST') {
-        setValidationError(errorMessage(error));
+        if (activeRouteId.current === String(itemId)) {
+          setValidationError(errorMessage(error));
+        }
       } else if (code === 'OPPORTUNITY_NOT_REVIEWABLE') {
-        setMutationError(
-          'Cơ hội chưa đủ điều kiện để duyệt. Hãy kiểm tra nguồn, nội dung và địa điểm bắt buộc.',
-        );
+        if (activeRouteId.current === String(itemId)) {
+          setMutationError(
+            'Cơ hội chưa đủ điều kiện để duyệt. Hãy kiểm tra nguồn, nội dung và địa điểm bắt buộc.',
+          );
+        }
       } else {
-        setMutationError(errorMessage(error));
+        if (activeRouteId.current === String(itemId)) {
+          setMutationError(errorMessage(error));
+        }
       }
       return false;
     } finally {
@@ -740,11 +863,24 @@ export function AdminOpportunitiesPage() {
                 ← Quay lại hàng chờ
               </Link>
               <AdminOpportunityDetail
+                key={id}
                 detail={detail}
+                routeId={id}
                 onRetry={detailRetry}
-                onApprove={(verified) => setChoice({ verified })}
-                onReject={(reason) =>
-                  runMutation(() => rejectAdminOpportunity(Number(id), reason))
+                onApprove={(itemId, verified) =>
+                  setChoice({ itemId, verified })
+                }
+                rejectTargetId={rejectTargetId}
+                onOpenReject={setRejectTargetId}
+                onCancelReject={(itemId) => {
+                  setRejectTargetId((current) =>
+                    current === itemId ? null : current,
+                  );
+                }}
+                onReject={(itemId, reason) =>
+                  runMutation(itemId, () =>
+                    rejectAdminOpportunity(itemId, reason),
+                  )
                 }
                 busy={busy}
                 notice={notice}
@@ -762,13 +898,26 @@ export function AdminOpportunitiesPage() {
       </div>
 
       <ReviewDialog
-        choice={choice}
+        choice={
+          detail.status === 'success' &&
+          isReviewTargetCurrent(choice?.itemId ?? null, id, detail.data.id)
+            ? choice
+            : null
+        }
         onCancel={() => setChoice(null)}
         onConfirm={() => {
-          if (choice && id)
-            void runMutation(() =>
-              approveAdminOpportunity(Number(id), choice.verified),
+          if (
+            choice &&
+            isReviewTargetCurrent(
+              choice.itemId,
+              id,
+              detail.status === 'success' ? detail.data.id : undefined,
+            )
+          ) {
+            void runMutation(choice.itemId, () =>
+              approveAdminOpportunity(choice.itemId, choice.verified),
             );
+          }
         }}
         busy={busy}
       />

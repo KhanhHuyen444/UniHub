@@ -15,4 +15,6 @@ Admin dùng `RequireRole` cùng auth dùng chung, `AdminLayout` (tên/email và 
 
 Handoff chung xác nhận sidebar Admin rộng 260 px, vùng nội dung padding 32 px, màu, typography Inter và các icon shell từ frame `166:940` (Dashboard). Ảnh “Tin chờ thẩm định” do nhóm đính kèm là căn cứ bố cục trang duyệt. Tỷ lệ cột queue/detail, khoảng cách, padding card, kích thước nội dung và cách co giãn ở 1920 px được ước lượng từ ảnh; đây không phải số đo trực tiếp Figma. Email liên hệ nội bộ, dashboard, tab/route Giám sát cộng đồng không có trong API/phạm vi và không được dựng từ nội dung mẫu trong ảnh.
 
-Backend API được kế thừa từ nhánh `feat/admin-opportunities`; auth frontend được kế thừa từ `feat/auth-frontend`. Hai nhánh cần được tích hợp/merge vào `main` trước khi nhánh giao diện này có thể chạy trên `main`.
+Backend API đã có trên `main` qua PR #24. Auth frontend được kế thừa từ `feat/auth-frontend` và vẫn cần merge trước khi luồng UI này có thể chạy trên `main`.
+
+DTO giữ `publisher` nullable như backend. Khi thiếu, queue/detail hiển thị “Chưa có đơn vị đăng” để Admin vẫn xem và từ chối; điều kiện backend yêu cầu publisher khi duyệt không thay đổi.

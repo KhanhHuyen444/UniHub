@@ -1,6 +1,6 @@
 # Hợp đồng Admin duyệt cơ hội
 
-> **Contract: leader đã duyệt theo Chương 3 UC-10. Implementation: đã có trên nhánh `feat/admin-opportunities`; chưa merge vào `main`.** Public GET opportunities giữ nguyên. Không thêm API tạo/sửa/xóa cơ hội, Admin source fetch, hoặc seed dữ liệu.
+> **Contract: leader đã duyệt theo Chương 3 UC-10. Backend implementation đã merge vào `main` qua PR #24; frontend nằm trên `feat/admin-opportunities-frontend`.** Public GET opportunities giữ nguyên. Không thêm API tạo/sửa/xóa cơ hội, Admin source fetch, hoặc seed dữ liệu.
 
 ## Quyền và response item
 
@@ -36,7 +36,7 @@ AdminOpportunity là một DTO đầy đủ gồm đúng các field sau; ví d�
 }
 ```
 
-`descriptionText`, `requirementsText`, `workFormat`, `location`, `deadline`, `sourceUrl` và `reviewedAt` có nullability theo schema/public contract. `majors`, `skills` và `eligibleAcademicYears` luôn là mảng. Detail trả status Pending/Approved/Rejected. Public endpoints tiếp tục chỉ trả Approved thuộc ba loại công khai; `isVerified` độc lập với Approved.
+`publisher`, `descriptionText`, `requirementsText`, `workFormat`, `location`, `deadline`, `sourceUrl` và `reviewedAt` theo nullability của schema/DTO; `publisher` có thể là `null` trong response dù quy tắc duyệt vẫn yêu cầu giá trị để approve. `majors`, `skills` và `eligibleAcademicYears` luôn là mảng. Detail trả status Pending/Approved/Rejected. Public endpoints tiếp tục chỉ trả Approved thuộc ba loại công khai; `isVerified` độc lập với Approved.
 
 ## Endpoints
 
@@ -70,4 +70,4 @@ node --test backend/test/admin-opportunities-mysql.test.mjs
 Remove-Item Env:TEST_ADMIN_OPPORTUNITIES_DATABASE_URL
 ```
 
-The backend implementation is on `feat/admin-opportunities`; the frontend is being added on `feat/admin-opportunities-frontend`. Both are separate from `main` until their PRs are merged. The frontend branch also depends on the auth UI from `feat/auth-frontend`.
+The backend implementation is on `main` via PR #24. The Admin frontend is being completed on `feat/admin-opportunities-frontend`; it depends on the auth UI from `feat/auth-frontend`, which is not yet on `main`.
