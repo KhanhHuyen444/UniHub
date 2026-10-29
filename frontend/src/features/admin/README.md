@@ -1,15 +1,18 @@
-# Khu vực Admin
+# Frontend Admin
 
-Chưa triển khai route hoặc UI nghiệp vụ Admin. `AdminLayout` chỉ có trong `/_dev/ui?area=admin`; đây là preview hình thức, không xác thực người dùng hoặc quyền.
+Admin dùng `RequireRole` cùng auth dùng chung, `AdminLayout` (tên/email và logout thật), và API client tại `features/admin/opportunities/api.ts`. Hiện nhánh `feat/admin-opportunities-frontend` có hàng chờ Pending, chi tiết, approve/reject theo [hợp đồng](../../../../docs/admin-opportunities-api-contract.md). Không có dashboard, CRUD cơ hội, kiểm duyệt diễn đàn hoặc API Skill trong phạm vi này.
 
-Khi làm chức năng, chia component/API theo người phụ trách:
+## Kiểm duyệt cơ hội
 
-| Thư mục con dự kiến | Phụ trách | Phạm vi                                                |
-| ------------------- | --------- | ------------------------------------------------------ |
-| `users/`            | TV2       | Tài khoản và vai trò                                   |
-| `opportunities/`    | TV1       | Tab thẩm định cơ hội trong `/admin/moderation`         |
-| `categories/`       | TV3       | Chuyên ngành và kỹ năng                                |
-| `dashboard/`        | TV4       | Dashboard thống kê                                     |
-| `forum/`            | TV5       | Tab kiểm duyệt bài/bình luận trong `/admin/moderation` |
+- Route: `/admin/opportunities` và `/admin/opportunities/:id`.
+- Bốn request dùng `protectedApiRequest`: GET hàng chờ, GET chi tiết, POST approve, POST reject.
+- `AdminLayout` mở mục Kiểm duyệt nội dung; người dùng chưa đăng nhập đi qua `/login?returnTo=...`, Student tới `/403`; kiểm tra quyền thực sự vẫn do backend.
+- Reject yêu cầu lý do đã trim, 1–500 ký tự; approve xác nhận lựa chọn Verified. Mutation đang gửi sẽ khóa các nút để tránh gửi lặp.
+- Queue/detail có trạng thái loading, empty, error/retry; 401/403/404/409/422/validation có thông báo riêng. 409 tải lại cả hàng chờ lẫn chi tiết.
+- Ngày deadline lấy ngày nguồn từ API; unknown được ghi “Chưa xác định hạn”. Nội dung hiển thị dạng text, URL nguồn chỉ mở khi parser xác nhận HTTP(S).
 
-TV1 điều phối shell/menu với `layouts/` và route config tại `app/router.tsx`. Không gom mọi chức năng vào một file Admin lớn, không giao cả Admin Portal cho một người, và chỉ tạo thư mục con khi có mã thật. Route guard không thay kiểm tra quyền backend.
+## Căn cứ giao diện
+
+Handoff chung xác nhận sidebar Admin rộng 260 px, vùng nội dung padding 32 px, màu, typography Inter và các icon shell từ frame `166:940` (Dashboard). Ảnh “Tin chờ thẩm định” do nhóm đính kèm là căn cứ bố cục trang duyệt. Tỷ lệ cột queue/detail, khoảng cách, padding card, kích thước nội dung và cách co giãn ở 1920 px được ước lượng từ ảnh; đây không phải số đo trực tiếp Figma. Email liên hệ nội bộ, dashboard, tab/route Giám sát cộng đồng không có trong API/phạm vi và không được dựng từ nội dung mẫu trong ảnh.
+
+Backend API được kế thừa từ nhánh `feat/admin-opportunities`; auth frontend được kế thừa từ `feat/auth-frontend`. Hai nhánh cần được tích hợp/merge vào `main` trước khi nhánh giao diện này có thể chạy trên `main`.

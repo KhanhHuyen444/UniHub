@@ -63,7 +63,7 @@ export function AdminLayout({
                       alt=""
                       width={20}
                       height={20}
-                      className="h-5 w-5 shrink-0"
+                      className={`h-5 w-5 shrink-0 ${active ? 'brightness-0 invert' : item.key === 'dashboard' ? '[filter:brightness(0)_saturate(100%)_invert(8%)_sepia(92%)_saturate(5228%)_hue-rotate(239deg)_brightness(48%)_contrast(115%)]' : ''}`}
                     />
                     <span>{item.label}</span>
                   </Link>

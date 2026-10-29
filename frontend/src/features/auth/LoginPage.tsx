@@ -3,7 +3,8 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import { ApiError } from '../../lib/api';
 import { useAuth } from './AuthProvider';
 import { GoogleIdentityButton } from './GoogleIdentityButton';
-import { safeReturnPath } from './return-path';
+import { loginDestination } from './return-path';
+import { getAuthSnapshot } from './auth-state';
 
 export function LoginPage() {
   const { status, user, error: authError, loginWithGoogleIdToken } = useAuth();
@@ -12,8 +13,10 @@ export function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const submittingRef = useRef(false);
-  const returnPath = safeReturnPath(
-    query.get('returnTo'),
+  const returnTo = query.get('returnTo');
+  const returnPath = loginDestination(
+    returnTo,
+    user?.role ?? null,
     window.location.origin,
   );
 
@@ -25,7 +28,14 @@ export function LoginPage() {
       setError(null);
       try {
         await loginWithGoogleIdToken(credential);
-        navigate(returnPath, { replace: true });
+        navigate(
+          loginDestination(
+            returnTo,
+            getAuthSnapshot().user?.role ?? null,
+            window.location.origin,
+          ),
+          { replace: true },
+        );
       } catch (loginError) {
         setError(
           loginError instanceof ApiError
@@ -37,7 +47,7 @@ export function LoginPage() {
         setSubmitting(false);
       }
     },
-    [loginWithGoogleIdToken, navigate, returnPath],
+    [loginWithGoogleIdToken, navigate, returnTo],
   );
 
   if (status === 'authenticated' && user) {

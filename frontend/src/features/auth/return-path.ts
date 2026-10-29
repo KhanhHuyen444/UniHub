@@ -15,3 +15,12 @@ export function safeReturnPath(
     return '/opportunities';
   }
 }
+
+export function loginDestination(
+  returnTo: string | null,
+  role: 'Student' | 'Admin' | null,
+  origin = 'http://localhost',
+): string {
+  if (returnTo !== null) return safeReturnPath(returnTo, origin);
+  return role === 'Admin' ? '/admin/opportunities' : '/opportunities';
+}

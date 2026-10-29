@@ -6,15 +6,18 @@ import { sharedUiPreviewPath } from '../layouts/navigation';
 import { OpportunityHubPage } from '../features/opportunities/OpportunityHubPage';
 import { OpportunityDetailPage } from '../features/opportunities/OpportunityDetailPage';
 import { AuthProvider } from '../features/auth/AuthProvider';
-import { ForbiddenPage } from '../features/auth/AuthGuard';
+import { ForbiddenPage, RequireRole } from '../features/auth/AuthGuard';
 import { LoginPage } from '../features/auth/LoginPage';
 import { PublicLayout } from '../layouts/PublicLayout';
+import { AdminLayout } from '../layouts/AdminLayout';
+import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
 
 export const appPaths = {
   home: '/',
   developmentHealth: '/_dev/health',
   sharedUiPreview: sharedUiPreviewPath,
   opportunities: '/opportunities',
+  adminOpportunities: '/admin/opportunities',
   notFound: '/404',
 } as const;
 
@@ -42,6 +45,26 @@ export function AppRouter() {
           <Route
             path={`${appPaths.opportunities}/:id`}
             element={<OpportunityDetailPage />}
+          />
+          <Route
+            path={appPaths.adminOpportunities}
+            element={
+              <RequireRole role="Admin">
+                <AdminLayout activeKey="moderation">
+                  <AdminOpportunitiesPage />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path={`${appPaths.adminOpportunities}/:id`}
+            element={
+              <RequireRole role="Admin">
+                <AdminLayout activeKey="moderation">
+                  <AdminOpportunitiesPage />
+                </AdminLayout>
+              </RequireRole>
+            }
           />
           <Route path={appPaths.notFound} element={<NotFoundPage />} />
           <Route

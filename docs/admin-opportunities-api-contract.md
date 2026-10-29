@@ -70,4 +70,4 @@ node --test backend/test/admin-opportunities-mysql.test.mjs
 Remove-Item Env:TEST_ADMIN_OPPORTUNITIES_DATABASE_URL
 ```
 
-The branch implementation is not yet on main.
+The backend implementation is on `feat/admin-opportunities`; the frontend is being added on `feat/admin-opportunities-frontend`. Both are separate from `main` until their PRs are merged. The frontend branch also depends on the auth UI from `feat/auth-frontend`.
