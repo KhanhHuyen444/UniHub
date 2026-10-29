@@ -1,7 +1,78 @@
-# guidance
+# Guidance public read API
 
-**Chưa triển khai.** API lộ trình và bài viết định hướng, dùng opportunities cùng các bảng nối theo thiết kế. Contract dự thảo: [guidance-api-contract.md](../../../../docs/guidance-api-contract.md).
+TV3 owns this module. The implementation follows the approved
+[Guidance contract](../../../../docs/guidance-api-contract.md), using existing
+opportunities/category relations without schema changes or writes.
 
-Phụ trách dự kiến: **TV3**. Chưa gán tên người hoặc deadline.
+- `GET /api/guidance`: only optional `majorId`; selects an Active Major,
+  Approved guidance articles, and groups by academic year 1–4. Stage order is
+  ascending year; item order is ascending ID. No-year articles are omitted.
+- `GET /api/guidance/:id`: Approved guidance detail, including existing Closed
+  Major/Skill links and an empty year array when no year is linked. Text fields
+  are plain text, not trusted HTML. Only contract fields are serialized.
+- Both reads select the stored `opportunity_type` and enforce JavaScript strict
+  equality with `Bài viết định hướng` before serialization. Prisma's MySQL string
+  predicate remains a preliminary filter; database collation cannot admit case,
+  accent, normalization or trailing-space variants into either API response.
+  The internal type field is not exposed in the response.
+- Both routes are public. A valid Student access token and live session allow
+  the list to default to the profile's Active Major when no query is supplied.
+  Missing/Closed profile Major, Guest and Admin use the first Active Major
+  (`name ASC, category_id ASC`). Explicit Active Major selection wins.
+- Shared auth middleware is wrapped locally: only 401 `UNAUTHORIZED` falls back
+  to Guest. Database errors, Auth configuration errors and unexpected failures
+  propagate; they never become a successful empty response.
+- Invalid query/ID/filter: 400 `INVALID_QUERY` / `INVALID_ID` / `INVALID_FILTER`;
+  unavailable/private/wrong-type detail: 404 `NOT_FOUND`; service errors use
+  shared 503 `SERVICE_UNAVAILABLE` and 500 `INTERNAL_ERROR` handling.
+- GET bodies are rejected with 400 `INVALID_REQUEST` (malformed JSON remains
+  subject to the shared JSON middleware). No search, pagination or write API.
 
-Khi làm chức năng, bắt đầu bằng route/controller/service trong module này theo nhu cầu thực tế; chưa tạo code rỗng hoặc endpoint giả. Chỉ backend truy cập MySQL. Theo [quy trình nhóm](../../../../docs/team-workflow.md) và [quy ước API](../../../../docs/api-conventions.md).
+## Windows PowerShell validation
+
+Run from the repository root on `feat/guidance-public-read`, using the pinned
+Node/npm versions. Preserve local `.env` files. Do not use a group database.
+
+```powershell
+npm.cmd ci
+npm.cmd run typecheck
+npm.cmd run build
+node --test backend/test/guidance.test.mjs backend/test/categories.test.mjs backend/test/auth-middleware.test.mjs backend/test/http.test.mjs
+npm.cmd run format:check
+git diff --check
+```
+
+Guidance tests use real signed test JWTs and shared middleware with Prisma/session
+read doubles. They assert query predicates/order, grouping, serializers, default
+Major selection, validation and error handling. They do not establish real MySQL
+collation, Google login, Windows runtime readiness or performance NFRs. Existing
+Categories tests have an opt-in MySQL case; without its dedicated test database
+configuration it is skipped. Guidance has its own opt-in integration case:
+`TEST_GUIDANCE_DATABASE_URL` must target a loopback-only `unihub_guidance_test*`
+database with the existing migrations applied and empty categories/opportunities.
+The case inserts valid and wrong-type articles, verifies list/detail over HTTP,
+and rolls back its own transaction; it never clears existing data. Without that
+variable the integration case is SKIP, not PASS.
+
+## Local HTTP checks
+
+With a private development database migrated using existing repository migrations,
+start the backend from the root:
+
+```powershell
+npm.cmd run dev:backend
+```
+
+In a second terminal:
+
+```powershell
+Invoke-RestMethod 'http://127.0.0.1:3001/api/guidance'
+```
+
+Use IDs actually returned by your private database for explicit `majorId` and
+`/api/guidance/:id`. No Active Major returns exactly
+`{"selectedMajor":null,"stages":[]}`; a selected Major with no articles retains
+`selectedMajor` with empty `stages`. Do not seed group data to produce a demo.
+Student defaults require the group's existing Auth configuration and a real valid
+UniHub Student token/session on that same database. Keep credentials/tokens out of
+logs. Frontend routes and UI are outside this backend change.
