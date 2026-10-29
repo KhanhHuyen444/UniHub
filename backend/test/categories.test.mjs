@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { after, test } from 'node:test';
 import { once } from 'node:events';
+import { request as httpRequest } from 'node:http';
 import { createApp } from '../dist/app.js';
 import { createPrismaClient } from '../dist/lib/prisma.js';
 
@@ -480,6 +481,53 @@ test('Skill query sai trả 400 trước auth và database kể cả có JWT Stu
       );
       assert.equal(response.status, 400);
       assert.equal((await response.json()).error.code, 'INVALID_QUERY');
+    }
+  });
+  assert.deepEqual(fixture.calls(), { categoryCalls: 0, sessionCalls: 0 });
+});
+
+test('Skill GET có body trả INVALID_REQUEST trước mọi truy cập Prisma', async () => {
+  const fixture = await skillFixture();
+  await withServer(fixture.app, async (url) => {
+    for (const [contentType, payload, chunked] of [
+      ['application/json', '{}', false],
+      ['application/json', '{"type":"Major"}', false],
+      ['text/plain', 'Skill', false],
+      ['application/json', '{}', true],
+      ['text/plain', 'Skill', true],
+    ]) {
+      for (const token of [undefined, fixture.token, fixture.adminToken]) {
+        const result = await new Promise((resolve, reject) => {
+          const request = httpRequest(
+            `${url}/api/categories?type=Skill`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': contentType,
+                ...(chunked
+                  ? { 'Transfer-Encoding': 'chunked' }
+                  : { 'Content-Length': Buffer.byteLength(payload) }),
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+            },
+            (response) => {
+              let body = '';
+              response.setEncoding('utf8');
+              response.on('data', (chunk) => {
+                body += chunk;
+              });
+              response.on('error', reject);
+              response.on('end', () =>
+                resolve({ status: response.statusCode, body }),
+              );
+            },
+          );
+          request.on('error', reject);
+          request.end(payload);
+        });
+        assert.equal(result.status, 400);
+        assert.equal(JSON.parse(result.body).error.code, 'INVALID_REQUEST');
+      }
     }
   });
   assert.deepEqual(fixture.calls(), { categoryCalls: 0, sessionCalls: 0 });

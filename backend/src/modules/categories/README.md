@@ -66,8 +66,9 @@ Guest or invalid/expired tokens receive 401 `UNAUTHORIZED`; Admin receives 403
 `FORBIDDEN`. Major remains public, including when an Authorization header exists.
 Query validation runs before authentication: exactly one `type=Major` or
 `type=Skill` is accepted; unsupported, repeated or missing query fields return
-400 `INVALID_QUERY` before any database access. No body, search or pagination is
-part of the options contract.
+400 `INVALID_QUERY` before any database access. Skill requests with a body return
+400 `INVALID_REQUEST` before authentication or any Prisma access. Search and
+pagination are not part of the options contract.
 
 Both types reuse the same Prisma query/serializer: Active only, ordered by
 `name ASC, category_id ASC`, selecting only `id`, `name`, `type` for the response.
@@ -112,8 +113,11 @@ skipped. Mock query assertions do not establish actual MySQL collation behavior.
 
 ## Outside this endpoint
 
-`type=Skill`, profile rules for Closed categories and Admin CRUD are not
-implemented. Their contract proposals are in
+Skill Options is implemented as the Student-only read endpoint described above.
+Admin CRUD and profile rules for retaining existing Closed category links are
+separate features outside this implementation; their approved contracts are in
 [categories-api-contract.md](../../../../docs/categories-api-contract.md).
-They await leader review; TV2/TV3 provide module feedback. Do not infer Skill
-permissions from the public Major contract.
+The options endpoint reuses the existing Auth middleware and live sessions.
+It does not implement Google login, profile editing or a frontend profile
+consumer; those integrations depend on the Auth/Profile modules. Admin must use
+the separate category management API, not Skill Options.

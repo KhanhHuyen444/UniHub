@@ -47,7 +47,19 @@ export function createCategoriesRouter(
     '/',
     (request, _response, next) => {
       try {
-        validateCategoryQuery(request.originalUrl);
+        const type = validateCategoryQuery(request.originalUrl);
+        if (
+          type === 'Skill' &&
+          (request.body !== undefined ||
+            Number(request.get('content-length') ?? 0) > 0 ||
+            request.get('transfer-encoding') !== undefined)
+        ) {
+          throw new ApiError(
+            400,
+            'INVALID_REQUEST',
+            'Yêu cầu không được có nội dung body.',
+          );
+        }
         next();
       } catch (error) {
         next(error);
