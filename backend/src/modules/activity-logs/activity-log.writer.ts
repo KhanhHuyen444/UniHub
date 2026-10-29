@@ -343,12 +343,33 @@ export async function writeActivityLog(
   transaction: ActivityLogTransactionClient,
   input: ActivityLogInput,
 ): Promise<void> {
-  if (
-    transaction === null ||
-    typeof transaction !== 'object' ||
+  if (transaction === null || typeof transaction !== 'object') {
+    throw new ActivityLogTransactionRequiredError();
+  }
+
+  // Prisma 7.10.1 leaves `$transaction` on interactive transaction proxies.
+  // Its transaction-scope marker distinguishes those proxies from root clients.
+  const transactionScope = (
+    transaction as unknown as Record<PropertyKey, unknown>
+  )[Symbol.for('prisma.client.transaction.scope_context')];
+  const hasPrismaTransactionScope =
+    transactionScope !== null &&
+    typeof transactionScope === 'object' &&
+    'kind' in transactionScope &&
+    transactionScope.kind === 'nested' &&
+    'txId' in transactionScope &&
+    typeof transactionScope.txId === 'string' &&
+    'scopeId' in transactionScope &&
+    typeof transactionScope.scopeId === 'string' &&
+    'scopeState' in transactionScope &&
+    transactionScope.scopeState !== null &&
+    typeof transactionScope.scopeState === 'object' &&
+    'stack' in transactionScope.scopeState &&
+    Array.isArray(transactionScope.scopeState.stack);
+  const isPrismaRootClient =
     typeof (transaction as unknown as { $transaction?: unknown })
-      .$transaction === 'function'
-  ) {
+      .$transaction === 'function' && !hasPrismaTransactionScope;
+  if (isPrismaRootClient) {
     throw new ActivityLogTransactionRequiredError();
   }
 

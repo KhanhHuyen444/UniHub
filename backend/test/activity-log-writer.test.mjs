@@ -139,6 +139,19 @@ test('từ chối Prisma root client trước khi gọi create; transaction clie
 
   await writeActivityLog(tx, validEntries[0]);
   assert.equal(tx.entries.length, 1);
+
+  const prismaTransaction = {
+    ...transaction(),
+    $transaction: async () => {},
+    [Symbol.for('prisma.client.transaction.scope_context')]: {
+      kind: 'nested',
+      txId: 'tx-id',
+      scopeId: 'scope-id',
+      scopeState: { stack: [] },
+    },
+  };
+  await writeActivityLog(prismaTransaction, validEntries[0]);
+  assert.equal(prismaTransaction.entries.length, 1);
 });
 
 test('từ chối action-target sai, payload thừa/sai, ID sai và reason thiếu', async () => {
