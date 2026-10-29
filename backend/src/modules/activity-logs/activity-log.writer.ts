@@ -97,6 +97,15 @@ export class ActivityLogValidationError extends Error {
   }
 }
 
+export class ActivityLogTransactionRequiredError extends Error {
+  readonly code = 'ACTIVITY_LOG_TRANSACTION_REQUIRED';
+
+  constructor() {
+    super('Activity log writes require a caller-owned Prisma transaction.');
+    this.name = 'ActivityLogTransactionRequiredError';
+  }
+}
+
 function invalid(): never {
   throw new ActivityLogValidationError();
 }
@@ -334,6 +343,15 @@ export async function writeActivityLog(
   transaction: ActivityLogTransactionClient,
   input: ActivityLogInput,
 ): Promise<void> {
+  if (
+    transaction === null ||
+    typeof transaction !== 'object' ||
+    typeof (transaction as unknown as { $transaction?: unknown })
+      .$transaction === 'function'
+  ) {
+    throw new ActivityLogTransactionRequiredError();
+  }
+
   const payload = validatePayload(input);
   const activityLog = transaction.activityLog as ActivityLogCreator;
   await activityLog.create({

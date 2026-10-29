@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  ActivityLogTransactionRequiredError,
   ActivityLogValidationError,
   writeActivityLog,
 } from '../dist/modules/activity-logs/activity-log.writer.js';
@@ -117,6 +118,27 @@ test('ghi payload compact đúng danh sách field được duyệt cho mọi act
     tx.entries.every((entry) => Array.from(entry.new_value).length <= 500),
     true,
   );
+});
+
+test('từ chối Prisma root client trước khi gọi create; transaction client được nhận', async () => {
+  const tx = transaction();
+  let rootTransactionCalls = 0;
+  const rootClient = {
+    ...tx,
+    $transaction: async () => {
+      rootTransactionCalls += 1;
+    },
+  };
+
+  await assert.rejects(
+    writeActivityLog(rootClient, validEntries[0]),
+    ActivityLogTransactionRequiredError,
+  );
+  assert.equal(tx.entries.length, 0);
+  assert.equal(rootTransactionCalls, 0);
+
+  await writeActivityLog(tx, validEntries[0]);
+  assert.equal(tx.entries.length, 1);
 });
 
 test('từ chối action-target sai, payload thừa/sai, ID sai và reason thiếu', async () => {

@@ -10,17 +10,29 @@ Ví dụ đổi role cùng log:
 
 ```ts
 await prisma.$transaction(async (transaction) => {
+  const target = await transaction.user.findUnique({
+    where: { user_id: targetUserId },
+    select: { role: true },
+  });
+  if (!target) throw new Error('Không tìm thấy tài khoản.');
+  if (target.role !== 'Student' && target.role !== 'Admin') {
+    throw new Error('Role hiện tại không hợp lệ.');
+  }
+  const oldRole = target.role;
+  const newRole = requestedRole; // Role đã được validate từ request/admin policy.
+  if (oldRole === newRole) throw new Error('Role không thay đổi.');
+
   await transaction.user.update({
     where: { user_id: targetUserId },
-    data: { role: 'Admin' },
+    data: { role: newRole },
   });
   await writeActivityLog(transaction, {
     adminId: adminIdentity.userId,
     actionType: 'CHANGE_ROLE',
     targetType: 'User',
     targetId: targetUserId,
-    oldValue: { role: 'Student' },
-    newValue: { role: 'Admin' },
+    oldValue: { role: oldRole },
+    newValue: { role: newRole },
   });
 });
 ```
