@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { useAuth } from '../features/auth/AuthProvider';
 import googleGLogo from '../assets/google-g-logo.svg';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
@@ -23,6 +24,15 @@ export function PublicLayout({
 }: PublicLayoutProps) {
   const area: Extract<ShellArea, 'public'> = 'public';
   const isOpportunities = variant === 'opportunities';
+  const auth = useAuth();
+
+  async function logout() {
+    try {
+      await auth.logout();
+    } catch {
+      // Auth state is cleared locally; the visible notice below reports server status.
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-page">
@@ -48,19 +58,64 @@ export function PublicLayout({
               ))}
             </ul>
           </nav>
-          <span
-            aria-label="Đăng nhập với Google — chỉ là mẫu thiết kế, chưa có chức năng"
-            aria-disabled="true"
-            className="inline-flex h-12 w-[270px] shrink-0 items-center justify-center gap-3 rounded-control border border-control bg-white px-4 text-sm font-medium leading-5 text-secondary shadow-soft"
-          >
-            <img
-              src={googleGLogo}
-              alt=""
-              aria-hidden="true"
-              className="h-[18px] w-[18px] shrink-0 object-contain"
-            />
-            Đăng nhập với Google
-          </span>
+          {previewNavigation ? (
+            <span
+              aria-label="Đăng nhập với Google — chỉ là mẫu thiết kế, chưa có chức năng"
+              aria-disabled="true"
+              className="inline-flex h-12 w-[270px] shrink-0 items-center justify-center gap-3 rounded-control border border-control bg-white px-4 text-sm font-medium leading-5 text-secondary shadow-soft"
+            >
+              <img
+                src={googleGLogo}
+                alt=""
+                aria-hidden="true"
+                className="h-[18px] w-[18px] shrink-0 object-contain"
+              />
+              Đăng nhập với Google
+            </span>
+          ) : auth.status === 'authenticated' && auth.user ? (
+            <div className="flex h-12 w-[270px] shrink-0 items-center justify-end gap-3">
+              <span
+                className="min-w-0 truncate type-label font-medium text-secondary"
+                title={auth.user.fullName}
+              >
+                {auth.user.fullName}
+              </span>
+              <button
+                type="button"
+                onClick={() => void logout()}
+                className="shrink-0 rounded-control border border-control bg-white px-3 py-2 type-label font-medium text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              >
+                Đăng xuất
+              </button>
+            </div>
+          ) : auth.status === 'restoring' ? (
+            <span
+              role="status"
+              className="inline-flex h-12 w-[270px] shrink-0 items-center justify-center rounded-control border border-control bg-white px-4 type-label text-secondary"
+            >
+              Đang khôi phục phiên…
+            </span>
+          ) : (
+            <div className="flex flex-col items-end">
+              <Link
+                to="/login"
+                className="inline-flex h-12 w-[270px] shrink-0 items-center justify-center gap-3 rounded-control border border-control bg-white px-4 text-sm font-medium leading-5 text-secondary shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              >
+                <img
+                  src={googleGLogo}
+                  alt=""
+                  aria-hidden="true"
+                  className="h-[18px] w-[18px] shrink-0 object-contain"
+                />
+                Đăng nhập với Google
+              </Link>
+              {auth.status === 'guest' && auth.error ? (
+                <span role="status" className="mt-1 type-caption text-danger">
+                  Máy chủ chưa xác nhận thu hồi phiên.
+                </span>
+              ) : null}
+            </div>
+          )}
         </div>
       </header>
 

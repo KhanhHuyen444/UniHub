@@ -1,12 +1,10 @@
 # UniHub
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. `main` có bộ khung chung, luồng Public Hub cơ hội, danh mục Major và các API xác thực; `GET /api/opportunities` cùng `GET /api/opportunities/:id` là API đọc công khai. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. `main` có bộ khung chung, Public Hub cơ hội, Guidance, Events, danh mục Major/Skill và API xác thực; `GET /api/opportunities` cùng `GET /api/opportunities/:id` là API đọc công khai. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
 
-Nhánh `feat/admin-opportunities` bổ sung API Admin xem hàng chờ, xem chi tiết, duyệt và từ chối cơ hội theo [hợp đồng Admin](docs/admin-opportunities-api-contract.md). Phần này chưa có trên `main`; chưa có giao diện Admin.
+Health chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi thiếu `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration và Prisma runtime đã merge. Auth schema/backend bốn API đã có trên `main`; giao diện Google login/session nằm trên nhánh `feat/auth-frontend` này, chưa có trên `main`. `main` cũng có Guidance public, Events API và backend Admin review qua PR #24; nhánh này không mang giao diện Admin review từ nhánh riêng. Không có dữ liệu tài khoản mẫu. Shared UI preview vẫn chỉ là preview, không xác thực. Health/preview không cần MySQL hoặc Docker.
 
-Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4, Prisma runtime qua PR #5. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Auth API trên `main` gồm Google login, refresh, `/me`, logout và access-token middleware; không có tài khoản mẫu. Public Hub API vẫn chỉ đọc. Nhánh `feat/admin-opportunities` bổ sung Admin review endpoints nhưng chưa merge; chưa có giao diện Admin. Shared UI preview chỉ dùng kiểm tra shell/component, không phải giao diện sản phẩm. Có thể chạy frontend health/preview mà không cần MySQL hoặc Docker.
-
-TV1 điều phối mục lục và trạng thái các hợp đồng API tại [docs/api-contracts.md](docs/api-contracts.md); leader duyệt toàn bộ contract trước khi thành viên triển khai. Hợp đồng không đồng nghĩa endpoint đã có code. Khác biệt giữa Chương 4 mới và Prisma main không ngăn việc hoàn thiện/duyệt tài liệu, nhưng auth chưa thể chạy trên database thật cho đến khi schema/migration riêng được duyệt và áp dụng.
+TV1 điều phối mục lục và trạng thái các hợp đồng API tại [docs/api-contracts.md](docs/api-contracts.md); leader duyệt toàn bộ contract trước khi thành viên triển khai. Hợp đồng không đồng nghĩa endpoint đã có code. Auth schema/migration/GRANT đã có trên `main`; mỗi database đích phải xác nhận migration và quyền đã áp dụng trước khi chạy auth.
 
 ## 1. Công nghệ và điều kiện môi trường
 
@@ -179,15 +177,15 @@ UniHub/
 
 Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Phân công theo yêu cầu mới nhất, chưa gán tên/deadline:
 
-| Thành viên | Phần frontend và backend                                                             |
-| ---------- | ------------------------------------------------------------------------------------ |
-| TV1        | Nền tảng chung, Hub cơ hội/tìm kiếm/chi tiết; Admin duyệt cơ hội; điều phối tích hợp |
-| TV2        | Đăng nhập Google/JWT/role, hồ sơ và tài khoản; Admin quản lý tài khoản               |
-| TV3        | Lộ trình kỹ năng, gợi ý/cơ hội dành cho bạn; Admin danh mục                          |
-| TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                  |
-| TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction        |
+| Thành viên | Phần frontend và backend                                                                                        |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| TV1        | Nền tảng auth backend/frontend dùng chung; Hub cơ hội/tìm kiếm/chi tiết; Admin duyệt cơ hội; điều phối tích hợp |
+| TV2        | Hồ sơ và chức năng tài khoản; Admin quản lý tài khoản                                                           |
+| TV3        | Lộ trình kỹ năng, gợi ý/cơ hội dành cho bạn; Admin danh mục                                                     |
+| TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                                             |
+| TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction                                   |
 
-Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3. Trang danh sách, trang chi tiết dùng chung cho ba loại và consumer Major của Hub đã có trên `main` sau PR #12; API provider Major đã merge qua PR #13. Auth API cũng đã merge vào `main`. Nhánh `feat/admin-opportunities` đang bổ sung API Admin review; giao diện Admin và các module sản phẩm khác vẫn chưa triển khai. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
+Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Trang Public Hub, Guidance, Events, API Major/Skill, auth backend và backend Admin review đã có trên `main`. Nhánh `feat/auth-frontend` bổ sung frontend auth. Giao diện Admin review đang ở nhánh riêng và không thuộc nhánh auth này. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
 
 ## 7. Lỗi thường gặp và giới hạn
 

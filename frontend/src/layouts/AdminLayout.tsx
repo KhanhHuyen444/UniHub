@@ -5,6 +5,7 @@ import dashboardIcon from '../assets/admin-dashboard.svg';
 import moderationIcon from '../assets/admin-moderation.svg';
 import logoutIcon from '../assets/logout-icon.png';
 import { Brand } from './Brand';
+import { useAuth } from '../features/auth/AuthProvider';
 import {
   adminNavigation,
   navigationTarget,
@@ -30,6 +31,15 @@ export function AdminLayout({
   previewNavigation = false,
 }: AdminLayoutProps) {
   const area: Extract<ShellArea, 'admin'> = 'admin';
+  const { user, logout, status } = useAuth();
+
+  async function handleLogout() {
+    try {
+      await logout();
+    } catch {
+      // Local auth is already cleared; LoginPage reports uncertain revocation.
+    }
+  }
 
   return (
     <div className="flex min-h-screen bg-page">
@@ -64,15 +74,35 @@ export function AdminLayout({
         </nav>
 
         <div className="mt-auto border-t border-line bg-white/60 px-5 py-5 backdrop-blur-sm">
-          <p className="type-label font-medium text-navy">
-            Quản trị viên xem trước
-          </p>
-          <p className="mt-1 type-label text-secondary">Admin preview</p>
+          {previewNavigation ? (
+            <>
+              <p className="type-label font-medium text-navy">
+                Quản trị viên xem trước
+              </p>
+              <p className="mt-1 type-label text-secondary">Admin preview</p>
+            </>
+          ) : user ? (
+            <>
+              <p className="truncate type-label font-medium text-navy">
+                {user.fullName}
+              </p>
+              <p className="mt-1 truncate type-label text-secondary">
+                {user.email}
+              </p>
+            </>
+          ) : (
+            <p role="status" className="type-label text-secondary">
+              {status === 'unavailable'
+                ? 'Không kiểm tra được phiên'
+                : 'Đang khôi phục phiên…'}
+            </p>
+          )}
           <div className="mt-3 border-t border-line pt-[10px]">
             <button
               type="button"
-              disabled
-              className="flex h-5 w-full items-center gap-2 text-left type-label font-medium text-danger disabled:cursor-not-allowed"
+              disabled={previewNavigation || !user}
+              onClick={() => void handleLogout()}
+              className="flex h-5 w-full items-center gap-2 text-left type-label font-medium text-danger disabled:cursor-not-allowed disabled:opacity-60"
             >
               <img
                 src={logoutIcon}
