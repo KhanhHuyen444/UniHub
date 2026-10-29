@@ -14,6 +14,8 @@ import {
   createOpportunitiesRouter,
   type OpportunitiesRouterDependencies,
 } from './modules/opportunities/opportunities.routes.js';
+import { createEventsRouter } from './modules/events/events.routes.js';
+import type { EventsRouterDependencies } from './modules/events/events.types.js';
 import {
   createAdminOpportunitiesRouter,
   type AdminOpportunitiesRouterDependencies,
@@ -25,6 +27,7 @@ interface AppDependencies {
   categories?: CategoriesRouterDependencies;
   opportunities?: OpportunitiesRouterDependencies;
   auth?: GoogleAuthDependencies;
+  events?: EventsRouterDependencies;
   adminOpportunities?: AdminOpportunitiesRouterDependencies;
 }
 
@@ -41,6 +44,7 @@ export function createApp(dependencies: AppDependencies = {}) {
     '/api/opportunities',
     createOpportunitiesRouter(dependencies.opportunities),
   );
+  app.use('/api/events', createEventsRouter(dependencies.events));
   app.use(
     '/api/admin/opportunities',
     createAdminOpportunitiesRouter(dependencies.adminOpportunities),
