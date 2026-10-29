@@ -1,4 +1,8 @@
 import {
+  createRecommendationsRouter,
+  type RecommendationsRouterDependencies,
+} from './modules/recommendations/recommendations.routes.js';
+import {
   createGuidanceRouter,
   type GuidanceRouterDependencies,
 } from './modules/guidance/guidance.routes.js';
@@ -30,6 +34,7 @@ interface AppDependencies {
   logDatabaseFailure?: () => void;
   categories?: CategoriesRouterDependencies;
   guidance?: GuidanceRouterDependencies;
+  recommendations?: RecommendationsRouterDependencies;
   opportunities?: OpportunitiesRouterDependencies;
   auth?: GoogleAuthDependencies;
   events?: EventsRouterDependencies;
@@ -45,6 +50,10 @@ export function createApp(dependencies: AppDependencies = {}) {
   app.use('/api/ready', createReadyRouter(dependencies));
   app.use('/api/auth', createAuthRouter(dependencies.auth));
   app.use('/api/categories', createCategoriesRouter(dependencies.categories));
+  app.use(
+    '/api/recommendations',
+    createRecommendationsRouter(dependencies.recommendations),
+  );
   app.use('/api/guidance', createGuidanceRouter(dependencies.guidance));
   app.use(
     '/api/opportunities',
