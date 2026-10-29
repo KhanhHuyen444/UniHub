@@ -11,6 +11,8 @@
     "prebuild": "npm run prisma:generate",
     "build": "tsc",
     "start": "node --env-file-if-exists=.env dist/server.js",
+    "preadmin:bootstrap": "npm run prisma:generate",
+    "admin:bootstrap": "node --env-file-if-exists=.env --import tsx src/scripts/admin-bootstrap.ts",
     "test": "npm run build && node --test",
     "prisma:format": "prisma format --config prisma.config.ts",
     "prisma:validate": "prisma validate --config prisma.config.ts",
