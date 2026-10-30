@@ -41,22 +41,31 @@ No backend, schema, dependency or contract edits.
 
 ## Verification and limits
 
-- `frontend/test/calendar.test.mjs` checks five years of grid boundaries,
-  Vietnam/UTC conversion, changed-only patches, past content edits, validation,
-  DTO parsing, all six authenticated requests, refresh and error handling using
-  mocked HTTP responses.
-- `frontend/test/calendar-page.test.mjs` is an optional Playwright flow using the
-  in-memory HTTP harness in `test-support/calendar-browser.mjs`. It covers CRUD,
-  validation, save/list failure and retry, empty state and session switching.
-  It explicitly skips without the optional environment runner; no dependency added.
-- Windows environment: Node 24.13.0 / npm 11.6.2, below the declared repository
-  minimums of 24.19.0 / 11.9.0. Versions and lockfile were not changed.
-- Root typecheck, production build, tests, format check and diff whitespace check
-  were run; final counts are in the task handoff. Tests needed execution outside
-  the sandbox because tsx's user-info lookup failed inside it.
-- No isolated Events database configuration was available. The unrelated reminders
-  configuration was not reused. No real `.env` was read; no team database accessed.
-  Real Calendar/MySQL integration remains unverified.
-- Browser DOM access was unavailable and Playwright absent. Native Chrome preview
-  attempts encountered user activity and minimized-window recovery failures.
-  Rendered visual QA and interactive browser assertions remain unverified here.
+Latest review: 31 October 2026, starting head `2cd7788`, already contains
+`origin/main=df6a277`. No Calendar application regression was found or changed.
+
+- All six Events endpoints use the existing protectedApiRequest/refresh; ownership
+  is enforced by the backend. No owner ID or arbitrary status is submitted.
+- Real Google Student login by the user, actual Express and a fresh guarded
+  MySQL 8.4.13 instance with existing migrations: UI create -> F5 persistence ->
+  edit -> complete -> delete executed and passed. No HTTP/auth mock, token copy,
+  fabricated token or role change was used for this browser run.
+- Screenshots at 1280x1000: Calendar created/completed, stored in local
+  `.cache/tv4/33-calendar-*.png`. No pixel-match claim without design comparison.
+- Full checks: typecheck/build/format/diff-check passed. Frontend 85 passed,
+  32 skipped; backend 133 passed, 17 skipped; zero failures. Optional Playwright
+  harness and DB suites without explicit test URLs remained skipped. Existing
+  Calendar HTTP unit tests use mock responses, distinct from the live browser run.
+- Runtime: Windows, Node 24.22.1 / npm 11.19.1. No dependency/lockfile changes.
+- One dev-server run hit Vite dependency-cache 504 after SSR tests. Restarting the
+  exact checkout after tests resolved it. An early automation selector chose the
+  background Delete button rather than the modal; corrected the test selector,
+  then the full real UI flow passed. Neither required an application change.
+- #33 and #35 still conflict with each other in `frontend/src/app/router.tsx`,
+  not with current main. Integration must retain both Student Calendar and
+  Admin Dashboard routes and all existing auth/Guidance/Opportunities routes.
+  Dashboard has not been copied into this PR to hide that conflict.
+- This checkout has no scheduler or Notifications implementation. Cross-PR
+  reminder/bell flow and Admin Google UI are not claimed as tested here.
+- Only the dedicated temporary database was used; no personal/group database,
+  schema/migration or SQL privilege changes.
