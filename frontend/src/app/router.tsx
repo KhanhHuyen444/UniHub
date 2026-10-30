@@ -1,4 +1,10 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from 'react-router';
 import { HealthCheckPage } from './App';
 import { NotFoundPage } from './NotFoundPage';
 import { SharedUiPreviewPage } from './SharedUiPreviewPage';
@@ -13,9 +19,28 @@ import { LoginPage } from '../features/auth/LoginPage';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
+import { ProfilePage } from '../features/profile/ProfilePage';
+import { StudentLayout } from '../layouts/StudentLayout';
+import { RecommendationsPage } from '../features/recommendations/RecommendationsPage';
+import { useAuth } from '../features/auth/AuthProvider';
+import { getAccessToken } from '../features/auth/auth-state';
+
+function RecommendationsRoute() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  return (
+    <RecommendationsPage
+      accessToken={getAccessToken()}
+      role={user?.role ?? null}
+      onCompleteProfile={() => navigate('/profile')}
+      onSignIn={() => navigate('/login?returnTo=%2Frecommendations')}
+    />
+  );
+}
 
 export const appPaths = {
   home: '/',
+  profile: '/profile',
   developmentHealth: '/_dev/health',
   sharedUiPreview: sharedUiPreviewPath,
   opportunities: '/opportunities',
@@ -29,6 +54,26 @@ export function AppRouter() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          <Route
+            path="/recommendations"
+            element={
+              <RequireRole role="Student">
+                <StudentLayout activeKey="recommendations">
+                  <RecommendationsRoute />
+                </StudentLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path={appPaths.profile}
+            element={
+              <RequireRole role="Student">
+                <StudentLayout activeKey="profile">
+                  <ProfilePage />
+                </StudentLayout>
+              </RequireRole>
+            }
+          />
           <Route
             path={appPaths.home}
             element={<Navigate to={appPaths.developmentHealth} replace />}
