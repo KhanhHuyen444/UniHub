@@ -11,6 +11,10 @@ import {
   type GuidanceRouterDependencies,
 } from './modules/guidance/guidance.routes.js';
 import express from 'express';
+import {
+  createNotificationsRouter,
+  type NotificationsRouterDependencies,
+} from './modules/notifications/notifications.routes.js';
 import { errorHandler, notFound } from './middleware/errors.js';
 import { healthRouter } from './modules/health/health.routes.js';
 import { createReadyRouter } from './modules/health/ready.routes.js';
@@ -43,6 +47,7 @@ interface AppDependencies {
   opportunities?: OpportunitiesRouterDependencies;
   auth?: GoogleAuthDependencies;
   events?: EventsRouterDependencies;
+  notifications?: NotificationsRouterDependencies;
   adminOpportunities?: AdminOpportunitiesRouterDependencies;
 }
 
@@ -69,6 +74,10 @@ export function createApp(dependencies: AppDependencies = {}) {
     createOpportunitiesRouter(dependencies.opportunities),
   );
   app.use('/api/events', createEventsRouter(dependencies.events));
+  app.use(
+    '/api/notifications',
+    createNotificationsRouter(dependencies.notifications),
+  );
   app.use(
     '/api/admin/opportunities',
     createAdminOpportunitiesRouter(dependencies.adminOpportunities),
