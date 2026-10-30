@@ -11,6 +11,10 @@ import {
   type GuidanceRouterDependencies,
 } from './modules/guidance/guidance.routes.js';
 import express from 'express';
+import {
+  createDashboardRouter,
+  type DashboardRouterDependencies,
+} from './modules/dashboard/dashboard.routes.js';
 import { errorHandler, notFound } from './middleware/errors.js';
 import { healthRouter } from './modules/health/health.routes.js';
 import { createReadyRouter } from './modules/health/ready.routes.js';
@@ -44,6 +48,7 @@ interface AppDependencies {
   auth?: GoogleAuthDependencies;
   events?: EventsRouterDependencies;
   adminOpportunities?: AdminOpportunitiesRouterDependencies;
+  dashboard?: DashboardRouterDependencies;
 }
 
 export function createApp(dependencies: AppDependencies = {}) {
@@ -69,6 +74,10 @@ export function createApp(dependencies: AppDependencies = {}) {
     createOpportunitiesRouter(dependencies.opportunities),
   );
   app.use('/api/events', createEventsRouter(dependencies.events));
+  app.use(
+    '/api/admin/dashboard',
+    createDashboardRouter(dependencies.dashboard),
+  );
   app.use(
     '/api/admin/opportunities',
     createAdminOpportunitiesRouter(dependencies.adminOpportunities),
