@@ -97,8 +97,9 @@ export function HealthCheckPage() {
         </h2>
         <p>
           Kết quả chỉ xác nhận HTTP server phản hồi. MySQL, đăng nhập Google,
-          JWT và các chức năng nghiệp vụ chưa được triển khai. Màn hình này chưa
-          dùng thiết kế Figma và dành cho desktop 1280–1920 px.
+          quyền Admin và các API nghiệp vụ khác không được kiểm tra ở trang này.
+          Màn hình kỹ thuật chưa dùng thiết kế Figma và dành cho desktop
+          1280–1920 px.
         </p>
       </aside>
     </main>
