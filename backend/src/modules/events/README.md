@@ -57,9 +57,10 @@ Lỗi quét/DB được
 ghi thông báo chung, không log exception có dữ liệu nhạy cảm.
 
 Không có shared Notification writer hỗ trợ transaction hiện tại, nên Reminder
-được ghi trực tiếp bằng `tx.notification.create`. API list/read, bell UI và
-Violation thuộc Vy, không nằm trong Task 2. Review phần server lifecycle với TV1
-và transaction liên module với Vy trước khi tích hợp.
+được ghi trực tiếp bằng `tx.notification.create`. Tuyen phụ trách Notifications API
+(list/read) và bell UI; Vy điều phối chức năng thông báo Violation. Task 2 phụ trách
+Reminder Service và scheduler 60 giây. Review phần server lifecycle với TV1
+và transaction liên module với Tuyen và Vy trước khi tích hợp.
 
 Kiểm thử unit: `backend/test/reminders.test.mjs`. Kiểm thử MySQL:
 `backend/test/reminders-mysql.test.mjs`, chỉ bật khi `TEST_REMINDERS_DATABASE_URL`
@@ -67,7 +68,13 @@ Kiểm thử unit: `backend/test/reminders.test.mjs`. Kiểm thử MySQL:
 `unihub_reminders_test_<suffix chữ/số>`, đã áp dụng migration hiện có. Tuyệt đối
 không trỏ tới DB phát triển/production. Test chỉ tạo/xóa dữ liệu của user test
 riêng, không tự migrate, không đọc `.env`, không dùng fallback `DATABASE_URL`.
-Nếu không cấp DB này, test MySQL bị skip và concurrency chưa được xác minh thực tế.
+Nếu không cấp DB này, test MySQL bị skip và lần chạy đó không xác minh concurrency thực tế.
+
+Đã chạy kiểm thử tích hợp trên database MySQL 8.4.13 riêng biệt, đã áp dụng đủ
+3 Prisma migration hiện có. Lệnh `node --test test/reminders-mysql.test.mjs`
+(tại thư mục `backend`): **19 test passed, 0 failed, 0 skipped**, khoảng 5,16 giây.
+Phạm vi gồm chống trùng, rollback/retry, race với `dueDate`/`remindBefore`/
+`Completed`/`DELETE`, biên `DATETIME(0)` và quét theo batch.
 
 `remindBefore=0` không nhắc theo công thức approved. Không cam kết chính xác từng
 giây: lượt chạy dài bỏ qua tick chồng, event mới qua ngưỡng được xử lý ở lượt sau.
