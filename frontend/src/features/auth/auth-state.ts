@@ -15,14 +15,17 @@ export type AuthStatus =
   | 'unavailable';
 
 export interface AuthSnapshot {
+  accessToken: string | null;
+  role: AuthRole | null;
   status: AuthStatus;
   user: AuthUser | null;
   error: string | null;
 }
 
 const listeners = new Set<() => void>();
-let accessToken: string | null = null;
 let snapshot: AuthSnapshot = {
+  accessToken: null,
+  role: null,
   status: 'restoring',
   user: null,
   error: null,
@@ -43,29 +46,45 @@ function publish(next: AuthSnapshot): void {
 }
 
 export function getAccessToken(): string | null {
-  return accessToken;
-}
-
-export function setAccessToken(token: string | null): void {
-  accessToken = token;
+  return snapshot.accessToken;
 }
 
 export function setAuthenticated(token: string, user: AuthUser): void {
-  accessToken = token;
-  publish({ status: 'authenticated', user, error: null });
+  publish({
+    accessToken: token,
+    role: user.role,
+    status: 'authenticated',
+    user,
+    error: null,
+  });
 }
 
 export function setGuest(error: string | null = null): void {
-  accessToken = null;
-  publish({ status: 'guest', user: null, error });
+  publish({
+    accessToken: null,
+    role: null,
+    status: 'guest',
+    user: null,
+    error,
+  });
 }
 
 export function setAuthUnavailable(message: string): void {
-  accessToken = null;
-  publish({ status: 'unavailable', user: null, error: message });
+  publish({
+    accessToken: null,
+    role: null,
+    status: 'unavailable',
+    user: null,
+    error: message,
+  });
 }
 
 export function setAuthRestoring(): void {
-  accessToken = null;
-  publish({ status: 'restoring', user: null, error: null });
+  publish({
+    accessToken: null,
+    role: null,
+    status: 'restoring',
+    user: null,
+    error: null,
+  });
 }

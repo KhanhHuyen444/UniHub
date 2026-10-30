@@ -12,6 +12,11 @@ import { ForbiddenPage, RequireRole } from '../features/auth/AuthGuard';
 import { LoginPage } from '../features/auth/LoginPage';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
+import { StudentLayout } from '../layouts/StudentLayout';
+import {
+  RecommendationsRoute,
+  AdminCategoriesRoute,
+} from '../features/auth/SessionRoutes';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
 
 export const appPaths = {
@@ -21,78 +26,100 @@ export const appPaths = {
   opportunities: '/opportunities',
   roadmaps: '/roadmaps',
   adminOpportunities: '/admin/opportunities',
+  recommendations: '/recommendations',
+  adminCategories: '/admin/categories',
   notFound: '/404',
 } as const;
+
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route
+        path={appPaths.home}
+        element={<Navigate to={appPaths.developmentHealth} replace />}
+      />
+      <Route path={appPaths.developmentHealth} element={<HealthCheckPage />} />
+      <Route
+        path={appPaths.sharedUiPreview}
+        element={<SharedUiPreviewPage />}
+      />
+      <Route path={appPaths.opportunities} element={<OpportunityHubPage />} />
+      <Route
+        path={`${appPaths.opportunities}/:id`}
+        element={<OpportunityDetailPage />}
+      />
+      <Route path={appPaths.roadmaps} element={<GuidanceRoadmapPage />} />
+      <Route
+        path={`${appPaths.roadmaps}/:id`}
+        element={<GuidanceDetailPage />}
+      />
+      <Route
+        path={appPaths.adminOpportunities}
+        element={
+          <RequireRole role="Admin">
+            <AdminLayout activeKey="moderation">
+              <AdminOpportunitiesPage />
+            </AdminLayout>
+          </RequireRole>
+        }
+      />
+      <Route
+        path={`${appPaths.adminOpportunities}/:id`}
+        element={
+          <RequireRole role="Admin">
+            <AdminLayout activeKey="moderation">
+              <AdminOpportunitiesPage />
+            </AdminLayout>
+          </RequireRole>
+        }
+      />
+      <Route
+        path={appPaths.recommendations}
+        element={
+          <RequireRole role="Student">
+            <StudentLayout activeKey="recommendations">
+              <RecommendationsRoute />
+            </StudentLayout>
+          </RequireRole>
+        }
+      />
+      <Route
+        path={appPaths.adminCategories}
+        element={
+          <RequireRole role="Admin">
+            <AdminLayout activeKey="categories">
+              <AdminCategoriesRoute />
+            </AdminLayout>
+          </RequireRole>
+        }
+      />
+      <Route path={appPaths.notFound} element={<NotFoundPage />} />
+      <Route
+        path="/login"
+        element={
+          <PublicLayout activeKey="home">
+            <LoginPage />
+          </PublicLayout>
+        }
+      />
+      <Route
+        path="/403"
+        element={
+          <PublicLayout activeKey="home">
+            <ForbiddenPage />
+          </PublicLayout>
+        }
+      />
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
+}
 
 export function AppRouter() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route
-            path={appPaths.home}
-            element={<Navigate to={appPaths.developmentHealth} replace />}
-          />
-          <Route
-            path={appPaths.developmentHealth}
-            element={<HealthCheckPage />}
-          />
-          <Route
-            path={appPaths.sharedUiPreview}
-            element={<SharedUiPreviewPage />}
-          />
-          <Route
-            path={appPaths.opportunities}
-            element={<OpportunityHubPage />}
-          />
-          <Route
-            path={`${appPaths.opportunities}/:id`}
-            element={<OpportunityDetailPage />}
-          />
-          <Route path={appPaths.roadmaps} element={<GuidanceRoadmapPage />} />
-          <Route
-            path={`${appPaths.roadmaps}/:id`}
-            element={<GuidanceDetailPage />}
-          />
-          <Route
-            path={appPaths.adminOpportunities}
-            element={
-              <RequireRole role="Admin">
-                <AdminLayout activeKey="moderation">
-                  <AdminOpportunitiesPage />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path={`${appPaths.adminOpportunities}/:id`}
-            element={
-              <RequireRole role="Admin">
-                <AdminLayout activeKey="moderation">
-                  <AdminOpportunitiesPage />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route path={appPaths.notFound} element={<NotFoundPage />} />
-          <Route
-            path="/login"
-            element={
-              <PublicLayout activeKey="home">
-                <LoginPage />
-              </PublicLayout>
-            }
-          />
-          <Route
-            path="/403"
-            element={
-              <PublicLayout activeKey="home">
-                <ForbiddenPage />
-              </PublicLayout>
-            }
-          />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        <AppRoutes />
       </AuthProvider>
     </BrowserRouter>
   );

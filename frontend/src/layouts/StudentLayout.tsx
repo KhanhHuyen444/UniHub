@@ -1,6 +1,7 @@
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { Button } from '../components/ui/Button';
 import notificationIcon from '../assets/notification.svg';
+import logoutIcon from '../assets/logout-icon.png';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
 import { useAuth } from '../features/auth/AuthProvider';
@@ -22,7 +23,14 @@ export function StudentLayout({
   previewNavigation = false,
 }: StudentLayoutProps) {
   const area: Extract<ShellArea, 'student'> = 'student';
-  const { user, status } = useAuth();
+  const { user, status, logout } = useAuth();
+  const navigate = useNavigate();
+  function handleLogout() {
+    const operation = logout();
+    // logout clears memory synchronously; its failure notice lives in Auth state.
+    navigate('/login', { replace: true });
+    void operation.catch(() => undefined);
+  }
   const initials = user?.fullName
     .trim()
     .split(/\s+/)
@@ -112,6 +120,25 @@ export function StudentLayout({
                 {status === 'unavailable' ? 'Phiên chưa sẵn sàng' : 'Đang tải…'}
               </span>
             )}
+            <Button
+              variant="text"
+              size="icon"
+              disabled={
+                previewNavigation || status !== 'authenticated' || !user
+              }
+              aria-label="Đăng xuất"
+              title="Đăng xuất"
+              onClick={handleLogout}
+            >
+              <img
+                src={logoutIcon}
+                alt=""
+                aria-hidden="true"
+                width={16}
+                height={16}
+                className="h-4 w-4 shrink-0"
+              />
+            </Button>
           </div>
         </div>
       </header>
