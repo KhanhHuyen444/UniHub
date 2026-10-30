@@ -33,6 +33,14 @@ function fixture({
           status,
         })),
         { opportunity_type: 'Thực tập', status: 'Unexpected' },
+        ...[
+          'thực tập',
+          'THỰC TẬP',
+          'việc làm',
+          'VIỆC LÀM',
+          'học bổng',
+          'HỌC BỔNG',
+        ].map((opportunity_type) => ({ opportunity_type, status: 'Approved' })),
       ];
   const posts = empty
     ? []
@@ -64,21 +72,19 @@ function fixture({
         return users.length;
       },
     },
-    opportunity: {
-      groupBy: async (args) => {
-        record('opportunities', args);
-        const counts = new Map();
-        for (const row of opportunities)
-          if (
-            args.where.opportunity_type.in.includes(row.opportunity_type) &&
-            args.where.status.in.includes(row.status)
-          )
-            counts.set(row.status, (counts.get(row.status) ?? 0) + 1);
-        return [...counts].map(([status, count]) => ({
-          status,
-          _count: { _all: count },
-        }));
-      },
+    $queryRaw: async (args) => {
+      record('opportunities', args);
+      const counts = new Map();
+      for (const row of opportunities)
+        if (
+          args.values.slice(0, 3).includes(row.opportunity_type) &&
+          args.values.slice(3).includes(row.status)
+        )
+          counts.set(row.status, (counts.get(row.status) ?? 0) + 1);
+      return [...counts].map(([status, count]) => ({
+        status,
+        count: BigInt(count),
+      }));
     },
     forumPost: {
       count: async (args) => {
@@ -173,22 +179,28 @@ test('exact responses count all accounts, allowed opportunity types/statuses, an
       assert.deepEqual(await response.json(), expected[index]);
     }
   });
-  assert.deepEqual(f.calls, [
-    ['accounts', undefined],
-    [
-      'opportunities',
-      {
-        by: ['status'],
-        where: {
-          opportunity_type: { in: ['Thực tập', 'Việc làm', 'Học bổng'] },
-          status: { in: ['Pending', 'Approved', 'Rejected'] },
-        },
-        _count: { _all: true },
-      },
-    ],
-    ['posts', { where: { is_deleted: false } }],
-    ['comments', { where: { is_deleted: false, post: { is_deleted: false } } }],
+  const sql = f.calls.find(([name]) => name === 'opportunities')[1];
+  assert.match(sql.sql, /opportunity_type COLLATE utf8mb4_0900_as_cs IN/);
+  assert.match(sql.sql, /COUNT\(\*\)/);
+  assert.deepEqual(sql.values, [
+    'Thực tập',
+    'Việc làm',
+    'Học bổng',
+    'Pending',
+    'Approved',
+    'Rejected',
   ]);
+  assert.deepEqual(
+    f.calls.filter(([name]) => name !== 'opportunities'),
+    [
+      ['accounts', undefined],
+      ['posts', { where: { is_deleted: false } }],
+      [
+        'comments',
+        { where: { is_deleted: false, post: { is_deleted: false } } },
+      ],
+    ],
+  );
 });
 
 test('empty data preserves every zero field; missing grouped statuses are zero', async () => {

@@ -1,5 +1,9 @@
 # UniHub
 
+## TV4 Dashboard — kết quả review 31/10/2026 trên nhánh PR #35
+
+Đã sửa phép đếm opportunity theo ba loại chính xác, không phụ thuộc collation mặc định. Regression chạy MySQL 8.4.13 cô lập với migrations hiện có đã đạt; không dùng database cá nhân/nhóm. Xem [biên bản và conflict/phụ thuộc](docs/tv4-dashboard-review.md). Chức năng vẫn ở PR, không coi là đã merge main hoặc đã kiểm tra UI Google thật. Runner: `node backend/test/run-dashboard-mysql.mjs --run-isolated` sau build. Không sửa schema/grants.
+
 UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. `main` có bộ khung chung, Public Hub cơ hội, Guidance, Events, danh mục Major/Skill và API xác thực; `GET /api/opportunities` cùng `GET /api/opportunities/:id` là API đọc công khai. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
 
 Health chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi thiếu `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration và Prisma runtime đã merge. Auth schema/backend bốn API, frontend Google login/session và backend Admin review đã có trên `main`. Xem [hướng dẫn runtime database](docs/database-runtime.md) và [database-migrations.md](docs/database-migrations.md). Không có tài khoản mẫu; shared UI preview vẫn chỉ là preview, không xác thực. Health/preview không cần MySQL hoặc Docker. Giao diện Admin review ở nhánh `feat/admin-opportunities-frontend` này, chưa merge.

@@ -1,4 +1,5 @@
 import type { PrismaClient } from '../../generated/prisma/client.js';
+import { Prisma } from '../../generated/prisma/client.js';
 
 function formatInstant(value: Date): string {
   return value.toISOString().replace('.000Z', 'Z');
@@ -16,22 +17,29 @@ export async function getOpportunityMetric(
   client: PrismaClient,
   evaluatedAt: Date,
 ) {
-  const groups = await client.opportunity.groupBy({
-    by: ['status'],
-    where: {
-      opportunity_type: { in: ['Thực tập', 'Việc làm', 'Học bổng'] },
-      status: { in: ['Pending', 'Approved', 'Rejected'] },
-    },
-    _count: { _all: true },
-  });
+  // Explicit case/accent-sensitive predicates match Public Opportunities even
+  // when the database default collation is case-insensitive. Aggregate in SQL;
+  // never load descriptions or individual opportunity rows for this metric.
+  const groups = await client.$queryRaw<
+    Array<{ status: string; count: bigint | number }>
+  >(
+    Prisma.sql`SELECT status, COUNT(*) AS count FROM opportunities
+      WHERE opportunity_type COLLATE utf8mb4_0900_as_cs IN (${'Thực tập'}, ${'Việc làm'}, ${'Học bổng'})
+        AND status COLLATE utf8mb4_0900_as_cs IN (${'Pending'}, ${'Approved'}, ${'Rejected'})
+      GROUP BY status`,
+  );
   const byStatus = { Pending: 0, Approved: 0, Rejected: 0 };
   for (const group of groups) {
     if (
       group.status === 'Pending' ||
       group.status === 'Approved' ||
       group.status === 'Rejected'
-    )
-      byStatus[group.status] = group._count._all;
+    ) {
+      const count = Number(group.count);
+      if (!Number.isSafeInteger(count) || count < 0)
+        throw new Error('Invalid opportunity count.');
+      byStatus[group.status] = count;
+    }
   }
   return { byStatus, evaluatedAt: formatInstant(evaluatedAt) };
 }
