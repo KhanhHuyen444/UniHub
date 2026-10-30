@@ -8,6 +8,26 @@ harness, and proxies `/api` to the real Express application and Prisma/MySQL.
 It does not mock HTTP responses or replace production components. The temporary
 test router does not change the shared application router or layout.
 
+## Shared AuthProvider and Guest
+
+The harness wraps both routes in the real `AuthProvider` from
+`frontend/src/features/auth/AuthProvider.tsx`, inside `BrowserRouter`. It does not
+provide a fake context or override Auth state. A fresh browser has no refresh
+cookie; the provider calls the real `POST /api/auth/refresh` through the same
+Vite proxy and Express server, receives 401 and uses its official Guest flow.
+
+The existing Auth router dependency `getAllowedOrigins` allows only the temporary
+Vite origin. Random test-only JWT configuration is scoped to the test process and
+restored during cleanup; real JWT configuration validation remains enabled.
+No Google verification, Auth/Profile implementation or shared router is changed.
+A harness-only component reads the public `useAuth()` interface and each scenario
+waits for `status === 'guest'`. Guidance and Categories responses are never mocked.
+
+Every test page registers Playwright `pageerror` before navigation. A render error
+immediately rejects the scenario with its original message/cause through
+`Promise.race`, rather than waiting for an element timeout. The listener is
+removed and the page closed in cleanup.
+
 The six scenarios cover:
 
 - Public Major options from `GET /api/categories?type=Major`, excluding Closed
@@ -89,19 +109,23 @@ This is an isolated public Guidance harness, not the integrated application
 layout, authenticated Student Profile flow or production deployment. Fixture
 reads use the existing dependency injection with one transaction-scoped Prisma
 client; the test does not prove independent production transaction isolation.
-Auth/Profile and shared router/layout integration remain separate checks.
+The real AuthProvider's unauthenticated Guest restoration is verified here;
+authenticated Student/Admin sessions, Profile integration, Google login E2E and
+the shared application router/layout remain separate checks.
 
 ## Verification results
 
-Base: `origin/main` at `0301e66f71c83ab0d367886923917e0a3aeb4f2a`.
+PR #32 review update: latest `origin/main` at `2c55089` was merged into
+`test/guidance-integration` without rebase. The original four-file PR changes,
+including the narrow P2039 mapping and its regression tests, are preserved.
 
-| Check                                                                  | Result                                                                                                                                                                             |
-| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| New browser → Express → MySQL 8.4 test, rerun after fix                | PASS: all six scenarios; Node reports seven passes including the enclosing test, zero failures/skips.                                                                              |
-| Existing Backend Guidance suite, dedicated MySQL, rerun                | PASS: 15 tests, including its existing exact-type MySQL opt-in test.                                                                                                               |
-| Full Backend regression, rerun                                         | 133 PASS, zero FAIL, 17 SKIP: isolated MySQL opt-ins were not configured in this run. Includes Guidance/Categories and all four new error regressions.                             |
-| Frontend Guidance API/contracts/pages and Opportunities API regression | Previous run: 30 PASS; mocked/component tests, not rerun for the Backend-only fix.                                                                                                 |
-| Both workspace typecheck/build, rerun                                  | PASS using the previously WASM-generated Prisma client and disabled pre-generation lifecycle. Native Prisma CLI generation was previously blocked by HTTP 403 and was not retried. |
+| Check                                                                                                | Result                                                                                                                                                                             |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| New browser → Express → MySQL 8.4 test, rerun after fix                                              | PASS: all six scenarios; Node reports seven passes including the enclosing test, zero failures/skips.                                                                              |
+| Existing Backend Guidance suite, dedicated MySQL, rerun                                              | PASS: 15 tests, including its existing exact-type MySQL opt-in test.                                                                                                               |
+| Full Backend regression, rerun                                                                       | 133 PASS, zero FAIL, 17 SKIP: isolated MySQL opt-ins were not configured in this run. Includes Guidance/Categories and all four new error regressions.                             |
+| Frontend Auth, Guidance API/contracts/pages and Opportunities API regression, rerun after main merge | 42 PASS, zero FAIL/SKIP. These use mocked API/component fixtures; the separate six-scenario test above uses real Express/MySQL.                                                    |
+| Both workspace typecheck/build, rerun                                                                | PASS using the previously WASM-generated Prisma client and disabled pre-generation lifecycle. Native Prisma CLI generation was previously blocked by HTTP 403 and was not retried. |
 
 The first browser attempt also hit an idle transaction timeout while testing
 connection failures. The final harness moves those checks after rollback. Before

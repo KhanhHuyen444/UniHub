@@ -46,6 +46,15 @@ test(
       '../../backend/dist/lib/prisma.js'
     );
     const client = createPrismaClient(databaseUrl);
+    const authEnvironment = {
+      JWT_SIGNING_SECRET: randomBytes(48).toString('hex'),
+      JWT_ISSUER: 'guidance-integration',
+      JWT_AUDIENCE: 'guidance-browser',
+    };
+    const previousAuthEnvironment = Object.fromEntries(
+      Object.keys(authEnvironment).map((key) => [key, process.env[key]]),
+    );
+    Object.assign(process.env, authEnvironment);
     // Error scenarios still use real Prisma/MySQL: rejected authentication to the
     // disposable DB, never fabricated API responses or an injected query error.
     const deniedUrl = new URL(databaseUrl);
@@ -55,7 +64,7 @@ test(
     const directory = await mkdtemp(
       join(tmpdir(), 'unihub-guidance-integration-'),
     );
-    let backend, vite, browser, runDatabaseErrorScenario;
+    let backend, vite, browser, runDatabaseErrorScenario, base;
     let readClient = client;
     let databaseFailure;
     const captureFailure = (promise) =>
@@ -150,6 +159,10 @@ test(
             guidanceUnavailable = false;
           readClient = tx;
           const app = createApp({
+            // Real Auth refresh returns 401 for a fresh browser without a cookie.
+            // Use the official dependency for the temporary browser origin;
+            // JWT configuration remains validated by the real Auth implementation.
+            auth: { getAllowedOrigins: () => [base] },
             categories: {
               getPrismaClient: () =>
                 majorUnavailable ? failedReads : readClient,
@@ -168,12 +181,15 @@ test(
             `
         import React from 'react'; import {createRoot} from 'react-dom/client';
         import {BrowserRouter,Routes,Route} from 'react-router';
+        import {AuthProvider,useAuth} from ${JSON.stringify(root + '/src/features/auth/AuthProvider.tsx')};
         import {GuidanceRoadmapPage} from ${JSON.stringify(root + '/src/features/guidance/GuidanceRoadmapPage.tsx')};
         import {GuidanceDetailPage} from ${JSON.stringify(root + '/src/features/guidance/GuidanceDetailPage.tsx')};
         const e=React.createElement;
-        createRoot(document.getElementById('root')).render(e(BrowserRouter,null,e(Routes,null,
+        function AuthStatus(){return e('output',{'data-testid':'auth-status',hidden:true},useAuth().status);}
+        createRoot(document.getElementById('root')).render(e(BrowserRouter,null,e(AuthProvider,null,
+          e(AuthStatus),e(Routes,null,
           e(Route,{path:'/roadmaps',element:e(GuidanceRoadmapPage)}),
-          e(Route,{path:'/roadmaps/:id',element:e(GuidanceDetailPage)}))));
+          e(Route,{path:'/roadmaps/:id',element:e(GuidanceDetailPage)})))));
       `,
           );
           vite = await createServer({
@@ -209,7 +225,7 @@ test(
             logLevel: 'silent',
           });
           await vite.listen();
-          const base = `http://127.0.0.1:${vite.httpServer.address().port}`;
+          base = `http://127.0.0.1:${vite.httpServer.address().port}`;
           browser = await chromium.launch({
             headless: true,
             executablePath:
@@ -220,9 +236,32 @@ test(
           });
           const withPage = async (callback) => {
             const page = await browser.newPage();
+            let rejectPageError;
+            const renderFailure = new Promise((_, reject) => {
+              rejectPageError = reject;
+            });
+            const onPageError = (error) => {
+              rejectPageError(
+                new Error(`Guidance browser pageerror: ${error.message}`, {
+                  cause: error,
+                }),
+              );
+            };
+            page.on('pageerror', onPageError);
             try {
-              await callback(page);
+              await Promise.race([
+                (async () => {
+                  await callback(page);
+                  await page.waitForFunction(
+                    () =>
+                      document.querySelector('[data-testid="auth-status"]')
+                        ?.textContent === 'guest',
+                  );
+                })(),
+                renderFailure,
+              ]);
             } finally {
+              page.off('pageerror', onPageError);
               await page.close();
             }
           };
@@ -615,6 +654,10 @@ test(
       await client.$disconnect();
       await deniedClient.$disconnect();
       await rm(directory, { recursive: true, force: true });
+      for (const [key, value] of Object.entries(previousAuthEnvironment)) {
+        if (value === undefined) delete process.env[key];
+        else process.env[key] = value;
+      }
     }
   },
 );
