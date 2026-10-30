@@ -3,6 +3,7 @@ import { Button } from '../components/ui/Button';
 import notificationIcon from '../assets/notification.svg';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
+import { useAuth } from '../features/auth/AuthProvider';
 import {
   navigationTarget,
   studentNavigation,
@@ -21,6 +22,14 @@ export function StudentLayout({
   previewNavigation = false,
 }: StudentLayoutProps) {
   const area: Extract<ShellArea, 'student'> = 'student';
+  const { user, status } = useAuth();
+  const initials = user?.fullName
+    .trim()
+    .split(/\s+/)
+    .slice(-2)
+    .map((part) => part.slice(0, 1))
+    .join('')
+    .toLocaleUpperCase('vi-VN');
 
   return (
     <div className="flex min-h-screen flex-col bg-page">
@@ -58,18 +67,51 @@ export function StudentLayout({
                 className="h-5 w-4 shrink-0"
               />
             </Button>
-            <div className="hidden text-right xl:block">
-              <p className="type-label font-semibold text-ink">
-                Tài khoản xem trước
-              </p>
-              <p className="type-caption text-muted">Student preview</p>
-            </div>
-            <span
-              aria-label="Ảnh đại diện mẫu Student"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-cyan text-sm font-bold leading-5 text-navy"
-            >
-              SV
-            </span>
+            {previewNavigation ? (
+              <>
+                <div className="hidden text-right xl:block">
+                  <p className="type-label font-semibold text-ink">
+                    Tài khoản xem trước
+                  </p>
+                  <p className="type-caption text-muted">Student preview</p>
+                </div>
+                <span
+                  aria-label="Ảnh đại diện mẫu Student"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-cyan text-sm font-bold leading-5 text-navy"
+                >
+                  SV
+                </span>
+              </>
+            ) : user ? (
+              <>
+                <div className="hidden max-w-44 text-right xl:block">
+                  <p className="truncate type-label font-semibold text-ink">
+                    {user.fullName}
+                  </p>
+                  <p className="truncate type-caption text-muted">
+                    {user.email}
+                  </p>
+                </div>
+                {user.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={`Ảnh đại diện của ${user.fullName}`}
+                    className="h-9 w-9 rounded-full object-cover"
+                  />
+                ) : (
+                  <span
+                    aria-label={`Ảnh đại diện của ${user.fullName}`}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-cyan text-sm font-bold leading-5 text-navy"
+                  >
+                    {initials || 'U'}
+                  </span>
+                )}
+              </>
+            ) : (
+              <span role="status" className="type-caption text-muted">
+                {status === 'unavailable' ? 'Phiên chưa sẵn sàng' : 'Đang tải…'}
+              </span>
+            )}
           </div>
         </div>
       </header>

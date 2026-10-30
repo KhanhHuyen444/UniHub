@@ -1,12 +1,12 @@
 # Hợp đồng Admin duyệt cơ hội
 
-> **Contract: leader đã duyệt theo Chương 3 UC-10. Implementation: đã có trên nhánh `feat/admin-opportunities`; chưa merge vào `main`.** Public GET opportunities giữ nguyên. Không thêm API tạo/sửa/xóa cơ hội, Admin source fetch, hoặc seed dữ liệu.
+> **Contract: leader đã duyệt theo Chương 3 UC-10. Backend implementation đã merge vào `main` qua PR #24; frontend nằm trên `feat/admin-opportunities-frontend`.** Public GET opportunities giữ nguyên. Không thêm API tạo/sửa/xóa cơ hội, Admin source fetch, hoặc seed dữ liệu.
 
 ## Quyền và response item
 
 Tất cả endpoint yêu cầu access JWT hợp lệ và requireRole(Admin) ở backend. Guest → 401 UNAUTHORIZED; Student → 403 FORBIDDEN. Public UI guard không phải authorization. Queue/detail là chỉ đọc; chỉ POST approve/reject thay đổi dữ liệu.
 
-AdminOpportunity là một DTO đầy đủ gồm đúng các field sau; ví dụ dùng dữ liệu hư cấu. `deadline` theo deadline object/null trong opportunities contract. Không trả `reviewedBy`, submitter identity/profile, JWT hoặc session data.
+AdminOpportunity là một DTO đầy đủ gồm đúng các field sau; ví dụ dùng dữ liệu hư cấu. `type` theo `opportunity_type` trong database và có thể là `Thực tập`, `Việc làm`, `Học bổng` hoặc `Bài viết định hướng`. Queue Admin giữ mọi bản ghi Pending thuộc cả bốn loại; frontend không lọc loại để tránh làm sai `total` hoặc phân trang. `deadline` theo deadline object/null trong opportunities contract. Không trả `reviewedBy`, submitter identity/profile, JWT hoặc session data.
 
 ```json
 {
@@ -36,7 +36,7 @@ AdminOpportunity là một DTO đầy đủ gồm đúng các field sau; ví d�
 }
 ```
 
-`descriptionText`, `requirementsText`, `workFormat`, `location`, `deadline`, `sourceUrl` và `reviewedAt` có nullability theo schema/public contract. `majors`, `skills` và `eligibleAcademicYears` luôn là mảng. Detail trả status Pending/Approved/Rejected. Public endpoints tiếp tục chỉ trả Approved thuộc ba loại công khai; `isVerified` độc lập với Approved.
+`publisher`, `descriptionText`, `requirementsText`, `workFormat`, `location`, `deadline`, `sourceUrl` và `reviewedAt` theo nullability của schema/DTO; `publisher` có thể là `null` trong response dù quy tắc duyệt vẫn yêu cầu giá trị để approve. `majors`, `skills` và `eligibleAcademicYears` luôn là mảng. Detail trả status Pending/Approved/Rejected. Bản ghi `Bài viết định hướng` vẫn thuộc phạm vi đọc/hiển thị của Admin; API Public vẫn chỉ công khai Approved thuộc ba loại cơ hội. `isVerified` độc lập với Approved.
 
 ## Endpoints
 
@@ -70,4 +70,4 @@ node --test backend/test/admin-opportunities-mysql.test.mjs
 Remove-Item Env:TEST_ADMIN_OPPORTUNITIES_DATABASE_URL
 ```
 
-The branch implementation is not yet on main.
+The backend implementation is on `main` via PR #24. The Admin frontend is being completed on `feat/admin-opportunities-frontend`; it depends on the auth UI from `feat/auth-frontend`, which is not yet on `main`.

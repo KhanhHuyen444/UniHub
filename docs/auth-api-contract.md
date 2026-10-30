@@ -1,6 +1,6 @@
 # Hợp đồng xác thực và phân quyền UniHub
 
-> **Contract đã được duyệt.** Schema, migration và mẫu GRANT cho `google_sub`/`auth_sessions` đã có trên `main`; leader xác nhận đã áp dụng lên database phát triển của mình. Google login, access JWT/middleware, refresh, `/me` và logout đã có trên `main`. Nhánh `feat/admin-bootstrap` bổ sung command operator khởi tạo Admin đầu tiên; frontend auth chưa triển khai.
+> **Contract đã được duyệt.** Schema, migration và mẫu GRANT cho `google_sub`/`auth_sessions` đã có trên `main`; leader xác nhận đã áp dụng lên database phát triển của mình. Google login, access JWT/middleware, refresh, `/me` và logout backend đã có trên `main`. Frontend auth đang được leader triển khai trên `feat/auth-frontend`; implementation này chưa có trên `main` cho tới khi merge PR. Nhánh `feat/admin-bootstrap` bổ sung command operator khởi tạo Admin đầu tiên.
 
 ## 1. Căn cứ và mức độ quyết định
 
@@ -175,7 +175,7 @@ Schema hiện có CHECK `users.role` chỉ nhận Student/Admin. CHECK không x�
 ## 9. Bàn giao leader → TV2 và phụ thuộc Admin cơ hội
 
 - Sau khi leader duyệt contract, leader làm trước nền backend dùng chung: module `backend/src/modules/auth/`, middleware `backend/src/middleware/require-auth.ts` và `require-role.ts` (tên file có thể theo quy ước code sau này), cấu hình/kiểm tra JWT và Google verifier, API login/refresh/me/logout, test auth và audit/transaction cần thiết.
-- Sau handoff và cùng contract đã duyệt, TV2 tiếp quản module/middleware/API nền; hoàn thiện `frontend/src/features/auth/` cho login/logout/session, `frontend/src/features/profile/` và `backend/src/modules/users/` cho hồ sơ/tài khoản. Không tạo JWT client-side hoặc auth API thứ hai; dùng `frontend/src/lib/api.ts` cùng một provider/token-in-memory strategy.
+- Leader triển khai frontend auth dùng chung trong `frontend/src/features/auth/` trên cùng contract/backend; TV2 tiếp quản cơ chế này cho hồ sơ Student và chức năng tài khoản. Không tạo JWT client-side hoặc auth API thứ hai; dùng `frontend/src/lib/api.ts`, provider và access-token-in-memory strategy dùng chung.
 - Admin cơ hội TV1 phụ thuộc `requireAuth` + `requireRole('Admin')`, role từ claim server ký và session do backend kiểm tra, xử lý 401/403 và ghi activity log trong transaction của thao tác duyệt. Không tự tin Admin preview/UI là quyền server.
 - API Major TV3 và các API Admin TV3–TV5 sẽ tái sử dụng cùng middleware; không tự triển khai Skill hoặc module account trong nhánh này.
 - Migration bổ sung `users.google_sub`, bảng `auth_sessions` và GRANT runtime đã có trên `main`; leader xác nhận database phát triển của mình đã áp dụng. Từng môi trường khác cần xác minh migration/GRANT riêng trước khi chạy auth; không thêm account status.
@@ -228,5 +228,5 @@ Ngày đối chiếu: **27/10/2026**. Không nâng Node/Express/Prisma đã ch�
 
 ### Nguồn cần review trước triển khai
 
-- Các điểm nghiệp vụ về domain email, account lock, role timing, Google ID token, `google_sub`/`auth_sessions` và refresh TTL đã được giữ theo quyết định/nguồn đã đọc. Contract auth đã được leader duyệt; schema/migration/GRANT và login/access middleware/refresh/`/me`/logout đã có trên `main`. Nhánh `feat/admin-bootstrap` bổ sung command operator cho Admin đầu tiên; frontend auth chưa triển khai.
+- Các điểm nghiệp vụ về domain email, account lock, role timing, Google ID token, `google_sub`/`auth_sessions` và refresh TTL đã được giữ theo quyết định/nguồn đã đọc. Contract auth đã được leader duyệt; schema/migration/GRANT và login/access middleware/refresh/`/me`/logout đã có trên `main`. Nhánh `feat/admin-bootstrap` bổ sung command operator cho Admin đầu tiên; frontend auth đang được leader triển khai trên `feat/auth-frontend`.
 - Trước triển khai trên schema thật, review migration và quyền runtime/migration; kiểm thử trên MySQL cô lập. Với user legacy chưa có `google_sub`, cần quy trình operator đối soát riêng trước khi cho tài khoản đó dùng Google login; không tự liên kết theo email.

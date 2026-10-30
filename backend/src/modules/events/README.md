@@ -1,5 +1,13 @@
 # events
 
+## Review Reminders 31/10/2026 — PR #26
+
+Đã cập nhật nhánh bằng `origin/main=df6a277` (merge sạch, không conflict thực tế); không đưa Calendar, Notifications hoặc Dashboard đang mở vào PR này. Không phát hiện regression cần sửa trong Reminder service tại head `006f810`; giữ nguyên logic production.
+
+Đã chạy lại **19/19 test MySQL thật, 0 skip/0 fail** trên MySQL 8.4.13 mới hoàn toàn, cổng/datadir/UUID riêng đã xác minh, migrations hiện có. Bao gồm hai worker không trùng, rollback/retry, race deadline/remindBefore/Completed/DELETE, no-op, DATETIME(0), batch/cursor và event quá hạn. Runner Windows: `node backend/test/run-reminders-mysql.mjs --run-isolated` sau build. Không nạp `.env`, không dùng database cá nhân/nhóm, không thay quyền SQL hoặc schema/migration. Các ghi nhận cũ “chưa có MySQL” không còn đúng với lần chạy có guard này.
+
+Root typecheck/build đạt. Root tests: frontend 78 pass / 31 skip, backend 164 pass / 18 skip, 0 fail; các integration không cấu hình test URL vẫn skip trong root run, khác với 19 test đã chạy bằng runner riêng. Không thêm endpoint kích hoạt scheduler. Notifications API/bell và Calendar UI vẫn ở PR riêng; chưa có checkout tích hợp nên không kết luận chuỗi xuyên PR đã đạt.
+
 Đã triển khai: **Backend CRUD Calendar Events (FR-04.1)** theo [hợp đồng API](../../../../docs/events-notifications-api-contract.md).
 
 Phụ trách: **TV4**.
