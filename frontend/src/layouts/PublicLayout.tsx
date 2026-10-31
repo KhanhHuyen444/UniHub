@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { useAuth } from '../features/auth/AuthProvider';
 import { NotificationBell } from '../features/notifications/NotificationBell';
+import { StudentAccountMenu } from '../features/profile/StudentAccountMenu';
 import googleGLogo from '../assets/google-g-logo.svg';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
@@ -83,22 +84,28 @@ export function PublicLayout({
             </span>
           ) : auth.status === 'authenticated' && auth.user ? (
             <div className="flex h-12 w-[270px] shrink-0 items-center justify-end gap-3">
-              {auth.user.role === 'Student' && (
-                <NotificationBell key={auth.user.id} />
+              {auth.user.role === 'Student' ? (
+                <>
+                  <NotificationBell key={auth.user.id} />
+                  <StudentAccountMenu />
+                </>
+              ) : (
+                <>
+                  <span
+                    className="min-w-0 truncate type-label font-medium text-secondary"
+                    title={auth.user.fullName}
+                  >
+                    {auth.user.fullName}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => void logout()}
+                    className="shrink-0 rounded-control border border-control bg-white px-3 py-2 type-label font-medium text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  >
+                    Đăng xuất
+                  </button>
+                </>
               )}
-              <span
-                className="min-w-0 truncate type-label font-medium text-secondary"
-                title={auth.user.fullName}
-              >
-                {auth.user.fullName}
-              </span>
-              <button
-                type="button"
-                onClick={() => void logout()}
-                className="shrink-0 rounded-control border border-control bg-white px-3 py-2 type-label font-medium text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-              >
-                Đăng xuất
-              </button>
             </div>
           ) : auth.status === 'restoring' ? (
             <span

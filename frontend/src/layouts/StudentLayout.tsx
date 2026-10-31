@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { NotificationBell } from '../features/notifications/NotificationBell';
+import { StudentAccountMenu } from '../features/profile/StudentAccountMenu';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
 import { useAuth } from '../features/auth/AuthProvider';
@@ -71,30 +72,34 @@ export function StudentLayout({
                 </span>
               </>
             ) : user ? (
-              <>
-                <div className="hidden max-w-44 text-right xl:block">
-                  <p className="truncate type-label font-semibold text-ink">
-                    {user.fullName}
-                  </p>
-                  <p className="truncate type-caption text-muted">
-                    {user.email}
-                  </p>
-                </div>
-                {user.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={`Ảnh đại diện của ${user.fullName}`}
-                    className="h-9 w-9 rounded-full object-cover"
-                  />
-                ) : (
-                  <span
-                    aria-label={`Ảnh đại diện của ${user.fullName}`}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-cyan text-sm font-bold leading-5 text-navy"
-                  >
-                    {initials || 'U'}
-                  </span>
-                )}
-              </>
+              user.role === 'Student' ? (
+                <StudentAccountMenu />
+              ) : (
+                <>
+                  <div className="hidden max-w-44 text-right xl:block">
+                    <p className="truncate type-label font-semibold text-ink">
+                      {user.fullName}
+                    </p>
+                    <p className="truncate type-caption text-muted">
+                      {user.email}
+                    </p>
+                  </div>
+                  {user.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={`Ảnh đại diện của ${user.fullName}`}
+                      className="h-9 w-9 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span
+                      aria-label={`Ảnh đại diện của ${user.fullName}`}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-cyan text-sm font-bold leading-5 text-navy"
+                    >
+                      {initials || 'U'}
+                    </span>
+                  )}
+                </>
+              )
             ) : (
               <span role="status" className="type-caption text-muted">
                 {status === 'unavailable' ? 'Phiên chưa sẵn sàng' : 'Đang tải…'}

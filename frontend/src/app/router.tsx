@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
+import { BrowserRouter, Route, Routes } from 'react-router';
 import { HealthCheckPage } from './App';
 import { NotFoundPage } from './NotFoundPage';
 import { SharedUiPreviewPage } from './SharedUiPreviewPage';
@@ -15,6 +15,7 @@ import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
 import { AdminDashboardPage } from '../features/admin/dashboard/AdminDashboardPage';
 import { CalendarPage } from '../features/calendar/CalendarPage';
+import { HomePage } from '../features/home/HomePage';
 
 export const appPaths = {
   home: '/',
@@ -34,7 +35,11 @@ export function AppRouter() {
         <Routes>
           <Route
             path={appPaths.home}
-            element={<Navigate to={appPaths.developmentHealth} replace />}
+            element={
+              <PublicLayout activeKey="home">
+                <HomePage />
+              </PublicLayout>
+            }
           />
           <Route
             path={appPaths.developmentHealth}
