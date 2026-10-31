@@ -1,8 +1,12 @@
 # UniHub
 
+## TV4 Dashboard — kết quả review 31/10/2026 trên nhánh PR #35
+
+Đã sửa phép đếm opportunity theo ba loại chính xác, không phụ thuộc collation mặc định. Regression chạy MySQL 8.4.13 cô lập với migrations hiện có đã đạt; không dùng database cá nhân/nhóm. Xem [biên bản và conflict/phụ thuộc](docs/tv4-dashboard-review.md). Chức năng vẫn ở PR, không coi là đã merge main hoặc đã kiểm tra UI Google thật. Runner: `node backend/test/run-dashboard-mysql.mjs --run-isolated` sau build. Không sửa schema/grants.
+
 ## TV4 Reminders — review 31/10/2026 trên PR #26
 
-Nhánh đã cập nhật main `df6a277`, merge sạch và giữ đầy đủ route có trên main. Reminders đã chạy lại **19/19 test MySQL 8.4.13 cô lập**, không còn chỉ là kết quả mock/skip. Xem [module Events/Reminders](backend/src/modules/events/README.md); chạy lại bằng `node backend/test/run-reminders-mysql.mjs --run-isolated` sau build. Không dùng database cá nhân/nhóm, không sửa migration/grants hoặc thêm endpoint scheduler. PR Calendar/Notifications/Dashboard chưa tích hợp, không suy từ test SQL thành PASS toàn luồng giao diện.
+Reminders, Calendar và Notifications đã có trên main `c310a4c` và được giữ lại khi cập nhật nhánh Dashboard PR #35. Reminders đã chạy lại **19/19 test MySQL 8.4.13 cô lập** theo báo cáo trên PR #26. Xem [module Events/Reminders](backend/src/modules/events/README.md); chạy lại bằng `node backend/test/run-reminders-mysql.mjs --run-isolated` sau build. Không dùng database cá nhân/nhóm, không sửa migration/grants hoặc thêm endpoint scheduler. Việc tích hợp mã nguồn không thay thế kiểm thử toàn luồng giao diện với MySQL thật.
 
 UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. `main` có bộ khung chung, Public Hub cơ hội, Guidance, Events, danh mục Major/Skill và API xác thực; `GET /api/opportunities` cùng `GET /api/opportunities/:id` là API đọc công khai. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
 

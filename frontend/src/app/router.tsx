@@ -13,6 +13,7 @@ import { LoginPage } from '../features/auth/LoginPage';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
+import { AdminDashboardPage } from '../features/admin/dashboard/AdminDashboardPage';
 import { CalendarPage } from '../features/calendar/CalendarPage';
 
 export const appPaths = {
@@ -22,6 +23,7 @@ export const appPaths = {
   opportunities: '/opportunities',
   roadmaps: '/roadmaps',
   adminOpportunities: '/admin/opportunities',
+  adminDashboard: '/admin/dashboard',
   notFound: '/404',
 } as const;
 
@@ -51,6 +53,16 @@ export function AppRouter() {
             element={<OpportunityDetailPage />}
           />
           <Route path={appPaths.roadmaps} element={<GuidanceRoadmapPage />} />
+          <Route
+            path={appPaths.adminDashboard}
+            element={
+              <RequireRole role="Admin">
+                <AdminLayout activeKey="dashboard">
+                  <AdminDashboardPage />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
           <Route
             path="/calendar"
             element={
