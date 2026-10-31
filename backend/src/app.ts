@@ -12,6 +12,10 @@ import {
 } from './modules/guidance/guidance.routes.js';
 import express from 'express';
 import {
+  createProfileRouter,
+  type ProfileRouterDependencies,
+} from './modules/users/profile.routes.js';
+import {
   createDashboardRouter,
   type DashboardRouterDependencies,
 } from './modules/dashboard/dashboard.routes.js';
@@ -42,6 +46,7 @@ import {
 } from './modules/admin-opportunities/admin-opportunities.routes.js';
 
 interface AppDependencies {
+  profile?: ProfileRouterDependencies;
   checkDatabase?: () => Promise<void>;
   logDatabaseFailure?: () => void;
   categories?: CategoriesRouterDependencies;
@@ -68,6 +73,7 @@ export function createApp(dependencies: AppDependencies = {}) {
   app.use('/api/health', healthRouter);
   app.use('/api/ready', createReadyRouter(dependencies));
   app.use('/api/auth', createAuthRouter(dependencies.auth));
+  app.use('/api/users/me/profile', createProfileRouter(dependencies.profile));
   app.use('/api/categories', createCategoriesRouter(dependencies.categories));
   app.use(
     '/api/recommendations',

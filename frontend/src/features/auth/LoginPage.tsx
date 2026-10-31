@@ -1,15 +1,14 @@
 import { useCallback, useRef, useState } from 'react';
-import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
+import { Link, Navigate, useSearchParams } from 'react-router';
 import { ApiError } from '../../lib/api';
 import { useAuth } from './AuthProvider';
 import { GoogleIdentityButton } from './GoogleIdentityButton';
 import { loginDestination } from './return-path';
-import { getAuthSnapshot } from './auth-state';
+import { ProfileLoginRedirect } from '../profile/ProfileLoginRedirect';
 
 export function LoginPage() {
   const { status, user, error: authError, loginWithGoogleIdToken } = useAuth();
   const [query] = useSearchParams();
-  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const submittingRef = useRef(false);
@@ -28,14 +27,6 @@ export function LoginPage() {
       setError(null);
       try {
         await loginWithGoogleIdToken(credential);
-        navigate(
-          loginDestination(
-            returnTo,
-            getAuthSnapshot().user?.role ?? null,
-            window.location.origin,
-          ),
-          { replace: true },
-        );
       } catch (loginError) {
         setError(
           loginError instanceof ApiError
@@ -47,10 +38,18 @@ export function LoginPage() {
         setSubmitting(false);
       }
     },
-    [loginWithGoogleIdToken, navigate, returnTo],
+    [loginWithGoogleIdToken],
   );
 
   if (status === 'authenticated' && user) {
+    if (user.role === 'Student')
+      return (
+        <ProfileLoginRedirect
+          key={user.id}
+          userId={user.id}
+          returnTo={returnTo}
+        />
+      );
     return <Navigate to={returnPath} replace />;
   }
 
@@ -71,7 +70,7 @@ export function LoginPage() {
         <div className="mt-7">
           <GoogleIdentityButton
             onCredential={acceptCredential}
-            disabled={submitting}
+            disabled={submitting || status === 'restoring'}
           />
         </div>
         {submitting ? (

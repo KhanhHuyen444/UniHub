@@ -92,6 +92,14 @@ export function PublicLayout({
               >
                 {auth.user.fullName}
               </span>
+              {auth.user.role === 'Student' && (
+                <Link
+                  to="/profile"
+                  className="shrink-0 text-sm text-brand underline"
+                >
+                  Hồ sơ cá nhân
+                </Link>
+              )}
               <button
                 type="button"
                 onClick={() => void logout()}
