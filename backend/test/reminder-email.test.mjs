@@ -170,6 +170,9 @@ test('enabled configuration rejects missing/unsafe settings without leaking valu
     { APP_BASE_URL: 'https://unihub.example#private' },
     { APP_BASE_URL: 'http://unihub.example' },
     { APP_BASE_URL: 'http://localhost:5173', NODE_ENV: 'production' },
+    { EMAIL_PROVIDER: 'unsupported-provider' },
+    { EMAIL_FROM_NAME: 'bad\r\nname' },
+    { EMAIL_FROM_NAME: 'x'.repeat(101) },
   ]) {
     assert.throws(
       () => readReminderEmailConfig({ ...environment, ...overrides }),
@@ -181,6 +184,34 @@ test('enabled configuration rejects missing/unsafe settings without leaking valu
     APP_BASE_URL: 'http://127.0.0.1:5173',
   });
   assert.equal(local.calendarUrl, 'http://127.0.0.1:5173/calendar');
+});
+
+test('enabled configuration supports EMAIL_PROVIDER=resend and EMAIL_PROVIDER=gmail-smtp', () => {
+  const defaultProvider = readReminderEmailConfig(environment);
+  assert.equal(defaultProvider.provider, 'resend');
+
+  const gmailConfig = readReminderEmailConfig({
+    ...environment,
+    EMAIL_PROVIDER: 'gmail-smtp',
+  });
+  assert.equal(gmailConfig.provider, 'gmail-smtp');
+});
+
+test('enabled configuration supports EMAIL_FROM_NAME and defaults to UniHub', () => {
+  const defaultConfig = readReminderEmailConfig(environment);
+  assert.equal(defaultConfig.fromName, 'UniHub');
+
+  const customConfig = readReminderEmailConfig({
+    ...environment,
+    EMAIL_FROM_NAME: 'UniHub Support',
+  });
+  assert.equal(customConfig.fromName, 'UniHub Support');
+
+  const whitespaceConfig = readReminderEmailConfig({
+    ...environment,
+    EMAIL_FROM_NAME: '   ',
+  });
+  assert.equal(whitespaceConfig.fromName, 'UniHub');
 });
 
 test('valid single mailboxes work unchanged for both sender and recipient', () => {

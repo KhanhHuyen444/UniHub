@@ -756,6 +756,26 @@ test('disabled mode has no database/transport/timer access; shutdown aborts and 
       }),
     /PROVIDER_CONFIG_INVALID/,
   );
+  assert.throws(
+    () =>
+      createConfiguredReminderEmailWorker({
+        EVENT_REMINDER_EMAIL_ENABLED: 'true',
+        EMAIL_PROVIDER: 'gmail-smtp',
+        EMAIL_FROM: 'sender@example.test',
+        EMAIL_IDEMPOTENCY_NAMESPACE: 'test',
+        APP_BASE_URL: 'https://unihub.example',
+      }),
+    /PROVIDER_CONFIG_INVALID/,
+  );
+  const gmailConfigured = createConfiguredReminderEmailWorker({
+    EVENT_REMINDER_EMAIL_ENABLED: 'true',
+    EMAIL_PROVIDER: 'gmail-smtp',
+    EMAIL_FROM: 'sender@example.test',
+    EMAIL_IDEMPOTENCY_NAMESPACE: 'test',
+    APP_BASE_URL: 'https://unihub.example',
+    GMAIL_APP_PASSWORD: 'abcdefghijklmnop',
+  });
+  assert.ok(gmailConfigured);
   const f = database();
   const w = worker(f, () => new Promise(() => {}));
   w.w.start();

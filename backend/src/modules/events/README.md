@@ -143,13 +143,39 @@ Không backfill/reconcile/purge, không sửa activity_logs, không thêm endpoi
 
 Rollout (không thực hiện trong Phase 3 này): giữ cờ false; người quản trị xác nhận
 migration đã được duyệt/áp dụng, runtime có SELECT/INSERT/UPDATE trên bảng mới; cấu
-hình sender/domain đã verify tại Resend, `APP_BASE_URL` đúng origin ứng dụng,
-namespace ổn định và riêng cho environment/database lineage, `RESEND_API_KEY` chỉ
-ở backend. Sau review/test MySQL cô lập mới đặt cờ true và restart backend. Cờ true
+hình sender/domain đã verify tại Resend hoặc Gmail SMTP (`EMAIL_PROVIDER=resend|gmail-smtp`),
+`APP_BASE_URL` đúng origin ứng dụng, namespace ổn định và riêng cho environment/database lineage.
+Sau review/test MySQL cô lập mới đặt cờ true và restart backend. Cờ true
 bật cả enqueue lẫn gửi thật, không có chế độ enqueue-only. Thiếu key/config thì
 khởi tạo thất bại có thông báo đã che dữ liệu, không fallback bell-only. Đặt false
 và restart sẽ dừng cả worker lẫn enqueue; job cũ giữ nguyên, revalidate khi bật lại.
 Không dùng key/namespace của production để gửi job từ database clone/restore.
+
+### Cấu hình Gmail SMTP (Nodemailer) cho Demo
+
+Hệ thống hỗ trợ gửi email trực tiếp qua Gmail SMTP bằng Google App Password:
+
+1. `EMAIL_PROVIDER=gmail-smtp`: Kích hoạt transport SMTP thay cho Resend.
+2. `GMAIL_SMTP_USER`: Tài khoản Gmail gửi thư (mặc định lấy giá trị `EMAIL_FROM` nếu để trống).
+3. `GMAIL_APP_PASSWORD`: Mật khẩu ứng dụng 16 ký tự tạo tại `myaccount.google.com/apppasswords`
+   (yêu cầu tài khoản Google đã bật Xác minh 2 bước; không dùng mật khẩu đăng nhập chính).
+4. `EMAIL_FROM`: Địa chỉ Gmail của tài khoản gửi (ví dụ: `myaccount@gmail.com`).
+5. `EMAIL_FROM_NAME`: Tên hiển thị người gửi (mặc định là `UniHub` nếu không thiết lập; khi gửi qua Nodemailer sẽ dùng định dạng `{ name: 'UniHub', address: EMAIL_FROM }`).
+
+**Gửi thật tới các thành viên:**
+Hệ thống không hardcode danh sách email nhận. Recipient được lấy động từ trường `users.email`
+của tài khoản Student sở hữu Event khi đăng nhập Google. Khi 5 thành viên nhóm đăng nhập
+bằng tài khoản Google cá nhân và tạo Event có đặt lịch nhắc, worker sẽ tự động gửi email nhắc hạn
+tới đúng địa chỉ Gmail của từng thành viên.
+
+**Đặc thù Idempotency & Retry trên SMTP:**
+Khác với API HTTP của Resend hỗ trợ header `Idempotency-Key` phía server, giao thức SMTP tiêu chuẩn
+không có cơ chế deduplication tích hợp trên máy chủ. Header `X-Idempotency-Key` được đính kèm vào email
+để truy vết. Nếu xảy ra đứt kết nối mạng sau lệnh `DATA` nhưng trước khi nhận mã phản hồi `250 OK`,
+lượt retry tiếp theo có thể dẫn đến việc người nhận nhận thư trùng lặp. Lỗi xác thực (535) và từ chối địa chỉ
+(5xx) được đánh dấu vĩnh viễn (`Dead`, không retry) để tránh khóa tài khoản do spam đăng nhập sai.
+Lỗi tạm thời (421, 450, 452) tuân thủ chính sách backoff tối đa 6 lần thử. Tuyệt đối không log thông tin
+mật khẩu ứng dụng, email cá nhân hay nội dung thư.
 
 Test fake-only (tại gốc sau backend build):
 `node --test backend/test/mail-transport.test.mjs backend/test/reminder-email-worker.test.mjs backend/test/reminder-email.test.mjs backend/test/reminders.test.mjs backend/test/shutdown.test.mjs`.
