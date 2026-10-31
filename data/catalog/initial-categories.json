@@ -1,0 +1,122 @@
+[
+  {
+    "type": "Major",
+    "name": "Quản trị nhân lực"
+  },
+  {
+    "type": "Major",
+    "name": "Quản trị kinh doanh"
+  },
+  {
+    "type": "Major",
+    "name": "Quản trị rủi ro"
+  },
+  {
+    "type": "Major",
+    "name": "Đảm bảo chất lượng"
+  },
+  {
+    "type": "Major",
+    "name": "Kiểm toán"
+  },
+  {
+    "type": "Major",
+    "name": "Marketing"
+  },
+  {
+    "type": "Major",
+    "name": "Truyền thông"
+  },
+  {
+    "type": "Major",
+    "name": "Báo chí"
+  },
+  {
+    "type": "Major",
+    "name": "Kế toán"
+  },
+  {
+    "type": "Major",
+    "name": "Tài chính"
+  },
+  {
+    "type": "Major",
+    "name": "Kinh tế"
+  },
+  {
+    "type": "Skill",
+    "name": "Microsoft Word"
+  },
+  {
+    "type": "Skill",
+    "name": "Microsoft Excel"
+  },
+  {
+    "type": "Skill",
+    "name": "Làm việc nhóm"
+  },
+  {
+    "type": "Skill",
+    "name": "Quản trị rủi ro doanh nghiệp"
+  },
+  {
+    "type": "Skill",
+    "name": "Giao tiếp"
+  },
+  {
+    "type": "Skill",
+    "name": "Tiếng Anh"
+  },
+  {
+    "type": "Skill",
+    "name": "Google Sheets"
+  },
+  {
+    "type": "Skill",
+    "name": "Google Docs"
+  },
+  {
+    "type": "Skill",
+    "name": "Google Slides"
+  },
+  {
+    "type": "Skill",
+    "name": "Google Forms"
+  },
+  {
+    "type": "Skill",
+    "name": "Viết và trình bày nội dung"
+  },
+  {
+    "type": "Skill",
+    "name": "Làm việc độc lập"
+  },
+  {
+    "type": "Skill",
+    "name": "Sử dụng mạng xã hội phục vụ tuyển dụng"
+  },
+  {
+    "type": "Skill",
+    "name": "CapCut"
+  },
+  {
+    "type": "Skill",
+    "name": "Affiliate Marketing"
+  },
+  {
+    "type": "Skill",
+    "name": "Sáng tạo nội dung"
+  },
+  {
+    "type": "Skill",
+    "name": "Chỉnh sửa hình ảnh và video cơ bản"
+  },
+  {
+    "type": "Skill",
+    "name": "Phát triển cộng đồng trực tuyến"
+  },
+  {
+    "type": "Skill",
+    "name": "Quản lý công việc"
+  }
+]

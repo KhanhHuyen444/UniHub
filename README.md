@@ -1,5 +1,9 @@
 # UniHub
 
+## Danh mục chuẩn dùng chung
+
+Bộ đã duyệt **11 Major + 19 Skill** ở [data/catalog/initial-categories.json](data/catalog/initial-categories.json). Git chỉ chia sẻ tên/loại và importer; mỗi thành viên tự nhập vào database riêng. Xem [hướng dẫn PowerShell tại gốc repo](data/catalog/README.md) để chuẩn bị migration, dry-run mặc định, apply rõ ràng và kiểm tra chạy lại. Không cần nhập 8 cơ hội; không chia sẻ ID local, `.env` hoặc database dump. [Kết quả kiểm thử](docs/catalog-import-validation.md).
+
 ## TV4 Reminders — review 31/10/2026 trên PR #26
 
 Nhánh đã cập nhật main `df6a277`, merge sạch và giữ đầy đủ route có trên main. Reminders đã chạy lại **19/19 test MySQL 8.4.13 cô lập**, không còn chỉ là kết quả mock/skip. Xem [module Events/Reminders](backend/src/modules/events/README.md); chạy lại bằng `node backend/test/run-reminders-mysql.mjs --run-isolated` sau build. Không dùng database cá nhân/nhóm, không sửa migration/grants hoặc thêm endpoint scheduler. PR Calendar/Notifications/Dashboard chưa tích hợp, không suy từ test SQL thành PASS toàn luồng giao diện.
