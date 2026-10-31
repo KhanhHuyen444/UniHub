@@ -1,8 +1,9 @@
-import { ApiError, apiRequest } from '../../lib/api';
+import { ApiError } from '../../lib/api';
+import { protectedApiRequest } from '../auth/auth-api';
 import { parseSkillOptions, type SkillOption } from './contracts';
 
-// Auth owns the token lifecycle. Reuse the shared API client's headers support;
-// do not read storage, decode JWTs, refresh or introduce another fetch client.
+// Auth owns the token lifecycle, including refresh and retry.
+// The token argument remains a caller gate; the shared client reads the current session.
 export async function getSkillOptions(
   accessToken: string,
   signal?: AbortSignal,
@@ -14,9 +15,8 @@ export async function getSkillOptions(
       status: 401,
     });
   return parseSkillOptions(
-    await apiRequest<unknown>('/api/categories', {
+    await protectedApiRequest<unknown>('/api/categories', {
       query: new URLSearchParams({ type: 'Skill' }),
-      headers: { Authorization: `Bearer ${accessToken}` },
       signal,
     }),
   );

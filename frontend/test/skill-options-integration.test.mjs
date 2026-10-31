@@ -147,9 +147,11 @@ test(
             entry,
             `
         import React,{useState} from 'react'; import {createRoot} from 'react-dom/client';
-        import {SkillOptionsField} from ${JSON.stringify(root + '/src/features/categories/SkillOptionsField.tsx')};
+        import {setAccessToken} from ${JSON.stringify(root + '/src/features/auth/auth-state.ts')};
+    import {SkillOptionsField} from ${JSON.stringify(root + '/src/features/categories/SkillOptionsField.tsx')};
         const e=React.createElement;
         function Harness() {const [token,setToken]=useState(null);const [ids,setIds]=useState([]);
+          setAccessToken(token);
           window.setSkillTestToken=setToken;
           return e('div',null,e(SkillOptionsField,{accessToken:token,role:token?'Student':null,selectedIds:ids,onChange:setIds}),
             e('output',null,JSON.stringify(ids)));}

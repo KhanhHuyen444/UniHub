@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { EmptyState, ErrorState, LoadingState } from '../../components/ui';
 import { useSkillOptions, type SkillOptionsRole } from './useSkillOptions';
 
@@ -7,6 +8,7 @@ export interface SkillOptionsFieldProps {
   selectedIds: readonly number[];
   onChange: (ids: number[]) => void;
   disabled?: boolean;
+  searchable?: boolean;
 }
 
 export function SkillOptionsField({
@@ -15,7 +17,9 @@ export function SkillOptionsField({
   selectedIds,
   onChange,
   disabled = false,
+  searchable = false,
 }: SkillOptionsFieldProps) {
+  const [search, setSearch] = useState('');
   const { state, retry } = useSkillOptions(accessToken, role);
   let content;
   if (state.status === 'unauthenticated')
@@ -58,28 +62,36 @@ export function SkillOptionsField({
   else if (state.status === 'success')
     content = (
       <div className="grid gap-2 sm:grid-cols-2">
-        {state.options.map((option) => (
-          <label
-            key={option.id}
-            className="flex cursor-pointer items-center gap-3 rounded-control border border-line bg-white p-3 type-label text-secondary"
-          >
-            <input
-              type="checkbox"
-              className="h-4 w-4 accent-brand"
-              checked={selectedIds.includes(option.id)}
-              onChange={(event) => {
-                // Preserve unlisted existing IDs (e.g. Closed Profile links). The Profile
-                // owner renders/manages those separately; options never silently erase them.
-                onChange(
-                  event.currentTarget.checked
-                    ? [...selectedIds, option.id]
-                    : selectedIds.filter((id) => id !== option.id),
-                );
-              }}
-            />
-            <span>{option.name}</span>
-          </label>
-        ))}
+        {state.options
+          .filter(
+            (option) =>
+              !searchable ||
+              option.name
+                .toLocaleLowerCase('vi-VN')
+                .includes(search.trim().toLocaleLowerCase('vi-VN')),
+          )
+          .map((option) => (
+            <label
+              key={option.id}
+              className="flex cursor-pointer items-center gap-3 rounded-control border border-line bg-white p-3 type-label text-secondary"
+            >
+              <input
+                type="checkbox"
+                className="h-4 w-4 accent-brand"
+                checked={selectedIds.includes(option.id)}
+                onChange={(event) => {
+                  // Preserve unlisted existing IDs (e.g. Closed Profile links). The Profile
+                  // owner renders/manages those separately; options never silently erase them.
+                  onChange(
+                    event.currentTarget.checked
+                      ? [...selectedIds, option.id]
+                      : selectedIds.filter((id) => id !== option.id),
+                  );
+                }}
+              />
+              <span>{option.name}</span>
+            </label>
+          ))}
       </div>
     );
   return (
@@ -90,7 +102,31 @@ export function SkillOptionsField({
       <p className="type-caption text-muted">
         Chọn kỹ năng đang hoạt động cho hồ sơ của bạn.
       </p>
+      {searchable && (
+        <label className="grid gap-2 text-sm">
+          <span className="sr-only">Tìm kiếm kỹ năng</span>
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Tìm kiếm kỹ năng có sẵn (ví dụ: Python, ReactJS, SQL...)"
+            className="w-full rounded-control border border-line p-3"
+          />
+        </label>
+      )}
       {content}
+      {searchable &&
+        state.status === 'success' &&
+        state.options.length > 0 &&
+        !state.options.some((option) =>
+          option.name
+            .toLocaleLowerCase('vi-VN')
+            .includes(search.trim().toLocaleLowerCase('vi-VN')),
+        ) && (
+          <p role="status" className="text-sm text-muted">
+            Không tìm thấy kỹ năng phù hợp.
+          </p>
+        )}
     </fieldset>
   );
 }

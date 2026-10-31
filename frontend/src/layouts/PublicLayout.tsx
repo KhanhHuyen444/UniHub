@@ -1,3 +1,4 @@
+import { StudentAccountMenu } from './StudentAccountMenu';
 import { Link } from 'react-router';
 import { useAuth } from '../features/auth/AuthProvider';
 import googleGLogo from '../assets/google-g-logo.svg';
@@ -72,6 +73,9 @@ export function PublicLayout({
               />
               Đăng nhập với Google
             </span>
+          ) : auth.status === 'authenticated' &&
+            auth.user?.role === 'Student' ? (
+            <StudentAccountMenu />
           ) : auth.status === 'authenticated' && auth.user ? (
             <div className="flex h-12 w-[270px] shrink-0 items-center justify-end gap-3">
               <span

@@ -33,6 +33,9 @@ before(async () => {
 beforeEach(async () => {
   if (!harness) return;
   page = await harness.browser.newPage();
+  await page.route('**/api/auth/refresh', (route) =>
+    fail(route, 'UNAUTHORIZED', 401),
+  );
   await page.addInitScript(() => {
     window.recommendationRequests = [];
     const original = window.fetch;

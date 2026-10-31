@@ -1,4 +1,5 @@
-import { ApiError, apiRequest } from '../../lib/api';
+import { ApiError } from '../../lib/api';
+import { protectedApiRequest } from '../auth/auth-api';
 import { parseRecommendations } from './contracts';
 export async function getRecommendations(
   accessToken: string,
@@ -11,8 +12,7 @@ export async function getRecommendations(
       status: 401,
     });
   return parseRecommendations(
-    await apiRequest<unknown>('/api/recommendations', {
-      headers: { Authorization: `Bearer ${accessToken}` },
+    await protectedApiRequest<unknown>('/api/recommendations', {
       signal,
     }),
   );

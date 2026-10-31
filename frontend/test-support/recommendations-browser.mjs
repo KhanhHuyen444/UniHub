@@ -31,9 +31,11 @@ export async function startRecommendationsHarness({
       entry,
       `
       import React,{useState} from 'react';import {createRoot} from 'react-dom/client';import {BrowserRouter} from 'react-router';
-      import {RecommendationsPage} from ${JSON.stringify(root + '/src/features/recommendations/RecommendationsPage.tsx')};
+      import {setAccessToken} from ${JSON.stringify(root + '/src/features/auth/auth-state.ts')};
+    import {RecommendationsPage} from ${JSON.stringify(root + '/src/features/recommendations/RecommendationsPage.tsx')};
       const e=React.createElement;
       function Harness(){const [token,setToken]=useState(${authenticated ? "'student-test-token'" : 'null'});const [role,setRole]=useState(${authenticated ? "'Student'" : 'null'});const [visible,setVisible]=useState(true);
+        setAccessToken(token);
         window.recommendationTest={setToken,setRole,setVisible};
         return visible?e(RecommendationsPage,{accessToken:token,role,onCompleteProfile:()=>{window.profileRequested=true;},onSignIn:()=>{window.signInRequested=true;}}):e('p',null,'Unmounted');}
       createRoot(document.getElementById('root')).render(e(BrowserRouter,null,e(Harness)));

@@ -32,7 +32,7 @@ function RecommendationsRoute() {
     <RecommendationsPage
       accessToken={getAccessToken()}
       role={user?.role ?? null}
-      onCompleteProfile={() => navigate('/profile')}
+      onCompleteProfile={() => navigate('/profile?returnTo=%2Frecommendations')}
       onSignIn={() => navigate('/login?returnTo=%2Frecommendations')}
     />
   );
