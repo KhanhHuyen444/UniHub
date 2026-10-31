@@ -1,4 +1,3 @@
-import { StudentAccountMenu } from './StudentAccountMenu';
 import { Link } from 'react-router';
 import { Button } from '../components/ui/Button';
 import notificationIcon from '../assets/notification.svg';
@@ -24,16 +23,20 @@ export function StudentLayout({
 }: StudentLayoutProps) {
   const area: Extract<ShellArea, 'student'> = 'student';
   const { user, status } = useAuth();
+  const initials = user?.fullName
+    .trim()
+    .split(/\s+/)
+    .slice(-2)
+    .map((part) => part.slice(0, 1))
+    .join('')
+    .toLocaleUpperCase('vi-VN');
 
   return (
     <div className="flex min-h-screen flex-col bg-page">
-      <header className="shrink-0 border-b border-line bg-white/95 shadow-nav backdrop-blur-[12px]">
-        <div className="mx-auto flex min-h-16 max-w-student flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-8 lg:flex-nowrap lg:py-0">
+      <header className="h-16 shrink-0 border-b border-line bg-white/95 shadow-nav backdrop-blur-[12px]">
+        <div className="mx-auto flex h-full max-w-student items-center gap-8 px-8">
           <Brand area={area} previewNavigation={previewNavigation} />
-          <nav
-            aria-label="Điều hướng sinh viên"
-            className="order-3 w-full min-w-0 overflow-x-auto lg:order-none lg:w-auto lg:flex-1"
-          >
+          <nav aria-label="Điều hướng sinh viên" className="min-w-0 flex-1">
             <ul className="flex items-center justify-between gap-4">
               {studentNavigation.map((item) => (
                 <li key={item.key}>
@@ -80,7 +83,30 @@ export function StudentLayout({
                 </span>
               </>
             ) : user ? (
-              <StudentAccountMenu />
+              <>
+                <div className="hidden max-w-44 text-right xl:block">
+                  <p className="truncate type-label font-semibold text-ink">
+                    {user.fullName}
+                  </p>
+                  <p className="truncate type-caption text-muted">
+                    {user.email}
+                  </p>
+                </div>
+                {user.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={`Ảnh đại diện của ${user.fullName}`}
+                    className="h-9 w-9 rounded-full object-cover"
+                  />
+                ) : (
+                  <span
+                    aria-label={`Ảnh đại diện của ${user.fullName}`}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-cyan text-sm font-bold leading-5 text-navy"
+                  >
+                    {initials || 'U'}
+                  </span>
+                )}
+              </>
             ) : (
               <span role="status" className="type-caption text-muted">
                 {status === 'unavailable' ? 'Phiên chưa sẵn sàng' : 'Đang tải…'}
@@ -91,7 +117,7 @@ export function StudentLayout({
       </header>
 
       <main className="w-full flex-1">
-        <div className="mx-auto w-full max-w-student px-4 py-8 sm:px-8 sm:pb-20">
+        <div className="mx-auto w-full max-w-student px-8 py-10">
           {children}
         </div>
       </main>

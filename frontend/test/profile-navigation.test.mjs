@@ -22,10 +22,10 @@ before(async () => {
     '/src/features/auth/AuthProvider.tsx',
   ));
   ({ StudentAccountMenu } = await vite.ssrLoadModule(
-    '/src/layouts/StudentAccountMenu.tsx',
+    '/src/features/profile/StudentAccountMenu.tsx',
   ));
   ({ UserAvatar } = await vite.ssrLoadModule(
-    '/src/components/ui/UserAvatar.tsx',
+    '/src/features/profile/UserAvatar.tsx',
   ));
 });
 after(async () => {

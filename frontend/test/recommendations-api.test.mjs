@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { before, beforeEach, after, afterEach, test } from 'node:test';
+import { before, after, afterEach, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
 import { parseRecommendations } from '../src/features/recommendations/contracts.ts';
@@ -16,7 +16,7 @@ const item = {
   matchScore: 0.7632,
 };
 const payload = (items = [item]) => ({ items, meta: { evaluatedAt } });
-let vite, api, auth, fetcher;
+let vite, api, fetcher;
 const original = globalThis.fetch;
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -32,18 +32,8 @@ before(async () => {
     root: fileURLToPath(new URL('..', import.meta.url)),
     server: { middlewareMode: true },
   });
-  auth = await vite.ssrLoadModule('/src/features/auth/auth-state.ts');
   api = await vite.ssrLoadModule('/src/features/recommendations/api.ts');
 });
-beforeEach(() =>
-  auth.setAuthenticated('student-test-token', {
-    id: 1,
-    role: 'Student',
-    fullName: 'Fixture',
-    email: 'fixture@example.invalid',
-    avatarUrl: null,
-  }),
-);
 afterEach(() => {
   fetcher = original;
 });
@@ -209,51 +199,4 @@ test('network, malformed successful JSON and abort propagate without empty fallb
     api.getRecommendations('token'),
     (error) => error === aborted,
   );
-});
-
-const refreshUser = {
-  id: 1,
-  role: 'Student',
-  fullName: 'Fixture',
-  email: 'fixture@example.invalid',
-  avatarUrl: null,
-};
-test('expired access uses shared refresh once, then retries with current session token', async () => {
-  auth.setAuthenticated('expired', refreshUser);
-  let refreshes = 0,
-    requests = 0;
-  fetcher = async (path, options) => {
-    if (path === '/api/auth/refresh') {
-      refreshes++;
-      assert.equal(options.credentials, 'include');
-      return json({
-        accessToken: 'renewed',
-        tokenType: 'Bearer',
-        expiresIn: 900,
-        user: refreshUser,
-      });
-    }
-    if (path === '/api/auth/me') return json({ user: refreshUser });
-    requests++;
-    if (options.headers.get('Authorization') === 'Bearer expired')
-      return json({ error: { code: 'UNAUTHORIZED', message: 'Expired' } }, 401);
-    assert.equal(options.headers.get('Authorization'), 'Bearer renewed');
-    return json(payload());
-  };
-  await api.getRecommendations('expired');
-  assert.equal(refreshes, 1);
-  assert.equal(requests, 2);
-  assert.equal(auth.getAuthSnapshot().status, 'authenticated');
-});
-test('revoked refresh clears session without retry loop', async () => {
-  auth.setAuthenticated('expired', refreshUser);
-  const paths = [];
-  fetcher = async (path) => {
-    paths.push(path);
-    return json({ error: { code: 'UNAUTHORIZED', message: 'Expired' } }, 401);
-  };
-  await assert.rejects(api.getRecommendations('expired'), { status: 401 });
-  assert.equal(paths.length, 2);
-  assert.equal(paths[1], '/api/auth/refresh');
-  assert.equal(auth.getAuthSnapshot().status, 'guest');
 });

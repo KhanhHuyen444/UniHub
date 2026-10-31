@@ -1,44 +1,42 @@
 # Student Profile — Task 2
 
-`/profile` chỉ dành cho Student qua `RequireRole`. GET/PUT dùng [Profile contract](../../../../docs/profile-api-contract.md) và `protectedApiRequest` của Auth. Profile giữ state nghiệp vụ riêng; không mở rộng AuthProvider.
+`/profile` chỉ dành cho Student qua `RequireRole`. GET/PUT dùng [Profile contract](../../../../docs/profile-api-contract.md) và `protectedApiRequest` của Auth. Profile giữ state nghiệp vụ riêng, không mở rộng AuthProvider.
 
-## Thay đổi sau review PR #36
+## Phạm vi sau khi thu hồi thay đổi ngoài Task 2
 
-- Bố cục theo ảnh “Tạo hồ sơ”: tiêu đề Hồ sơ cá nhân, card Google/account và học thuật bên trái, card trạng thái/lưu/để sau bên phải; một cột ở màn hình nhỏ. Dùng header/footer và design tokens chung.
-- Tên/email chỉ đọc từ Auth. `UserAvatar` hiển thị initials khi thiếu ảnh hoặc tải ảnh lỗi. Menu tài khoản Student có Profile, Recommendations và logout, được dùng trên Student shell và Hub công khai.
-- Tái sử dụng trực tiếp `SkillOptionsField`; thêm tùy chọn `searchable` (mặc định false, không đổi consumer cũ). Tìm kiếm chỉ lọc hiển thị, không thay selected IDs. Không nhập kỹ năng tự do.
-- Khởi tạo toàn bộ Skill IDs gồm Closed, bảo toàn trừ khi chủ động gỡ; Major Closed hiện tại vẫn là lựa chọn hợp lệ. Major/Skill mới lấy API Active, không hardcode dữ liệu.
-- Badge phản ánh `isComplete` đã lưu từ server; checklist phản ánh form đang nhập và có ghi chú chỉ cập nhật sau khi lưu. Lỗi tải không trở thành hồ sơ rỗng, lỗi lưu giữ form. Đổi identity remount; abort và kiểm tra session loại response cũ.
-- Skills/Recommendations chuyển sang `protectedApiRequest`: Auth state là nguồn token chính; tham số token giữ tương thích để gate caller. Không tạo refresh riêng, không sửa thuật toán.
-- Recommendations → Profile mang `returnTo`; “Để sau” dùng `safeReturnPath`, không gửi PUT. Có đường quay lại Recommendations.
+- Các file Categories/Recommendations, test và browser harness của Quyên được khôi phục nguyên nội dung `origin/main`. Không bổ sung tìm kiếm hoặc sửa refresh trong module của Quyên.
+- Profile dùng trực tiếp `SkillOptionsField` gốc, không truyền prop `searchable`. Toàn bộ Skill IDs gồm Closed vẫn được khởi tạo và gửi lại trừ khi người dùng chủ động gỡ. Major Closed hiện tại được giữ; options mới chỉ lấy Active từ API.
+- Bố cục ba card, tên/email từ Auth, validation, loading/error/retry/save, badge `isComplete` và checklist được giữ. Form không bị xóa khi lưu lỗi; đổi identity remount và bỏ qua response cũ.
+- `UserAvatar` và `StudentAccountMenu` thuộc riêng `features/profile`; avatar fallback và menu chỉ dùng trong trang Profile. Test của Bình giữ lại, cập nhật đường dẫn import.
+- StudentLayout và SiteFooter khôi phục nguyên bản main. PublicLayout chỉ thêm liên kết `/profile` cho Student; giữ tên tài khoản và logout gốc.
+- Những phần chung bắt buộc còn giữ: backend app mount Profile; router tích hợp Profile/Recommendations và RequireRole; API client hỗ trợ PUT/fieldErrors cùng test tương thích. Cần Huyền review các điểm tích hợp này.
+- Không sửa Backend Profile, Auth, Activity Log, schema/migration, contract, database hay cấu hình local trong lần khắc phục.
 
-## Bằng chứng kiểm thử ngày 31/10/2026
+## Tác động cần phối hợp
 
-- Frontend: **93 pass, 0 fail, 32 skip** (`npm run test --workspace @unihub/frontend`).
-- Backend: **140 pass, 0 fail, 17 skip** (`npm test`, backend cũng build trước test).
-- `npm run build`, `npm run typecheck`, `npm run format:check`, `git diff --check`: pass.
-- Test mới: Skills/Recommendations 401 → một refresh → retry với token mới; refresh 401 → Guest và không loop. Navigation Student/Guest/Admin, avatar thiếu ảnh, returnTo được kiểm tra bằng unit/SSR. Không dùng SSR để khẳng định giao diện trình duyệt.
-- Browser fixture runner chưa cài Playwright; các ca tùy chọn bị SKIP. Các harness đã đồng bộ token fixture vào Auth state chung nhưng chưa chạy trình duyệt trong lượt này.
-- Computer Use đã bị chặn vì không xác minh được URL Chrome. Không có ảnh desktop/mobile sau sửa; chưa nghiệm thu độ tương đồng pixel, overflow, console, avatar onError hoặc giữ form qua refresh bằng browser.
-- Không mở/ghi database, không thay .env/quyền/schema/migration. MySQL riêng trước đó bị lỗi xác thực; chưa thử lại trong lượt review này. Không coi fixture rollback/concurrent closure là chứng minh MySQL locking thực tế.
+- Tìm kiếm Skills không còn trong bản này vì component gốc chỉ có checkbox. Nếu cần, Quyên bổ sung trong module của mình.
+- Hai API Skills/Recommendations trở về cách dùng token của main; bản sửa tự refresh trong commit 80dbfe5 đã được thu hồi. Lỗi token hết hạn cần Quyên phối hợp với Huyền sửa riêng. GET/PUT Profile vẫn dùng refresh chung.
+- Header avatar và responsive shell/footer trở về hành vi của main. Không tuyên bố đã khắc phục lỗi ảnh/header hoặc overflow toàn trang.
+- “Để sau” dùng returnTo an toàn, không gửi PUT. Recommendations có callback tới Profile; thuật toán Recommendations không đổi.
 
-## Ma trận TC01–TC08
+## Kiểm thử và giới hạn
 
-| Ca                     | Trạng thái E2E | Bằng chứng và giới hạn                                                                                                              |
-| ---------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| TC01 Login/Profile     | NOT RUN        | Người dùng đã xác nhận login trước đây; chưa kiểm chứng phiên Google thật sau sửa. SSR xác nhận fallback khi không có ảnh.          |
-| TC02 UI desktop/mobile | BLOCKED        | Code có layout responsive; Computer Use bị chặn. Chưa có screenshot, chưa xác nhận console/overflow.                                |
-| TC03 Form/validation   | NOT RUN        | Unit/fixture pass về validation, fetch/save, lỗi; UI tương tác/search/empty chưa chạy browser.                                      |
-| TC04 Save/reload MySQL | BLOCKED        | Backend fixture save/ownership pass; chưa có test DB riêng hoạt động và dữ liệu Major/Skill local.                                  |
-| TC05 Closed            | BLOCKED        | Unit/backend fixture bảo toàn, gỡ, từ chối Closed mới pass; chưa kiểm tra MySQL/browser thật.                                       |
-| TC06 Recommendations   | BLOCKED        | Service đọc users.major_id/academic_year/user_skills, trả 409 khi thiếu; fixture pass. Chưa kiểm chứng liên module trên MySQL thật. |
-| TC07 Refresh           | NOT RUN        | Bốn regression fetch-double pass cho hai API; giữ form qua token refresh chưa được chứng minh bằng browser.                         |
-| TC08 Quyền/returnTo    | NOT RUN        | Backend fixture Guest401/Admin403/ownership và unit/SSR role/menu/returnTo pass; chưa chạy browser thật.                            |
+Sau khôi phục: frontend **89 pass, 0 fail, 32 skip**; backend **140 pass, 0 fail, 17 skip**. Số frontend pass giảm 4 vì thu hồi các test refresh thêm vào file của Quyên, không phải test bị lỗi. Unit/fixture/SSR không thay thế browser E2E hoặc MySQL thật.
 
-## Phạm vi và phối hợp review
+Browser tests phụ thuộc Playwright; integration tests phụ thuộc database test riêng hợp lệ. Chưa có screenshot desktop/mobile và chưa kiểm chứng save/reload, rollback hoặc concurrency trên MySQL thật trong lần khắc phục. Không chạy test phá hủy trên database nhóm.
 
-- Huyền: router, Student/Public layout, footer responsive, `StudentAccountMenu`, `UserAvatar`; không sửa code Auth/backend hay Activity Log Writer.
-- Quyên: thay client ở `categories/api.ts`, `recommendations/api.ts`; tùy chọn tìm kiếm trong chính `SkillOptionsField`; cập nhật API tests và browser harness theo Auth state. Không copy component, không sửa thuật toán Recommendations.
-- Task 2: `ProfilePage`, README, test navigation. Backend Profile được review, không sửa trong lần bổ sung này. Transaction khóa users FOR UPDATE, categories theo ID tăng dần FOR SHARE, isolation ReadCommitted; rollback và cạnh tranh hiện mới có bằng chứng fixture.
-- Không phát hiện blocker nội bộ qua test chạy được. Việc nghiệm thu UI/browser vẫn chưa hoàn thành. Cần Huyền/Quyên review phần chung và cung cấp dữ liệu/quyền môi trường test hợp lệ để kiểm tra E2E trước nghiệm thu toàn luồng.
-- Khác mockup: options Active hiện là checkbox có tìm kiếm của component chung; footer dùng asset/spacing hiện có, header dùng menu account, không tự bịa “Sinh viên Năm 3 • CNTT”. Không có dữ liệu mẫu trong product.
+## Danh sách khôi phục từ origin/main
+
+- `frontend/src/features/categories/SkillOptionsField.tsx`
+- `frontend/src/features/categories/api.ts`
+- `frontend/src/features/recommendations/api.ts`
+- `frontend/test-support/recommendations-browser.mjs`
+- `frontend/test/recommendations-api.test.mjs`
+- `frontend/test/recommendations-page.test.mjs`
+- `frontend/test/skill-options-api.test.mjs`
+- `frontend/test/skill-options-field.test.mjs`
+- `frontend/test/skill-options-integration.test.mjs`
+- `frontend/src/layouts/StudentLayout.tsx`
+- `frontend/src/layouts/SiteFooter.tsx`
+
+Chín file đầu thuộc Quyên; hai layout cuối thuộc shell chung. Nội dung được đối chiếu bằng byte với `origin/main`. Các thay đổi khắc phục hiện chỉ nằm ở working tree, chưa commit/push; PR #36 trên GitHub vẫn chứa commit 80dbfe5 cho đến khi người dùng cho phép cập nhật.

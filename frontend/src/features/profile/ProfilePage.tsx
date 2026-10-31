@@ -1,6 +1,7 @@
+import { ProfileIcon } from './ProfileIcon';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
-import { UserAvatar } from '../../components/ui/UserAvatar';
+import { UserAvatar } from './UserAvatar';
 import { safeReturnPath } from '../auth/return-path';
 import { useAuth } from '../auth/AuthProvider';
 import { getAccessToken } from '../auth/auth-state';
@@ -143,65 +144,83 @@ function ProfileEditor({ userId }: { userId: number }) {
       >
         <div className="grid min-w-0 gap-6">
           <section
-            className="rounded-card bg-white p-6 shadow-public-card"
+            className="rounded-card bg-white p-6 shadow-soft"
             aria-labelledby="google-heading"
           >
-            <h2 id="google-heading" className="text-lg font-semibold text-navy">
-              Tài khoản Google
+            <h2
+              id="google-heading"
+              className="flex items-center gap-2 text-lg font-semibold text-navy"
+            >
+              <ProfileIcon name="account" /> Tài khoản Google
             </h2>
-            <div className="mt-4 flex items-center gap-4">
+            <div className="mt-4 flex items-end gap-4">
               <UserAvatar
                 name={user?.fullName ?? ''}
                 url={user?.avatarUrl ?? null}
-                className="h-12 w-12 text-lg"
+                className="mb-1 h-12 w-12 text-lg"
               />
               <div className="grid min-w-0 flex-1 gap-3 sm:grid-cols-2">
-                <label className="grid min-w-0 gap-1 text-sm text-secondary">
+                <label className="grid min-w-0 gap-1 text-sm font-medium text-secondary">
                   Họ và tên
                   <input
                     readOnly
                     value={user?.fullName ?? ''}
-                    className="w-full min-w-0 rounded-control bg-surface px-3 py-2 text-ink"
+                    className="w-full min-w-0 rounded-control bg-surface px-3 py-2.5 font-normal text-ink"
                   />
                 </label>
-                <label className="grid min-w-0 gap-1 text-sm text-secondary">
+                <label className="grid min-w-0 gap-1 text-sm font-medium text-secondary">
                   Email
-                  <input
-                    readOnly
-                    value={user?.email ?? ''}
-                    className="w-full min-w-0 rounded-control bg-surface px-3 py-2 text-ink"
-                  />
+                  <span className="relative">
+                    <input
+                      readOnly
+                      value={user?.email ?? ''}
+                      className="w-full min-w-0 rounded-control bg-surface py-2.5 pl-3 pr-9 font-normal text-ink"
+                    />
+                    <ProfileIcon
+                      name="lock"
+                      className="pointer-events-none absolute right-3 top-3 h-4 w-4 text-muted"
+                    />
+                  </span>
                 </label>
               </div>
             </div>
-            <p className="mt-4 rounded-control bg-surface p-3 text-sm text-muted">
-              ⓘ Thông tin lấy từ tài khoản Google, không thể sửa tại đây.
+            <p className="mt-4 flex items-center gap-2 rounded-control bg-surface p-3 text-sm text-muted">
+              <ProfileIcon name="info" className="h-5 w-5 text-brand" /> Thông
+              tin lấy từ tài khoản Google, không thể sửa tại đây.
             </p>
           </section>
           <section
-            className="rounded-card bg-white p-6 shadow-public-card"
+            className="rounded-card bg-white p-6 shadow-soft"
             aria-labelledby="academic-heading"
           >
             <h2
               id="academic-heading"
-              className="mb-6 text-2xl font-semibold text-ink"
+              className="mb-6 flex items-center gap-2 text-2xl font-semibold text-ink"
             >
-              Hồ sơ học thuật
+              <ProfileIcon name="academic" className="h-6 w-6 text-brand" /> Hồ
+              sơ học thuật
             </h2>
-            <fieldset disabled={saving} className="grid min-w-0 gap-5">
+            <fieldset disabled={saving} className="grid min-w-0 gap-5 text-sm">
               <div className="grid gap-5 sm:grid-cols-2">
                 <label className="grid gap-2">
-                  Chuyên ngành
+                  <span>
+                    Chuyên ngành{' '}
+                    <span aria-hidden="true" className="text-red-600">
+                      *
+                    </span>
+                  </span>
                   <select
+                    aria-label="Chuyên ngành"
+                    aria-required="true"
                     value={form.majorId}
                     onChange={(e) => change({ majorId: e.target.value })}
                     aria-invalid={!!errors.majorId}
                     aria-describedby={
                       errors.majorId ? 'majorId-error' : undefined
                     }
-                    className="rounded-control border border-line p-3"
+                    className="min-w-0 rounded-control border border-slate-100 bg-white px-3 py-2.5 text-sm shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
                   >
-                    <option value="">Chọn chuyên ngành</option>
+                    <option value="">Chọn chuyên ngành đào tạo...</option>
                     {closedMajor && (
                       <option value={closedMajor.id}>
                         {closedMajor.name} (Đã đóng — liên kết hiện tại)
@@ -218,17 +237,24 @@ function ProfileEditor({ userId }: { userId: number }) {
                   {fieldError('majorId')}
                 </label>
                 <label className="grid gap-2">
-                  Năm học
+                  <span>
+                    Năm học{' '}
+                    <span aria-hidden="true" className="text-red-600">
+                      *
+                    </span>
+                  </span>
                   <select
+                    aria-label="Năm học"
+                    aria-required="true"
                     value={form.academicYear}
                     onChange={(e) => change({ academicYear: e.target.value })}
                     aria-invalid={!!errors.academicYear}
                     aria-describedby={
                       errors.academicYear ? 'academicYear-error' : undefined
                     }
-                    className="rounded-control border border-line p-3"
+                    className="min-w-0 rounded-control border border-slate-100 bg-white px-3 py-2.5 text-sm shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
                   >
-                    <option value="">Chọn năm học</option>
+                    <option value="">Chọn năm học...</option>
                     {[1, 2, 3, 4].map((y) => (
                       <option key={y} value={y}>
                         Năm {y}
@@ -244,7 +270,6 @@ function ProfileEditor({ userId }: { userId: number }) {
                 </p>
               )}
               <SkillOptionsField
-                searchable
                 accessToken={getAccessToken()}
                 role="Student"
                 selectedIds={form.skillIds}
@@ -275,12 +300,16 @@ function ProfileEditor({ userId }: { userId: number }) {
                 ))}
               {fieldError('skillIds')}
               <label className="grid gap-2">
-                Mục tiêu nghề nghiệp (không bắt buộc)
+                <span className="flex items-center justify-between gap-2">
+                  Vị trí nghề nghiệp mục tiêu{' '}
+                  <span className="text-xs text-muted">(Tùy chọn)</span>
+                </span>
                 <input
+                  aria-label="Vị trí nghề nghiệp mục tiêu"
                   value={form.careerGoal}
                   onChange={(e) => change({ careerGoal: e.target.value })}
                   aria-invalid={!!errors.careerGoal}
-                  className="rounded-control border border-line p-3"
+                  className="min-w-0 rounded-control border border-slate-100 bg-white px-3 py-2.5 text-sm shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
                   placeholder="Ví dụ: Thực tập sinh Frontend"
                   aria-describedby={
                     errors.careerGoal ? 'careerGoal-error' : undefined
@@ -292,7 +321,7 @@ function ProfileEditor({ userId }: { userId: number }) {
           </section>
         </div>
         <aside
-          className="rounded-card bg-white p-6 shadow-public-card"
+          className="rounded-card bg-white p-6 shadow-soft"
           aria-label="Trạng thái hồ sơ"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -323,7 +352,7 @@ function ProfileEditor({ userId }: { userId: number }) {
               >
                 <span
                   aria-hidden="true"
-                  className={item.done ? 'text-green-700' : 'text-amber-700'}
+                  className={`flex h-5 w-5 items-center justify-center rounded-full ${item.done ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}
                 >
                   {item.done ? '✓' : '×'}
                 </span>
@@ -334,19 +363,20 @@ function ProfileEditor({ userId }: { userId: number }) {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-xs text-muted">
+          <p className="sr-only">
             Các lựa chọn chỉ được cập nhật vào hồ sơ sau khi lưu thành công.
           </p>
           <button
-            className="mt-6 w-full rounded-control bg-brand px-4 py-3 text-sm font-medium text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60"
+            className="mt-8 flex h-10 w-full items-center justify-center gap-2 rounded-control bg-brand px-4 text-sm font-medium text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60"
             type="submit"
             disabled={saving}
           >
+            {!saving && <ProfileIcon name="check" className="h-4 w-4" />}
             {saving ? 'Đang lưu…' : 'Lưu hồ sơ'}
           </button>
           <Link
             to={returnTo.startsWith('/profile') ? '/opportunities' : returnTo}
-            className="mt-2 block rounded-control bg-surface p-3 text-center text-sm text-brand"
+            className="mt-2 flex h-10 items-center justify-center rounded-control bg-surface text-sm text-brand"
           >
             Để sau
           </Link>
@@ -355,16 +385,21 @@ function ProfileEditor({ userId }: { userId: number }) {
               {message}
             </p>
           )}
-          <p className="mt-4 rounded-control bg-surface p-3 text-sm text-secondary">
-            ✧ Bạn luôn có thể quay lại điều chỉnh và bổ sung hồ sơ sau trong mục
-            Hồ sơ cá nhân.
+          <p className="mt-4 flex items-start gap-2 rounded-control bg-surface p-3 text-sm text-secondary">
+            <ProfileIcon name="sparkles" className="h-5 w-5 text-brand" />
+            <span>
+              Bạn luôn có thể quay lại điều chỉnh và bổ sung hồ sơ sau trong mục
+              Hồ sơ cá nhân.
+            </span>
           </p>
-          <Link
-            to="/recommendations"
-            className="mt-4 block text-center text-sm text-brand"
-          >
-            Cơ hội dành cho bạn →
-          </Link>
+          {data.isComplete && (
+            <Link
+              to="/recommendations"
+              className="mt-4 block text-center text-sm text-brand"
+            >
+              Cơ hội dành cho bạn →
+            </Link>
+          )}
         </aside>
       </form>
     </section>

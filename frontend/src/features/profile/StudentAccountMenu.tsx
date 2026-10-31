@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
-import { useAuth } from '../features/auth/AuthProvider';
-import { UserAvatar } from '../components/ui/UserAvatar';
+import { useAuth } from '../auth/AuthProvider';
+import { UserAvatar } from './UserAvatar';
 
 export function StudentAccountMenu() {
   const { user, logout } = useAuth();

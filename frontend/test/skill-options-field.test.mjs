@@ -39,13 +39,11 @@ before(async () => {
     entry,
     `
     import React, {useState} from 'react'; import {createRoot} from 'react-dom/client';
-    import {setAccessToken} from ${JSON.stringify(root + '/src/features/auth/auth-state.ts')};
     import {SkillOptionsField} from ${JSON.stringify(root + '/src/features/categories/SkillOptionsField.tsx')};
     const e=React.createElement;
     function Harness() {
       const [token,setToken]=useState('student-test-token'); const [role,setRole]=useState('Student');
       const [ids,setIds]=useState([99]); const [visible,setVisible]=useState(true); const [disabled,setDisabled]=useState(false);
-      setAccessToken(token);
       window.skillTest={setToken,setRole,setVisible,setDisabled};
       return e('form',{onSubmit:(event)=>{event.preventDefault();window.submitted=true;}},
         visible ? e(SkillOptionsField,{accessToken:token,role,selectedIds:ids,onChange:setIds,disabled}) : e('p',null,'Unmounted'),
@@ -92,13 +90,6 @@ before(async () => {
 beforeEach(async () => {
   if (!browser) return;
   page = await browser.newPage();
-  await page.route('**/api/auth/refresh', (route) =>
-    fulfill(
-      route,
-      { error: { code: 'UNAUTHORIZED', message: 'Expired fixture session' } },
-      401,
-    ),
-  );
   await page.addInitScript(() => {
     window.skillRequests = [];
     const original = window.fetch;
