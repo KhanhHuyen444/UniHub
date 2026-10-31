@@ -204,3 +204,7 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 - Không commit `.env`, node_modules, dist, coverage, khóa hoặc dữ liệu cục bộ. `.env.example` chỉ chứa cấu hình mẫu an toàn.
 
 Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. Shared UI/list/detail được kiểm tra trực quan theo ảnh handoff và fixture mock; bố cục ở 1920 px là lựa chọn triển khai, không phải số đo trực tiếp Figma, và mock không xác nhận API/MySQL thật. Auth API và Admin review API đã có trên `main`; giao diện Admin review đang được hoàn thiện trên nhánh riêng và phụ thuộc frontend auth chưa merge.
+
+## Danh mục chuẩn dùng chung
+
+Bộ đã duyệt **11 Major + 19 Skill** ở [data/catalog/initial-categories.json](data/catalog/initial-categories.json). Git chỉ chia sẻ tên/loại và importer; mỗi thành viên tự nhập vào database riêng. Xem [hướng dẫn PowerShell tại gốc repo](data/catalog/README.md) để chuẩn bị migration, dry-run mặc định, apply rõ ràng và kiểm tra chạy lại. Không cần nhập 8 cơ hội; không chia sẻ ID local, `.env` hoặc database dump. [Kết quả kiểm thử](docs/catalog-import-validation.md).
