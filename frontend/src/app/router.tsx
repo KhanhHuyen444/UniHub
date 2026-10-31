@@ -17,6 +17,7 @@ import { GuidanceDetailPage } from '../features/guidance/GuidanceDetailPage';
 import { AuthProvider } from '../features/auth/AuthProvider';
 import { ForbiddenPage, RequireRole } from '../features/auth/AuthGuard';
 import { LoginPage } from '../features/auth/LoginPage';
+import { LoginLayout } from '../features/auth/LoginLayout';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
@@ -149,9 +150,9 @@ export function AppRouter() {
           <Route
             path="/login"
             element={
-              <PublicLayout activeKey="home">
+              <LoginLayout>
                 <LoginPage />
-              </PublicLayout>
+              </LoginLayout>
             }
           />
           <Route

@@ -333,7 +333,7 @@ test(
   async () => {
     await fixture({ role: 'Admin' }, async ({ page, calls }) => {
       await login(page);
-      await page.waitForURL(base + '/admin/opportunities');
+      await page.waitForURL(base + '/admin/dashboard');
       await page.goto(base + '/profile');
       await page.waitForURL(base + '/403');
       assert.equal(
