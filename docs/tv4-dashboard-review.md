@@ -12,3 +12,22 @@ Kiểm tra conflict bằng `git merge-tree --write-tree` (không đổi nhánh/m
 - #34 + #35 còn conflict `backend/src/app.ts`: khi tích hợp giữ imports/dependency/mount Notifications và Dashboard đồng thời với auth, Events, Guidance, Recommendations, Categories, Opportunities và Admin Opportunities. Chưa có conflict với main, nên không kéo Notifications vào PR Dashboard.
 
 Không có checkout đã tích hợp bốn PR; chưa tuyên bố chuỗi xuyên PR đạt. UI Admin với Google thật, ảnh đối chiếu thiết kế cùng viewport và NFR chưa được xác minh tại thời điểm sửa này. Test role/error độc lập hiện tại dùng doubles, được phân biệt với MySQL service test thật.
+
+## Cập nhật giải quyết conflict với main `c310a4c`
+
+Sau khi #26, #33 và #34 merge vào main, nhánh #35 đã hợp nhất main và giải quyết
+conflict trong `README.md`, `backend/src/app.ts` và `frontend/src/app/router.tsx`.
+Backend giữ cả Notifications và Dashboard, cùng toàn bộ mount hiện có. Frontend
+giữ `/calendar` với guard Student và `/admin/dashboard` với guard Admin, cùng
+auth, Guidance, Opportunities và Admin Opportunities. Không đổi SQL metric,
+schema, migration, cấu hình hoặc thiết kế Dashboard trong lần giải quyết conflict.
+
+Đây là tích hợp mã nguồn; không xác nhận Google login, UI khớp thiết kế hoặc
+chuỗi Calendar → scheduler → Notifications trên MySQL thật. Các giới hạn của
+lần review trước vẫn áp dụng cho những kiểm thử chưa được chạy lại.
+
+Kiểm tra sau giải quyết conflict: root typecheck/build/format và diff check đạt;
+backend **176 pass, 0 fail, 20 skip** (các suite MySQL cần cấu hình riêng);
+frontend liên quan **51 pass, 0 fail, 0 skip** cho Auth, API client, Admin
+Opportunities, Dashboard, Calendar và Notifications. Frontend dùng HTTP doubles
+và server rendering; không chạy toàn bộ browser suite hoặc MySQL thật tại đây.

@@ -1,11 +1,13 @@
 import { Link } from 'react-router';
 import { useAuth } from '../features/auth/AuthProvider';
+import { NotificationBell } from '../features/notifications/NotificationBell';
 import googleGLogo from '../assets/google-g-logo.svg';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
 import {
   navigationTarget,
   publicNavigation,
+  studentNavigation,
   type ShellArea,
 } from './navigation';
 
@@ -25,6 +27,13 @@ export function PublicLayout({
   const area: Extract<ShellArea, 'public'> = 'public';
   const isOpportunities = variant === 'opportunities';
   const auth = useAuth();
+  const navigation =
+    auth.status === 'authenticated' && auth.user?.role === 'Student'
+      ? [
+          ...publicNavigation,
+          ...studentNavigation.filter((item) => item.key === 'calendar'),
+        ]
+      : publicNavigation;
 
   async function logout() {
     try {
@@ -45,7 +54,7 @@ export function PublicLayout({
           <Brand area={area} previewNavigation={previewNavigation} />
           <nav aria-label="Điều hướng chính">
             <ul className="flex items-center gap-8">
-              {publicNavigation.map((item) => (
+              {navigation.map((item) => (
                 <li key={item.key}>
                   <Link
                     to={navigationTarget(item, area, previewNavigation)}
@@ -74,6 +83,9 @@ export function PublicLayout({
             </span>
           ) : auth.status === 'authenticated' && auth.user ? (
             <div className="flex h-12 w-[270px] shrink-0 items-center justify-end gap-3">
+              {auth.user.role === 'Student' && (
+                <NotificationBell key={auth.user.id} />
+              )}
               <span
                 className="min-w-0 truncate type-label font-medium text-secondary"
                 title={auth.user.fullName}

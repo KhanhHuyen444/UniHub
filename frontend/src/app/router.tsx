@@ -14,6 +14,7 @@ import { PublicLayout } from '../layouts/PublicLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
 import { AdminDashboardPage } from '../features/admin/dashboard/AdminDashboardPage';
+import { CalendarPage } from '../features/calendar/CalendarPage';
 
 export const appPaths = {
   home: '/',
@@ -59,6 +60,14 @@ export function AppRouter() {
                 <AdminLayout activeKey="dashboard">
                   <AdminDashboardPage />
                 </AdminLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <RequireRole role="Student">
+                <CalendarPage />
               </RequireRole>
             }
           />

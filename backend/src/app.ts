@@ -15,6 +15,10 @@ import {
   createDashboardRouter,
   type DashboardRouterDependencies,
 } from './modules/dashboard/dashboard.routes.js';
+import {
+  createNotificationsRouter,
+  type NotificationsRouterDependencies,
+} from './modules/notifications/notifications.routes.js';
 import { errorHandler, notFound } from './middleware/errors.js';
 import { healthRouter } from './modules/health/health.routes.js';
 import { createReadyRouter } from './modules/health/ready.routes.js';
@@ -47,6 +51,7 @@ interface AppDependencies {
   opportunities?: OpportunitiesRouterDependencies;
   auth?: GoogleAuthDependencies;
   events?: EventsRouterDependencies;
+  notifications?: NotificationsRouterDependencies;
   adminOpportunities?: AdminOpportunitiesRouterDependencies;
   dashboard?: DashboardRouterDependencies;
 }
@@ -77,6 +82,10 @@ export function createApp(dependencies: AppDependencies = {}) {
   app.use(
     '/api/admin/dashboard',
     createDashboardRouter(dependencies.dashboard),
+  );
+  app.use(
+    '/api/notifications',
+    createNotificationsRouter(dependencies.notifications),
   );
   app.use(
     '/api/admin/opportunities',
