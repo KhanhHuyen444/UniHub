@@ -6,6 +6,7 @@ import { SiteFooter } from './SiteFooter';
 import {
   navigationTarget,
   publicNavigation,
+  studentNavigation,
   type ShellArea,
 } from './navigation';
 
@@ -25,6 +26,13 @@ export function PublicLayout({
   const area: Extract<ShellArea, 'public'> = 'public';
   const isOpportunities = variant === 'opportunities';
   const auth = useAuth();
+  const navigation =
+    auth.status === 'authenticated' && auth.user?.role === 'Student'
+      ? [
+          ...publicNavigation,
+          ...studentNavigation.filter((item) => item.key === 'calendar'),
+        ]
+      : publicNavigation;
 
   async function logout() {
     try {
@@ -45,7 +53,7 @@ export function PublicLayout({
           <Brand area={area} previewNavigation={previewNavigation} />
           <nav aria-label="Điều hướng chính">
             <ul className="flex items-center gap-8">
-              {publicNavigation.map((item) => (
+              {navigation.map((item) => (
                 <li key={item.key}>
                   <Link
                     to={navigationTarget(item, area, previewNavigation)}

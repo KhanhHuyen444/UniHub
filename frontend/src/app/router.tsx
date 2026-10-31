@@ -13,6 +13,7 @@ import { LoginPage } from '../features/auth/LoginPage';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
+import { CalendarPage } from '../features/calendar/CalendarPage';
 
 export const appPaths = {
   home: '/',
@@ -50,6 +51,14 @@ export function AppRouter() {
             element={<OpportunityDetailPage />}
           />
           <Route path={appPaths.roadmaps} element={<GuidanceRoadmapPage />} />
+          <Route
+            path="/calendar"
+            element={
+              <RequireRole role="Student">
+                <CalendarPage />
+              </RequireRole>
+            }
+          />
           <Route
             path={`${appPaths.roadmaps}/:id`}
             element={<GuidanceDetailPage />}
