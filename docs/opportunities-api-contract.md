@@ -61,6 +61,10 @@ Các bộ lọc `majorId`, `type`, `workFormat` kết hợp với nhau theo **AN
 
 Không join nhiều bảng N-N trong một truy vấn phẳng rồi paginate/count trên các hàng nhân bản. Dùng `EXISTS` cho lọc major/skill, hoặc select ID phân biệt trước rồi nạp quan hệ theo batch. Bảo đảm mỗi `item_id` xuất hiện đúng một lần trong `items`; `total` cũng đếm item duy nhất.
 
+**Bổ sung Skills cho card Hub V2 (theo yêu cầu triển khai):** mỗi list item luôn có `skills: { id: number, name: string }[]`; không có liên kết thì `[]`. Chỉ lấy danh mục type Skill đã liên kết qua `opportunity_skills`, gồm cả Closed; không trả status hoặc metadata nội bộ. Sắp `skill.name ASC`, rồi `skill.category_id ASC`, như detail. Sau khi chọn ID trang bằng LIMIT/OFFSET và nạp rows, service chạy **một SQL batch** nối `opportunity_skills`/`categories` với `item_id IN (...)`, rồi nhóm theo item ID. Không chạy truy vấn cho từng card, không thay predicate/count/total/thứ tự cơ hội; trang rỗng không chạy batch. Backend không gọi detail HTTP.
+
+Frontend đọc Skills từ list và render text thường, tên dài xuống dòng, mảng rỗng ẩn dòng Kỹ năng. Để rollout tương thích, parser list chấp nhận payload cũ thiếu field và chuẩn hóa thành `[]`; `null`, Skill ID sai/trùng hoặc tên rỗng là INVALID_RESPONSE, không silently bỏ dữ liệu sai. Client cũ có thể bỏ qua field bổ sung. Chỉ list response được mở rộng; Recommendations và detail giữ contract hiện tại.
+
 #### Response 200 — ví dụ minh họa (dữ liệu hư cấu, không phải seed)
 
 ```json
@@ -80,7 +84,8 @@ Không join nhiều bảng N-N trong một truy vấn phẳng rồi paginate/cou
         "instant": "2026-11-05T17:00:00Z",
         "state": "open"
       },
-      "isVerified": true
+      "isVerified": true,
+      "skills": [{ "id": 33, "name": "TypeScript" }]
     }
   ],
   "meta": {

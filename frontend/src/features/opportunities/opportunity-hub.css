@@ -1,0 +1,77 @@
+/* Scope shell overrides to the Hub route; other pages retain their desktop contract. */
+body.opportunity-hub-page {
+  min-width: 0;
+}
+
+.opportunity-hub-page .hub-deadline-badge {
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+@media (max-width: 1279px) {
+  .opportunity-hub-page #root > div > header {
+    height: auto;
+  }
+
+  .opportunity-hub-page #root > div > header > div {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .opportunity-hub-page nav[aria-label='Điều hướng chính'] {
+    order: 3;
+    width: 100%;
+  }
+
+  .opportunity-hub-page nav[aria-label='Điều hướng chính'] ul {
+    flex-wrap: wrap;
+    gap: 12px 20px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .opportunity-hub-page footer > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .opportunity-hub-page footer > div > div:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .opportunity-hub-page footer > p {
+    position: static;
+    margin-top: 24px;
+    text-align: left;
+  }
+}
+
+@media (max-width: 639px) {
+  .opportunity-hub-page #root > div > header > div,
+  .opportunity-hub-page #root > div > main > div,
+  .opportunity-hub-page footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .opportunity-hub-page #root > div > header > div > div:last-child {
+    width: auto;
+    height: auto;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .opportunity-hub-page header a[href='/login'] {
+    width: auto;
+    height: auto;
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .opportunity-hub-page footer > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
