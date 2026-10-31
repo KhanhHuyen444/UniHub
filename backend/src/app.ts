@@ -12,6 +12,10 @@ import {
 } from './modules/guidance/guidance.routes.js';
 import express from 'express';
 import {
+  createDashboardRouter,
+  type DashboardRouterDependencies,
+} from './modules/dashboard/dashboard.routes.js';
+import {
   createNotificationsRouter,
   type NotificationsRouterDependencies,
 } from './modules/notifications/notifications.routes.js';
@@ -49,6 +53,7 @@ interface AppDependencies {
   events?: EventsRouterDependencies;
   notifications?: NotificationsRouterDependencies;
   adminOpportunities?: AdminOpportunitiesRouterDependencies;
+  dashboard?: DashboardRouterDependencies;
 }
 
 export function createApp(dependencies: AppDependencies = {}) {
@@ -74,6 +79,10 @@ export function createApp(dependencies: AppDependencies = {}) {
     createOpportunitiesRouter(dependencies.opportunities),
   );
   app.use('/api/events', createEventsRouter(dependencies.events));
+  app.use(
+    '/api/admin/dashboard',
+    createDashboardRouter(dependencies.dashboard),
+  );
   app.use(
     '/api/notifications',
     createNotificationsRouter(dependencies.notifications),
