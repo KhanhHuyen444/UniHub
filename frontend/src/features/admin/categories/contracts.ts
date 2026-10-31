@@ -7,6 +7,7 @@ export interface AdminCategory {
   type: CategoryType;
   name: string;
   status: CategoryStatus;
+  createdAt: string | null;
 }
 export interface CategoryChange {
   changed: boolean;
@@ -29,6 +30,18 @@ export function invalidResponse(): never {
     kind: 'response',
   });
 }
+// Invalid metadata must not hide an otherwise usable category list.
+export function parseCreatedAt(value: unknown): string | null {
+  if (
+    typeof value !== 'string' ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)
+  )
+    return null;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) && date.toISOString() === value
+    ? value
+    : null;
+}
 export function parseAdminCategory(value: unknown): AdminCategory {
   if (
     !record(value) ||
@@ -45,6 +58,7 @@ export function parseAdminCategory(value: unknown): AdminCategory {
     type: value.type,
     name: value.name,
     status: value.status,
+    createdAt: parseCreatedAt(value.createdAt),
   };
 }
 export function parseAdminCategories(

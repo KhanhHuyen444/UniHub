@@ -32,11 +32,14 @@ export async function startAdminCategoriesHarness({
     await writeFile(
       entry,
       `
-      import React,{useState} from 'react';import {createRoot} from 'react-dom/client';
+      import React,{useState,useRef} from 'react';import {createRoot} from 'react-dom/client';
       import {AdminCategoriesPage} from ${JSON.stringify(root + '/src/features/admin/categories/AdminCategoriesPage.tsx')};
+      import {setAuthenticated,setGuest} from ${JSON.stringify(root + '/src/features/auth/auth-state.ts')};
+      const sync=(token,role,id=1)=>token&&role?setAuthenticated(token,{id,email:'test@example.com',fullName:'Test',avatarUrl:null,role}):setGuest();
+      sync(${authenticated ? "'admin-test-token'" : 'null'},${authenticated ? "'Admin'" : 'null'});
       const e=React.createElement;
-      function Harness(){const [token,setToken]=useState(${authenticated ? "'admin-test-token'" : 'null'});const [role,setRole]=useState(${authenticated ? "'Admin'" : 'null'});const [visible,setVisible]=useState(true);
-        window.adminTest={setToken,setRole,setVisible};
+      function Harness(){const [token,setToken]=useState(${authenticated ? "'admin-test-token'" : 'null'});const [role,setRole]=useState(${authenticated ? "'Admin'" : 'null'});const [visible,setVisible]=useState(true);const current=useRef({token,role});
+        window.adminTest={setToken:(value)=>{current.current.token=value;sync(value,current.current.role);setToken(value)},setRole:(value)=>{current.current.role=value;sync(current.current.token,value);setRole(value)},setVisible,setUser:(id)=>sync(token,role,id)};
         return visible?e(AdminCategoriesPage,{accessToken:token,role}):e('p',null,'Unmounted');}
       createRoot(document.getElementById('root')).render(e(Harness));
     `,

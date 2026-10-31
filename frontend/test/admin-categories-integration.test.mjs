@@ -146,15 +146,16 @@ test(
             window.adminTest.setRole('Admin');
           }, signed.Admin);
           await page.getByText('Data', { exact: true }).waitFor();
+          await page.getByRole('button', { name: /Thêm chuyên ngành/ }).click();
           const create = page.getByRole('form', {
             name: 'Tạo danh mục',
             exact: true,
           });
           await create
-            .getByLabel('Tên danh mục', { exact: false })
+            .getByLabel('Tên chuyên ngành', { exact: false })
             .fill('Data');
           await create
-            .getByRole('button', { name: 'Tạo danh mục', exact: true })
+            .getByRole('button', { name: 'Lưu', exact: true })
             .click();
           await page
             .getByText('Tên danh mục đã tồn tại trong loại này.', {
@@ -163,13 +164,16 @@ test(
             .waitFor();
           assert.equal(await tx.activityLog.count(), 0);
           await create
-            .getByLabel('Tên danh mục', { exact: false })
+            .getByLabel('Tên chuyên ngành', { exact: false })
             .fill('New Major');
+          await create
+            .getByText('Thêm lý do (tùy chọn)', { exact: true })
+            .click();
           await create
             .getByLabel('Lý do tạo (tùy chọn)', { exact: true })
             .fill('Create through UI');
           await create
-            .getByRole('button', { name: 'Tạo danh mục', exact: true })
+            .getByRole('button', { name: 'Lưu', exact: true })
             .click();
           await page.getByText('New Major', { exact: true }).waitFor();
           await page
@@ -192,7 +196,10 @@ test(
             await button.waitFor();
             await button.click();
             await edit
-              .getByRole('button', { name: 'Lưu thay đổi', exact: true })
+              .getByRole('button', {
+                name: label.startsWith('Đóng') ? 'Đóng' : 'Mở lại',
+                exact: true,
+              })
               .click();
           }
           await statusButton('Đóng Updated');
@@ -245,13 +252,14 @@ test(
             1,
           );
           await page
-            .getByRole('button', { name: 'Skill', exact: true })
+            .getByRole('button', { name: 'Đóng hộp thoại', exact: true })
             .click();
+          await page.getByRole('button', { name: /^Kỹ năng/ }).click();
           await page.getByText('Old Skill', { exact: true }).waitFor();
           await page.getByText('Closed', { exact: true }).waitFor();
           await page.evaluate(() => window.adminTest.setToken('invalid-token'));
           await page
-            .getByText('Không được truy cập danh mục Admin', { exact: true })
+            .getByText('Cần đăng nhập Admin', { exact: true })
             .waitFor();
           assert.equal(await page.getByRole('form').count(), 0);
           throw rollback;
