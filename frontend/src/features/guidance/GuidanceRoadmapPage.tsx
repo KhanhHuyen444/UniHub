@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { PublicLayout } from '../../layouts/PublicLayout';
+import { StudentLayout } from '../../layouts/StudentLayout';
+import { useAuth } from '../auth/AuthProvider';
 import {
   Badge,
   Button,
@@ -66,9 +68,13 @@ export function GuidanceRoadmapPage() {
     selectedId !== '' &&
     !options.some((major) => String(major.id) === selectedId);
   const returnTo = `/roadmaps${search ? `?${search}` : ''}`;
+  const auth = useAuth();
+  const isStudent =
+    auth.status === 'authenticated' && auth.user?.role === 'Student';
+  const Layout = isStudent ? StudentLayout : PublicLayout;
 
   return (
-    <PublicLayout activeKey="roadmaps">
+    <Layout activeKey="roadmaps">
       <div className="grid gap-6">
         <h1 className="type-heading text-navy">
           Lộ trình kỹ năng &amp; Định hướng
@@ -187,6 +193,6 @@ export function GuidanceRoadmapPage() {
             </div>
           ))}
       </div>
-    </PublicLayout>
+    </Layout>
   );
 }

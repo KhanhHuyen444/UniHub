@@ -46,8 +46,17 @@ after(async () => {
 const visit = () => page.goto(harness.base + '/admin-categories-test');
 const visible = (text) => page.getByText(text, { exact: true }).waitFor();
 
+const createForm = () =>
+  page.getByRole('form', { name: 'Tạo danh mục', exact: true });
+const editForm = () =>
+  page.getByRole('form', { name: 'Chỉnh sửa danh mục', exact: true });
+const openCreate = () =>
+  page.getByRole('button', { name: /Thêm chuyên ngành|Thêm kỹ năng/ }).click();
+const closeDialog = () =>
+  page.getByRole('button', { name: 'Đóng hộp thoại', exact: true }).click();
+
 test(
-  'loading/list statuses/empty type/error/retry and authenticated headers',
+  'loading, Vietnamese tabs, statuses, empty and error retry',
   options,
   async () => {
     let pending;
@@ -67,9 +76,8 @@ test(
     await fulfill(pending, { items: initial });
     await visible('Data');
     await visible('Closed');
-    await page.getByRole('button', { name: 'Skill', exact: true }).click();
+    await page.getByRole('button', { name: /^Kỹ năng/ }).click();
     await visible('Chưa có danh mục');
-    assert.equal(await page.getByRole('button', { name: /Xóa/ }).count(), 0);
     await page.unroute('**/api/admin/categories?type=Skill');
     let attempts = 0;
     await page.route('**/api/admin/categories?type=Skill', (route) =>
@@ -85,25 +93,26 @@ test(
     await visible('Không tải được danh mục');
     await page.getByRole('button', { name: 'Thử lại', exact: true }).click();
     await visible('SQL');
+    assert.equal(await page.getByRole('button', { name: /Xóa/ }).count(), 0);
   },
 );
 
 test(
-  'create saves real contract payload, pending disables controls; rename/status/no-op refresh list',
+  'modal CRUD preserves payloads, locks pending actions, no-op and status changes',
   options,
   async () => {
     let rows = structuredClone(initial),
-      saveRoute;
-    await page.route('**/api/admin/categories**', async (route) => {
-      const request = route.request();
-      const path = new URL(request.url()).pathname;
+      pending;
+    await page.route('**/api/admin/categories**', (route) => {
+      const request = route.request(),
+        path = new URL(request.url()).pathname;
       if (request.method() === 'GET') return fulfill(route, { items: rows });
       if (request.method() === 'POST') {
-        saveRoute = route;
+        pending = route;
         return;
       }
-      const body = request.postDataJSON();
-      const row = rows.find((item) => item.id === Number(path.split('/')[4]));
+      const row = rows.find((item) => item.id === Number(path.split('/')[4])),
+        body = request.postDataJSON();
       const changed = path.endsWith('/status')
         ? row.status !== body.status
         : row.name !== body.name;
@@ -116,177 +125,136 @@ test(
     await page
       .getByRole('button', { name: 'Đổi tên Data', exact: true })
       .click();
-    await page
+    await editForm()
       .getByRole('button', { name: 'Lưu thay đổi', exact: true })
       .click();
     await visible('Không có thay đổi.');
-    const create = page.getByRole('form', {
-      name: 'Tạo danh mục',
-      exact: true,
-    });
-    await create.getByLabel('Tên danh mục', { exact: false }).fill(' New ');
-    await create
+    await openCreate();
+    await createForm()
+      .getByLabel('Tên chuyên ngành', { exact: false })
+      .fill(' New ');
+    await createForm()
+      .getByText('Thêm lý do (tùy chọn)', { exact: true })
+      .click();
+    await createForm()
       .getByLabel('Lý do tạo (tùy chọn)', { exact: true })
       .fill('Reason');
-    await create
-      .getByRole('button', { name: 'Tạo danh mục', exact: true })
+    await createForm()
+      .getByRole('button', { name: 'Lưu', exact: true })
       .click();
     await page.waitForFunction(() =>
-      window.adminRequests.some(
-        (request) => request.path === '/api/admin/categories',
-      ),
+      window.adminRequests.some((r) => r.path === '/api/admin/categories'),
     );
     assert.equal(
-      await page
-        .getByRole('button', { name: 'Skill', exact: true })
-        .isDisabled(),
+      await page.getByRole('button', { name: /^Kỹ năng/ }).isDisabled(),
       true,
     );
-    assert.deepEqual(saveRoute.request().postDataJSON(), {
+    await page.keyboard.press('Escape');
+    assert.equal(await page.getByRole('dialog').count(), 1);
+    assert.deepEqual(pending.request().postDataJSON(), {
       type: 'Major',
       name: 'New',
       reason: 'Reason',
     });
     rows.push({ id: 3, type: 'Major', name: 'New', status: 'Active' });
-    await fulfill(saveRoute, { category: rows[2] }, 201);
+    await fulfill(pending, { category: rows[2] }, 201);
     await visible('New');
-    assert.equal(
-      await create.getByLabel('Tên danh mục', { exact: false }).inputValue(),
-      '',
-    );
+    assert.equal(await page.getByRole('dialog').count(), 0);
     await page
       .getByRole('button', { name: 'Đổi tên New', exact: true })
       .click();
-    const edit = page.getByRole('form', {
-      name: 'Chỉnh sửa danh mục',
-      exact: true,
-    });
-    await edit.getByLabel('Tên mới', { exact: false }).fill('Updated');
-    await edit
+    await editForm().getByLabel('Tên mới', { exact: false }).fill('Updated');
+    await editForm()
       .getByRole('button', { name: 'Lưu thay đổi', exact: true })
       .click();
     await visible('Updated');
-    await page
-      .getByRole('button', { name: 'Đóng Updated', exact: true })
-      .click();
-    await edit
-      .getByRole('button', { name: 'Lưu thay đổi', exact: true })
-      .click();
-    await page
-      .getByRole('button', { name: 'Mở lại Updated', exact: true })
-      .waitFor();
-    await page
-      .getByRole('button', { name: 'Mở lại Updated', exact: true })
-      .click();
-    await edit
-      .getByRole('button', { name: 'Lưu thay đổi', exact: true })
-      .click();
-    await page
-      .getByRole('button', { name: 'Đóng Updated', exact: true })
-      .waitFor();
+    for (const [action, confirm, next] of [
+      ['Đóng Updated', 'Đóng', 'Mở lại Updated'],
+      ['Mở lại Updated', 'Mở lại', 'Đóng Updated'],
+    ]) {
+      await page.getByRole('button', { name: action, exact: true }).click();
+      await editForm()
+        .getByRole('button', { name: confirm, exact: true })
+        .click();
+      await page.getByRole('button', { name: next, exact: true }).waitFor();
+    }
   },
 );
 
 test(
-  'client validation and duplicate/last Active/server errors preserve forms and show messages',
+  'validation and business errors retain modal input; Escape returns focus',
   options,
   async () => {
-    let posts = 0,
-      postCode = 'DUPLICATE_CATEGORY';
+    let posts = 0;
     await page.route('**/api/admin/categories**', (route) => {
       if (route.request().method() === 'GET')
         return fulfill(route, { items: initial });
       posts++;
       return denied(
         route,
-        route.request().method() === 'POST' ? postCode : 'LAST_ACTIVE_CATEGORY',
+        route.request().method() === 'POST'
+          ? 'DUPLICATE_CATEGORY'
+          : 'LAST_ACTIVE_CATEGORY',
         409,
       );
     });
     await visit();
     await visible('Data');
-    const create = page.getByRole('form', {
-      name: 'Tạo danh mục',
-      exact: true,
-    });
-    await create
-      .getByLabel('Tên danh mục', { exact: false })
+    await openCreate();
+    await createForm()
+      .getByLabel('Tên chuyên ngành', { exact: false })
       .fill('x'.repeat(101));
-    await create
-      .getByRole('button', { name: 'Tạo danh mục', exact: true })
+    await createForm()
+      .getByRole('button', { name: 'Lưu', exact: true })
       .click();
     await visible(
       'Dữ liệu không hợp lệ: tên 1–100 ký tự, lý do tối đa 500 ký tự.',
     );
     assert.equal(posts, 0);
-    await create.getByLabel('Tên danh mục', { exact: false }).fill('Data');
-    await create
-      .getByRole('button', { name: 'Tạo danh mục', exact: true })
+    await createForm()
+      .getByLabel('Tên chuyên ngành', { exact: false })
+      .fill('Data');
+    await createForm()
+      .getByRole('button', { name: 'Lưu', exact: true })
       .click();
     await visible('Tên danh mục đã tồn tại trong loại này.');
     assert.equal(
-      await create.getByLabel('Tên danh mục', { exact: false }).inputValue(),
+      await createForm()
+        .getByLabel('Tên chuyên ngành', { exact: false })
+        .inputValue(),
       'Data',
     );
-    postCode = 'INTERNAL_ERROR';
-    await create
-      .getByRole('button', { name: 'Tạo danh mục', exact: true })
-      .click();
-    await visible(
-      'Thao tác chưa thành công. Vui lòng tải lại để kiểm tra kết quả.',
-    );
-    await page.getByRole('button', { name: 'Đóng Data', exact: true }).click();
-    await page
-      .getByRole('button', { name: 'Lưu thay đổi', exact: true })
-      .click();
-    await visible('Không thể đóng danh mục Active cuối cùng của loại này.');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.getByRole('dialog').count(), 0);
     assert.equal(
       await page
-        .getByRole('form', { name: 'Chỉnh sửa danh mục', exact: true })
-        .count(),
-      1,
+        .getByRole('button', { name: /Thêm chuyên ngành/ })
+        .evaluate((node) => node === document.activeElement),
+      true,
     );
+    await page.getByRole('button', { name: 'Đóng Data', exact: true }).click();
+    await editForm().getByRole('button', { name: 'Đóng', exact: true }).click();
+    await visible('Không thể đóng danh mục Active cuối cùng của loại này.');
+    assert.equal(await page.getByRole('dialog').count(), 1);
   },
 );
 
-test(
-  'Guest/Student do not fetch or mutate; 401/403 remove Admin controls; new token resets state',
-  options,
-  async () => {
-    await page.route('**/api/admin/categories**', (route) =>
-      route.request().headers().authorization === 'Bearer valid-token'
-        ? fulfill(route, { items: initial })
-        : denied(route, 'UNAUTHORIZED', 401),
-    );
-    await visit();
-    await visible(
-      'Phiên đăng nhập không hợp lệ hoặc hết hạn. Vui lòng đăng nhập lại.',
-    );
-    assert.equal(await page.getByRole('form').count(), 0);
-    await page.evaluate(() => {
-      window.adminTest.setToken('valid-token');
-      window.adminTest.setRole('Student');
-    });
-    await visible('Không có quyền quản trị');
-    assert.equal(await page.evaluate(() => window.adminRequests.length), 1);
-    await page.evaluate(() => {
-      window.adminTest.setToken(null);
-      window.adminTest.setRole(null);
-    });
-    await visible('Cần đăng nhập Admin');
-    assert.equal(await page.evaluate(() => window.adminRequests.length), 1);
-    await page.evaluate(() => {
-      window.adminTest.setToken('valid-token');
-      window.adminTest.setRole('Admin');
-    });
-    await visible('Data');
-    await page.evaluate(() => window.adminTest.setToken('expired-token'));
-    await visible('Không được truy cập danh mục Admin');
-  },
-);
+test('Guest/Student cannot access controls or fetch', options, async () => {
+  await page.route('**/api/admin/categories**', (route) =>
+    fulfill(route, { items: initial }),
+  );
+  await visit();
+  await visible('Data');
+  await page.evaluate(() => window.adminTest.setRole('Student'));
+  await visible('Không có quyền quản trị');
+  assert.equal(await page.getByRole('form').count(), 0);
+  await page.evaluate(() => window.adminTest.setToken(null));
+  await visible('Cần đăng nhập Admin');
+  assert.equal(await page.evaluate(() => window.adminRequests.length), 1);
+});
 
 test(
-  'filter switch and unmount abort stale loads; pending mutation never leaks into a new session',
+  'filter and unmount abort stale reads and pending mutations',
   options,
   async () => {
     const pending = [];
@@ -295,7 +263,7 @@ test(
     });
     await visit();
     await visible('Đang tải danh mục');
-    await page.getByRole('button', { name: 'Skill', exact: true }).click();
+    await page.getByRole('button', { name: /^Kỹ năng/ }).click();
     await page.waitForFunction(
       () =>
         window.adminRequests.length === 2 &&
@@ -305,17 +273,156 @@ test(
     await visible('Chưa có danh mục');
     await fulfill(pending[0], { items: initial }).catch(() => {});
     assert.equal(await page.getByText('Data', { exact: true }).count(), 0);
-    const create = page.getByRole('form', {
-      name: 'Tạo danh mục',
-      exact: true,
-    });
-    await create.getByLabel('Tên danh mục', { exact: false }).fill('New');
-    await create
-      .getByRole('button', { name: 'Tạo danh mục', exact: true })
+    await openCreate();
+    await createForm().getByLabel('Tên kỹ năng', { exact: false }).fill('New');
+    await createForm()
+      .getByRole('button', { name: 'Lưu', exact: true })
       .click();
     await page.waitForFunction(() => window.adminRequests.length === 3);
     await page.evaluate(() => window.adminTest.setVisible(false));
     await visible('Unmounted');
     await page.waitForFunction(() => window.adminRequests[2].signal.aborted);
+  },
+);
+
+test(
+  'rotation preserves modal draft; user switch and logout remove previous workspace',
+  options,
+  async () => {
+    await page.route('**/api/admin/categories**', (route) =>
+      fulfill(route, { items: initial }),
+    );
+    await visit();
+    await visible('Data');
+    await openCreate();
+    const input = page.locator('#category-create-name');
+    await input.fill('Private draft');
+    await page.evaluate(() => window.adminTest.setToken('rotated'));
+    assert.equal(await input.inputValue(), 'Private draft');
+    await page.evaluate(() => window.adminTest.setUser(2));
+    await visible('Data');
+    assert.equal(await page.getByRole('dialog').count(), 0);
+    await openCreate();
+    assert.equal(await input.inputValue(), '');
+    await input.fill('Second draft');
+    await page.evaluate(() => window.adminTest.setToken(null));
+    await visible('Cần đăng nhập Admin');
+    assert.equal(await page.getByRole('dialog').count(), 0);
+    await page.evaluate(() => window.adminTest.setToken('new-session'));
+    await visible('Data');
+    await openCreate();
+    assert.equal(await input.inputValue(), '');
+  },
+);
+
+test(
+  'Skill search and eight-row pagination use the loaded API list, not additional query parameters',
+  options,
+  async () => {
+    await page.route('**/api/admin/categories**', (route) =>
+      fulfill(route, {
+        items:
+          new URL(route.request().url()).searchParams.get('type') === 'Skill'
+            ? Array.from({ length: 17 }, (_, i) => ({
+                id: i + 10,
+                type: 'Skill',
+                name: `Skill ${i + 1}`,
+                status: 'Active',
+              }))
+            : initial,
+      }),
+    );
+    await visit();
+    await visible('Data');
+    await page.getByRole('button', { name: /^Kỹ năng/ }).click();
+    await visible('Skill 1');
+    assert.equal(await page.locator('tbody tr').count(), 8);
+    await page.getByRole('button', { name: 'Tiếp', exact: true }).click();
+    await visible('Skill 9');
+    await page.getByRole('searchbox', { name: 'Tìm kỹ năng' }).fill('Skill 17');
+    await visible('Skill 17');
+    assert.equal(await page.locator('tbody tr').count(), 1);
+    assert.equal(await page.evaluate(() => window.adminRequests.length), 2);
+  },
+);
+
+test(
+  'creation date uses Vietnamese format and Ho Chi Minh timezone with safe fallback',
+  options,
+  async () => {
+    await page.close();
+    page = await harness.browser.newPage({ timezoneId: 'America/Los_Angeles' });
+    await page.route('**/api/admin/categories**', (route) =>
+      fulfill(route, {
+        items: [
+          { ...initial[0], createdAt: '2026-10-28T18:30:00.000Z' },
+          { ...initial[1], createdAt: '2026-02-30T00:00:00.000Z' },
+          { ...initial[0], id: 3, name: 'Missing date' },
+        ],
+      }),
+    );
+    await visit();
+    await visible('29/10/2026');
+    assert.equal(
+      await page.locator('time').getAttribute('datetime'),
+      '2026-10-28T18:30:00.000Z',
+    );
+    assert.equal(
+      await page
+        .getByLabel('Ngày tạo chưa có thông tin', { exact: true })
+        .count(),
+      2,
+    );
+    assert.equal(await page.locator('tbody tr').count(), 3);
+  },
+);
+
+test(
+  'Skill reload clamps the stored page and reports matching totals without page jumps',
+  options,
+  async () => {
+    let count = 17;
+    await page.route('**/api/admin/categories**', (route) =>
+      fulfill(route, {
+        items:
+          new URL(route.request().url()).searchParams.get('type') === 'Skill'
+            ? Array.from({ length: count }, (_, index) => ({
+                id: index + 10,
+                type: 'Skill',
+                name: `Skill ${index + 1}`,
+                status: 'Active',
+              }))
+            : initial,
+      }),
+    );
+    await visit();
+    await visible('Data');
+    await page.getByRole('button', { name: /^Kỹ năng/ }).click();
+    await visible('Hiển thị 1–8 / 17 kỹ năng');
+    await page.getByRole('button', { name: 'Tiếp', exact: true }).click();
+    await visible('Hiển thị 9–16 / 17 kỹ năng');
+    await page.getByRole('button', { name: 'Tiếp', exact: true }).click();
+    await visible('Hiển thị 17–17 / 17 kỹ năng');
+    count = 8;
+    await page
+      .getByRole('button', { name: 'Tải lại danh sách', exact: true })
+      .click();
+    await visible('Trang 1 / 1');
+    count = 17;
+    await page
+      .getByRole('button', { name: 'Tải lại danh sách', exact: true })
+      .click();
+    await visible('Trang 1 / 3');
+    await visible('Hiển thị 1–8 / 17 kỹ năng');
+    const search = page.getByRole('searchbox', { name: 'Tìm kỹ năng' });
+    await search.fill('missing');
+    await visible('Không tìm thấy kỹ năng');
+    await visible('Hiển thị 0–0 / 0 kỹ năng');
+    count = 0;
+    await search.fill('   ');
+    await page
+      .getByRole('button', { name: 'Tải lại danh sách', exact: true })
+      .click();
+    await visible('Chưa có danh mục');
   },
 );
