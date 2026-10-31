@@ -20,12 +20,14 @@ body.opportunity-hub-page {
     padding-bottom: 12px;
   }
 
-  .opportunity-hub-page nav[aria-label='Điều hướng chính'] {
+  .opportunity-hub-page nav[aria-label='Điều hướng chính'],
+  .opportunity-hub-page nav[aria-label='Điều hướng sinh viên'] {
     order: 3;
     width: 100%;
   }
 
-  .opportunity-hub-page nav[aria-label='Điều hướng chính'] ul {
+  .opportunity-hub-page nav[aria-label='Điều hướng chính'] ul,
+  .opportunity-hub-page nav[aria-label='Điều hướng sinh viên'] ul {
     flex-wrap: wrap;
     gap: 12px 20px;
   }

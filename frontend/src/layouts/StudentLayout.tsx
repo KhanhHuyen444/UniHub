@@ -13,15 +13,18 @@ export interface StudentLayoutProps {
   children: React.ReactNode;
   activeKey?: string;
   previewNavigation?: boolean;
+  variant?: 'default' | 'opportunities';
 }
 
 export function StudentLayout({
   children,
   activeKey = 'recommendations',
   previewNavigation = false,
+  variant = 'default',
 }: StudentLayoutProps) {
   const area: Extract<ShellArea, 'student'> = 'student';
-  const { user, status } = useAuth();
+  const isOpportunities = variant === 'opportunities';
+  const { user, status, logout } = useAuth();
   const initials = user?.fullName
     .trim()
     .split(/\s+/)
@@ -71,30 +74,69 @@ export function StudentLayout({
                 </span>
               </>
             ) : user ? (
-              <>
-                <div className="hidden max-w-44 text-right xl:block">
-                  <p className="truncate type-label font-semibold text-ink">
-                    {user.fullName}
-                  </p>
-                  <p className="truncate type-caption text-muted">
-                    {user.email}
-                  </p>
-                </div>
-                {user.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={`Ảnh đại diện của ${user.fullName}`}
-                    className="h-9 w-9 rounded-full object-cover"
-                  />
-                ) : (
-                  <span
-                    aria-label={`Ảnh đại diện của ${user.fullName}`}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-cyan text-sm font-bold leading-5 text-navy"
+              <details className="relative shrink-0">
+                <summary
+                  className="flex cursor-pointer list-none items-center gap-3 rounded-control focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+                  aria-label="Tài khoản sinh viên"
+                >
+                  <div className="hidden max-w-44 text-right xl:block">
+                    <p className="truncate type-label font-semibold text-ink">
+                      {user.fullName}
+                    </p>
+                    <p className="truncate type-caption text-muted">
+                      {user.email}
+                    </p>
+                  </div>
+                  {user.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={`Ảnh đại diện của ${user.fullName}`}
+                      className="h-9 w-9 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span
+                      aria-label={`Ảnh đại diện của ${user.fullName}`}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-cyan text-sm font-bold leading-5 text-navy"
+                    >
+                      {initials || 'U'}
+                    </span>
+                  )}
+                </summary>
+                <nav
+                  aria-label="Tài khoản sinh viên"
+                  className="absolute right-0 z-30 mt-3 grid w-60 gap-1 rounded-card border border-line bg-white p-2 shadow-soft"
+                >
+                  <Link
+                    className="rounded-control p-3 text-sm hover:bg-surface"
+                    to="/profile"
+                    onClick={(e) =>
+                      e.currentTarget
+                        .closest('details')
+                        ?.removeAttribute('open')
+                    }
                   >
-                    {initials || 'U'}
-                  </span>
-                )}
-              </>
+                    Hồ sơ cá nhân
+                  </Link>
+                  <Link
+                    className="rounded-control p-3 text-sm hover:bg-surface"
+                    to="/recommendations"
+                    onClick={(e) =>
+                      e.currentTarget
+                        .closest('details')
+                        ?.removeAttribute('open')
+                    }
+                  >
+                    Cơ hội dành cho bạn
+                  </Link>
+                  <button
+                    type="button"
+                    className="rounded-control p-3 text-left text-sm text-brand hover:bg-surface"
+                    onClick={() => void logout().catch(() => undefined)}
+                  >
+                    Đăng xuất
+                  </button>
+                </nav>
+              </details>
             ) : (
               <span role="status" className="type-caption text-muted">
                 {status === 'unavailable' ? 'Phiên chưa sẵn sàng' : 'Đang tải…'}
@@ -105,11 +147,21 @@ export function StudentLayout({
       </header>
 
       <main className="w-full flex-1">
-        <div className="mx-auto w-full max-w-student px-8 py-10">
+        <div
+          className={`mx-auto w-full max-w-student ${isOpportunities ? 'px-8 pt-10' : 'px-8 py-10'}`}
+        >
           {children}
         </div>
       </main>
-      <SiteFooter area={area} previewNavigation={previewNavigation} />
+      <SiteFooter
+        area={area}
+        previewNavigation={previewNavigation}
+        navigationLabelOverrides={
+          isOpportunities
+            ? { opportunities: 'Cơ hội', roadmaps: 'Lộ trình' }
+            : undefined
+        }
+      />
     </div>
   );
 }
