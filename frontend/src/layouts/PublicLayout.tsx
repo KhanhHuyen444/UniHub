@@ -43,7 +43,7 @@ export function PublicLayout({
   return (
     <div className="flex min-h-screen flex-col bg-page">
       <header
-        className={`${isOpportunities ? 'h-[81px]' : 'h-[72px]'} shrink-0 border-b border-line bg-white/90 shadow-nav backdrop-blur-[24px]`}
+        className={`relative z-40 ${isOpportunities ? 'h-[81px]' : 'h-[72px]'} shrink-0 border-b border-line bg-white/90 shadow-nav backdrop-blur-[24px]`}
       >
         <div
           className={`mx-auto flex h-full items-center justify-between px-8 ${isOpportunities ? 'w-full max-w-[1280px]' : 'max-w-public'}`}

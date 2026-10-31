@@ -36,7 +36,9 @@ export function StudentLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-page">
-      <header className="h-16 shrink-0 border-b border-line bg-white/95 shadow-nav backdrop-blur-[12px]">
+      <header
+        className={`relative z-40 ${isOpportunities ? 'h-[81px]' : 'h-16'} shrink-0 border-b border-line bg-white/95 shadow-nav backdrop-blur-[12px]`}
+      >
         <div className="mx-auto flex h-full max-w-student items-center gap-8 px-8">
           <Brand area={area} previewNavigation={previewNavigation} />
           <nav aria-label="Điều hướng sinh viên" className="min-w-0 flex-1">

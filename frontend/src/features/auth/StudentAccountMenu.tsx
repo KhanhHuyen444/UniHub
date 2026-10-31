@@ -73,7 +73,7 @@ export function StudentAccountMenu() {
       </summary>
       <nav
         aria-label="Tài khoản sinh viên"
-        className="absolute right-0 z-30 mt-2 grid w-64 gap-1 rounded-card border border-line bg-white p-2 shadow-public-card"
+        className="absolute right-0 z-50 mt-2 grid w-64 gap-1 rounded-card border border-line bg-white p-2 shadow-public-card"
       >
         <div className="border-b border-line px-3 py-2">
           <p className="truncate text-sm font-bold text-ink">{user.fullName}</p>
