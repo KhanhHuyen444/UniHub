@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { useAuth } from '../features/auth/AuthProvider';
 import { NotificationBell } from '../features/notifications/NotificationBell';
-import { StudentAccountMenu } from '../features/profile/StudentAccountMenu';
+import { StudentAccountMenu } from '../features/auth/StudentAccountMenu';
 import googleGLogo from '../assets/google-g-logo.svg';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';

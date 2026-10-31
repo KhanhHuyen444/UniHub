@@ -241,7 +241,7 @@ export function HomePage() {
 
           {/* Card 4: Lịch & Deadline */}
           <Link
-            to="/login"
+            to={isStudent ? '/calendar' : '/login'}
             className="group flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-md hover:border-brand/40 transition-all"
           >
             <div>
@@ -264,11 +264,13 @@ export function HomePage() {
                 Lịch & Deadline
               </h3>
               <p className="mt-2 text-xs leading-relaxed text-muted">
-                Quản lý lịch và deadline. Đăng nhập để dùng.
+                {isStudent
+                  ? 'Quản lý lịch cá nhân và theo dõi các deadline quan trọng.'
+                  : 'Quản lý lịch và deadline. Đăng nhập để dùng.'}
               </p>
             </div>
             <span className="mt-5 inline-flex items-center gap-1 text-xs font-medium text-brand">
-              Đăng nhập{' '}
+              {isStudent ? 'Xem lịch' : 'Đăng nhập'}{' '}
               <span className="transition-transform group-hover:translate-x-0.5">
                 →
               </span>

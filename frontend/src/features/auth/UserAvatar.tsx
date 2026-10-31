@@ -18,6 +18,7 @@ export function UserAvatar({
       .map((part) => part.slice(0, 1))
       .join('')
       .toLocaleUpperCase('vi-VN') || 'U';
+
   return (
     <span
       aria-label={`Ảnh đại diện của ${name}`}
@@ -37,3 +38,4 @@ export function UserAvatar({
     </span>
   );
 }
+

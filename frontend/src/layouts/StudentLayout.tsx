@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { NotificationBell } from '../features/notifications/NotificationBell';
-import { StudentAccountMenu } from '../features/profile/StudentAccountMenu';
+import { StudentAccountMenu } from '../features/auth/StudentAccountMenu';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
 import { useAuth } from '../features/auth/AuthProvider';

@@ -1,12 +1,46 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router';
-import { useAuth } from '../auth/AuthProvider';
+import { useAuth } from './AuthProvider';
 import { UserAvatar } from './UserAvatar';
 
 export function StudentAccountMenu() {
   const { user, logout } = useAuth();
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+
+  useEffect(() => {
+    function handleDocumentClick(event: MouseEvent) {
+      if (
+        detailsRef.current &&
+        !detailsRef.current.contains(event.target as Node)
+      ) {
+        detailsRef.current.removeAttribute('open');
+      }
+    }
+
+    document.addEventListener('click', handleDocumentClick);
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, []);
+
   if (user?.role !== 'Student') return null;
+
+  function closeMenu() {
+    if (detailsRef.current) {
+      detailsRef.current.removeAttribute('open');
+    }
+  }
+
   return (
-    <details className="relative shrink-0">
+    <details
+      ref={detailsRef}
+      className="relative shrink-0"
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          closeMenu();
+        }
+      }}
+    >
       <summary
         className="flex cursor-pointer list-none items-center gap-2 rounded-control p-1 hover:bg-surface/80 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden"
         aria-label="Tài khoản sinh viên"
@@ -32,18 +66,16 @@ export function StudentAccountMenu() {
       </summary>
       <nav
         aria-label="Tài khoản sinh viên"
-        className="absolute right-0 z-30 mt-2 grid w-64 gap-1 rounded-card border border-line bg-white p-2 shadow-card-public"
+        className="absolute right-0 z-30 mt-2 grid w-64 gap-1 rounded-card border border-line bg-white p-2 shadow-public-card"
       >
         <div className="border-b border-line px-3 py-2">
           <p className="truncate text-sm font-bold text-ink">{user.fullName}</p>
           <p className="truncate text-xs text-muted">{user.email}</p>
         </div>
         <Link
-          className="flex items-center gap-2.5 rounded-control px-3 py-2 text-sm font-medium text-ink hover:bg-surface hover:text-brand transition-colors"
+          className="flex items-center gap-2.5 rounded-control px-3 py-2 text-sm font-medium text-ink hover:bg-surface hover:text-brand transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
           to="/profile"
-          onClick={(e) =>
-            e.currentTarget.closest('details')?.removeAttribute('open')
-          }
+          onClick={closeMenu}
         >
           <svg
             className="h-4 w-4 text-muted"
@@ -62,11 +94,9 @@ export function StudentAccountMenu() {
           Hồ sơ cá nhân
         </Link>
         <Link
-          className="flex items-center gap-2.5 rounded-control px-3 py-2 text-sm font-medium text-ink hover:bg-surface hover:text-brand transition-colors"
+          className="flex items-center gap-2.5 rounded-control px-3 py-2 text-sm font-medium text-ink hover:bg-surface hover:text-brand transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
           to="/recommendations"
-          onClick={(e) =>
-            e.currentTarget.closest('details')?.removeAttribute('open')
-          }
+          onClick={closeMenu}
         >
           <svg
             className="h-4 w-4 text-muted"
@@ -87,7 +117,7 @@ export function StudentAccountMenu() {
         <div className="border-t border-line my-1" />
         <button
           type="button"
-          className="flex w-full items-center gap-2.5 rounded-control px-3 py-2 text-left text-sm font-medium text-danger hover:bg-danger-surface transition-colors"
+          className="flex w-full items-center gap-2.5 rounded-control px-3 py-2 text-left text-sm font-medium text-danger hover:bg-danger-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-danger"
           onClick={() => void logout().catch(() => undefined)}
         >
           <svg
@@ -110,3 +140,4 @@ export function StudentAccountMenu() {
     </details>
   );
 }
+

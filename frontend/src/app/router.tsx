@@ -10,7 +10,9 @@ import { GuidanceDetailPage } from '../features/guidance/GuidanceDetailPage';
 import { AuthProvider } from '../features/auth/AuthProvider';
 import { ForbiddenPage, RequireRole } from '../features/auth/AuthGuard';
 import { LoginPage } from '../features/auth/LoginPage';
+import { PendingFeatureNotice } from '../features/auth/PendingFeatureNotice';
 import { PublicLayout } from '../layouts/PublicLayout';
+import { StudentLayout } from '../layouts/StudentLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
 import { AdminDashboardPage } from '../features/admin/dashboard/AdminDashboardPage';
@@ -23,6 +25,9 @@ export const appPaths = {
   sharedUiPreview: sharedUiPreviewPath,
   opportunities: '/opportunities',
   roadmaps: '/roadmaps',
+  profile: '/profile',
+  recommendations: '/recommendations',
+  calendar: '/calendar',
   adminOpportunities: '/admin/opportunities',
   adminDashboard: '/admin/dashboard',
   notFound: '/404',
@@ -69,10 +74,42 @@ export function AppRouter() {
             }
           />
           <Route
-            path="/calendar"
+            path={appPaths.calendar}
             element={
               <RequireRole role="Student">
                 <CalendarPage />
+              </RequireRole>
+            }
+          />
+          <Route
+            path={appPaths.profile}
+            element={
+              <RequireRole role="Student">
+                <StudentLayout activeKey="profile">
+                  <PendingFeatureNotice
+                    title="Hồ sơ sinh viên"
+                    description="Tính năng Hồ sơ sinh viên đang trong quá trình nghiệm thu tích hợp (PR #36). Bạn có thể quay lại khám phá các cơ hội học tập và việc làm."
+                    badgeText="Chờ tích hợp PR #36"
+                    backTo={appPaths.opportunities}
+                    backLabel="Khám phá cơ hội"
+                  />
+                </StudentLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path={appPaths.recommendations}
+            element={
+              <RequireRole role="Student">
+                <StudentLayout activeKey="recommendations">
+                  <PendingFeatureNotice
+                    title="Cơ hội dành cho bạn"
+                    description="Tính năng gợi ý cơ hội học tập và việc làm cá nhân hóa đang được hoàn thiện. Vui lòng quay lại sau hoặc duyệt danh sách cơ hội hiện có."
+                    badgeText="Đang hoàn thiện"
+                    backTo={appPaths.opportunities}
+                    backLabel="Xem tất cả cơ hội"
+                  />
+                </StudentLayout>
               </RequireRole>
             }
           />
