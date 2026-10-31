@@ -5,37 +5,25 @@ approved [contract](../../../../docs/recommendations-api-contract.md). This
 frontend update does not change Backend behavior, schema/database definitions,
 Auth/Profile, shared router, Guidance or Categories.
 
-## Verified state and integration interface
+## Auth/Profile integration — PR #36
 
-The inspected frontend Auth/Profile modules contain README placeholders only,
-without a session provider or Profile UI. `RecommendationsPage` therefore exports
-reusable page content, not an independently authenticated product route:
+`/recommendations` is mounted by the shared router inside `RequireRole Student` and
+StudentLayout. Guest goes to login with a safe returnTo; Admin goes to /403.
+`PROFILE_INCOMPLETE` offers `/profile`. Per UC-05, successful save and deferring go to home `/`; deferring does not call PUT; empty recommendations remain distinct from an
+incomplete profile or a service error.
 
-```tsx
-<RecommendationsPage
-  accessToken={accessToken}
-  role={role}
-  onCompleteProfile={openProfile}
-  onSignIn={openSignIn}
-/>
-```
-
-These values/callbacks belong to the parent; no unverified Auth API shape or
-Profile path is assumed. The page uses existing React Router links, so render it
-inside the application's router. Huyền owns the actual Student route/shell and
-navigation integration; no shared router was modified. Bình supplies the current
-token/role, refresh/re-login/logout and Profile completion. Clear/update auth props
-on identity changes. Callbacks are optional: without them the page still explains
-which profile fields are needed, but cannot navigate to unimplemented modules.
-A full login -> Profile -> Recommendations product flow remains pending.
+RecommendationsPage keeps its existing token/role props for request lifecycle,
+abort and visibility gates. The token prop is not forwarded to the API: the
+shared Auth module supplies the current Bearer token and owns refresh/retry.
+Callbacks remain optional for isolated consumers and test harnesses.
 
 ## API, validation and hook
 
-- `getRecommendations(accessToken, signal?)` calls the exact GET endpoint with
-  no query or body, using existing shared `apiRequest` and Authorization Bearer
-  headers. No separate fetch client, login, token storage, decoding or refresh.
-- Blank tokens fail before fetching; nonempty invalid tokens reach shared
-  Backend Auth. Error status/code, network errors and AbortError are preserved.
+- `getRecommendations(signal?)` uses `protectedApiRequest` for the exact GET
+  endpoint with no query/body. On 401 it uses shared refresh/retry, reads the new
+  token and clears Auth on terminal 401. Refresh service errors become unavailable
+  state; the existing guard offers restoration retry. No new auth mechanism.
+- Error status/code, network errors and AbortError are preserved.
 - `parseRecommendations(unknown)` validates items/meta/evaluatedAt, unique positive
   MySQL INT IDs, exact public opportunity types, fields, finite matchScore in
   [0.5,1] with output precision at most four decimals and known open deadlines.
@@ -63,7 +51,7 @@ Percentages display the API's rounded score (up to two percentage decimals),
 without changing server order. No production fixtures/mock data are included.
 UI has not been verified against Figma or claimed to be the final Student shell.
 
-- 401: invalid/expired session, re-login callback and retry; no fake refresh.
+- Terminal 401: shared Auth clears the session and the product guard sends Guest to login; isolated content keeps its re-login callback.
 - 403: Student-only access explanation; no recommendation data.
 - 409 `PROFILE_INCOMPLETE`: distinct from empty/error; instruct Major, year 1–4
   and at least one Skill, optional Profile callback, retry after completion.
@@ -104,7 +92,7 @@ It does not establish independent request transaction isolation or concurrent
 Profile edits. Existing Backend MySQL tests verify additional scoring/SQL cases.
 Missing configuration reports SKIP, not PASS.
 
-Native Prisma CLI in this Cloud has returned HTTP 403 fetching the schema-engine
+Historical Cloud environment note: Prisma CLI returned HTTP 403 fetching the schema-engine
 checksum from binaries.prisma.sh. Official same-version `@prisma/internals` and
 `@prisma/client-generator-ts` 7.10.1 can generate the actual client in-process with
 WASM outside the checkout. After explicit generation, use
@@ -112,5 +100,6 @@ WASM outside the checkout. After explicit generation, use
 only the blocked native-generation lifecycle while executing the requested
 checks. No TLS/checksum verification, schema, manifests or lockfiles are changed.
 
-Not verified: real Google login, final Auth/Profile/session UI and guarded Student
-routing, production data/grants, Windows, NFR/performance, deployment or Figma.
+Current review results and limitations: [PR #36 review](../../../../docs/pr36-review-fix.md).
+Fetch/SSR coverage is distinct from browser routing, real Google login, MySQL
+integration, production grants, NFR/performance, deployment and Figma verification.

@@ -1,21 +1,35 @@
-export type ApiMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+export interface ApiFieldError {
+  source: 'body' | 'path' | 'query';
+  field: string;
+  code: string;
+  message: string;
+}
 
 export type ApiErrorKind = 'request' | 'http' | 'network' | 'response';
 
 export class ApiError extends Error {
+  readonly fieldErrors?: ApiFieldError[];
   readonly code: string;
   readonly kind: ApiErrorKind;
   readonly status?: number;
 
   constructor(
     message: string,
-    options: { code: string; kind: ApiErrorKind; status?: number },
+    options: {
+      code: string;
+      kind: ApiErrorKind;
+      status?: number;
+      fieldErrors?: ApiFieldError[];
+    },
   ) {
     super(message);
     this.name = 'ApiError';
     this.code = options.code;
     this.kind = options.kind;
     this.status = options.status;
+    this.fieldErrors = options.fieldErrors;
   }
 }
 
@@ -64,13 +78,32 @@ function throwNetworkError(error: unknown): never {
 function parseErrorEnvelope(value: unknown): {
   code: string;
   message: string;
+  fieldErrors?: ApiFieldError[];
 } | null {
   if (!isRecord(value) || !isRecord(value.error)) return null;
   const envelope = value as JsonErrorEnvelope;
   const code = envelope.error?.code;
   const message = envelope.error?.message;
   if (typeof code !== 'string' || typeof message !== 'string') return null;
-  return { code, message };
+  const fields = value.error.fieldErrors;
+  const fieldErrors = Array.isArray(fields)
+    ? fields
+        .filter(
+          (item): item is ApiFieldError =>
+            isRecord(item) &&
+            ['body', 'path', 'query'].includes(String(item.source)) &&
+            typeof item.field === 'string' &&
+            typeof item.code === 'string' &&
+            typeof item.message === 'string',
+        )
+        .map(({ source, field, code, message }) => ({
+          source,
+          field,
+          code,
+          message,
+        }))
+    : undefined;
+  return { code, message, fieldErrors };
 }
 
 export function createApiClient(fetcher: typeof fetch = globalThis.fetch) {
@@ -162,6 +195,7 @@ export function createApiClient(fetcher: typeof fetch = globalThis.fetch) {
           code: envelope?.code ?? 'HTTP_ERROR',
           kind: 'http',
           status: response.status,
+          fieldErrors: envelope?.fieldErrors,
         },
       );
     }

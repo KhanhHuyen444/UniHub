@@ -37,7 +37,7 @@ beforeEach(async () => {
     window.recommendationRequests = [];
     const original = window.fetch;
     window.fetch = (input, init) => {
-      if (String(input).startsWith('/api/'))
+      if (String(input).startsWith('/api/recommendations'))
         window.recommendationRequests.push({
           path: String(input),
           signal: init?.signal,

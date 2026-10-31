@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router';
 import { HealthCheckPage } from './App';
 import { NotFoundPage } from './NotFoundPage';
 import { SharedUiPreviewPage } from './SharedUiPreviewPage';
@@ -10,14 +10,31 @@ import { GuidanceDetailPage } from '../features/guidance/GuidanceDetailPage';
 import { AuthProvider } from '../features/auth/AuthProvider';
 import { ForbiddenPage, RequireRole } from '../features/auth/AuthGuard';
 import { LoginPage } from '../features/auth/LoginPage';
-import { PendingFeatureNotice } from '../features/auth/PendingFeatureNotice';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { StudentLayout } from '../layouts/StudentLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
+import { ProfilePage } from '../features/profile/ProfilePage';
+import { ProfileSavedNotice } from '../features/profile/ProfileSavedNotice';
+import { RecommendationsPage } from '../features/recommendations/RecommendationsPage';
+import { useAuth } from '../features/auth/AuthProvider';
+import { getAccessToken } from '../features/auth/auth-state';
 import { AdminDashboardPage } from '../features/admin/dashboard/AdminDashboardPage';
 import { CalendarPage } from '../features/calendar/CalendarPage';
 import { HomePage } from '../features/home/HomePage';
+
+function RecommendationsRoute() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  return (
+    <RecommendationsPage
+      accessToken={getAccessToken()}
+      role={user?.role ?? null}
+      onCompleteProfile={() => navigate('/profile')}
+      onSignIn={() => navigate('/login?returnTo=%2Frecommendations')}
+    />
+  );
+}
 
 export const appPaths = {
   home: '/',
@@ -37,6 +54,7 @@ export function AppRouter() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <ProfileSavedNotice />
         <Routes>
           <Route
             path={appPaths.home}
@@ -86,13 +104,7 @@ export function AppRouter() {
             element={
               <RequireRole role="Student">
                 <StudentLayout activeKey="profile">
-                  <PendingFeatureNotice
-                    title="Hồ sơ sinh viên"
-                    description="Tính năng Hồ sơ sinh viên đang trong quá trình nghiệm thu tích hợp (PR #36). Bạn có thể quay lại khám phá các cơ hội học tập và việc làm."
-                    badgeText="Chờ tích hợp PR #36"
-                    backTo={appPaths.opportunities}
-                    backLabel="Khám phá cơ hội"
-                  />
+                  <ProfilePage />
                 </StudentLayout>
               </RequireRole>
             }
@@ -102,13 +114,7 @@ export function AppRouter() {
             element={
               <RequireRole role="Student">
                 <StudentLayout activeKey="recommendations">
-                  <PendingFeatureNotice
-                    title="Cơ hội dành cho bạn"
-                    description="Tính năng gợi ý cơ hội học tập và việc làm cá nhân hóa đang được hoàn thiện. Vui lòng quay lại sau hoặc duyệt danh sách cơ hội hiện có."
-                    badgeText="Đang hoàn thiện"
-                    backTo={appPaths.opportunities}
-                    backLabel="Xem tất cả cơ hội"
-                  />
+                  <RecommendationsRoute />
                 </StudentLayout>
               </RequireRole>
             }

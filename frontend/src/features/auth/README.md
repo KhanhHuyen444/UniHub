@@ -26,3 +26,7 @@ Trong module được bảo vệ, gọi `protectedApiRequest('/api/auth/me')` ho
 3. Chạy backend/frontend theo README. Mở `http://127.0.0.1:5173/login`; Google sẽ chuyển ID token qua frontend tới backend same-origin `/api`.
 
 Kiểm thử trong nhánh dùng API fetch double và trình duyệt với API/GIS mock để kiểm tra luồng giao diện. Chưa xác minh thông tin OAuth thật hoặc đăng nhập Google production. Admin shell trong `/_dev/ui?area=admin` tiếp tục là preview tĩnh, không giả lập người đăng nhập; khi module sản phẩm dùng `AdminLayout`, tên/email và đăng xuất lấy từ auth context thật.
+
+## Tích hợp Student Profile — PR #36
+
+LoginPage để Auth hoàn tất Google login, sau đó ProfileLoginRedirect đọc GET `/api/users/me/profile` qua client bảo vệ chung. Student thiếu hồ sơ đến `/profile` kể cả khi có returnTo; Student đủ hồ sơ về `/` hoặc safe returnTo. Lỗi kiểm tra hồ sơ hiển thị retry, không tự coi hồ sơ là đủ. Chỉ kiểm tra ở login, không ép Student đã chọn “Để sau” hoàn thiện hồ sơ khi dùng chức năng công khai. Admin không gọi API Profile và giữ routing hiện có. PR giữ markup login nền và GoogleIdentityButton theo HEAD; phần Login UI riêng được bảo toàn ngoài phạm vi PR.
