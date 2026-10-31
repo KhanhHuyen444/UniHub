@@ -22,5 +22,5 @@ export function loginDestination(
   origin = 'http://localhost',
 ): string {
   if (returnTo !== null) return safeReturnPath(returnTo, origin);
-  return role === 'Admin' ? '/admin/opportunities' : '/opportunities';
+  return role === 'Admin' ? '/admin/dashboard' : '/';
 }

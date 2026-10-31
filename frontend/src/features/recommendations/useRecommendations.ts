@@ -26,7 +26,7 @@ export function useRecommendations(
         setResult({ token: accessToken, role, attempt, state });
     };
     update({ status: 'loading' });
-    getRecommendations(accessToken, controller.signal).then(
+    getRecommendations(controller.signal).then(
       (data) =>
         update(
           data.items.length

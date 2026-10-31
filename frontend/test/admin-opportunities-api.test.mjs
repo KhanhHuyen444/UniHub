@@ -129,8 +129,8 @@ test('queue page correction never renders an invalid final or empty page', () =>
 });
 
 test('admin direct login destination and returnTo stay within the application', () => {
-  assert.equal(loginDestination(null, 'Admin'), '/admin/opportunities');
-  assert.equal(loginDestination(null, 'Student'), '/opportunities');
+  assert.equal(loginDestination(null, 'Admin'), '/admin/dashboard');
+  assert.equal(loginDestination(null, 'Student'), '/');
   assert.equal(
     loginDestination('/admin/opportunities/41?page=2', 'Admin'),
     '/admin/opportunities/41?page=2',
