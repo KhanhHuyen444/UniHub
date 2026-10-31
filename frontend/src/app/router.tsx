@@ -13,6 +13,7 @@ import { LoginPage } from '../features/auth/LoginPage';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
+import { AdminCategoriesRoute } from '../features/admin/categories/AdminCategoriesRoute';
 import { AdminDashboardPage } from '../features/admin/dashboard/AdminDashboardPage';
 import { CalendarPage } from '../features/calendar/CalendarPage';
 
@@ -53,6 +54,7 @@ export function AppRouter() {
             element={<OpportunityDetailPage />}
           />
           <Route path={appPaths.roadmaps} element={<GuidanceRoadmapPage />} />
+          <Route path="/admin/categories" element={<AdminCategoriesRoute />} />
           <Route
             path={appPaths.adminDashboard}
             element={
