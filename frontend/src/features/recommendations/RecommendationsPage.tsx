@@ -1,13 +1,11 @@
-import { Link } from 'react-router';
 import {
-  Badge,
   Button,
   Card,
   EmptyState,
   ErrorState,
   LoadingState,
 } from '../../components/ui';
-import { formatOpportunityDate } from '../opportunities/contracts';
+import { RecommendationCard } from './RecommendationCard';
 import {
   useRecommendations,
   type RecommendationsRole,
@@ -102,76 +100,118 @@ export function RecommendationsPage({
   } else if (state.status === 'success')
     content = (
       <>
-        <Button variant="outline" onClick={retry}>
-          Tải lại gợi ý
-        </Button>
-        <ol
-          className="grid list-none gap-4 p-0 md:grid-cols-2"
-          aria-label="Cơ hội được gợi ý"
-        >
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="type-body font-medium text-ink">
+            {state.data.items.length} cơ hội phù hợp
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="type-caption text-muted">
+              ≡ Sắp xếp theo mức độ phù hợp giảm dần
+            </p>
+            <Button variant="text" onClick={retry}>
+              Tải lại gợi ý
+            </Button>
+          </div>
+        </div>
+        <ol className="grid list-none gap-4 p-0" aria-label="Cơ hội được gợi ý">
           {state.data.items.map((item) => (
             <li key={item.id}>
-              <Card className="h-full p-5">
-                <article
-                  className="grid gap-3"
-                  aria-labelledby={`recommendation-${item.id}`}
-                >
-                  <div className="flex gap-2">
-                    <Badge variant="info">{item.type}</Badge>
-                    {item.isVerified && (
-                      <Badge variant="success">Verified</Badge>
-                    )}
-                  </div>
-                  <h2
-                    id={`recommendation-${item.id}`}
-                    className="type-title font-semibold text-navy"
-                  >
-                    {item.title}
-                  </h2>
-                  {item.publisher && (
-                    <p className="type-label text-secondary">
-                      {item.publisher}
-                    </p>
-                  )}
-                  <p className="type-label font-semibold text-brand">
-                    Điểm phù hợp:{' '}
-                    {new Intl.NumberFormat('vi-VN', {
-                      style: 'percent',
-                      maximumFractionDigits: 2,
-                    }).format(item.matchScore)}
-                  </p>
-                  {item.workFormat && (
-                    <p className="type-label">Hình thức: {item.workFormat}</p>
-                  )}
-                  {item.location && (
-                    <p className="type-label">Địa điểm: {item.location}</p>
-                  )}
-                  <p className="type-label">
-                    Hạn nộp:{' '}
-                    {item.deadline
-                      ? formatOpportunityDate(item.deadline.date)
-                      : 'Không có hạn nộp'}
-                  </p>
-                  <Link
-                    to={`/opportunities/${item.id}`}
-                    className="type-label font-semibold text-brand underline"
-                    aria-label={`Xem chi tiết: ${item.title}`}
-                  >
-                    Xem chi tiết
-                  </Link>
-                </article>
-              </Card>
+              <article aria-labelledby={`recommendation-${item.id}`}>
+                <RecommendationCard item={item} />
+              </article>
             </li>
           ))}
         </ol>
       </>
     );
+  const showSidebar =
+    state.status !== 'unauthenticated' && state.status !== 'forbidden';
   return (
-    <section className="grid gap-5" aria-label="Gợi ý cơ hội cá nhân hóa">
-      <h1 className="type-title font-semibold text-navy">
-        Cơ hội dành cho bạn
-      </h1>
-      {content}
+    <section className="grid gap-8" aria-label="Gợi ý cơ hội cá nhân hóa">
+      <header>
+        <span className="inline-flex items-center gap-2 rounded-pill bg-surface px-3 py-1 type-caption text-navy">
+          <span aria-hidden="true" className="text-brand">
+            ●
+          </span>
+          Gợi ý thông minh dựa trên hồ sơ học thuật
+        </span>
+        <h1 className="mt-3 type-heading text-navy">Cơ hội dành cho bạn</h1>
+        <p className="mt-2 type-label text-secondary">
+          Khám phá cơ hội phù hợp với chuyên ngành, năm học và kỹ năng của bạn.
+        </p>
+      </header>
+      <div
+        className={
+          showSidebar
+            ? 'grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]'
+            : 'grid gap-6'
+        }
+      >
+        <div className="grid min-w-0 gap-6">{content}</div>
+        {showSidebar && (
+          <aside className="grid gap-4" aria-label="Thông tin gợi ý">
+            <Card className="grid gap-5 p-5">
+              <h3 className="type-body font-medium text-ink">Hồ sơ của bạn</h3>
+              <p className="type-label text-muted">
+                Cập nhật chuyên ngành, năm học và kỹ năng trong hồ sơ để nhận cơ
+                hội phù hợp.
+              </p>
+              {onCompleteProfile && state.status === 'success' && (
+                <Button
+                  variant="neutral"
+                  className="bg-cyan text-navy"
+                  onClick={onCompleteProfile}
+                >
+                  Cập nhật hồ sơ
+                </Button>
+              )}
+            </Card>
+            <section
+              className="grid gap-4 rounded-card bg-surface p-5"
+              aria-labelledby="recommendation-how"
+            >
+              <h3
+                id="recommendation-how"
+                className="type-body font-medium text-navy"
+              >
+                <span aria-hidden="true" className="mr-2 text-brand">
+                  ⓘ
+                </span>
+                Cách gợi ý hoạt động
+              </h3>
+              <p className="type-label text-secondary">
+                Mức độ phù hợp được tính từ chuyên ngành (40%), năm học (30%) và
+                kỹ năng (30%). Chỉ hiển thị cơ hội đạt từ 50% và còn hạn nhận hồ
+                sơ hoặc không có hạn nộp.
+              </p>
+              <div className="rounded-control bg-white p-3">
+                <p className="flex justify-between type-caption text-muted">
+                  <span>Trọng số tính điểm:</span>
+                  <strong className="font-semibold text-ink">
+                    100% Tổng điểm
+                  </strong>
+                </p>
+                <div
+                  aria-hidden="true"
+                  className="my-2 flex h-2 overflow-hidden rounded-pill"
+                >
+                  <span className="w-2/5 bg-navy" />
+                  <span className="w-[30%] bg-brand" />
+                  <span className="w-[30%] bg-[#00b4d8]" />
+                </div>
+                <p className="flex justify-between gap-2 type-caption text-secondary">
+                  <span>Ngành 40%</span>
+                  <span>Năm 30%</span>
+                  <span>Kỹ năng 30%</span>
+                </p>
+              </div>
+              <p className="type-caption italic text-muted">
+                Vị trí nghề nghiệp mục tiêu không tham gia tính điểm.
+              </p>
+            </section>
+          </aside>
+        )}
+      </div>
     </section>
   );
 }
