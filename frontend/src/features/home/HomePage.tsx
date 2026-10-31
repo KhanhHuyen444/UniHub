@@ -93,7 +93,10 @@ export function HomePage() {
             </div>
 
             {/* Floating Card 1: Top Milestone */}
-            <div className="w-full max-w-[270px] rounded-card border border-line bg-white/95 p-3.5 shadow-soft transition-transform hover:-translate-y-0.5 lg:mr-10 mb-[-12px] z-10">
+            <Link
+              to="/roadmaps"
+              className="w-full max-w-[270px] rounded-card border border-line bg-white/95 p-3.5 shadow-soft transition-transform hover:-translate-y-0.5 lg:mr-10 mb-[-12px] z-10 block"
+            >
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-teal-500" />
                 <span className="text-[11px] font-semibold text-[#00677D]">
@@ -103,53 +106,122 @@ export function HomePage() {
               <p className="mt-1 text-sm font-semibold text-ink">
                 Cấu trúc dữ liệu & Git
               </p>
-            </div>
+            </Link>
 
             {/* Floating Card 2: Middle Job Card */}
-            <div className="w-full max-w-[290px] rounded-card border border-line bg-white p-4 shadow-public-card transition-transform hover:-translate-y-0.5 z-20">
-              <div className="flex items-center gap-2">
-                <span className="inline-flex rounded-full bg-info-surface px-2 py-0.5 text-[11px] font-semibold text-info">
-                  Thực tập
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-success-surface px-2 py-0.5 text-[11px] font-semibold text-success">
-                  <svg
-                    className="h-3 w-3"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Verified
-                </span>
-              </div>
-              <p className="mt-2 text-sm font-bold text-navy">
-                Frontend React Developer
-              </p>
-              <p className="text-xs text-muted">FPT Software · Hà Nội</p>
-              <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-2 text-xs">
-                <span className="font-medium text-amber-700">
-                  Hạn: 15/11/2025
-                </span>
-                <span className="text-brand font-bold">→</span>
-              </div>
-            </div>
+            {opportunities[0] ? (
+              <Link
+                to={`/opportunities/${opportunities[0].id}`}
+                className="w-full max-w-[290px] rounded-card border border-line bg-white p-4 shadow-public-card transition-transform hover:-translate-y-0.5 z-20 block"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex rounded-full bg-info-surface px-2 py-0.5 text-[11px] font-semibold text-info">
+                    {opportunities[0].type}
+                  </span>
+                  {opportunities[0].isVerified && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-success-surface px-2 py-0.5 text-[11px] font-semibold text-success">
+                      <svg
+                        className="h-3 w-3"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Verified
+                    </span>
+                  )}
+                </div>
+                <p className="mt-2 text-sm font-bold text-navy line-clamp-1">
+                  {opportunities[0].title}
+                </p>
+                <p className="text-xs text-muted truncate">
+                  {opportunities[0].publisher}
+                  {opportunities[0].location
+                    ? ` · ${opportunities[0].location}`
+                    : ''}
+                </p>
+                <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-2 text-xs">
+                  <span className="font-medium text-amber-700">
+                    {opportunities[0].deadline?.date
+                      ? `Hạn: ${opportunities[0].deadline.date}`
+                      : 'Đang mở'}
+                  </span>
+                  <span className="text-brand font-bold">→</span>
+                </div>
+              </Link>
+            ) : (
+              <Link
+                to="/opportunities"
+                className="w-full max-w-[290px] rounded-card border border-line bg-white p-4 shadow-public-card transition-transform hover:-translate-y-0.5 z-20 block"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex rounded-full bg-info-surface px-2 py-0.5 text-[11px] font-semibold text-info">
+                    Thực tập
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-success-surface px-2 py-0.5 text-[11px] font-semibold text-success">
+                    <svg
+                      className="h-3 w-3"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Verified
+                  </span>
+                </div>
+                <p className="mt-2 text-sm font-bold text-navy">
+                  Frontend React Developer
+                </p>
+                <p className="text-xs text-muted">FPT Software · Hà Nội</p>
+                <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-2 text-xs">
+                  <span className="font-medium text-amber-700">
+                    Hạn: 15/11/2025
+                  </span>
+                  <span className="text-brand font-bold">→</span>
+                </div>
+              </Link>
+            )}
 
             {/* Floating Card 3: Bottom Reminder */}
-            <div className="w-full max-w-[260px] rounded-card border border-line bg-white/95 p-3 shadow-soft transition-transform hover:-translate-y-0.5 lg:mr-4 mt-[-12px] z-30 flex items-center gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-700 text-sm">
-                🎓
-              </div>
-              <div className="min-w-0">
-                <p className="text-[11px] text-muted">Nhắc hạn nộp</p>
-                <p className="text-xs font-semibold text-ink truncate">
-                  Học bổng Tài năng 2025
-                </p>
-              </div>
-            </div>
+            {opportunities[1] ? (
+              <Link
+                to={`/opportunities/${opportunities[1].id}`}
+                className="w-full max-w-[260px] rounded-card border border-line bg-white/95 p-3 shadow-soft transition-transform hover:-translate-y-0.5 lg:mr-4 mt-[-12px] z-30 flex items-center gap-3"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-700 text-sm">
+                  🎓
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[11px] text-muted">Cơ hội nổi bật</p>
+                  <p className="text-xs font-semibold text-ink truncate">
+                    {opportunities[1].title}
+                  </p>
+                </div>
+              </Link>
+            ) : (
+              <Link
+                to="/opportunities"
+                className="w-full max-w-[260px] rounded-card border border-line bg-white/95 p-3 shadow-soft transition-transform hover:-translate-y-0.5 lg:mr-4 mt-[-12px] z-30 flex items-center gap-3"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-700 text-sm">
+                  🎓
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[11px] text-muted">Nhắc hạn nộp</p>
+                  <p className="text-xs font-semibold text-ink truncate">
+                    Học bổng Tài năng 2025
+                  </p>
+                </div>
+              </Link>
+            )}
           </div>
         </div>
       </section>
@@ -538,76 +610,96 @@ export function HomePage() {
           {/* Right 4 Years Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {/* Năm 1 */}
-            <div className="rounded-control border border-line bg-page p-3.5 flex flex-col justify-between">
+            <Link
+              to="/roadmaps"
+              className="group rounded-control border border-line bg-page p-3.5 flex flex-col justify-between hover:border-brand/40 hover:bg-white hover:shadow-soft transition-all"
+            >
               <div>
                 <div className="flex items-center justify-between">
                   <span className="rounded bg-[#0077B6] px-2 py-0.5 text-[11px] font-bold text-white">
                     Năm 1
                   </span>
-                  <span className="text-muted text-xs">🌱</span>
+                  <span className="text-muted text-xs group-hover:scale-110 transition-transform">
+                    🌱
+                  </span>
                 </div>
-                <h4 className="mt-2.5 text-xs font-bold text-ink">
+                <h4 className="mt-2.5 text-xs font-bold text-ink group-hover:text-brand transition-colors">
                   Nhập môn & Nền tảng
                 </h4>
                 <p className="mt-1 text-[11px] leading-relaxed text-muted">
                   Tin học đại cương, Tư duy lập trình, Tiếng Anh giao tiếp.
                 </p>
               </div>
-            </div>
+            </Link>
 
             {/* Năm 2 */}
-            <div className="rounded-control border border-line bg-page p-3.5 flex flex-col justify-between">
+            <Link
+              to="/roadmaps"
+              className="group rounded-control border border-line bg-page p-3.5 flex flex-col justify-between hover:border-brand/40 hover:bg-white hover:shadow-soft transition-all"
+            >
               <div>
                 <div className="flex items-center justify-between">
                   <span className="rounded bg-[#0D9488] px-2 py-0.5 text-[11px] font-bold text-white">
                     Năm 2
                   </span>
-                  <span className="text-muted text-xs">⚡</span>
+                  <span className="text-muted text-xs group-hover:scale-110 transition-transform">
+                    ⚡
+                  </span>
                 </div>
-                <h4 className="mt-2.5 text-xs font-bold text-ink">
+                <h4 className="mt-2.5 text-xs font-bold text-ink group-hover:text-brand transition-colors">
                   Kỹ năng chuyên sâu
                 </h4>
                 <p className="mt-1 text-[11px] leading-relaxed text-muted">
                   Cấu trúc dữ liệu, Dự án nhóm, Quy trình Git/GitHub.
                 </p>
               </div>
-            </div>
+            </Link>
 
             {/* Năm 3 */}
-            <div className="rounded-control border border-line bg-page p-3.5 flex flex-col justify-between">
+            <Link
+              to="/roadmaps"
+              className="group rounded-control border border-line bg-page p-3.5 flex flex-col justify-between hover:border-brand/40 hover:bg-white hover:shadow-soft transition-all"
+            >
               <div>
                 <div className="flex items-center justify-between">
                   <span className="rounded bg-[#0284C7] px-2 py-0.5 text-[11px] font-bold text-white">
                     Năm 3
                   </span>
-                  <span className="text-muted text-xs">💼</span>
+                  <span className="text-muted text-xs group-hover:scale-110 transition-transform">
+                    💼
+                  </span>
                 </div>
-                <h4 className="mt-2.5 text-xs font-bold text-ink">
+                <h4 className="mt-2.5 text-xs font-bold text-ink group-hover:text-brand transition-colors">
                   Thực tập & Dự án
                 </h4>
                 <p className="mt-1 text-[11px] leading-relaxed text-muted">
                   Framework nâng cao, CV chuyên nghiệp, Phỏng vấn thử.
                 </p>
               </div>
-            </div>
+            </Link>
 
             {/* Năm 4 */}
-            <div className="rounded-control border border-line bg-page p-3.5 flex flex-col justify-between">
+            <Link
+              to="/roadmaps"
+              className="group rounded-control border border-line bg-page p-3.5 flex flex-col justify-between hover:border-brand/40 hover:bg-white hover:shadow-soft transition-all"
+            >
               <div>
                 <div className="flex items-center justify-between">
                   <span className="rounded bg-[#1E3A8A] px-2 py-0.5 text-[11px] font-bold text-white">
                     Năm 4
                   </span>
-                  <span className="text-muted text-xs">🎓</span>
+                  <span className="text-muted text-xs group-hover:scale-110 transition-transform">
+                    🎓
+                  </span>
                 </div>
-                <h4 className="mt-2.5 text-xs font-bold text-ink">
+                <h4 className="mt-2.5 text-xs font-bold text-ink group-hover:text-brand transition-colors">
                   Tốt nghiệp & Đi làm
                 </h4>
                 <p className="mt-1 text-[11px] leading-relaxed text-muted">
                   Đồ án tốt nghiệp, Cơ hội việc làm chính thức, Portfolio.
                 </p>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -630,47 +722,102 @@ export function HomePage() {
               tuyển học bổng tự động ngay trên trang cá nhân mà không bỏ sót cơ
               hội quan trọng.
             </p>
+            <div className="mt-6">
+              <Link
+                to={isStudent ? '/calendar' : '/login'}
+                className="inline-flex items-center gap-2 rounded-control bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-button hover:brightness-95 transition-all"
+              >
+                <span>
+                  {isStudent ? 'Mở Lịch & Deadline' : 'Đăng nhập để xem lịch'}
+                </span>
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
           </div>
 
-          <div className="rounded-card border border-line bg-page p-4 shadow-sm">
+          <Link
+            to={isStudent ? '/calendar' : '/login'}
+            className="group block rounded-card border border-line bg-page p-4 shadow-sm hover:border-brand/40 hover:bg-white hover:shadow-soft transition-all"
+          >
             <div className="flex items-center justify-between border-b border-line pb-2.5">
-              <span className="text-sm font-bold text-navy">
-                Tháng 11, 2025
+              <span className="text-sm font-bold text-navy group-hover:text-brand transition-colors">
+                Lịch & Deadline sắp tới
               </span>
               <span className="text-muted text-sm">🗓️</span>
             </div>
             <div className="mt-3 space-y-3">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-start gap-2.5 min-w-0">
-                  <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-amber-500" />
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold text-ink truncate">
-                      Hạn nộp FPT Software
-                    </p>
-                    <p className="text-[11px] text-muted">15:00 · ngày mai</p>
+              {opportunities.filter((o) => o.deadline?.date).length > 0 ? (
+                opportunities
+                  .filter((o) => o.deadline?.date)
+                  .slice(0, 2)
+                  .map((opp, idx) => (
+                    <div
+                      key={opp.id}
+                      className="flex items-center justify-between gap-3"
+                    >
+                      <div className="flex items-start gap-2.5 min-w-0">
+                        <span
+                          className={`mt-1 h-2 w-2 shrink-0 rounded-full ${
+                            idx === 0 ? 'bg-amber-500' : 'bg-brand'
+                          }`}
+                        />
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-ink truncate group-hover:text-brand transition-colors">
+                            {opp.title}
+                          </p>
+                          <p className="text-[11px] text-muted">
+                            {opp.deadline?.date || 'Đang mở'} · {opp.publisher}
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                          idx === 0
+                            ? 'bg-warning-surface text-warning'
+                            : 'bg-info-surface text-brand'
+                        }`}
+                      >
+                        {idx === 0 ? 'Deadline gần' : 'Sắp tới'}
+                      </span>
+                    </div>
+                  ))
+              ) : (
+                <>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-start gap-2.5 min-w-0">
+                      <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-ink truncate">
+                          Hạn nộp FPT Software
+                        </p>
+                        <p className="text-[11px] text-muted">
+                          15:00 · ngày mai
+                        </p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-warning-surface px-2 py-0.5 text-[10px] font-semibold text-warning">
+                      Deadline gần
+                    </span>
                   </div>
-                </div>
-                <span className="shrink-0 rounded-full bg-warning-surface px-2 py-0.5 text-[10px] font-semibold text-warning">
-                  Deadline gần
-                </span>
-              </div>
 
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-start gap-2.5 min-w-0">
-                  <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-brand" />
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold text-ink truncate">
-                      Học bổng Viettel Digital
-                    </p>
-                    <p className="text-[11px] text-muted">30/11/2025</p>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-start gap-2.5 min-w-0">
+                      <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-brand" />
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-ink truncate">
+                          Học bổng Viettel Digital
+                        </p>
+                        <p className="text-[11px] text-muted">30/11/2025</p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-info-surface px-2 py-0.5 text-[10px] font-semibold text-brand">
+                      Sắp tới
+                    </span>
                   </div>
-                </div>
-                <span className="shrink-0 rounded-full bg-info-surface px-2 py-0.5 text-[10px] font-semibold text-brand">
-                  Sắp tới
-                </span>
-              </div>
+                </>
+              )}
             </div>
-          </div>
+          </Link>
         </div>
       </section>
 
@@ -698,12 +845,15 @@ export function HomePage() {
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Post 1 */}
-          <article className="flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-md transition-shadow">
+          <Link
+            to="/forum"
+            className="group flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-md hover:border-brand/30 transition-all"
+          >
             <div>
               <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
                 Kinh nghiệm phỏng vấn
               </span>
-              <h3 className="mt-3 text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2">
+              <h3 className="mt-3 text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2 group-hover:text-brand transition-colors">
                 Chia sẻ kinh nghiệm phỏng vấn vị trí Software Intern cho sinh
                 viên năm 3
               </h3>
@@ -712,15 +862,18 @@ export function HomePage() {
               <span>Nguyễn H. · 2 giờ trước</span>
               <span className="flex items-center gap-1 font-medium">💬 18</span>
             </div>
-          </article>
+          </Link>
 
           {/* Post 2 */}
-          <article className="flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-md transition-shadow">
+          <Link
+            to="/forum"
+            className="group flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-md hover:border-brand/30 transition-all"
+          >
             <div>
               <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
                 Học tập
               </span>
-              <h3 className="mt-3 text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2">
+              <h3 className="mt-3 text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2 group-hover:text-brand transition-colors">
                 Cách phân bổ thời gian ôn thi chứng chỉ TOEIC và đồ án chuyên
                 ngành hiệu quả
               </h3>
@@ -729,15 +882,18 @@ export function HomePage() {
               <span>Trần M. · 1 ngày trước</span>
               <span className="flex items-center gap-1 font-medium">💬 32</span>
             </div>
-          </article>
+          </Link>
 
           {/* Post 3 */}
-          <article className="flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-md transition-shadow">
+          <Link
+            to="/forum"
+            className="group flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-md hover:border-brand/30 transition-all"
+          >
             <div>
               <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
                 Thực tập
               </span>
-              <h3 className="mt-3 text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2">
+              <h3 className="mt-3 text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2 group-hover:text-brand transition-colors">
                 Nên chuẩn bị gì trước kỳ thực tập doanh nghiệp đầu tiên?
               </h3>
             </div>
@@ -745,7 +901,7 @@ export function HomePage() {
               <span>Lê T. · 2 ngày trước</span>
               <span className="flex items-center gap-1 font-medium">💬 14</span>
             </div>
-          </article>
+          </Link>
         </div>
       </section>
     </div>
