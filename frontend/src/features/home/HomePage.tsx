@@ -1,10 +1,46 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { useAuth } from '../auth/AuthProvider';
+import { getOpportunityList } from '../opportunities/api';
+import { hubDeadlineLabel } from '../opportunities/hub-deadline';
+import type { PublicOpportunityListItem } from '../opportunities/contracts';
 import googleGLogo from '../../assets/google-g-logo.svg';
 
 export function HomePage() {
   const { user, status } = useAuth();
   const isStudent = status === 'authenticated' && user?.role === 'Student';
+
+  const [opportunities, setOpportunities] = useState<
+    PublicOpportunityListItem[]
+  >([]);
+  const [evaluatedAt, setEvaluatedAt] = useState<string>('');
+  const [isLoadingOpps, setIsLoadingOpps] = useState(true);
+  const [hasErrorOpps, setHasErrorOpps] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setIsLoadingOpps(true);
+    setHasErrorOpps(false);
+
+    getOpportunityList(
+      new URLSearchParams({ pageSize: '3' }),
+      controller.signal,
+    )
+      .then((data) => {
+        setOpportunities(data.items);
+        setEvaluatedAt(data.meta.evaluatedAt);
+        setIsLoadingOpps(false);
+      })
+      .catch(() => {
+        if (controller.signal.aborted) return;
+        setIsLoadingOpps(false);
+        setHasErrorOpps(true);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
 
   return (
     <div className="w-full space-y-12 pb-12">
@@ -302,140 +338,116 @@ export function HomePage() {
         </div>
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Item 1: Frontend Developer */}
-          <article className="flex flex-col justify-between rounded-card border border-line bg-white p-6 shadow-soft hover:shadow-md transition-shadow">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
-                  Thực tập
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-success-surface px-2.5 py-0.5 text-xs font-semibold text-success">
-                  <svg
-                    className="h-3.5 w-3.5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Verified
-                </span>
+          {isLoadingOpps ? (
+            Array.from({ length: 3 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col justify-between rounded-card border border-line bg-white p-6 shadow-soft animate-pulse"
+              >
+                <div>
+                  <div className="flex gap-2">
+                    <div className="h-5 w-16 rounded-full bg-slate-100" />
+                    <div className="h-5 w-16 rounded-full bg-slate-100" />
+                  </div>
+                  <div className="mt-3 h-5 w-4/5 rounded bg-slate-100" />
+                  <div className="mt-2 h-4 w-1/2 rounded bg-slate-100" />
+                  <div className="mt-4 space-y-2">
+                    <div className="h-3 w-3/5 rounded bg-slate-100" />
+                    <div className="h-3 w-2/5 rounded bg-slate-100" />
+                  </div>
+                </div>
+                <div className="mt-6 h-10 w-full rounded-control bg-slate-100" />
               </div>
-              <h3 className="mt-3 text-base font-bold text-ink leading-snug">
-                Frontend Developer Intern (React/TypeScript)
-              </h3>
-              <p className="mt-1 text-sm font-medium text-secondary">
-                FPT Software
+            ))
+          ) : hasErrorOpps || opportunities.length === 0 ? (
+            <div className="col-span-full rounded-card border border-line bg-white p-8 text-center shadow-soft">
+              <p className="text-sm text-secondary">
+                {hasErrorOpps
+                  ? 'Tạm thời chưa tải được danh sách cơ hội mới nhất.'
+                  : 'Hiện tại chưa có cơ hội nào đang mở.'}
               </p>
-              <div className="mt-4 space-y-1.5 text-xs text-muted">
-                <p className="flex items-center gap-1.5">
-                  <span>📍</span> Hybrid · Hà Nội
-                </p>
-                <p className="flex items-center gap-1.5 font-medium text-amber-800">
-                  <span>⏰</span> Hạn nộp: 15/11/2025
-                </p>
-              </div>
+              <Link
+                to="/opportunities"
+                className="mt-4 inline-flex items-center justify-center rounded-control bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-button hover:brightness-95 transition-all"
+              >
+                Khám phá Hub cơ hội
+              </Link>
             </div>
-            <Link
-              to="/opportunities"
-              className="mt-6 block w-full rounded-control border border-control bg-white py-2.5 text-center text-sm font-medium text-brand hover:bg-page transition-colors"
-            >
-              Xem chi tiết
-            </Link>
-          </article>
-
-          {/* Item 2: Học bổng Viettel */}
-          <article className="flex flex-col justify-between rounded-card border border-line bg-white p-6 shadow-soft hover:shadow-md transition-shadow">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
-                  Học bổng
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-success-surface px-2.5 py-0.5 text-xs font-semibold text-success">
-                  <svg
-                    className="h-3.5 w-3.5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+          ) : (
+            opportunities.map((item) => {
+              const deadlineInfo = hubDeadlineLabel(item.deadline, evaluatedAt);
+              return (
+                <article
+                  key={item.id}
+                  className="flex flex-col justify-between rounded-card border border-line bg-white p-6 shadow-soft hover:shadow-md transition-shadow"
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
+                        {item.type}
+                      </span>
+                      {item.isVerified && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-success-surface px-2.5 py-0.5 text-xs font-semibold text-success">
+                          <svg
+                            className="h-3.5 w-3.5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Verified
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="mt-3 text-base font-bold text-ink leading-snug line-clamp-2">
+                      {item.title}
+                    </h3>
+                    {item.publisher && (
+                      <p className="mt-1 text-sm font-medium text-secondary truncate">
+                        {item.publisher}
+                      </p>
+                    )}
+                    <div className="mt-4 space-y-1.5 text-xs text-muted">
+                      <p className="flex items-center gap-1.5 truncate">
+                        <span aria-hidden="true">📍</span>{' '}
+                        {item.workFormat ? `${item.workFormat} · ` : ''}
+                        {item.location || 'Toàn quốc'}
+                      </p>
+                      {deadlineInfo ? (
+                        <p
+                          className={`flex items-center gap-1.5 font-medium ${
+                            deadlineInfo.variant === 'error'
+                              ? 'text-danger'
+                              : deadlineInfo.variant === 'warning'
+                                ? 'text-amber-800'
+                                : 'text-secondary'
+                          }`}
+                        >
+                          <span aria-hidden="true">⏰</span> {deadlineInfo.text}
+                        </p>
+                      ) : (
+                        <p className="flex items-center gap-1.5 text-muted">
+                          <span aria-hidden="true">⏰</span> Hạn nộp: Đang cập
+                          nhật
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <Link
+                    to={`/opportunities/${item.id}`}
+                    className="mt-6 block w-full rounded-control border border-control bg-white py-2.5 text-center text-sm font-medium text-brand hover:bg-page transition-colors"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Verified
-                </span>
-              </div>
-              <h3 className="mt-3 text-base font-bold text-ink leading-snug">
-                Học bổng Tài năng Trẻ Công nghệ 2025
-              </h3>
-              <p className="mt-1 text-sm font-medium text-secondary">
-                Viettel Digital
-              </p>
-              <div className="mt-4 space-y-1.5 text-xs text-muted">
-                <p className="flex items-center gap-1.5">
-                  <span>🌐</span> Toàn quốc
-                </p>
-                <p className="flex items-center gap-1.5 font-medium text-amber-800">
-                  <span>⏰</span> Hạn nộp: 05/01/2026
-                </p>
-              </div>
-            </div>
-            <Link
-              to="/opportunities"
-              className="mt-6 block w-full rounded-control border border-control bg-white py-2.5 text-center text-sm font-medium text-brand hover:bg-page transition-colors"
-            >
-              Xem chi tiết
-            </Link>
-          </article>
-
-          {/* Item 3: Data Analyst */}
-          <article className="flex flex-col justify-between rounded-card border border-line bg-white p-6 shadow-soft hover:shadow-md transition-shadow">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
-                  Việc làm
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-success-surface px-2.5 py-0.5 text-xs font-semibold text-success">
-                  <svg
-                    className="h-3.5 w-3.5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Verified
-                </span>
-              </div>
-              <h3 className="mt-3 text-base font-bold text-ink leading-snug">
-                Data Analyst Junior (Part-time)
-              </h3>
-              <p className="mt-1 text-sm font-medium text-secondary">
-                Shopee Vietnam
-              </p>
-              <div className="mt-4 space-y-1.5 text-xs text-muted">
-                <p className="flex items-center gap-1.5">
-                  <span>🏢</span> Offline · TP.HCM
-                </p>
-                <p className="flex items-center gap-1.5 font-medium text-amber-800">
-                  <span>⏰</span> Hạn nộp: 20/12/2025
-                </p>
-              </div>
-            </div>
-            <Link
-              to="/opportunities"
-              className="mt-6 block w-full rounded-control border border-control bg-white py-2.5 text-center text-sm font-medium text-brand hover:bg-page transition-colors"
-            >
-              Xem chi tiết
-            </Link>
-          </article>
+                    Xem chi tiết
+                  </Link>
+                </article>
+              );
+            })
+          )}
         </div>
       </section>
 

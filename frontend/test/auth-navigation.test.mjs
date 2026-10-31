@@ -15,7 +15,8 @@ let vite,
   StudentAccountMenu,
   UserAvatar,
   PendingFeatureNotice,
-  PublicLayout;
+  PublicLayout,
+  HomePage;
 
 before(async () => {
   vite = await createServer({
@@ -41,6 +42,7 @@ before(async () => {
   ({ PublicLayout } = await vite.ssrLoadModule(
     '/src/layouts/PublicLayout.tsx',
   ));
+  ({ HomePage } = await vite.ssrLoadModule('/src/features/home/HomePage.tsx'));
 });
 
 after(async () => {
@@ -203,4 +205,20 @@ test('PublicLayout renders standard 4 navigation links and Google Login button f
   assert.doesNotMatch(markup, /Cơ hội dành cho bạn/);
   assert.doesNotMatch(markup, /Lịch & Deadline/);
   assert.match(markup, /Đăng nhập với Google/);
+});
+
+test('HomePage renders dynamic opportunity section heading and links correctly', () => {
+  auth.setGuest();
+  const markup = renderToStaticMarkup(
+    createElement(
+      MemoryRouter,
+      null,
+      createElement(AuthProvider, null, createElement(HomePage)),
+    ),
+  );
+
+  assert.match(markup, /Học tập, cơ hội và định hướng/);
+  assert.match(markup, /Khám phá cơ hội đang mở/);
+  assert.match(markup, /Xem tất cả cơ hội/);
+  assert.match(markup, /href="\/opportunities"/);
 });
