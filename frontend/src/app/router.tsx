@@ -1,11 +1,4 @@
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  useNavigate,
-  useLocation,
-} from 'react-router';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router';
 import { HealthCheckPage } from './App';
 import { NotFoundPage } from './NotFoundPage';
 import { SharedUiPreviewPage } from './SharedUiPreviewPage';
@@ -19,16 +12,18 @@ import { ForbiddenPage, RequireRole } from '../features/auth/AuthGuard';
 import { LoginPage } from '../features/auth/LoginPage';
 import { LoginLayout } from '../features/auth/LoginLayout';
 import { PublicLayout } from '../layouts/PublicLayout';
+import { StudentLayout } from '../layouts/StudentLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
 import { ProfileSavedNotice } from '../features/profile/ProfileSavedNotice';
-import { StudentLayout } from '../layouts/StudentLayout';
 import { RecommendationsPage } from '../features/recommendations/RecommendationsPage';
 import { useAuth } from '../features/auth/AuthProvider';
 import { getAccessToken } from '../features/auth/auth-state';
 import { AdminDashboardPage } from '../features/admin/dashboard/AdminDashboardPage';
 import { CalendarPage } from '../features/calendar/CalendarPage';
+import { HomePage } from '../features/home/HomePage';
+import { PendingFeatureNotice } from '../features/auth/PendingFeatureNotice';
 
 function RecommendationsRoute() {
   const { user } = useAuth();
@@ -43,22 +38,40 @@ function RecommendationsRoute() {
   );
 }
 
+function ForumPendingRoute() {
+  const { user } = useAuth();
+  const isStudent = user?.role === 'Student';
+  const Layout = isStudent ? StudentLayout : PublicLayout;
+
+  return (
+    <Layout activeKey="forum">
+      <div className="mx-auto max-w-public px-8 py-16">
+        <PendingFeatureNotice
+          title="Diễn đàn sinh viên"
+          badgeText="Sắp ra mắt"
+          description="Kênh thảo luận, hỏi đáp học tập và kinh nghiệm phỏng vấn dành cho cộng đồng sinh viên UniHub đang trong quá trình hoàn thiện."
+          backTo="/opportunities"
+          backLabel="Khám phá cơ hội"
+        />
+      </div>
+    </Layout>
+  );
+}
+
 export const appPaths = {
   home: '/',
-  profile: '/profile',
   developmentHealth: '/_dev/health',
   sharedUiPreview: sharedUiPreviewPath,
   opportunities: '/opportunities',
   roadmaps: '/roadmaps',
+  forum: '/forum',
+  profile: '/profile',
+  recommendations: '/recommendations',
+  calendar: '/calendar',
   adminOpportunities: '/admin/opportunities',
   adminDashboard: '/admin/dashboard',
   notFound: '/404',
 } as const;
-
-function HomeRedirect() {
-  const { state } = useLocation();
-  return <Navigate to={appPaths.developmentHealth} state={state} replace />;
-}
 
 export function AppRouter() {
   return (
@@ -67,26 +80,13 @@ export function AppRouter() {
         <ProfileSavedNotice />
         <Routes>
           <Route
-            path="/recommendations"
+            path={appPaths.home}
             element={
-              <RequireRole role="Student">
-                <StudentLayout activeKey="recommendations">
-                  <RecommendationsRoute />
-                </StudentLayout>
-              </RequireRole>
+              <PublicLayout activeKey="home">
+                <HomePage />
+              </PublicLayout>
             }
           />
-          <Route
-            path={appPaths.profile}
-            element={
-              <RequireRole role="Student">
-                <StudentLayout activeKey="profile">
-                  <ProfilePage />
-                </StudentLayout>
-              </RequireRole>
-            }
-          />
-          <Route path={appPaths.home} element={<HomeRedirect />} />
           <Route
             path={appPaths.developmentHealth}
             element={<HealthCheckPage />}
@@ -104,6 +104,7 @@ export function AppRouter() {
             element={<OpportunityDetailPage />}
           />
           <Route path={appPaths.roadmaps} element={<GuidanceRoadmapPage />} />
+          <Route path={appPaths.forum} element={<ForumPendingRoute />} />
           <Route
             path={appPaths.adminDashboard}
             element={
@@ -115,10 +116,30 @@ export function AppRouter() {
             }
           />
           <Route
-            path="/calendar"
+            path={appPaths.calendar}
             element={
               <RequireRole role="Student">
                 <CalendarPage />
+              </RequireRole>
+            }
+          />
+          <Route
+            path={appPaths.profile}
+            element={
+              <RequireRole role="Student">
+                <StudentLayout activeKey="profile">
+                  <ProfilePage />
+                </StudentLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path={appPaths.recommendations}
+            element={
+              <RequireRole role="Student">
+                <StudentLayout activeKey="recommendations">
+                  <RecommendationsRoute />
+                </StudentLayout>
               </RequireRole>
             }
           />

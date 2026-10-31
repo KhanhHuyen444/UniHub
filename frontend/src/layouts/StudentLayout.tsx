@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { NotificationBell } from '../features/notifications/NotificationBell';
+import { StudentAccountMenu } from '../features/auth/StudentAccountMenu';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
 import { useAuth } from '../features/auth/AuthProvider';
@@ -24,7 +25,7 @@ export function StudentLayout({
 }: StudentLayoutProps) {
   const area: Extract<ShellArea, 'student'> = 'student';
   const isOpportunities = variant === 'opportunities';
-  const { user, status, logout } = useAuth();
+  const { user, status } = useAuth();
   const initials = user?.fullName
     .trim()
     .split(/\s+/)
@@ -35,7 +36,9 @@ export function StudentLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-page">
-      <header className="h-16 shrink-0 border-b border-line bg-white/95 shadow-nav backdrop-blur-[12px]">
+      <header
+        className={`relative z-40 ${isOpportunities ? 'h-[81px]' : 'h-16'} shrink-0 border-b border-line bg-white/95 shadow-nav backdrop-blur-[12px]`}
+      >
         <div className="mx-auto flex h-full max-w-student items-center gap-8 px-8">
           <Brand area={area} previewNavigation={previewNavigation} />
           <nav aria-label="Điều hướng sinh viên" className="min-w-0 flex-1">
@@ -74,11 +77,10 @@ export function StudentLayout({
                 </span>
               </>
             ) : user ? (
-              <details className="relative shrink-0">
-                <summary
-                  className="flex cursor-pointer list-none items-center gap-3 rounded-control focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
-                  aria-label="Tài khoản sinh viên"
-                >
+              user.role === 'Student' ? (
+                <StudentAccountMenu />
+              ) : (
+                <>
                   <div className="hidden max-w-44 text-right xl:block">
                     <p className="truncate type-label font-semibold text-ink">
                       {user.fullName}
@@ -101,42 +103,8 @@ export function StudentLayout({
                       {initials || 'U'}
                     </span>
                   )}
-                </summary>
-                <nav
-                  aria-label="Tài khoản sinh viên"
-                  className="absolute right-0 z-30 mt-3 grid w-60 gap-1 rounded-card border border-line bg-white p-2 shadow-soft"
-                >
-                  <Link
-                    className="rounded-control p-3 text-sm hover:bg-surface"
-                    to="/profile"
-                    onClick={(e) =>
-                      e.currentTarget
-                        .closest('details')
-                        ?.removeAttribute('open')
-                    }
-                  >
-                    Hồ sơ cá nhân
-                  </Link>
-                  <Link
-                    className="rounded-control p-3 text-sm hover:bg-surface"
-                    to="/recommendations"
-                    onClick={(e) =>
-                      e.currentTarget
-                        .closest('details')
-                        ?.removeAttribute('open')
-                    }
-                  >
-                    Cơ hội dành cho bạn
-                  </Link>
-                  <button
-                    type="button"
-                    className="rounded-control p-3 text-left text-sm text-brand hover:bg-surface"
-                    onClick={() => void logout().catch(() => undefined)}
-                  >
-                    Đăng xuất
-                  </button>
-                </nav>
-              </details>
+                </>
+              )
             ) : (
               <span role="status" className="type-caption text-muted">
                 {status === 'unavailable' ? 'Phiên chưa sẵn sàng' : 'Đang tải…'}
