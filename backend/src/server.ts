@@ -1,12 +1,16 @@
 import { app } from './app.js';
 import { readPort } from './config/env.js';
 import { disconnectPrismaClient } from './lib/prisma.js';
+import { createReminderScheduler } from './modules/events/reminders.scheduler.js';
+import { shutdownServer } from './shutdown.js';
 
 const port = readPort();
 const host = '127.0.0.1';
+const reminderScheduler = createReminderScheduler();
 
 const server = app.listen(port, host, () => {
   console.info(`UniHub HTTP server: http://${host}:${port}`);
+  reminderScheduler.start();
 });
 
 server.on('error', (error: NodeJS.ErrnoException) => {
@@ -20,31 +24,20 @@ async function shutdown() {
   if (shuttingDown) return;
   shuttingDown = true;
   console.info('Đang dừng HTTP server…');
-
-  const timeout = setTimeout(() => {
-    console.error('Hết thời gian chờ; đóng các kết nối HTTP còn lại.');
-    process.exitCode = 1;
-    server.closeAllConnections();
-  }, 10_000);
-  timeout.unref();
-
-  await new Promise<void>((resolve) => {
-    server.close((error) => {
-      clearTimeout(timeout);
-      if (error) {
-        console.error('Không thể dừng HTTP server bình thường.');
-        process.exitCode = 1;
-      }
-      resolve();
-    });
+  await shutdownServer({
+    stopScheduler: () => reminderScheduler.stop(),
+    closeHttp: () =>
+      new Promise<void>((resolve, reject) => {
+        server.close((error) => (error ? reject(error) : resolve()));
+      }),
+    disconnectDatabase: disconnectPrismaClient,
+    forceCloseHttp: () => server.closeAllConnections(),
+    forceExit: () => process.exit(1),
+    reportError: () => {
+      console.error('Không thể hoàn tất shutdown trong thời gian cho phép.');
+      process.exitCode = 1;
+    },
   });
-
-  try {
-    await disconnectPrismaClient();
-  } catch {
-    console.error('Không thể đóng pool database bình thường.');
-    process.exitCode = 1;
-  }
 }
 
 process.once('SIGINT', shutdown);

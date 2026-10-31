@@ -24,6 +24,8 @@ import { StudentLayout } from '../layouts/StudentLayout';
 import { RecommendationsPage } from '../features/recommendations/RecommendationsPage';
 import { useAuth } from '../features/auth/AuthProvider';
 import { getAccessToken } from '../features/auth/auth-state';
+import { AdminDashboardPage } from '../features/admin/dashboard/AdminDashboardPage';
+import { CalendarPage } from '../features/calendar/CalendarPage';
 
 function RecommendationsRoute() {
   const { user } = useAuth();
@@ -46,6 +48,7 @@ export const appPaths = {
   opportunities: '/opportunities',
   roadmaps: '/roadmaps',
   adminOpportunities: '/admin/opportunities',
+  adminDashboard: '/admin/dashboard',
   notFound: '/404',
 } as const;
 
@@ -95,6 +98,24 @@ export function AppRouter() {
             element={<OpportunityDetailPage />}
           />
           <Route path={appPaths.roadmaps} element={<GuidanceRoadmapPage />} />
+          <Route
+            path={appPaths.adminDashboard}
+            element={
+              <RequireRole role="Admin">
+                <AdminLayout activeKey="dashboard">
+                  <AdminDashboardPage />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <RequireRole role="Student">
+                <CalendarPage />
+              </RequireRole>
+            }
+          />
           <Route
             path={`${appPaths.roadmaps}/:id`}
             element={<GuidanceDetailPage />}

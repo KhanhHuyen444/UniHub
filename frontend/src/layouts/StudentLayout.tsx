@@ -1,6 +1,5 @@
 import { Link } from 'react-router';
-import { Button } from '../components/ui/Button';
-import notificationIcon from '../assets/notification.svg';
+import { NotificationBell } from '../features/notifications/NotificationBell';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
 import { useAuth } from '../features/auth/AuthProvider';
@@ -52,21 +51,10 @@ export function StudentLayout({
             </ul>
           </nav>
           <div className="flex shrink-0 items-center gap-3">
-            <Button
-              type="button"
-              variant="text"
-              size="icon"
-              disabled
-              aria-label="Thông báo — chỉ là mẫu thiết kế, chưa có chức năng"
-            >
-              <img
-                src={notificationIcon}
-                alt=""
-                width={16}
-                height={20}
-                className="h-5 w-4 shrink-0"
-              />
-            </Button>
+            <NotificationBell
+              key={user?.id ?? 'guest'}
+              preview={previewNavigation}
+            />
             {previewNavigation ? (
               <>
                 <div className="hidden text-right xl:block">

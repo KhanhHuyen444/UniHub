@@ -1,5 +1,13 @@
 # UniHub
 
+## TV4 Dashboard — kết quả review 31/10/2026 trên nhánh PR #35
+
+Đã sửa phép đếm opportunity theo ba loại chính xác, không phụ thuộc collation mặc định. Regression chạy MySQL 8.4.13 cô lập với migrations hiện có đã đạt; không dùng database cá nhân/nhóm. Xem [biên bản và conflict/phụ thuộc](docs/tv4-dashboard-review.md). Chức năng vẫn ở PR, không coi là đã merge main hoặc đã kiểm tra UI Google thật. Runner: `node backend/test/run-dashboard-mysql.mjs --run-isolated` sau build. Không sửa schema/grants.
+
+## TV4 Reminders — review 31/10/2026 trên PR #26
+
+Reminders, Calendar và Notifications đã có trên main `c310a4c` và được giữ lại khi cập nhật nhánh Dashboard PR #35. Reminders đã chạy lại **19/19 test MySQL 8.4.13 cô lập** theo báo cáo trên PR #26. Xem [module Events/Reminders](backend/src/modules/events/README.md); chạy lại bằng `node backend/test/run-reminders-mysql.mjs --run-isolated` sau build. Không dùng database cá nhân/nhóm, không sửa migration/grants hoặc thêm endpoint scheduler. Việc tích hợp mã nguồn không thay thế kiểm thử toàn luồng giao diện với MySQL thật.
+
 UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. `main` có bộ khung chung, Public Hub cơ hội, Guidance, Events, danh mục Major/Skill và API xác thực; `GET /api/opportunities` cùng `GET /api/opportunities/:id` là API đọc công khai. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
 
 Health chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi thiếu `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration và Prisma runtime đã merge. Auth schema/backend bốn API, frontend Google login/session và backend Admin review đã có trên `main`. Xem [hướng dẫn runtime database](docs/database-runtime.md) và [database-migrations.md](docs/database-migrations.md). Không có tài khoản mẫu; shared UI preview vẫn chỉ là preview, không xác thực. Health/preview không cần MySQL hoặc Docker. Giao diện Admin review ở nhánh `feat/admin-opportunities-frontend` này, chưa merge.
@@ -196,3 +204,7 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 - Không commit `.env`, node_modules, dist, coverage, khóa hoặc dữ liệu cục bộ. `.env.example` chỉ chứa cấu hình mẫu an toàn.
 
 Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. Shared UI/list/detail được kiểm tra trực quan theo ảnh handoff và fixture mock; bố cục ở 1920 px là lựa chọn triển khai, không phải số đo trực tiếp Figma, và mock không xác nhận API/MySQL thật. Auth API và Admin review API đã có trên `main`; giao diện Admin review đang được hoàn thiện trên nhánh riêng và phụ thuộc frontend auth chưa merge.
+
+## Danh mục chuẩn dùng chung
+
+Bộ đã duyệt **11 Major + 19 Skill** ở [data/catalog/initial-categories.json](data/catalog/initial-categories.json). Git chỉ chia sẻ tên/loại và importer; mỗi thành viên tự nhập vào database riêng. Xem [hướng dẫn PowerShell tại gốc repo](data/catalog/README.md) để chuẩn bị migration, dry-run mặc định, apply rõ ràng và kiểm tra chạy lại. Không cần nhập 8 cơ hội; không chia sẻ ID local, `.env` hoặc database dump. [Kết quả kiểm thử](docs/catalog-import-validation.md).
