@@ -1,5 +1,9 @@
 import { getPrismaClient } from '../../lib/prisma.js';
 import {
+  readReminderEmailConfig,
+  type ReminderEmailConfig,
+} from './reminder-email.js';
+import {
   runDeadlineReminders,
   type ReminderClient,
   type ReminderScanState,
@@ -10,12 +14,14 @@ export const REMINDER_INTERVAL_MS = 60_000;
 export function createReminderScheduler(
   dependencies: {
     getClient?: () => ReminderClient;
+    email?: ReminderEmailConfig;
     now?: () => Date;
     reportError?: () => void;
     setInterval?: typeof globalThis.setInterval;
     clearInterval?: typeof globalThis.clearInterval;
   } = {},
 ) {
+  const email = dependencies.email ?? readReminderEmailConfig();
   const reportError =
     dependencies.reportError ??
     (() => console.error('Không thể xử lý nhắc hạn; sẽ thử lại ở chu kỳ sau.'));
@@ -37,6 +43,7 @@ export function createReminderScheduler(
             shouldStop: () => stopped,
             onEventError: reportError,
             scanState,
+            email,
           },
         );
       })

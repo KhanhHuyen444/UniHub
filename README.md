@@ -1,5 +1,12 @@
 # UniHub
 
+Nhánh email Reminder bổ sung enqueue nguyên tử và worker Resend, mặc định tắt
+(`EVENT_REMINDER_EMAIL_ENABLED=false`). Cờ true bật cả enqueue và gửi; chỉ bật sau
+khi migration/quyền runtime, sender, URL ứng dụng, namespace và backend API key đã
+sẵn sàng. Xem [hướng dẫn vận hành và giới hạn kiểm thử](backend/src/modules/events/README.md).
+Phase 3 chỉ được kiểm chứng bằng fake transport/SQL; không suy ra đã migrate hoặc
+gửi email thành công trên MySQL/Resend thực tế.
+
 ## TV4 Dashboard — kết quả review 31/10/2026 trên nhánh PR #35
 
 Đã sửa phép đếm opportunity theo ba loại chính xác, không phụ thuộc collation mặc định. Regression chạy MySQL 8.4.13 cô lập với migrations hiện có đã đạt; không dùng database cá nhân/nhóm. Xem [biên bản và conflict/phụ thuộc](docs/tv4-dashboard-review.md). Chức năng vẫn ở PR, không coi là đã merge main hoặc đã kiểm tra UI Google thật. Runner: `node backend/test/run-dashboard-mysql.mjs --run-isolated` sau build. Không sửa schema/grants.
