@@ -6,7 +6,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { EventEmitter } from 'node:events';
 import { readFile, readdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   createProcessOwner,
   startOnReservedPort,
@@ -165,7 +166,10 @@ test('validation throws before fixture DML even when a simulated subtest swallow
   assert.equal(writes, 0);
 });
 test('private snapshot pins exact bytes and rejects source changes before deployment', async () => {
-  const source = join(process.cwd(), 'backend/prisma/migrations'),
+  const source = resolve(
+      dirname(fileURLToPath(import.meta.url)),
+      '../prisma/migrations',
+    ),
     dest = 'private-snapshot';
   const files = new Map(),
     dirs = new Set([dest]);
