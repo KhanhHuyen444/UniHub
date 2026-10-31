@@ -170,7 +170,45 @@ model Notification {
   user  User   @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
   event Event? @relation(fields: [event_id], references: [event_id], onDelete: Cascade, onUpdate: Restrict)
 
+  event_reminder_email EventReminderEmail?
+
   @@map("notifications")
+}
+
+model EventReminderEmail {
+  notification_id Int @id @db.Int
+
+  // Immutable canonical JSON containing the exact provider request body.
+  // JSON validity is enforced by migration SQL; payload shape is a backend rule.
+  payload_json String @db.LongText
+
+  // Immutable across retries; ASCII collation is specified in migration SQL.
+  idempotency_key String @unique(map: "ere_idempotency_key_uq") @db.VarChar(256)
+
+  // State/attempt/lease CHECK constraints are specified in migration SQL.
+  state           String   @default("Pending") @db.VarChar(10)
+  attempt_count   Int      @default(0) @db.UnsignedTinyInt
+  next_attempt_at DateTime @default(now()) @db.DateTime(0)
+
+  lease_token      String?   @db.Char(36)
+  lease_expires_at DateTime? @db.DateTime(0)
+  first_attempt_at DateTime? @db.DateTime(0)
+
+  provider_email_id String?   @db.VarChar(255)
+  accepted_at       DateTime? @db.DateTime(0)
+
+  // Allowlisted classification only; never a raw provider error body.
+  last_error_code String? @db.VarChar(64)
+
+  created_at DateTime @default(now()) @db.DateTime(0)
+  // ON UPDATE CURRENT_TIMESTAMP is specified in migration SQL.
+  updated_at DateTime @default(now()) @db.DateTime(0)
+
+  notification Notification @relation(fields: [notification_id], references: [notification_id], onDelete: Cascade, onUpdate: Restrict, map: "ere_notification_id_fkey")
+
+  @@index([state, next_attempt_at, notification_id], map: "ere_ready_idx")
+  @@index([state, lease_expires_at, notification_id], map: "ere_lease_idx")
+  @@map("event_reminder_emails")
 }
 
 model AuthSession {
