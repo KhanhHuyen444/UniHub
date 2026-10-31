@@ -1,5 +1,12 @@
 # UniHub
 
+Nhánh email Reminder bổ sung enqueue nguyên tử và worker Resend, mặc định tắt
+(`EVENT_REMINDER_EMAIL_ENABLED=false`). Cờ true bật cả enqueue và gửi; chỉ bật sau
+khi migration/quyền runtime, sender, URL ứng dụng, namespace và backend API key đã
+sẵn sàng. Xem [hướng dẫn vận hành và giới hạn kiểm thử](backend/src/modules/events/README.md).
+Phase 3 chỉ được kiểm chứng bằng fake transport/SQL; không suy ra đã migrate hoặc
+gửi email thành công trên MySQL/Resend thực tế.
+
 ## TV4 Reminders — review 31/10/2026 trên PR #26
 
 Nhánh đã cập nhật main `df6a277`, merge sạch và giữ đầy đủ route có trên main. Reminders đã chạy lại **19/19 test MySQL 8.4.13 cô lập**, không còn chỉ là kết quả mock/skip. Xem [module Events/Reminders](backend/src/modules/events/README.md); chạy lại bằng `node backend/test/run-reminders-mysql.mjs --run-isolated` sau build. Không dùng database cá nhân/nhóm, không sửa migration/grants hoặc thêm endpoint scheduler. PR Calendar/Notifications/Dashboard chưa tích hợp, không suy từ test SQL thành PASS toàn luồng giao diện.
