@@ -13,7 +13,10 @@ try {
 } catch {
   /* optional environment runner */
 }
-const root = fileURLToPath(new URL('..', import.meta.url));
+const root = fileURLToPath(new URL('..', import.meta.url)).replaceAll(
+  '\\',
+  '/',
+);
 export async function startRecommendationsHarness({
   backendTarget,
   authenticated = true,
@@ -32,8 +35,11 @@ export async function startRecommendationsHarness({
       `
       import React,{useState} from 'react';import {createRoot} from 'react-dom/client';import {BrowserRouter} from 'react-router';
       import {RecommendationsPage} from ${JSON.stringify(root + '/src/features/recommendations/RecommendationsPage.tsx')};
+      import {setAccessToken} from ${JSON.stringify(root + '/src/features/auth/auth-state.ts')};
+      setAccessToken(${authenticated ? "'student-test-token'" : 'null'});
       const e=React.createElement;
-      function Harness(){const [token,setToken]=useState(${authenticated ? "'student-test-token'" : 'null'});const [role,setRole]=useState(${authenticated ? "'Student'" : 'null'});const [visible,setVisible]=useState(true);
+      function Harness(){const [token,updateToken]=useState(${authenticated ? "'student-test-token'" : 'null'});const [role,setRole]=useState(${authenticated ? "'Student'" : 'null'});const [visible,setVisible]=useState(true);
+        const setToken=(value)=>{setAccessToken(value);updateToken(value);};
         window.recommendationTest={setToken,setRole,setVisible};
         return visible?e(RecommendationsPage,{accessToken:token,role,onCompleteProfile:()=>{window.profileRequested=true;},onSignIn:()=>{window.signInRequested=true;}}):e('p',null,'Unmounted');}
       createRoot(document.getElementById('root')).render(e(BrowserRouter,null,e(Harness)));
@@ -49,6 +55,19 @@ export async function startRecommendationsHarness({
           name: 'recommendations-test-only-document',
           configureServer(server) {
             server.middlewares.use(async (request, response, next) => {
+              if (!backendTarget && request.url === '/api/auth/refresh') {
+                response.statusCode = 401;
+                response.setHeader('Content-Type', 'application/json');
+                response.end(
+                  JSON.stringify({
+                    error: {
+                      code: 'UNAUTHORIZED',
+                      message: 'Fixture session expired',
+                    },
+                  }),
+                );
+                return;
+              }
               if (request.url !== '/recommendations-test') return next();
               response.setHeader('Content-Type', 'text/html');
               response.end(

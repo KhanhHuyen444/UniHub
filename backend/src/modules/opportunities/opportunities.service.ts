@@ -394,12 +394,39 @@ export async function listPublicOpportunities(
         })
       : [];
     const rowsById = new Map(rows.map((row) => [row.item_id, row]));
+    // Fetch links for this page in one batch. Never join N-N rows before LIMIT/count.
+    // Linked Closed Skills remain visible, matching detail/search policy.
+    const skillRows = ids.length
+      ? await transaction.$queryRaw<
+          Array<{ item_id: number; skill_id: number; name: string }>
+        >(
+          Prisma.sql`SELECT os.item_id, skill.category_id AS skill_id, skill.name
+            FROM opportunity_skills AS os
+            INNER JOIN categories AS skill ON skill.category_id = os.skill_id
+            WHERE os.item_id IN (${Prisma.join(ids)})
+              AND skill.type COLLATE utf8mb4_0900_as_cs = 'Skill'
+            ORDER BY os.item_id ASC, skill.name ASC, skill.category_id ASC`,
+        )
+      : [];
+    const skillsById = new Map<number, Array<{ id: number; name: string }>>();
+    for (const skill of skillRows) {
+      const links = skillsById.get(skill.item_id) ?? [];
+      links.push({ id: skill.skill_id, name: skill.name });
+      skillsById.set(skill.item_id, links);
+    }
 
     return {
       total,
       items: ids.flatMap((id) => {
         const row = rowsById.get(id);
-        return row ? [toListItem(row, evaluatedAt)] : [];
+        return row
+          ? [
+              {
+                ...toListItem(row, evaluatedAt),
+                skills: skillsById.get(id) ?? [],
+              },
+            ]
+          : [];
       }),
     };
   });
