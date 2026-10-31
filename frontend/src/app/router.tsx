@@ -15,6 +15,7 @@ import { PublicLayout } from '../layouts/PublicLayout';
 import { StudentLayout } from '../layouts/StudentLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
+import { AdminCategoriesRoute } from '../features/admin/categories/AdminCategoriesRoute';
 import { ProfilePage } from '../features/profile/ProfilePage';
 import { ProfileSavedNotice } from '../features/profile/ProfileSavedNotice';
 import { RecommendationsPage } from '../features/recommendations/RecommendationsPage';
@@ -70,6 +71,7 @@ export const appPaths = {
   calendar: '/calendar',
   adminOpportunities: '/admin/opportunities',
   adminDashboard: '/admin/dashboard',
+  adminCategories: '/admin/categories',
   notFound: '/404',
 } as const;
 
@@ -104,6 +106,10 @@ export function AppRouter() {
             element={<OpportunityDetailPage />}
           />
           <Route path={appPaths.roadmaps} element={<GuidanceRoadmapPage />} />
+          <Route
+            path={appPaths.adminCategories}
+            element={<AdminCategoriesRoute />}
+          />
           <Route path={appPaths.forum} element={<ForumPendingRoute />} />
           <Route
             path={appPaths.adminDashboard}

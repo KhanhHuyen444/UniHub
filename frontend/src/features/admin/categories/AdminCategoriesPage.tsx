@@ -1,6 +1,14 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { getAuthSnapshot, subscribeToAuth } from '../../auth/auth-state';
+import {
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+} from 'react';
 import {
   Button,
+  Badge,
   EmptyState,
   ErrorState,
   FormField,
@@ -12,12 +20,32 @@ import {
   renameAdminCategory,
   setAdminCategoryStatus,
 } from './api';
-import type { AdminCategory, CategoryType } from './contracts';
+import {
+  parseCreatedAt,
+  type AdminCategory,
+  type CategoryType,
+} from './contracts';
 import {
   categoryError,
   useAdminCategories,
   type CategoryError,
 } from './useAdminCategories';
+import { CategoryDialog } from './CategoryDialog';
+
+const createdAtFormatter = new Intl.DateTimeFormat('vi-VN', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  timeZone: 'Asia/Ho_Chi_Minh',
+});
+function CategoryCreatedAt({ value }: { value: string | null }) {
+  const valid = parseCreatedAt(value);
+  return valid ? (
+    <time dateTime={valid}>{createdAtFormatter.format(new Date(valid))}</time>
+  ) : (
+    <span aria-label="Ngày tạo chưa có thông tin">—</span>
+  );
+}
 
 export interface AdminCategoriesPageProps {
   accessToken: string | null;
@@ -53,23 +81,27 @@ export function AdminCategoriesPage({
   accessToken,
   role,
 }: AdminCategoriesPageProps) {
-  if (!accessToken?.trim() || role === null)
+  const auth = useSyncExternalStore(
+    subscribeToAuth,
+    getAuthSnapshot,
+    getAuthSnapshot,
+  );
+  if (!accessToken?.trim() || role === null || auth.status !== 'authenticated')
     return (
       <ErrorState
         title="Cần đăng nhập Admin"
         description="Đăng nhập bằng tài khoản Admin để quản lý danh mục."
       />
     );
-  if (role !== 'Admin')
+  if (role !== 'Admin' || auth.user?.role !== 'Admin')
     return (
       <ErrorState
         title="Không có quyền quản trị"
         description="Student không được quản lý danh mục."
       />
     );
-  // Reset forms, request state and pending operations when the Auth owner changes
-  // the token. The token is never rendered or persisted in browser storage.
-  return <AdminCategoriesWorkspace key={accessToken} token={accessToken} />;
+  // Reset on identity changes; token rotation preserves drafts.
+  return <AdminCategoriesWorkspace key={auth.user.id} token={accessToken} />;
 }
 
 function AdminCategoriesWorkspace({ token }: { token: string }) {
@@ -83,7 +115,18 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<CategoryError | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [counts, setCounts] = useState<Partial<Record<CategoryType, number>>>(
+    {},
+  );
+  useEffect(() => {
+    if (state.status === 'success')
+      setCounts((value) => ({ ...value, [type]: state.items.length }));
+  }, [state, type]);
   const pending = useRef<AbortController | null>(null);
+  const dialogTrigger = useRef<HTMLElement | null>(null);
   useEffect(() => () => pending.current?.abort(), []);
   const refresh = () => {
     setError(null);
@@ -108,6 +151,7 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
         result.changed === false ? 'Không có thay đổi.' : 'Đã lưu danh mục.',
       );
       afterSave?.();
+      setCreating(false);
       setEdit(null);
       reload();
     } catch (failure) {
@@ -158,6 +202,35 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
     : state.status === 'error' && authError(state.error)
       ? state.error
       : null;
+  const locked = busy || state.status !== 'success';
+  const label = type === 'Major' ? 'chuyên ngành' : 'kỹ năng';
+  const filtered =
+    state.status === 'success'
+      ? state.items.filter(
+          (item) =>
+            type !== 'Skill' ||
+            item.name
+              .toLocaleLowerCase('vi-VN')
+              .includes(query.trim().toLocaleLowerCase('vi-VN')),
+        )
+      : [];
+  const pages =
+    type === 'Skill' ? Math.max(1, Math.ceil(filtered.length / 8)) : 1;
+  const currentPage = Math.min(page, pages);
+  useEffect(() => {
+    // Persist the clamped page only after a successful load, not during reload.
+    if (state.status === 'success' && page !== currentPage)
+      setPage(currentPage);
+  }, [state.status, page, currentPage]);
+  const rows =
+    type === 'Skill'
+      ? filtered.slice((currentPage - 1) * 8, currentPage * 8)
+      : filtered;
+  const closeDialog = () => {
+    setCreating(false);
+    setEdit(null);
+    setError(null);
+  };
   if (denied)
     return (
       <ErrorState
@@ -166,68 +239,94 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
         onRetry={refresh}
       />
     );
-  const locked = busy || state.status !== 'success';
   return (
     <section className="grid gap-6" aria-label="Quản lý danh mục">
-      <h1 className="type-title font-semibold text-navy">Quản lý danh mục</h1>
-      <div className="flex gap-3" aria-label="Loại danh mục">
-        {(['Major', 'Skill'] as const).map((value) => (
-          <Button
-            key={value}
-            variant={type === value ? 'primary' : 'outline'}
-            aria-pressed={type === value}
-            disabled={busy}
-            onClick={() => {
-              setType(value);
-              setEdit(null);
-              setError(null);
-              setNotice(null);
-              setName('');
-              setReason('');
-            }}
-          >
-            {value}
-          </Button>
-        ))}
+      <header>
+        <h1 className="type-display text-navy">Quản lý danh mục</h1>
+        <p className="mt-2 type-body text-muted">
+          Quản lý các danh mục dùng chung của hệ thống: chuyên ngành và kỹ năng.
+        </p>
+      </header>
+      <div className="flex items-center justify-between gap-4 border-b border-line">
+        <div className="flex gap-8" aria-label="Loại danh mục">
+          {(['Major', 'Skill'] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={type === value}
+              disabled={busy}
+              className={`border-b-2 px-0 py-4 type-label font-medium ${type === value ? 'border-brand text-brand' : 'border-transparent text-muted'}`}
+              onClick={() => {
+                setType(value);
+                setEdit(null);
+                setCreating(false);
+                setError(null);
+                setNotice(null);
+                setName('');
+                setReason('');
+                setQuery('');
+                setPage(1);
+              }}
+            >
+              {value === 'Major' ? 'Chuyên ngành' : 'Kỹ năng'}
+              {counts[value] !== undefined ? ` (${counts[value]})` : ''}
+            </button>
+          ))}
+        </div>
+        <Button
+          disabled={locked}
+          onClick={(event) => {
+            dialogTrigger.current = event.currentTarget;
+            closeDialog();
+            setName('');
+            setReason('');
+            setCreating(true);
+          }}
+        >
+          ＋ Thêm {label}
+        </Button>
       </div>
       {notice && (
-        <p role="status" className="type-label text-navy">
+        <p
+          role="status"
+          className="rounded-control bg-success-surface px-4 py-3 type-label text-success"
+        >
           {notice}
         </p>
       )}
-      {error && (
+      {error && !creating && !edit && (
         <ErrorState
           title="Không lưu được danh mục"
           description={message(error)}
-        >
-          <Button variant="outline" disabled={busy} onClick={refresh}>
-            Tải lại danh sách
-          </Button>
-        </ErrorState>
+          onRetry={refresh}
+        />
       )}
-      <form onSubmit={submitCreate} aria-label="Tạo danh mục">
-        <fieldset
-          disabled={locked}
-          className="grid gap-3 rounded-card border border-line bg-white p-5"
-        >
-          <legend className="type-label font-semibold">Tạo {type}</legend>
-          <FormField id="category-create-name" label="Tên danh mục" required>
+      {type === 'Skill' && (
+        <div className="flex items-center justify-between gap-4">
+          <div className="w-full max-w-md">
+            <label htmlFor="category-search" className="sr-only">
+              Tìm kỹ năng
+            </label>
             <Input
-              value={name}
-              onChange={(event) => setName(event.target.value)}
+              id="category-search"
+              type="search"
+              placeholder="Tìm kiếm theo tên kỹ năng..."
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setPage(1);
+              }}
+              disabled={busy}
             />
-          </FormField>
-          <FormField id="category-create-reason" label="Lý do tạo (tùy chọn)">
-            <Input
-              value={reason}
-              onChange={(event) => setReason(event.target.value)}
-            />
-          </FormField>
-          <Button type="submit" loading={busy}>
-            Tạo danh mục
-          </Button>
-        </fieldset>
-      </form>
+          </div>
+          {state.status === 'success' && (
+            <p className="type-caption text-muted">
+              Hiển thị {filtered.length === 0 ? 0 : (currentPage - 1) * 8 + 1}–
+              {(currentPage - 1) * 8 + rows.length} / {filtered.length} kỹ năng
+            </p>
+          )}
+        </div>
+      )}
       {state.status === 'loading' && <LoadingState title="Đang tải danh mục" />}
       {state.status === 'error' && (
         <ErrorState
@@ -236,59 +335,96 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
           onRetry={busy ? undefined : reload}
         />
       )}
-      {state.status === 'success' && (
-        <>
-          <Button variant="outline" disabled={busy} onClick={refresh}>
-            Tải lại danh sách
-          </Button>
-          {state.items.length === 0 ? (
-            <EmptyState
-              title="Chưa có danh mục"
-              description={`Chưa có ${type}. Bạn có thể tạo danh mục mới.`}
-            />
-          ) : (
+      {state.status === 'success' &&
+        (filtered.length === 0 ? (
+          <EmptyState
+            title={query.trim() ? 'Không tìm thấy kỹ năng' : 'Chưa có danh mục'}
+            description={
+              query.trim()
+                ? 'Thử tìm bằng tên khác.'
+                : `Chưa có ${label}. Bạn có thể tạo danh mục mới.`
+            }
+          />
+        ) : (
+          <div className="overflow-hidden rounded-card border border-line bg-white shadow-soft">
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse bg-white text-left type-label">
-                <caption className="sr-only">Danh sách {type}</caption>
-                <thead>
+              <table className="w-full border-collapse text-left type-label">
+                <caption className="sr-only">Danh sách {label}</caption>
+                <thead className="bg-surface font-normal text-secondary">
                   <tr>
-                    <th scope="col" className="p-3">
-                      Tên
+                    <th scope="col" className="w-[40%] px-6 py-4 font-medium">
+                      TÊN MỤC
                     </th>
-                    <th scope="col" className="p-3">
-                      Trạng thái
+                    <th scope="col" className="w-[20%] px-6 py-4 font-medium">
+                      TRẠNG THÁI
                     </th>
-                    <th scope="col" className="p-3">
-                      Thao tác
+                    <th scope="col" className="w-[20%] px-6 py-4 font-medium">
+                      NGÀY TẠO
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-4 text-right font-medium"
+                    >
+                      THAO TÁC
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {state.items.map((category) => (
-                    <tr key={category.id} className="border-t border-line">
-                      <td className="p-3">{category.name}</td>
-                      <td className="p-3">{category.status}</td>
-                      <td className="flex gap-2 p-3">
-                        {(['rename', 'status'] as const).map((kind) => (
-                          <Button
-                            key={kind}
-                            variant="outline"
-                            disabled={busy}
-                            aria-label={`${kind === 'rename' ? 'Đổi tên' : category.status === 'Active' ? 'Đóng' : 'Mở lại'} ${category.name}`}
-                            onClick={() => {
-                              setEdit({ category, kind });
-                              setEditName(category.name);
-                              setEditReason('');
-                              setError(null);
-                              setNotice(null);
-                            }}
-                          >
-                            {kind === 'rename'
-                              ? 'Đổi tên'
-                              : category.status === 'Active'
-                                ? 'Đóng'
-                                : 'Mở lại'}
-                          </Button>
+                  {rows.map((category) => (
+                    <tr
+                      key={category.id}
+                      className={`border-t border-line ${category.status === 'Closed' ? 'bg-page text-muted' : 'text-ink'}`}
+                    >
+                      <td className="break-words px-6 py-3">{category.name}</td>
+                      <td className="px-6 py-3">
+                        <Badge
+                          variant={
+                            category.status === 'Active' ? 'success' : 'neutral'
+                          }
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="mr-2 h-2 w-2 rounded-full bg-current"
+                          />
+                          {category.status}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-3 text-muted">
+                        <CategoryCreatedAt value={category.createdAt} />
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-3 text-right">
+                        {(['rename', 'status'] as const).map((kind, index) => (
+                          <span key={kind}>
+                            {index > 0 && (
+                              <span
+                                aria-hidden="true"
+                                className="mx-3 text-line"
+                              >
+                                ·
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              disabled={busy}
+                              className="rounded type-caption font-medium text-brand disabled:text-muted"
+                              aria-label={`${kind === 'rename' ? 'Đổi tên' : category.status === 'Active' ? 'Đóng' : 'Mở lại'} ${category.name}`}
+                              onClick={(event) => {
+                                dialogTrigger.current = event.currentTarget;
+                                setCreating(false);
+                                setEdit({ category, kind });
+                                setEditName(category.name);
+                                setEditReason('');
+                                setError(null);
+                                setNotice(null);
+                              }}
+                            >
+                              {kind === 'rename'
+                                ? 'Đổi tên'
+                                : category.status === 'Active'
+                                  ? 'Đóng'
+                                  : 'Mở lại'}
+                            </button>
+                          </span>
                         ))}
                       </td>
                     </tr>
@@ -296,56 +432,197 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
                 </tbody>
               </table>
             </div>
-          )}
-        </>
-      )}
-      {edit && (
-        <form aria-label="Chỉnh sửa danh mục" onSubmit={submitEdit}>
-          <fieldset
-            disabled={locked}
-            className="grid gap-3 rounded-card border border-line bg-white p-5"
-          >
-            <legend className="type-label font-semibold">
-              {edit.kind === 'rename'
-                ? 'Đổi tên'
-                : edit.category.status === 'Active'
-                  ? 'Đóng'
-                  : 'Mở lại'}
-              : {edit.category.name}
-            </legend>
-            {edit.kind === 'rename' ? (
-              <FormField id="category-edit-name" label="Tên mới" required>
-                <Input
-                  value={editName}
-                  onChange={(event) => setEditName(event.target.value)}
-                />
-              </FormField>
-            ) : (
-              <p>
-                Chuyển trạng thái sang{' '}
-                {edit.category.status === 'Active' ? 'Closed' : 'Active'}. Các
-                liên kết hiện có được giữ nguyên.
-              </p>
+            {type === 'Skill' && (
+              <nav
+                aria-label="Phân trang kỹ năng"
+                className="flex items-center justify-between border-t border-line px-6 py-4"
+              >
+                <p className="type-caption text-muted">
+                  Trang {currentPage} / {pages}
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="neutral"
+                    size="compact"
+                    disabled={busy || currentPage === 1}
+                    onClick={() => setPage(currentPage - 1)}
+                  >
+                    Trước
+                  </Button>
+                  {Array.from({ length: pages }, (_, index) => index + 1)
+                    .filter(
+                      (value) =>
+                        value === 1 ||
+                        value === pages ||
+                        Math.abs(value - currentPage) <= 1,
+                    )
+                    .map((value) => (
+                      <Button
+                        key={value}
+                        size="compact"
+                        variant={value === currentPage ? 'primary' : 'text'}
+                        disabled={busy}
+                        aria-current={
+                          value === currentPage ? 'page' : undefined
+                        }
+                        onClick={() => setPage(value)}
+                      >
+                        {value}
+                      </Button>
+                    ))}
+                  <Button
+                    variant="neutral"
+                    size="compact"
+                    disabled={busy || currentPage === pages}
+                    onClick={() => setPage(currentPage + 1)}
+                  >
+                    Tiếp
+                  </Button>
+                </div>
+              </nav>
             )}
-            <FormField
-              id="category-edit-reason"
-              label="Lý do thay đổi (tùy chọn)"
-            >
-              <Input
-                value={editReason}
-                onChange={(event) => setEditReason(event.target.value)}
-              />
-            </FormField>
-            <div className="flex gap-3">
-              <Button type="submit" loading={busy}>
-                Lưu thay đổi
-              </Button>
-              <Button variant="outline" onClick={() => setEdit(null)}>
-                Hủy
-              </Button>
-            </div>
-          </fieldset>
-        </form>
+          </div>
+        ))}
+      <aside className="flex items-start gap-3 rounded-control border border-line bg-surface p-4 type-label font-medium text-ink">
+        <span aria-hidden="true" className="text-brand">
+          ⓘ
+        </span>
+        <p>
+          Quy tắc quản lý danh mục học thuật: Danh mục chỉ được đóng, không xóa,
+          để bảo toàn dữ liệu hồ sơ và tin bài đang tham chiếu. Mỗi loại danh
+          mục phải luôn còn ít nhất một mục Active.
+        </p>
+      </aside>
+      <div>
+        <Button variant="text" disabled={busy} onClick={refresh}>
+          Tải lại danh sách
+        </Button>
+      </div>
+      {(creating || edit) && (
+        <CategoryDialog
+          title={
+            creating
+              ? `Thêm ${label}`
+              : edit?.kind === 'rename'
+                ? `Đổi tên ${label}`
+                : `${edit?.category.status === 'Active' ? 'Đóng' : 'Mở lại'} ${label}?`
+          }
+          busy={busy}
+          returnFocus={dialogTrigger.current}
+          onClose={closeDialog}
+        >
+          <form
+            aria-label={creating ? 'Tạo danh mục' : 'Chỉnh sửa danh mục'}
+            onSubmit={creating ? submitCreate : submitEdit}
+          >
+            <fieldset disabled={locked} className="grid gap-4">
+              {creating || edit?.kind === 'rename' ? (
+                <>
+                  <FormField
+                    id={
+                      creating ? 'category-create-name' : 'category-edit-name'
+                    }
+                    label={creating ? `Tên ${label}` : 'Tên mới'}
+                    required
+                  >
+                    <Input
+                      autoFocus
+                      placeholder={`Nhập tên ${label}...`}
+                      value={creating ? name : editName}
+                      onChange={(event) =>
+                        creating
+                          ? setName(event.target.value)
+                          : setEditName(event.target.value)
+                      }
+                    />
+                  </FormField>
+                  <details className="type-caption text-muted">
+                    <summary className="cursor-pointer">
+                      Thêm lý do (tùy chọn)
+                    </summary>
+                    <div className="mt-2">
+                      <FormField
+                        id={
+                          creating
+                            ? 'category-create-reason'
+                            : 'category-edit-reason'
+                        }
+                        label={
+                          creating
+                            ? 'Lý do tạo (tùy chọn)'
+                            : 'Lý do đổi tên (tùy chọn)'
+                        }
+                      >
+                        <Input
+                          value={creating ? reason : editReason}
+                          onChange={(event) =>
+                            creating
+                              ? setReason(event.target.value)
+                              : setEditReason(event.target.value)
+                          }
+                        />
+                      </FormField>
+                    </div>
+                  </details>
+                </>
+              ) : (
+                <>
+                  <p className="rounded-control border border-line bg-page px-4 py-3 type-label font-semibold">
+                    {type === 'Major' ? 'Chuyên ngành' : 'Kỹ năng'}:{' '}
+                    {edit?.category.name}
+                  </p>
+                  <p className="type-label text-muted">
+                    {edit?.category.status === 'Active'
+                      ? 'Mục đã đóng sẽ không xuất hiện khi tạo hồ sơ hoặc tin mới; dữ liệu cũ được giữ nguyên.'
+                      : 'Mục mở lại sẽ xuất hiện trong danh sách lựa chọn đang hoạt động.'}
+                  </p>
+                  <label
+                    className="grid gap-2 type-label text-secondary"
+                    htmlFor="category-edit-reason"
+                  >
+                    Lý do (không bắt buộc)
+                    <textarea
+                      id="category-edit-reason"
+                      rows={2}
+                      placeholder={`Nhập lý do ${edit?.category.status === 'Active' ? 'đóng' : 'mở lại'} ${label} (nếu có)...`}
+                      className="w-full resize-y rounded-control border border-control bg-white px-3 py-2 type-label text-ink"
+                      value={editReason}
+                      onChange={(event) => setEditReason(event.target.value)}
+                    />
+                  </label>
+                </>
+              )}
+              {error && (
+                <ErrorState
+                  title="Không lưu được danh mục"
+                  description={message(error)}
+                />
+              )}
+              <footer className="mt-3 flex justify-end gap-3 border-t border-line pt-4">
+                <Button variant="neutral" disabled={busy} onClick={closeDialog}>
+                  Hủy
+                </Button>
+                <Button
+                  type="submit"
+                  loading={busy}
+                  variant={
+                    edit?.kind === 'status' && edit.category.status === 'Active'
+                      ? 'danger'
+                      : 'primary'
+                  }
+                >
+                  {creating
+                    ? 'Lưu'
+                    : edit?.kind === 'rename'
+                      ? 'Lưu thay đổi'
+                      : edit?.category.status === 'Active'
+                        ? 'Đóng'
+                        : 'Mở lại'}
+                </Button>
+              </footer>
+            </fieldset>
+          </form>
+        </CategoryDialog>
       )}
     </section>
   );
