@@ -1,8 +1,12 @@
+export type ReminderEmailProvider = 'resend' | 'gmail-smtp';
+
 export type ReminderEmailConfig =
   | { readonly enabled: false }
   | {
       readonly enabled: true;
+      readonly provider: ReminderEmailProvider;
       readonly from: string;
+      readonly fromName: string;
       readonly namespace: string;
       readonly calendarUrl: string;
     };
@@ -40,7 +44,24 @@ export function readReminderEmailConfig(
   if (flag === undefined || flag === 'false') return { enabled: false };
   if (flag !== 'true') throw new Error('REMINDER_EMAIL_CONFIG_INVALID');
 
+  const rawProvider = env.EMAIL_PROVIDER ?? 'resend';
+  if (rawProvider !== 'resend' && rawProvider !== 'gmail-smtp') {
+    throw new Error('REMINDER_EMAIL_CONFIG_INVALID');
+  }
+  const provider: ReminderEmailProvider = rawProvider;
+
   const from = env.EMAIL_FROM;
+  const rawFromName = env.EMAIL_FROM_NAME;
+  let fromName = 'UniHub';
+  if (rawFromName !== undefined) {
+    const trimmed = rawFromName.trim();
+    if (trimmed.length > 0) {
+      if (/[\r\n]/.test(rawFromName) || trimmed.length > 100) {
+        throw new Error('REMINDER_EMAIL_CONFIG_INVALID');
+      }
+      fromName = trimmed;
+    }
+  }
   const namespace = env.EMAIL_IDEMPOTENCY_NAMESPACE;
   if (
     !from ||
@@ -73,7 +94,9 @@ export function readReminderEmailConfig(
 
   return Object.freeze({
     enabled: true,
+    provider,
     from,
+    fromName,
     namespace,
     calendarUrl: new URL('/calendar', base).href,
   });

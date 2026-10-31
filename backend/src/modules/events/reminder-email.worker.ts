@@ -3,6 +3,7 @@ import {
   MailFailure,
   asMailFailure,
   createResendTransport,
+  createGmailSmtpTransport,
   isProviderEmailId,
   type MailTransport,
 } from './mail-transport.js';
@@ -296,9 +297,18 @@ export function createConfiguredReminderEmailWorker(
   env: NodeJS.ProcessEnv = process.env,
 ) {
   const config = readReminderEmailConfig(env);
-  const transport = config.enabled
-    ? createResendTransport(env.RESEND_API_KEY ?? '')
-    : undefined;
+  let transport: MailTransport | undefined;
+  if (config.enabled) {
+    if (config.provider === 'gmail-smtp') {
+      transport = createGmailSmtpTransport({
+        user: env.GMAIL_SMTP_USER || config.from,
+        pass: env.GMAIL_APP_PASSWORD ?? '',
+        fromName: config.fromName,
+      });
+    } else {
+      transport = createResendTransport(env.RESEND_API_KEY ?? '');
+    }
+  }
   return createReminderEmailWorker({
     enabled: config.enabled,
     transport,

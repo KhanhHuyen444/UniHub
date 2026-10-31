@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  createGmailSmtpTransport,
   createResendTransport,
   MAIL_TIMEOUT_MS,
 } from '../dist/modules/events/mail-transport.js';
@@ -373,4 +374,143 @@ test('network, malformed successes and aborts remain ambiguous, redacted failure
   });
   assert.equal(calls, 0);
   assert.throws(() => createResendTransport(''), /PROVIDER_CONFIG_INVALID/);
+});
+
+test('Gmail SMTP adapter sends mail with payload, adds X-Idempotency-Key and extracts providerEmailId', async () => {
+  const calls = [];
+  const fakeTransporter = {
+    sendMail: async (mailOptions) => {
+      calls.push(mailOptions);
+      return { messageId: '<synthetic-msg-12345@gmail.com>' };
+    },
+  };
+  const transport = createGmailSmtpTransport(
+    { user: 'sender@example.test', pass: 'secret-app-password' },
+    { transporter: fakeTransporter },
+  );
+  const result = await transport.send(payload, options());
+  assert.equal(result.providerEmailId, 'synthetic-msg-12345_gmail_com');
+  assert.equal(calls.length, 1);
+  assert.deepEqual(calls[0].from, {
+    name: 'UniHub',
+    address: 'sender@example.test',
+  });
+  assert.deepEqual(calls[0].to, ['student@example.test']);
+  assert.equal(calls[0].subject, 'Reminder');
+  assert.equal(calls[0].headers['X-Idempotency-Key'], options().idempotencyKey);
+});
+
+test('Gmail SMTP uses custom sender name when provided in credentials', async () => {
+  const calls = [];
+  const fakeTransporter = {
+    sendMail: async (mailOptions) => {
+      calls.push(mailOptions);
+      return { messageId: '<custom-msg-999@gmail.com>' };
+    },
+  };
+  const transport = createGmailSmtpTransport(
+    {
+      user: 'sender@example.test',
+      pass: 'secret-app-password',
+      fromName: 'UniHub Notifications',
+    },
+    { transporter: fakeTransporter },
+  );
+  await transport.send(payload, options());
+  assert.equal(calls.length, 1);
+  assert.deepEqual(calls[0].from, {
+    name: 'UniHub Notifications',
+    address: 'sender@example.test',
+  });
+});
+
+test('Gmail SMTP rejects invalid credentials configuration without leaking values', () => {
+  for (const creds of [
+    { user: '', pass: 'app-password' },
+    { user: 'not-an-email', pass: 'app-password' },
+    { user: 'sender@example.test', pass: '' },
+    { user: 'sender@example.test', pass: 'short' },
+  ]) {
+    assert.throws(
+      () => createGmailSmtpTransport(creds),
+      /REMINDER_EMAIL_PROVIDER_CONFIG_INVALID/,
+    );
+  }
+});
+
+test('Gmail SMTP maps SMTP errors to redacted MailFailure without leaking details', async () => {
+  for (const [err, expectedCode, expectedRetryable] of [
+    [
+      { responseCode: 535, message: '5.7.8 Bad credentials private-pass' },
+      'PROVIDER_REJECTED',
+      false,
+    ],
+    [
+      { responseCode: 550, message: '5.1.1 User not found private@email.com' },
+      'PROVIDER_REJECTED',
+      false,
+    ],
+    [
+      { responseCode: 421, message: '4.7.0 Try again later' },
+      'RATE_LIMITED',
+      true,
+    ],
+    [
+      { responseCode: 450, message: '4.2.1 Mailbox busy' },
+      'RATE_LIMITED',
+      true,
+    ],
+    [
+      { responseCode: 452, message: '4.2.2 Daily sending limit exceeded' },
+      'RATE_LIMITED',
+      true,
+    ],
+    [
+      { responseCode: 400, message: '4.0.0 Temporary failure' },
+      'PROVIDER_UNAVAILABLE',
+      true,
+    ],
+    [
+      { code: 'ETIMEDOUT', message: 'connection timed out' },
+      'REQUEST_TIMEOUT',
+      true,
+    ],
+    [
+      { code: 'ECONNREFUSED', message: 'connection refused' },
+      'NETWORK_ERROR',
+      true,
+    ],
+  ]) {
+    const transport = createGmailSmtpTransport(
+      { user: 'sender@example.test', pass: 'secret-app-password' },
+      {
+        transporter: {
+          sendMail: async () => {
+            throw err;
+          },
+        },
+      },
+    );
+    await assert.rejects(transport.send(payload, options()), (error) => {
+      assert.equal(error.code, expectedCode);
+      assert.equal(error.retryable, expectedRetryable);
+      assert.ok(!error.message.includes('private'));
+      return true;
+    });
+  }
+});
+
+test('Gmail SMTP abort signal cancels send with REQUEST_TIMEOUT', async () => {
+  const signal = AbortSignal.abort();
+  const transport = createGmailSmtpTransport(
+    { user: 'sender@example.test', pass: 'secret-app-password' },
+    {
+      transporter: {
+        sendMail: async () => new Promise(() => {}),
+      },
+    },
+  );
+  await assert.rejects(transport.send(payload, { ...options(), signal }), {
+    code: 'REQUEST_TIMEOUT',
+  });
 });
