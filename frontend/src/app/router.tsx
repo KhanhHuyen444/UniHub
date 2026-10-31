@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
   useNavigate,
+  useLocation,
 } from 'react-router';
 import { HealthCheckPage } from './App';
 import { NotFoundPage } from './NotFoundPage';
@@ -20,6 +21,7 @@ import { PublicLayout } from '../layouts/PublicLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
+import { ProfileSavedNotice } from '../features/profile/ProfileSavedNotice';
 import { StudentLayout } from '../layouts/StudentLayout';
 import { RecommendationsPage } from '../features/recommendations/RecommendationsPage';
 import { useAuth } from '../features/auth/AuthProvider';
@@ -34,7 +36,7 @@ function RecommendationsRoute() {
     <RecommendationsPage
       accessToken={getAccessToken()}
       role={user?.role ?? null}
-      onCompleteProfile={() => navigate('/profile?returnTo=%2Frecommendations')}
+      onCompleteProfile={() => navigate('/profile')}
       onSignIn={() => navigate('/login?returnTo=%2Frecommendations')}
     />
   );
@@ -52,10 +54,16 @@ export const appPaths = {
   notFound: '/404',
 } as const;
 
+function HomeRedirect() {
+  const { state } = useLocation();
+  return <Navigate to={appPaths.developmentHealth} state={state} replace />;
+}
+
 export function AppRouter() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <ProfileSavedNotice />
         <Routes>
           <Route
             path="/recommendations"
@@ -77,10 +85,7 @@ export function AppRouter() {
               </RequireRole>
             }
           />
-          <Route
-            path={appPaths.home}
-            element={<Navigate to={appPaths.developmentHealth} replace />}
-          />
+          <Route path={appPaths.home} element={<HomeRedirect />} />
           <Route
             path={appPaths.developmentHealth}
             element={<HealthCheckPage />}

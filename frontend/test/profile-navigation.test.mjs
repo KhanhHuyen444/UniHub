@@ -65,7 +65,7 @@ test('avatar missing image renders initials and no broken img element', () => {
   assert.match(markup, />MA</);
   assert.doesNotMatch(markup, /<img/);
 });
-test('Profile returnTo preserves recommendations query and rejects external/login destinations', () => {
+test('Login returnTo preserves recommendations query and rejects external/login destinations', () => {
   assert.equal(
     safeReturnPath('/recommendations?from=profile'),
     '/recommendations?from=profile',

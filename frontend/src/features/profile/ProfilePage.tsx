@@ -1,8 +1,7 @@
 import { ProfileIcon } from './ProfileIcon';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { UserAvatar } from './UserAvatar';
-import { safeReturnPath } from '../auth/return-path';
 import { useAuth } from '../auth/AuthProvider';
 import { getAccessToken } from '../auth/auth-state';
 import { SkillOptionsField } from '../categories/SkillOptionsField';
@@ -28,11 +27,7 @@ export function ProfilePage() {
 }
 function ProfileEditor({ userId }: { userId: number }) {
   const { user } = useAuth();
-  const [query] = useSearchParams();
-  const returnTo = safeReturnPath(
-    query.get('returnTo'),
-    window.location.origin,
-  );
+  const navigate = useNavigate();
   const [attempt, setAttempt] = useState(0);
   const [data, setData] = useState<ProfileResponse | null>(null);
   const [form, setForm] = useState<ProfileForm | null>(null);
@@ -103,6 +98,7 @@ function ProfileEditor({ userId }: { userId: number }) {
       setData(result);
       setForm(toForm(result.profile));
       setMessage('Đã lưu hồ sơ thành công.');
+      navigate('/', { replace: true, state: { profileSaved: true } });
     } catch (error) {
       if (!isCurrentProfileSession(userId, controller.signal)) return;
       if (error instanceof ApiError) {
@@ -375,7 +371,7 @@ function ProfileEditor({ userId }: { userId: number }) {
             {saving ? 'Đang lưu…' : 'Lưu hồ sơ'}
           </button>
           <Link
-            to={returnTo.startsWith('/profile') ? '/opportunities' : returnTo}
+            to="/"
             className="mt-2 flex h-10 items-center justify-center rounded-control bg-surface text-sm text-brand"
           >
             Để sau
