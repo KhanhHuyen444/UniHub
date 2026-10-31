@@ -117,7 +117,7 @@ before(async () => {
   activeMajor = await createCategory('Major', 'Ngành Active');
   secondActiveMajor = await createCategory('Major', 'Ngành Active phụ');
   closedMajor = await createCategory('Major', 'Ngành Closed', 'Closed');
-  closedSkill = await createCategory('Skill', 'Kỹ năng Closed');
+  closedSkill = await createCategory('Skill', 'Kỹ năng Closed', 'Closed');
   skillThatMatches = await createCategory('Skill', 'Kỹ năng phân tích dữ liệu');
 
   records.dateOnly = await createOpportunity('date-only 05/11', {
@@ -407,6 +407,32 @@ enabledTest(
         [fixture.item_id],
       );
     }
+  },
+);
+
+enabledTest(
+  'list Skills include Closed links, match detail ordering and keep empty links as []',
+  async () => {
+    const { response, body } = await getList(
+      `?q=${encodeURIComponent(token)}&pageSize=100`,
+    );
+    assert.equal(response.status, 200);
+    const listed = body.items.find(
+      (item) => item.id === records.search.item_id,
+    );
+    const detail = await getDetail(records.search.item_id);
+    assert.deepEqual(listed.skills, detail.body.item.skills);
+    assert.ok(
+      listed.skills.some((skill) => skill.id === closedSkill.category_id),
+    );
+    assert.deepEqual(
+      body.items.find((item) => item.id === records.publicOnline.item_id)
+        .skills,
+      [],
+    );
+    for (const item of body.items)
+      for (const skill of item.skills)
+        assert.deepEqual(Object.keys(skill).sort(), ['id', 'name']);
   },
 );
 

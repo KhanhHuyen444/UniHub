@@ -10,6 +10,7 @@ import { GuidanceDetailPage } from '../features/guidance/GuidanceDetailPage';
 import { AuthProvider } from '../features/auth/AuthProvider';
 import { ForbiddenPage, RequireRole } from '../features/auth/AuthGuard';
 import { LoginPage } from '../features/auth/LoginPage';
+import { LoginLayout } from '../features/auth/LoginLayout';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { StudentLayout } from '../layouts/StudentLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
@@ -22,6 +23,7 @@ import { getAccessToken } from '../features/auth/auth-state';
 import { AdminDashboardPage } from '../features/admin/dashboard/AdminDashboardPage';
 import { CalendarPage } from '../features/calendar/CalendarPage';
 import { HomePage } from '../features/home/HomePage';
+import { PendingFeatureNotice } from '../features/auth/PendingFeatureNotice';
 
 function RecommendationsRoute() {
   const { user } = useAuth();
@@ -36,12 +38,33 @@ function RecommendationsRoute() {
   );
 }
 
+function ForumPendingRoute() {
+  const { user } = useAuth();
+  const isStudent = user?.role === 'Student';
+  const Layout = isStudent ? StudentLayout : PublicLayout;
+
+  return (
+    <Layout activeKey="forum">
+      <div className="mx-auto max-w-public px-8 py-16">
+        <PendingFeatureNotice
+          title="Diễn đàn sinh viên"
+          badgeText="Sắp ra mắt"
+          description="Kênh thảo luận, hỏi đáp học tập và kinh nghiệm phỏng vấn dành cho cộng đồng sinh viên UniHub đang trong quá trình hoàn thiện."
+          backTo="/opportunities"
+          backLabel="Khám phá cơ hội"
+        />
+      </div>
+    </Layout>
+  );
+}
+
 export const appPaths = {
   home: '/',
   developmentHealth: '/_dev/health',
   sharedUiPreview: sharedUiPreviewPath,
   opportunities: '/opportunities',
   roadmaps: '/roadmaps',
+  forum: '/forum',
   profile: '/profile',
   recommendations: '/recommendations',
   calendar: '/calendar',
@@ -81,6 +104,7 @@ export function AppRouter() {
             element={<OpportunityDetailPage />}
           />
           <Route path={appPaths.roadmaps} element={<GuidanceRoadmapPage />} />
+          <Route path={appPaths.forum} element={<ForumPendingRoute />} />
           <Route
             path={appPaths.adminDashboard}
             element={
@@ -147,9 +171,9 @@ export function AppRouter() {
           <Route
             path="/login"
             element={
-              <PublicLayout activeKey="home">
+              <LoginLayout>
                 <LoginPage />
-              </PublicLayout>
+              </LoginLayout>
             }
           />
           <Route

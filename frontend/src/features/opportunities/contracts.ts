@@ -35,8 +35,12 @@ export interface PublicOpportunitySummary {
   isVerified: boolean;
 }
 
+export interface PublicOpportunityListItem extends PublicOpportunitySummary {
+  skills: Array<{ id: number; name: string }>;
+}
+
 export interface OpportunityListResponse {
-  items: PublicOpportunitySummary[];
+  items: PublicOpportunityListItem[];
   meta: {
     page: number;
     pageSize: number;
@@ -232,7 +236,18 @@ export function parseOpportunityList(value: unknown): OpportunityListResponse {
   }
   const expectedTotalPages = total === 0 ? 0 : Math.ceil(total / pageSize);
   if (totalPages !== expectedTotalPages) throw invalidResponse();
-  const items = value.items.map(parseSummary);
+  const items = value.items.map((item): PublicOpportunityListItem => {
+    if (!isRecord(item)) throw invalidResponse();
+    const summary = parseSummary(item);
+    // Additive rollout: old list responses may omit skills; null/corrupt data is not empty.
+    const skills = item.skills === undefined ? [] : parseNameLinks(item.skills);
+    if (
+      skills.some((skill) => skill.id > 2_147_483_647 || !skill.name.trim()) ||
+      new Set(skills.map((skill) => skill.id)).size !== skills.length
+    )
+      throw invalidResponse();
+    return { ...summary, skills };
+  });
   if (items.length > pageSize || items.length > total) throw invalidResponse();
   return { items, meta: { page, pageSize, total, totalPages, evaluatedAt } };
 }

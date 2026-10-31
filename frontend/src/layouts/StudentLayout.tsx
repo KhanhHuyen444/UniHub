@@ -14,14 +14,17 @@ export interface StudentLayoutProps {
   children: React.ReactNode;
   activeKey?: string;
   previewNavigation?: boolean;
+  variant?: 'default' | 'opportunities';
 }
 
 export function StudentLayout({
   children,
   activeKey = 'recommendations',
   previewNavigation = false,
+  variant = 'default',
 }: StudentLayoutProps) {
   const area: Extract<ShellArea, 'student'> = 'student';
+  const isOpportunities = variant === 'opportunities';
   const { user, status } = useAuth();
   const initials = user?.fullName
     .trim()
@@ -110,11 +113,21 @@ export function StudentLayout({
       </header>
 
       <main className="w-full flex-1">
-        <div className="mx-auto w-full max-w-student px-8 py-10">
+        <div
+          className={`mx-auto w-full max-w-student ${isOpportunities ? 'px-8 pt-10' : 'px-8 py-10'}`}
+        >
           {children}
         </div>
       </main>
-      <SiteFooter area={area} previewNavigation={previewNavigation} />
+      <SiteFooter
+        area={area}
+        previewNavigation={previewNavigation}
+        navigationLabelOverrides={
+          isOpportunities
+            ? { opportunities: 'Cơ hội', roadmaps: 'Lộ trình' }
+            : undefined
+        }
+      />
     </div>
   );
 }

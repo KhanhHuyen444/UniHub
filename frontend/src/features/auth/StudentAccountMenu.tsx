@@ -1,11 +1,18 @@
 import { useEffect, useRef } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { useAuth } from './AuthProvider';
 import { UserAvatar } from './UserAvatar';
 
 export function StudentAccountMenu() {
   const { user, logout } = useAuth();
+  const location = useLocation();
   const detailsRef = useRef<HTMLDetailsElement>(null);
+
+  useEffect(() => {
+    if (detailsRef.current) {
+      detailsRef.current.removeAttribute('open');
+    }
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     function handleDocumentClick(event: MouseEvent) {

@@ -28,13 +28,9 @@ export function PublicLayout({
   const area: Extract<ShellArea, 'public'> = 'public';
   const isOpportunities = variant === 'opportunities';
   const auth = useAuth();
-  const navigation =
-    auth.status === 'authenticated' && auth.user?.role === 'Student'
-      ? [
-          ...publicNavigation,
-          ...studentNavigation.filter((item) => item.key === 'calendar'),
-        ]
-      : publicNavigation;
+  const isStudent =
+    auth.status === 'authenticated' && auth.user?.role === 'Student';
+  const navigation = isStudent ? studentNavigation : publicNavigation;
 
   async function logout() {
     try {
@@ -54,13 +50,13 @@ export function PublicLayout({
         >
           <Brand area={area} previewNavigation={previewNavigation} />
           <nav aria-label="Điều hướng chính">
-            <ul className="flex items-center gap-8">
+            <ul className="flex items-center gap-6 xl:gap-8">
               {navigation.map((item) => (
                 <li key={item.key}>
                   <Link
                     to={navigationTarget(item, area, previewNavigation)}
                     aria-current={activeKey === item.key ? 'page' : undefined}
-                    className={`type-label inline-flex min-h-7 items-center border-b pb-1 font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${activeKey === item.key ? 'border-brand text-brand' : 'border-transparent text-secondary hover:text-brand'}`}
+                    className={`type-label inline-flex min-h-7 items-center whitespace-nowrap border-b pb-1 font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${activeKey === item.key ? 'border-brand text-brand' : 'border-transparent text-secondary hover:text-brand'}`}
                   >
                     {item.label}
                   </Link>

@@ -14,7 +14,8 @@ let vite,
   AuthProvider,
   StudentAccountMenu,
   UserAvatar,
-  PendingFeatureNotice;
+  PendingFeatureNotice,
+  PublicLayout;
 
 before(async () => {
   vite = await createServer({
@@ -36,6 +37,9 @@ before(async () => {
   ));
   ({ PendingFeatureNotice } = await vite.ssrLoadModule(
     '/src/features/auth/PendingFeatureNotice.tsx',
+  ));
+  ({ PublicLayout } = await vite.ssrLoadModule(
+    '/src/layouts/PublicLayout.tsx',
   ));
 });
 
@@ -145,4 +149,58 @@ test('Safe return path validation preserves internal params and rejects maliciou
   ]) {
     assert.equal(safeReturnPath(badPath), '/opportunities');
   }
+});
+
+test('PublicLayout renders synchronized 6 navigation links and account menu for authenticated Student', () => {
+  auth.setAuthenticated('fixture-token', studentUser);
+  const markup = renderToStaticMarkup(
+    createElement(
+      MemoryRouter,
+      null,
+      createElement(
+        AuthProvider,
+        null,
+        createElement(
+          PublicLayout,
+          { activeKey: 'home' },
+          createElement('div'),
+        ),
+      ),
+    ),
+  );
+
+  assert.match(markup, /Trang chủ/);
+  assert.match(markup, /Hub cơ hội/);
+  assert.match(markup, /Cơ hội dành cho bạn/);
+  assert.match(markup, /Lộ trình kỹ năng/);
+  assert.match(markup, /Lịch (&amp;|&) Deadline/);
+  assert.match(markup, /Diễn đàn/);
+  assert.match(markup, /Nguyễn Thái Bình/);
+});
+
+test('PublicLayout renders standard 4 navigation links and Google Login button for Guest', () => {
+  auth.setGuest();
+  const markup = renderToStaticMarkup(
+    createElement(
+      MemoryRouter,
+      null,
+      createElement(
+        AuthProvider,
+        null,
+        createElement(
+          PublicLayout,
+          { activeKey: 'home' },
+          createElement('div'),
+        ),
+      ),
+    ),
+  );
+
+  assert.match(markup, /Trang chủ/);
+  assert.match(markup, /Hub cơ hội/);
+  assert.match(markup, /Lộ trình kỹ năng/);
+  assert.match(markup, /Diễn đàn/);
+  assert.doesNotMatch(markup, /Cơ hội dành cho bạn/);
+  assert.doesNotMatch(markup, /Lịch & Deadline/);
+  assert.match(markup, /Đăng nhập với Google/);
 });

@@ -9,6 +9,8 @@ import {
   LoadingState,
 } from '../../components/ui';
 import { PublicLayout } from '../../layouts/PublicLayout';
+import { StudentLayout } from '../../layouts/StudentLayout';
+import { useAuth } from '../auth/AuthProvider';
 import verifiedLogo from '../../assets/logo-student-40.svg';
 import {
   formatOpportunityDate,
@@ -167,9 +169,13 @@ export function OpportunityDetailPage() {
 
   const activeType =
     request.status === 'success' ? request.data.item.type : undefined;
+  const auth = useAuth();
+  const isStudent =
+    auth.status === 'authenticated' && auth.user?.role === 'Student';
+  const Layout = isStudent ? StudentLayout : PublicLayout;
 
   return (
-    <PublicLayout activeKey="opportunities" variant="opportunities">
+    <Layout activeKey="opportunities" variant="opportunities">
       <div className="mx-auto max-w-[1104px] pb-14">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <BackToHubLink to={returnTo} />
@@ -233,7 +239,7 @@ export function OpportunityDetailPage() {
           <OpportunityDetail item={request.data.item} returnTo={returnTo} />
         )}
       </div>
-    </PublicLayout>
+    </Layout>
   );
 }
 
