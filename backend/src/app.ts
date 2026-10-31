@@ -14,6 +14,14 @@ import {
   createOpportunitiesRouter,
   type OpportunitiesRouterDependencies,
 } from './modules/opportunities/opportunities.routes.js';
+import {
+  createForumRouter,
+  type ForumRouterDependencies,
+} from './modules/forum/forum.routes.js';
+import {
+  createForumModerationRouter,
+  type ForumModerationRouterDependencies,
+} from './modules/forum/forum-moderation.routes.js';
 
 interface AppDependencies {
   checkDatabase?: () => Promise<void>;
@@ -21,6 +29,8 @@ interface AppDependencies {
   categories?: CategoriesRouterDependencies;
   opportunities?: OpportunitiesRouterDependencies;
   auth?: GoogleAuthDependencies;
+  forum?: ForumRouterDependencies;
+  forumModeration?: ForumModerationRouterDependencies;
 }
 
 export function createApp(dependencies: AppDependencies = {}) {
@@ -35,6 +45,11 @@ export function createApp(dependencies: AppDependencies = {}) {
   app.use(
     '/api/opportunities',
     createOpportunitiesRouter(dependencies.opportunities),
+  );
+  app.use('/api/forum', createForumRouter(dependencies.forum));
+  app.use(
+    '/api/admin/moderation/forum',
+    createForumModerationRouter(dependencies.forumModeration),
   );
   app.use(notFound);
   app.use(errorHandler);

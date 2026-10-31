@@ -5,12 +5,17 @@ import { SharedUiPreviewPage } from './SharedUiPreviewPage';
 import { sharedUiPreviewPath } from '../layouts/navigation';
 import { OpportunityHubPage } from '../features/opportunities/OpportunityHubPage';
 import { OpportunityDetailPage } from '../features/opportunities/OpportunityDetailPage';
+import { ForumHubPage } from '../features/forum/ForumHubPage';
+import { ForumPostDetailPage } from '../features/forum/ForumPostDetailPage';
+import { AdminForumModerationPage } from '../features/admin/forum/ForumModerationPage';
 
 export const appPaths = {
   home: '/',
   developmentHealth: '/_dev/health',
   sharedUiPreview: sharedUiPreviewPath,
   opportunities: '/opportunities',
+  forum: '/forum',
+  adminForumModeration: '/admin/moderation',
   notFound: '/404',
 } as const;
 
@@ -34,6 +39,15 @@ export function AppRouter() {
         <Route
           path={`${appPaths.opportunities}/:id`}
           element={<OpportunityDetailPage />}
+        />
+        <Route path={appPaths.forum} element={<ForumHubPage />} />
+        <Route
+          path={`${appPaths.forum}/:id`}
+          element={<ForumPostDetailPage />}
+        />
+        <Route
+          path={appPaths.adminForumModeration}
+          element={<AdminForumModerationPage />}
         />
         <Route path={appPaths.notFound} element={<NotFoundPage />} />
         <Route path="*" element={<NotFoundPage />} />

@@ -9,10 +9,18 @@ export class ApiError extends Error {
     readonly status: number,
     readonly code: string,
     message: string,
+    readonly fieldErrors?: ApiFieldError[],
   ) {
     super(message);
     this.name = 'ApiError';
   }
+}
+
+export interface ApiFieldError {
+  source: 'body' | 'query' | 'path';
+  field: string;
+  code: string;
+  message: string;
 }
 
 function isDatabaseUnavailable(error: unknown): boolean {
@@ -100,8 +108,13 @@ export const errorHandler: ErrorRequestHandler = (
   }
 
   if (error instanceof ApiError) {
+    const fieldErrors = error.fieldErrors;
     response.status(error.status).json({
-      error: { code: error.code, message: error.message },
+      error: {
+        code: error.code,
+        message: error.message,
+        ...(fieldErrors ? { fieldErrors } : {}),
+      },
     });
     return;
   }

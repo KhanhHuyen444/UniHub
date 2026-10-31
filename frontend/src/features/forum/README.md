@@ -1,7 +1,10 @@
 # forum
 
-Bài đăng, bình luận và các trang diễn đàn; chưa triển khai. Contract draft: [forum-api-contract.md](../../../../docs/forum-api-contract.md).
+Đã triển khai các trang đọc công khai:
 
-Phụ trách dự kiến: **TV5**, cả frontend và backend tương ứng. Chưa gán tên người hoặc deadline.
+- `/forum`: danh sách bài viết công khai (`ForumHubPage`), lọc theo topic, phân trang.
+- `/forum/:id`: chi tiết bài viết công khai và danh sách bình luận (`ForumPostDetailPage`).
 
-Chỉ thêm component, hook và lời gọi API khi bắt đầu chức năng. Đọc [quy trình nhóm](../../../../docs/team-workflow.md); không tạo route giả hoặc dữ liệu cá nhân để giữ chỗ.
+Chưa triển khai đăng bài, gửi bình luận và kiểm duyệt nội dung. Contract: [forum-api-contract.md](../../../../docs/forum-api-contract.md).
+
+Phụ trách: **TV5**, cả frontend và backend tương ứng. Theo [quy trình nhóm](../../../../docs/team-workflow.md).
