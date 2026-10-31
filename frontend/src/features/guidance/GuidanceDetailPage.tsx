@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { Link, useLocation, useParams } from 'react-router';
 import { PublicLayout } from '../../layouts/PublicLayout';
+import { StudentLayout } from '../../layouts/StudentLayout';
+import { useAuth } from '../auth/AuthProvider';
 import { Badge, Card, ErrorState, LoadingState } from '../../components/ui';
 import { ApiError } from '../../lib/api';
 import { getGuidanceDetail } from './api';
@@ -30,8 +32,13 @@ export function GuidanceDetailPage() {
   );
   const { state, retry } = useGuidanceRequest(id, load);
   const item = state.status === 'success' ? state.data.item : null;
+  const auth = useAuth();
+  const isStudent =
+    auth.status === 'authenticated' && auth.user?.role === 'Student';
+  const Layout = isStudent ? StudentLayout : PublicLayout;
+
   return (
-    <PublicLayout activeKey="roadmaps">
+    <Layout activeKey="roadmaps">
       <div className="grid gap-6">
         <Link className="text-brand underline" to={returnTo}>
           Quay lại lộ trình
@@ -114,6 +121,6 @@ export function GuidanceDetailPage() {
           </>
         )}
       </div>
-    </PublicLayout>
+    </Layout>
   );
 }
