@@ -363,7 +363,7 @@ function ProfileEditor({ userId }: { userId: number }) {
             Các lựa chọn chỉ được cập nhật vào hồ sơ sau khi lưu thành công.
           </p>
           <button
-            className="mt-8 flex h-10 w-full items-center justify-center gap-2 rounded-control bg-brand px-4 text-sm font-medium text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60"
+            className="mt-8 flex h-10 w-full items-center justify-center gap-2 rounded-control bg-brand px-4 text-sm font-medium text-white shadow-button transition-all duration-200 ease-out hover:brightness-95 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60 disabled:transform-none"
             type="submit"
             disabled={saving}
           >
@@ -372,7 +372,7 @@ function ProfileEditor({ userId }: { userId: number }) {
           </button>
           <Link
             to="/"
-            className="mt-2 flex h-10 items-center justify-center rounded-control bg-surface text-sm text-brand"
+            className="mt-2 flex h-10 items-center justify-center rounded-control bg-surface text-sm text-brand border border-line transition-all duration-200 ease-out hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
           >
             Để sau
           </Link>

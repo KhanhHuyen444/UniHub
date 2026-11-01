@@ -160,7 +160,7 @@ export function AdminUsersPage({
           <button
             type="button"
             onClick={clearFeedback}
-            className="flex h-7 w-7 items-center justify-center rounded-control text-success hover:bg-success/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-success"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-success hover:bg-success/10 hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-success"
             aria-label="Đóng thông báo thành công"
             title="Đóng thông báo"
           >
@@ -184,7 +184,7 @@ export function AdminUsersPage({
           <button
             type="button"
             onClick={clearFeedback}
-            className="flex h-7 w-7 items-center justify-center rounded-control text-danger hover:bg-danger/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-danger hover:bg-danger/10 hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
             aria-label="Đóng thông báo lỗi"
             title="Đóng thông báo"
           >
@@ -195,7 +195,7 @@ export function AdminUsersPage({
       )}
 
       {/* Search and Filters Card */}
-      <Card className="mb-6 p-4">
+      <Card className="mb-6 p-4 transition-all duration-300 hover:shadow-md hover:border-brand/20">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="w-full sm:max-w-md">
             <label htmlFor={searchInputId} className="sr-only">
@@ -214,7 +214,7 @@ export function AdminUsersPage({
                 <button
                   type="button"
                   onClick={() => setSearchInput('')}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-secondary hover:text-navy"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-secondary hover:text-navy hover:scale-110 active:scale-95 transition-all duration-200"
                   aria-label="Xóa nội dung tìm kiếm"
                   title="Xóa tìm kiếm"
                 >
@@ -272,7 +272,7 @@ export function AdminUsersPage({
       ) : (
         <div className="space-y-4">
           {/* Users Table */}
-          <div className="overflow-hidden rounded-card border border-line bg-white shadow-subtle">
+          <div className="overflow-hidden rounded-card border border-line bg-white shadow-subtle transition-all duration-300 hover:shadow-md">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left text-sm">
                 <thead>
@@ -303,12 +303,14 @@ export function AdminUsersPage({
                     return (
                       <tr
                         key={user.id}
-                        className="transition-colors hover:bg-page/40"
+                        className="transition-colors duration-150 hover:bg-slate-50/80"
                       >
                         {/* User Identity Column */}
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
-                            <UserAvatar name={user.fullName} url={null} />
+                            <div className="transition-transform duration-200 hover:scale-105">
+                              <UserAvatar name={user.fullName} url={null} />
+                            </div>
                             <div>
                               <div className="font-medium text-navy">
                                 {user.fullName}
@@ -440,7 +442,7 @@ export function AdminUsersPage({
             <button
               type="button"
               onClick={() => setConfirmTarget(null)}
-              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
               aria-label="Đóng hộp thoại"
               title="Đóng"
             >

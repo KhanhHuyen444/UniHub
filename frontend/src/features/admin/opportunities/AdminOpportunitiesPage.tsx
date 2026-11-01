@@ -222,7 +222,7 @@ function ReviewQueue({
                   <Link
                     to={`/admin/opportunities/${item.id}${window.location.search}`}
                     aria-current={selected ? 'page' : undefined}
-                    className={`block rounded-card border bg-white p-4 shadow-soft transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${selected ? 'border-2 border-brand' : 'border-line hover:border-brand/50'}`}
+                    className={`block rounded-card border bg-white p-4 shadow-soft transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${selected ? 'border-2 border-brand shadow-md' : 'border-line hover:border-brand/50'}`}
                   >
                     <p className="type-caption font-semibold uppercase text-secondary">
                       {item.type}
@@ -441,7 +441,7 @@ function AdminOpportunityDetail({
             type="button"
             aria-label="Đóng thông báo"
             title="Đóng thông báo"
-            className="flex h-6 w-6 items-center justify-center rounded-sm text-info hover:bg-info/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+            className="flex h-6 w-6 items-center justify-center rounded-sm text-info hover:bg-info/10 hover:scale-110 active:scale-95 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
             onClick={onClearNotice}
           >
             <CloseIcon className="h-4 w-4" />
@@ -464,7 +464,7 @@ function AdminOpportunityDetail({
           </button>
         </p>
       )}
-      <Card className="p-6 md:p-8">
+      <Card className="p-6 md:p-8 transition-all duration-300 hover:shadow-md hover:border-brand/20">
         <div className="flex flex-wrap items-center gap-2">
           <Badge
             variant={
@@ -502,7 +502,7 @@ function AdminOpportunityDetail({
           </a>
         )}
 
-        <dl className="mt-6 grid grid-cols-2 gap-4 rounded-control bg-surface p-4 sm:grid-cols-4">
+        <dl className="mt-6 grid grid-cols-2 gap-4 rounded-control border border-line/60 bg-surface p-4 transition-all duration-200 hover:shadow-xs sm:grid-cols-4">
           <InfoItem label="Loại cơ hội" value={item.type} />
           <InfoItem label="Hạn nộp" value={deadlineLabel(item)} />
           <InfoItem
@@ -601,7 +601,7 @@ function AdminOpportunityDetail({
               title="Đóng"
               disabled={busy}
               onClick={() => onCancelReject(item.id)}
-              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
+              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50 disabled:scale-100"
             >
               <CloseIcon className="h-4 w-4" />
               <span className="sr-only">Đóng</span>
@@ -889,7 +889,7 @@ export function AdminOpportunitiesPage() {
             <>
               <Link
                 to={backToQueue}
-                className="mb-3 inline-flex min-h-9 items-center type-label font-medium text-brand hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                className="mb-3 inline-flex min-h-9 items-center type-label font-medium text-brand hover:underline hover:-translate-x-1 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               >
                 ← Quay lại hàng chờ
               </Link>

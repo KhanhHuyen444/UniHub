@@ -261,7 +261,7 @@ function NotificationPanel({ onClose }: { onClose: () => void }) {
                   <button
                     disabled={busy}
                     onClick={() => void select(item)}
-                    className={`w-full rounded-control border border-line p-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-50 ${item.isRead ? 'bg-white' : 'bg-cyan'}`}
+                    className={`w-full rounded-control border border-line p-3 text-left transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-50 disabled:transform-none ${item.isRead ? 'bg-white hover:bg-slate-50' : 'bg-cyan hover:brightness-98'}`}
                   >
                     <span className="block text-xs text-secondary">
                       {item.type === 'Reminder'

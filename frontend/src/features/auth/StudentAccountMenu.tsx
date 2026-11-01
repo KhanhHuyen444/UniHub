@@ -49,15 +49,17 @@ export function StudentAccountMenu() {
       }}
     >
       <summary
-        className="flex cursor-pointer list-none items-center gap-2 rounded-control p-1 hover:bg-surface/80 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden"
+        className="group flex cursor-pointer list-none items-center gap-2 rounded-control p-1 hover:bg-surface/80 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden"
         aria-label="Tài khoản sinh viên"
       >
-        <span className="hidden max-w-36 truncate text-sm font-semibold text-ink xl:block">
+        <span className="hidden max-w-36 truncate text-sm font-semibold text-ink group-hover:text-brand transition-colors xl:block">
           {user.fullName}
         </span>
-        <UserAvatar key={user.id} name={user.fullName} url={user.avatarUrl} />
+        <div className="transition-transform duration-200 group-hover:scale-105">
+          <UserAvatar key={user.id} name={user.fullName} url={user.avatarUrl} />
+        </div>
         <svg
-          className="h-3.5 w-3.5 text-secondary transition-transform"
+          className="h-3.5 w-3.5 text-secondary group-hover:text-brand transition-colors duration-200"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -124,11 +126,11 @@ export function StudentAccountMenu() {
         <div className="border-t border-line my-1" />
         <button
           type="button"
-          className="flex w-full items-center gap-2.5 rounded-control px-3 py-2 text-left text-sm font-medium text-danger hover:bg-danger-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-danger"
+          className="group flex w-full items-center gap-2.5 rounded-control px-3 py-2 text-left text-sm font-medium text-danger hover:bg-danger-surface hover:translate-x-1 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-danger"
           onClick={() => void logout().catch(() => undefined)}
         >
           <svg
-            className="h-4 w-4 text-danger"
+            className="h-4 w-4 text-danger transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

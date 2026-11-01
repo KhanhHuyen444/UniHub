@@ -433,11 +433,11 @@ export function CalendarContent() {
     return (
       <article
         key={event.id}
-        className={`calendar-event ${tones[event.status]}`}
+        className={`calendar-event group ${tones[event.status]}`}
       >
         <div className="flex items-start gap-2">
           <input
-            className="mt-1 h-4 w-4 accent-brand"
+            className="mt-1 h-4 w-4 accent-brand cursor-pointer hover:scale-110 active:scale-95 transition-transform duration-200"
             type="checkbox"
             checked={event.status === 'Completed'}
             disabled={busy || event.status === 'Completed'}
@@ -449,7 +449,7 @@ export function CalendarContent() {
               )
             }
           />
-          <h3 className="min-w-0 flex-1 break-words font-semibold">
+          <h3 className="min-w-0 flex-1 break-words font-semibold group-hover:text-brand transition-colors duration-200">
             {event.title}
           </h3>
           <span className="calendar-status">{statusLabels[event.status]}</span>
@@ -468,7 +468,7 @@ export function CalendarContent() {
         <div className="mt-2 flex items-center justify-end gap-1">
           <button
             type="button"
-            className="flex h-7 w-7 items-center justify-center rounded-control text-brand hover:bg-brand/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-50"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-brand hover:bg-brand/10 hover:scale-110 active:scale-95 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-50 disabled:scale-100"
             disabled={busy}
             onClick={() => open(event, 'edit')}
             aria-label={`Sửa: ${event.title}`}
@@ -479,7 +479,7 @@ export function CalendarContent() {
           </button>
           <button
             type="button"
-            className="flex h-7 w-7 items-center justify-center rounded-control text-danger hover:bg-danger/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-danger disabled:opacity-50"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-danger hover:bg-danger/10 hover:scale-110 active:scale-95 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-danger disabled:opacity-50 disabled:scale-100"
             disabled={busy}
             onClick={() => open(event, 'delete')}
             aria-label={`Xóa: ${event.title}`}
@@ -524,7 +524,10 @@ export function CalendarContent() {
       >
         {(['Upcoming', 'Overdue', 'Completed'] as const).map(
           (status, index) => (
-            <div key={status} className={`calendar-stat ${tones[status]}`}>
+            <div
+              key={status}
+              className={`calendar-stat group ${tones[status]}`}
+            >
               <div>
                 <h2 className="text-xs font-medium uppercase text-muted">
                   {statusLabels[status]}

@@ -10,6 +10,27 @@ import {
   useRecommendations,
   type RecommendationsRole,
 } from './useRecommendations';
+
+function RefreshIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.8}
+      stroke="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+      />
+    </svg>
+  );
+}
+
 export interface RecommendationsPageProps {
   accessToken: string | null;
   role: RecommendationsRole;
@@ -108,8 +129,16 @@ export function RecommendationsPage({
             <p className="type-caption text-muted">
               ≡ Sắp xếp theo mức độ phù hợp giảm dần
             </p>
-            <Button variant="text" onClick={retry}>
-              Tải lại gợi ý
+            <Button
+              variant="neutral"
+              size="icon"
+              onClick={retry}
+              aria-label="Tải lại gợi ý"
+              title="Tải lại gợi ý"
+              className="h-8 w-8 rounded-control border border-line text-secondary hover:text-brand hover:border-brand/40 hover:bg-brand/5 active:scale-95 transition-all"
+            >
+              <RefreshIcon className="h-4 w-4" />
+              <span className="sr-only">Tải lại gợi ý</span>
             </Button>
           </div>
         </div>
@@ -150,7 +179,7 @@ export function RecommendationsPage({
         <div className="grid min-w-0 gap-6">{content}</div>
         {showSidebar && (
           <aside className="grid gap-4" aria-label="Thông tin gợi ý">
-            <Card className="grid gap-5 p-5">
+            <Card className="grid gap-5 p-5 hover:shadow-md hover:border-brand/20 transition-all duration-300">
               <h3 className="type-body font-medium text-ink">Hồ sơ của bạn</h3>
               <p className="type-label text-muted">
                 Cập nhật chuyên ngành, năm học và kỹ năng trong hồ sơ để nhận cơ
@@ -159,7 +188,7 @@ export function RecommendationsPage({
               {onCompleteProfile && state.status === 'success' && (
                 <Button
                   variant="neutral"
-                  className="bg-cyan text-navy"
+                  className="w-full bg-[#E0F2FE] text-brand border border-brand/20 font-semibold shadow-sm hover:bg-brand hover:text-white active:bg-[#005f8d] active:text-white active:scale-[0.98] transition-all duration-200"
                   onClick={onCompleteProfile}
                 >
                   Cập nhật hồ sơ
@@ -167,7 +196,7 @@ export function RecommendationsPage({
               )}
             </Card>
             <section
-              className="grid gap-4 rounded-card bg-surface p-5"
+              className="grid gap-4 rounded-card bg-surface p-5 hover:shadow-md transition-all duration-300"
               aria-labelledby="recommendation-how"
             >
               <h3

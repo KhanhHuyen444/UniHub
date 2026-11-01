@@ -266,24 +266,20 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
     state.status === 'success'
       ? state.items.filter(
           (item) =>
-            type !== 'Skill' ||
+            !query.trim() ||
             item.name
               .toLocaleLowerCase('vi-VN')
               .includes(query.trim().toLocaleLowerCase('vi-VN')),
         )
       : [];
-  const pages =
-    type === 'Skill' ? Math.max(1, Math.ceil(filtered.length / 8)) : 1;
+  const pages = Math.max(1, Math.ceil(filtered.length / 8));
   const currentPage = Math.min(page, pages);
   useEffect(() => {
     // Persist the clamped page only after a successful load, not during reload.
     if (state.status === 'success' && page !== currentPage)
       setPage(currentPage);
   }, [state.status, page, currentPage]);
-  const rows =
-    type === 'Skill'
-      ? filtered.slice((currentPage - 1) * 8, currentPage * 8)
-      : filtered;
+  const rows = filtered.slice((currentPage - 1) * 8, currentPage * 8);
   const closeDialog = () => {
     setCreating(false);
     setEdit(null);
@@ -313,7 +309,7 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
               type="button"
               aria-pressed={type === value}
               disabled={busy}
-              className={`border-b-2 px-0 py-4 type-label font-medium ${type === value ? 'border-brand text-brand' : 'border-transparent text-muted'}`}
+              className={`border-b-2 px-0 py-4 type-label font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 active:translate-y-0 ${type === value ? 'border-brand text-brand font-semibold' : 'border-transparent text-muted hover:text-brand hover:border-brand/40'}`}
               onClick={() => {
                 setType(value);
                 setEdit(null);
@@ -359,32 +355,35 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
           onRetry={refresh}
         />
       )}
-      {type === 'Skill' && (
-        <div className="flex items-center justify-between gap-4">
-          <div className="w-full max-w-md">
-            <label htmlFor="category-search" className="sr-only">
-              Tìm kỹ năng
-            </label>
-            <Input
-              id="category-search"
-              type="search"
-              placeholder="Tìm kiếm theo tên kỹ năng..."
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value);
-                setPage(1);
-              }}
-              disabled={busy}
-            />
-          </div>
-          {state.status === 'success' && (
-            <p className="type-caption text-muted">
-              Hiển thị {filtered.length === 0 ? 0 : (currentPage - 1) * 8 + 1}–
-              {(currentPage - 1) * 8 + rows.length} / {filtered.length} kỹ năng
-            </p>
-          )}
+      <div className="flex items-center justify-between gap-4">
+        <div className="w-full max-w-md">
+          <label htmlFor="category-search" className="sr-only">
+            {type === 'Skill' ? 'Tìm kỹ năng' : 'Tìm chuyên ngành'}
+          </label>
+          <Input
+            id="category-search"
+            type="search"
+            placeholder={
+              type === 'Skill'
+                ? 'Tìm kiếm theo tên kỹ năng...'
+                : 'Tìm kiếm theo tên chuyên ngành...'
+            }
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setPage(1);
+            }}
+            disabled={busy}
+          />
         </div>
-      )}
+        {state.status === 'success' && (
+          <p className="type-caption text-muted">
+            Hiển thị {filtered.length === 0 ? 0 : (currentPage - 1) * 8 + 1}–
+            {(currentPage - 1) * 8 + rows.length} / {filtered.length}{' '}
+            {type === 'Skill' ? 'kỹ năng' : 'chuyên ngành'}
+          </p>
+        )}
+      </div>
       {state.status === 'loading' && <LoadingState title="Đang tải danh mục" />}
       {state.status === 'error' && (
         <ErrorState
@@ -396,7 +395,13 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
       {state.status === 'success' &&
         (filtered.length === 0 ? (
           <EmptyState
-            title={query.trim() ? 'Không tìm thấy kỹ năng' : 'Chưa có danh mục'}
+            title={
+              query.trim()
+                ? type === 'Skill'
+                  ? 'Không tìm thấy kỹ năng'
+                  : 'Không tìm thấy chuyên ngành'
+                : 'Chưa có danh mục'
+            }
             description={
               query.trim()
                 ? 'Thử tìm bằng tên khác.'
@@ -404,7 +409,7 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
             }
           />
         ) : (
-          <div className="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+          <div className="overflow-hidden rounded-card border border-line bg-white shadow-soft transition-all duration-300 hover:shadow-md">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left type-label">
                 <caption className="sr-only">Danh sách {label}</caption>
@@ -431,7 +436,7 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
                   {rows.map((category) => (
                     <tr
                       key={category.id}
-                      className={`border-t border-line ${category.status === 'Closed' ? 'bg-page text-muted' : 'text-ink'}`}
+                      className={`border-t border-line transition-colors duration-150 hover:bg-slate-50/80 ${category.status === 'Closed' ? 'bg-page text-muted' : 'text-ink'}`}
                     >
                       <td className="break-words px-6 py-3">{category.name}</td>
                       <td className="px-6 py-3">
@@ -455,7 +460,7 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
                           <button
                             type="button"
                             disabled={busy}
-                            className="inline-flex items-center justify-center rounded p-1 text-brand hover:text-navy hover:bg-slate-100 transition-colors disabled:text-muted disabled:hover:bg-transparent"
+                            className="inline-flex items-center justify-center rounded p-1 text-brand hover:text-navy hover:bg-slate-100 hover:scale-110 active:scale-95 transition-all duration-200 disabled:text-muted disabled:hover:bg-transparent disabled:scale-100"
                             aria-label={`Đổi tên ${category.name}`}
                             title="Đổi tên"
                             onClick={(event) => {
@@ -479,8 +484,8 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
                             disabled={busy}
                             className={
                               category.status === 'Active'
-                                ? 'inline-flex items-center justify-center rounded p-1 text-muted hover:text-danger hover:bg-danger-surface transition-colors disabled:text-muted disabled:hover:bg-transparent'
-                                : 'inline-flex items-center justify-center rounded p-1 text-muted hover:text-success hover:bg-success-surface transition-colors disabled:text-muted disabled:hover:bg-transparent'
+                                ? 'inline-flex items-center justify-center rounded p-1 text-muted hover:text-danger hover:bg-danger-surface hover:scale-110 active:scale-95 transition-all duration-200 disabled:text-muted disabled:hover:bg-transparent disabled:scale-100'
+                                : 'inline-flex items-center justify-center rounded p-1 text-muted hover:text-success hover:bg-success-surface hover:scale-110 active:scale-95 transition-all duration-200 disabled:text-muted disabled:hover:bg-transparent disabled:scale-100'
                             }
                             aria-label={`${category.status === 'Active' ? 'Đóng' : 'Mở lại'} ${category.name}`}
                             title={
@@ -512,9 +517,13 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
                 </tbody>
               </table>
             </div>
-            {type === 'Skill' && (
+            {pages > 1 && (
               <nav
-                aria-label="Phân trang kỹ năng"
+                aria-label={
+                  type === 'Skill'
+                    ? 'Phân trang kỹ năng'
+                    : 'Phân trang chuyên ngành'
+                }
                 className="flex items-center justify-between border-t border-line px-6 py-4"
               >
                 <p className="type-caption text-muted">

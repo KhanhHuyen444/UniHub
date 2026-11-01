@@ -28,11 +28,11 @@ export function RecommendationCard({ item }: { item: RecommendedOpportunity }) {
     maximumFractionDigits: 2,
   }).format(item.matchScore);
   return (
-    <Card className="grid gap-5 p-6">
+    <Card className="group grid gap-5 p-6 hover:shadow-lg hover:-translate-y-1.5 hover:border-brand/40 transition-all duration-300 ease-out">
       <header className="flex flex-wrap items-start gap-3">
         <span
           aria-hidden="true"
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-compact bg-surface text-brand"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-compact bg-surface text-brand transition-all duration-300 group-hover:bg-brand group-hover:text-white group-hover:scale-110"
         >
           <svg
             width="24"
@@ -57,7 +57,7 @@ export function RecommendationCard({ item }: { item: RecommendedOpportunity }) {
         <div className="min-w-0 flex-1">
           <h2
             id={`recommendation-${item.id}`}
-            className="break-words type-body font-medium text-ink"
+            className="break-words type-body font-medium text-ink group-hover:text-brand transition-colors"
           >
             {item.title}
           </h2>
@@ -108,9 +108,15 @@ export function RecommendationCard({ item }: { item: RecommendedOpportunity }) {
         <Link
           to={`/opportunities/${item.id}`}
           aria-label={`Xem chi tiết: ${item.title}`}
-          className="inline-flex h-10 items-center gap-2 rounded-control bg-brand px-4 type-label font-medium text-white hover:brightness-95"
+          className="inline-flex h-10 items-center gap-2 rounded-control bg-brand px-4 type-label font-medium text-white shadow-button hover:brightness-95 hover:scale-[1.02] active:scale-[0.98] transition-all"
         >
-          Xem chi tiết <span aria-hidden="true">→</span>
+          <span>Xem chi tiết</span>
+          <span
+            aria-hidden="true"
+            className="transition-transform duration-200 group-hover:translate-x-1"
+          >
+            →
+          </span>
         </Link>
       </footer>
     </Card>
