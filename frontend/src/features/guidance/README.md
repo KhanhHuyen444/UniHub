@@ -50,10 +50,10 @@ không gọi backend/MySQL/Google thật và không xác nhận UI hoặc NFR.
   bố cục hiện tại chỉ phục vụ chức năng.
 - Backend Guidance đã có trên nhánh backend trong workflow này; deployment/merge
   và HTTP end-to-end phải kiểm tra riêng. HTTP Guest có thể chạy độc lập Auth.
-- Hai hàm hiện gọi public API, không tự lấy/lưu/gắn token, refresh hoặc đọc Profile.
-  Luồng Student ưu tiên Major hồ sơ cần cơ chế Auth/session frontend dùng chung
-  của Bình (TV2), hiện đang chờ tích hợp frontend Auth, và backend cấu hình
-  hợp lệ; không tự xây cơ chế JWT thứ hai.
+- `getGuidanceList` sử dụng `protectedApiRequest` khi người dùng đăng nhập với vai trò Student
+  để gửi Bearer token và tự động xử lý token rotation/refresh. Backend nhận diện Student để ưu tiên
+  chuyên ngành đã lưu trong Profile khi URL không chỉ định `majorId`. Với Guest và Admin, hàm vẫn gọi
+  public `apiRequest` an toàn và độc lập với Auth.
 - Major options cho UI tương lai dùng API Categories public hiện có; không dùng
   Skill Options Active để lọc/xóa các liên kết Skill Closed của nội dung Guidance.
 - Không có mock API/dữ liệu production, dependency mới, schema hoặc môi trường mới.
