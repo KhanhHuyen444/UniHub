@@ -1,5 +1,23 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 
+function CloseIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  );
+}
+
 /** Native modal owns focus trapping, Escape and return-focus without another UI dependency. */
 export function CategoryDialog({
   title,
@@ -41,11 +59,13 @@ export function CategoryDialog({
         <button
           type="button"
           aria-label="Đóng hộp thoại"
+          title="Đóng hộp thoại"
           disabled={busy}
           onClick={onClose}
-          className="rounded px-1 text-2xl leading-6 text-muted disabled:opacity-50"
+          className="flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
         >
-          ×
+          <CloseIcon className="h-4 w-4" />
+          <span className="sr-only">Đóng hộp thoại</span>
         </button>
       </header>
       {children}

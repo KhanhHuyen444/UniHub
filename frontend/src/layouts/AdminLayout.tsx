@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import accountsIcon from '../assets/admin-accounts.svg';
 import categoriesIcon from '../assets/admin-categories.svg';
 import dashboardIcon from '../assets/admin-dashboard.svg';
@@ -32,12 +32,15 @@ export function AdminLayout({
 }: AdminLayoutProps) {
   const area: Extract<ShellArea, 'admin'> = 'admin';
   const { user, logout, status } = useAuth();
+  const navigate = useNavigate();
 
   async function handleLogout() {
     try {
       await logout();
     } catch {
       // Local auth is already cleared; LoginPage reports uncertain revocation.
+    } finally {
+      navigate('/login', { replace: true });
     }
   }
 

@@ -88,6 +88,15 @@ test('loginDestination standardizes post-login destinations for all roles', () =
     loginDestination('/login?returnTo=%2Flogin', 'Admin'),
     '/opportunities',
   );
+  // Role segregation: Student cannot be redirected to /admin paths, falls back to '/'
+  assert.equal(loginDestination('/admin/dashboard', 'Student'), '/');
+  assert.equal(loginDestination('/admin/opportunities?page=2', 'Student'), '/');
+  // Role segregation: Admin cannot be redirected to student-only paths, falls back to '/admin/dashboard'
+  assert.equal(loginDestination('/profile', 'Admin'), '/admin/dashboard');
+  assert.equal(
+    loginDestination('/recommendations', 'Admin'),
+    '/admin/dashboard',
+  );
 });
 
 test('LoginPresentation renders two-column structure with benefits, Google slot and privacy', () => {

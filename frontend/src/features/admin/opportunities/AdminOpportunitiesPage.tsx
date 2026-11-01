@@ -23,6 +23,24 @@ import type {
 } from './contracts';
 import { isReviewTargetCurrent, lastValidQueuePage } from './contracts';
 
+function CloseIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  );
+}
+
 type QueueState =
   | { status: 'loading' }
   | { status: 'error'; error: unknown }
@@ -422,10 +440,12 @@ function AdminOpportunityDetail({
           <button
             type="button"
             aria-label="Đóng thông báo"
-            className="rounded-sm px-1 font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+            title="Đóng thông báo"
+            className="flex h-6 w-6 items-center justify-center rounded-sm text-info hover:bg-info/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
             onClick={onClearNotice}
           >
-            ×
+            <CloseIcon className="h-4 w-4" />
+            <span className="sr-only">Đóng thông báo</span>
           </button>
         </div>
       )}
@@ -573,9 +593,20 @@ function AdminOpportunityDetail({
             role="dialog"
             aria-modal="true"
             aria-labelledby="reject-title"
-            className="w-full max-w-xl rounded-card border border-line bg-white p-6 shadow-card"
+            className="relative w-full max-w-xl rounded-card border border-line bg-white p-6 shadow-card"
           >
-            <h2 id="reject-title" className="type-title text-navy">
+            <button
+              type="button"
+              aria-label="Đóng hộp thoại từ chối"
+              title="Đóng"
+              disabled={busy}
+              onClick={() => onCancelReject(item.id)}
+              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
+            >
+              <CloseIcon className="h-4 w-4" />
+              <span className="sr-only">Đóng</span>
+            </button>
+            <h2 id="reject-title" className="pr-8 type-title text-navy">
               Từ chối cơ hội
             </h2>
             <p className="mt-2 type-label text-secondary">

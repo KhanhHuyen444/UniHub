@@ -7,6 +7,10 @@ import {
   type AdminCategoriesRouterDependencies,
 } from './modules/categories/admin-categories.routes.js';
 import {
+  createAdminUsersRouter,
+  type AdminUsersRouterDependencies,
+} from './modules/users/admin-users.routes.js';
+import {
   createGuidanceRouter,
   type GuidanceRouterDependencies,
 } from './modules/guidance/guidance.routes.js';
@@ -51,6 +55,7 @@ interface AppDependencies {
   logDatabaseFailure?: () => void;
   categories?: CategoriesRouterDependencies;
   adminCategories?: AdminCategoriesRouterDependencies;
+  adminUsers?: AdminUsersRouterDependencies;
   guidance?: GuidanceRouterDependencies;
   recommendations?: RecommendationsRouterDependencies;
   opportunities?: OpportunitiesRouterDependencies;
@@ -69,6 +74,7 @@ export function createApp(dependencies: AppDependencies = {}) {
     '/api/admin/categories',
     createAdminCategoriesRouter(dependencies.adminCategories),
   );
+  app.use('/api/admin/users', createAdminUsersRouter(dependencies.adminUsers));
   app.use(express.json({ limit: '100kb' }));
   app.use('/api/health', healthRouter);
   app.use('/api/ready', createReadyRouter(dependencies));

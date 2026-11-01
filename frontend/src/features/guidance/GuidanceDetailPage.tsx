@@ -9,6 +9,26 @@ import { getGuidanceDetail } from './api';
 import { isGuidanceId } from './contracts';
 import { useGuidanceRequest } from './useGuidanceRequest';
 
+function ArrowLeftIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+      stroke="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+      />
+    </svg>
+  );
+}
+
 export function GuidanceDetailPage() {
   const { id = '' } = useParams();
   const location = useLocation();
@@ -40,8 +60,12 @@ export function GuidanceDetailPage() {
   return (
     <Layout activeKey="roadmaps">
       <div className="grid gap-6">
-        <Link className="text-brand underline" to={returnTo}>
-          Quay lại lộ trình
+        <Link
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+          to={returnTo}
+        >
+          <ArrowLeftIcon className="h-4 w-4" />
+          <span>Quay lại lộ trình</span>
         </Link>
         {state.status === 'loading' && (
           <LoadingState title="Đang tải bài định hướng" />

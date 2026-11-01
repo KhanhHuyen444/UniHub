@@ -8,6 +8,24 @@ import {
 } from '../../components/ui/FeedbackStates';
 import notificationIcon from '../../assets/notification.svg';
 import { useAuth } from '../auth/AuthProvider';
+
+function CloseIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  );
+}
 import { getAuthSnapshot, subscribeToAuth } from '../auth/auth-state';
 import {
   listNotifications,
@@ -175,9 +193,11 @@ function NotificationPanel({ onClose }: { onClose: () => void }) {
           variant="text"
           size="icon"
           aria-label="Đóng thông báo"
+          title="Đóng thông báo"
           onClick={onClose}
         >
-          ×
+          <CloseIcon className="h-4 w-4 text-secondary" />
+          <span className="sr-only">Đóng thông báo</span>
         </Button>
       </div>
       {actionError && (
