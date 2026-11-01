@@ -266,24 +266,20 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
     state.status === 'success'
       ? state.items.filter(
           (item) =>
-            type !== 'Skill' ||
+            !query.trim() ||
             item.name
               .toLocaleLowerCase('vi-VN')
               .includes(query.trim().toLocaleLowerCase('vi-VN')),
         )
       : [];
-  const pages =
-    type === 'Skill' ? Math.max(1, Math.ceil(filtered.length / 8)) : 1;
+  const pages = Math.max(1, Math.ceil(filtered.length / 8));
   const currentPage = Math.min(page, pages);
   useEffect(() => {
     // Persist the clamped page only after a successful load, not during reload.
     if (state.status === 'success' && page !== currentPage)
       setPage(currentPage);
   }, [state.status, page, currentPage]);
-  const rows =
-    type === 'Skill'
-      ? filtered.slice((currentPage - 1) * 8, currentPage * 8)
-      : filtered;
+  const rows = filtered.slice((currentPage - 1) * 8, currentPage * 8);
   const closeDialog = () => {
     setCreating(false);
     setEdit(null);
@@ -359,32 +355,35 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
           onRetry={refresh}
         />
       )}
-      {type === 'Skill' && (
-        <div className="flex items-center justify-between gap-4">
-          <div className="w-full max-w-md">
-            <label htmlFor="category-search" className="sr-only">
-              Tìm kỹ năng
-            </label>
-            <Input
-              id="category-search"
-              type="search"
-              placeholder="Tìm kiếm theo tên kỹ năng..."
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value);
-                setPage(1);
-              }}
-              disabled={busy}
-            />
-          </div>
-          {state.status === 'success' && (
-            <p className="type-caption text-muted">
-              Hiển thị {filtered.length === 0 ? 0 : (currentPage - 1) * 8 + 1}–
-              {(currentPage - 1) * 8 + rows.length} / {filtered.length} kỹ năng
-            </p>
-          )}
+      <div className="flex items-center justify-between gap-4">
+        <div className="w-full max-w-md">
+          <label htmlFor="category-search" className="sr-only">
+            {type === 'Skill' ? 'Tìm kỹ năng' : 'Tìm chuyên ngành'}
+          </label>
+          <Input
+            id="category-search"
+            type="search"
+            placeholder={
+              type === 'Skill'
+                ? 'Tìm kiếm theo tên kỹ năng...'
+                : 'Tìm kiếm theo tên chuyên ngành...'
+            }
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setPage(1);
+            }}
+            disabled={busy}
+          />
         </div>
-      )}
+        {state.status === 'success' && (
+          <p className="type-caption text-muted">
+            Hiển thị {filtered.length === 0 ? 0 : (currentPage - 1) * 8 + 1}–
+            {(currentPage - 1) * 8 + rows.length} / {filtered.length}{' '}
+            {type === 'Skill' ? 'kỹ năng' : 'chuyên ngành'}
+          </p>
+        )}
+      </div>
       {state.status === 'loading' && <LoadingState title="Đang tải danh mục" />}
       {state.status === 'error' && (
         <ErrorState
@@ -396,7 +395,13 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
       {state.status === 'success' &&
         (filtered.length === 0 ? (
           <EmptyState
-            title={query.trim() ? 'Không tìm thấy kỹ năng' : 'Chưa có danh mục'}
+            title={
+              query.trim()
+                ? type === 'Skill'
+                  ? 'Không tìm thấy kỹ năng'
+                  : 'Không tìm thấy chuyên ngành'
+                : 'Chưa có danh mục'
+            }
             description={
               query.trim()
                 ? 'Thử tìm bằng tên khác.'
@@ -512,9 +517,13 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
                 </tbody>
               </table>
             </div>
-            {type === 'Skill' && (
+            {pages > 1 && (
               <nav
-                aria-label="Phân trang kỹ năng"
+                aria-label={
+                  type === 'Skill'
+                    ? 'Phân trang kỹ năng'
+                    : 'Phân trang chuyên ngành'
+                }
                 className="flex items-center justify-between border-t border-line px-6 py-4"
               >
                 <p className="type-caption text-muted">
