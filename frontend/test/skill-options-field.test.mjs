@@ -17,7 +17,10 @@ try {
   /* optional browser runner */
 }
 const options = { skip: !chromium && 'Playwright runner is not installed.' };
-const root = fileURLToPath(new URL('..', import.meta.url));
+const root = fileURLToPath(new URL('..', import.meta.url)).replaceAll(
+  '\\',
+  '/',
+);
 let directory, vite, browser, page, base;
 const active = {
   items: [
@@ -40,11 +43,20 @@ before(async () => {
     `
     import React, {useState} from 'react'; import {createRoot} from 'react-dom/client';
     import {SkillOptionsField} from ${JSON.stringify(root + '/src/features/categories/SkillOptionsField.tsx')};
+    import {getAuthSnapshot,getAccessToken,setAuthenticated,setGuest,subscribeToAuth} from ${JSON.stringify(root + '/src/features/auth/auth-state.ts')};
+    import {logoutCurrentSession} from ${JSON.stringify(root + '/src/features/auth/auth-api.ts')};
+    const student={id:42,email:'student@example.invalid',fullName:'Student',avatarUrl:null,role:'Student'};
+    setAuthenticated('student-test-token',student);
     const e=React.createElement;
     function Harness() {
-      const [token,setToken]=useState('student-test-token'); const [role,setRole]=useState('Student');
+      const auth=React.useSyncExternalStore(subscribeToAuth,getAuthSnapshot,getAuthSnapshot);
+      const token=getAccessToken();const role=auth.user?.role??null;
+      const setToken=(value)=>value?setAuthenticated(value,{...student,role: getAuthSnapshot().user?.role??'Student'}):setGuest();
+      const setRole=(value)=>value?setAuthenticated(getAccessToken()??'role-token',{...student,role:value}):setGuest();
+      const switchUser=(id)=>setAuthenticated('user-'+id,{...student,id});
+      const relogin=()=>{setGuest();setAuthenticated('same-user-new-session',student);};
       const [ids,setIds]=useState([99]); const [visible,setVisible]=useState(true); const [disabled,setDisabled]=useState(false);
-      window.skillTest={setToken,setRole,setVisible,setDisabled};
+      window.skillTest={setToken,setRole,setVisible,setDisabled,switchUser,relogin,logout:()=>logoutCurrentSession()};
       return e('form',{onSubmit:(event)=>{event.preventDefault();window.submitted=true;}},
         visible ? e(SkillOptionsField,{accessToken:token,role,selectedIds:ids,onChange:setIds,disabled}) : e('p',null,'Unmounted'),
         e('output',{'aria-label':'Selected IDs'},JSON.stringify(ids)));
@@ -194,7 +206,7 @@ test(
         ],
       }),
     );
-    await page.evaluate(() => window.skillTest.setToken('new-token'));
+    await page.evaluate(() => window.skillTest.relogin());
     await visible('Không tải được kỹ năng');
     assert.equal(
       await page.getByText('Closed skill must not render').count(),
@@ -204,9 +216,16 @@ test(
 );
 
 test(
-  '401/403 hide choices, expose auth guidance and recover only when parent supplies a new token',
+  'terminal refresh 401 clears Auth; server 403 and re-login recovery remain distinct',
   options,
   async () => {
+    await page.route('**/api/auth/refresh', (route) =>
+      fulfill(
+        route,
+        { error: { code: 'UNAUTHORIZED', message: 'Denied' } },
+        401,
+      ),
+    );
     await page.route('**/api/categories?type=Skill', (route) => {
       const auth = route.request().headers().authorization;
       return auth === 'Bearer refreshed-token'
@@ -224,13 +243,12 @@ test(
           );
     });
     await page.goto(base + '/skill-options-test');
-    await visible(
-      'Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.',
-    );
+    await visible('Cần đăng nhập Student');
     assert.equal(await page.getByRole('checkbox').count(), 0);
     await page.evaluate(() => window.skillTest.setToken('admin-token'));
     await visible('Tài khoản không có quyền truy cập Skill Options.');
     await page.evaluate(() => window.skillTest.setToken('refreshed-token'));
+    await page.getByRole('button', { name: 'Thử lại', exact: true }).click();
     await visible('SQL');
     await page.evaluate(() => {
       window.skillTest.setToken(null);
@@ -242,7 +260,7 @@ test(
 );
 
 test(
-  'Guest/Admin props make no additional requests; token change/unmount abort and ignore late data',
+  'Guest/Admin do not fetch; account change/unmount abort and ignore late data',
   options,
   async () => {
     const pending = [];
@@ -251,7 +269,7 @@ test(
     });
     await page.goto(base + '/skill-options-test');
     await visible('Đang tải kỹ năng');
-    await page.evaluate(() => window.skillTest.setToken('second-token'));
+    await page.evaluate(() => window.skillTest.switchUser(43));
     await page.waitForFunction(
       () =>
         window.skillRequests.length === 2 &&
@@ -280,5 +298,200 @@ test(
     await page.evaluate(() => window.skillTest.setVisible(false));
     await visible('Unmounted');
     await page.waitForFunction(() => window.skillRequests[2].signal.aborted);
+  },
+);
+
+test(
+  'refresh success performs exactly one retry, retains selected IDs and same-user rotation does not refetch',
+  options,
+  async () => {
+    let skills = 0,
+      refreshes = 0;
+    const user = {
+      id: 42,
+      email: 'student@example.invalid',
+      fullName: 'Student',
+      avatarUrl: null,
+      role: 'Student',
+    };
+    await page.route('**/api/auth/refresh', (route) => {
+      refreshes++;
+      return fulfill(route, {
+        accessToken: 'refreshed',
+        tokenType: 'Bearer',
+        expiresIn: 900,
+        user,
+      });
+    });
+    await page.route('**/api/auth/me', (route) => fulfill(route, { user }));
+    await page.route('**/api/categories?type=Skill', (route) =>
+      ++skills === 1
+        ? fulfill(
+            route,
+            { error: { code: 'UNAUTHORIZED', message: 'Expired' } },
+            401,
+          )
+        : fulfill(route),
+    );
+    await page.goto(base + '/skill-options-test');
+    await visible('SQL');
+    assert.equal(skills, 2);
+    assert.equal(refreshes, 1);
+    assert.equal(await page.locator('output').textContent(), '[99]');
+    await page.getByRole('checkbox', { name: 'SQL', exact: true }).check();
+    await page.evaluate(() => window.skillTest.setToken('another-rotation'));
+    await page.evaluate(
+      () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve)),
+        ),
+    );
+    assert.equal(skills, 2);
+    assert.equal(await page.locator('output').textContent(), '[99,31]');
+  },
+);
+
+test(
+  'temporary error preserves controlled selected IDs through retry',
+  options,
+  async () => {
+    let calls = 0;
+    await page.route('**/api/categories?type=Skill', (route) =>
+      ++calls === 2
+        ? fulfill(
+            route,
+            { error: { code: 'SERVICE_UNAVAILABLE', message: 'Unavailable' } },
+            503,
+          )
+        : fulfill(route),
+    );
+    await page.goto(base + '/skill-options-test');
+    await visible('SQL');
+    await page.getByRole('checkbox', { name: 'SQL', exact: true }).check();
+    await page.evaluate(() => window.skillTest.relogin());
+    await visible('Không tải được kỹ năng');
+    assert.equal(await page.locator('output').textContent(), '[99,31]');
+    await page.getByRole('button', { name: 'Thử lại', exact: true }).click();
+    await visible('SQL');
+    assert.equal(await page.locator('output').textContent(), '[99,31]');
+    assert.equal(
+      await page
+        .getByRole('checkbox', { name: 'SQL', exact: true })
+        .isChecked(),
+      true,
+    );
+  },
+);
+
+test(
+  'batched logout/login same user rejects pending old results and starts a fresh load',
+  options,
+  async () => {
+    const pending = [];
+    await page.route('**/api/categories?type=Skill', (route) =>
+      pending.push(route),
+    );
+    await page.goto(base + '/skill-options-test');
+    await page.waitForFunction(() => window.skillRequests.length === 1);
+    await page.evaluate(() => window.skillTest.relogin());
+    await page.waitForFunction(
+      () =>
+        window.skillRequests.length === 2 &&
+        window.skillRequests[0].signal.aborted,
+    );
+    await fulfill(pending[1]);
+    await visible('SQL');
+    await fulfill(pending[0], {
+      items: [{ id: 88, name: 'Old session skill', type: 'Skill' }],
+    }).catch(() => {});
+    assert.equal(await page.getByText('Old session skill').count(), 0);
+  },
+);
+
+test(
+  'refresh service outage shows service error rather than claiming the session is invalid',
+  options,
+  async () => {
+    await page.route('**/api/categories?type=Skill', (route) =>
+      fulfill(
+        route,
+        { error: { code: 'UNAUTHORIZED', message: 'Expired' } },
+        401,
+      ),
+    );
+    await page.route('**/api/auth/refresh', (route) =>
+      fulfill(
+        route,
+        { error: { code: 'SERVICE_UNAVAILABLE', message: 'Unavailable' } },
+        503,
+      ),
+    );
+    await page.goto(base + '/skill-options-test');
+    await visible('Không tải được kỹ năng');
+    assert.equal(
+      await page
+        .getByText('Vui lòng thử lại. Mã lỗi: SERVICE_UNAVAILABLE', {
+          exact: true,
+        })
+        .count(),
+      1,
+    );
+    assert.equal(await page.locator('output').textContent(), '[99]');
+  },
+);
+
+test(
+  'logout during refresh aborts the old Skills retry and never renders its late result',
+  options,
+  async () => {
+    let refresh,
+      skills = 0;
+    const user = {
+      id: 42,
+      email: 'student@example.invalid',
+      fullName: 'Student',
+      avatarUrl: null,
+      role: 'Student',
+    };
+    await page.route('**/api/categories?type=Skill', (route) =>
+      ++skills === 1
+        ? fulfill(
+            route,
+            { error: { code: 'UNAUTHORIZED', message: 'Expired' } },
+            401,
+          )
+        : fulfill(route, {
+            items: [{ id: 88, name: 'Old session skill', type: 'Skill' }],
+          }),
+    );
+    await page.route('**/api/auth/refresh', (route) => {
+      refresh = route;
+    });
+    await page.route('**/api/auth/me', (route) => fulfill(route, { user }));
+    await page.route('**/api/auth/logout', (route) =>
+      route.fulfill({ status: 204 }),
+    );
+    await page.goto(base + '/skill-options-test');
+    await page.waitForFunction(() => window.skillRequests.length === 2);
+    await page.evaluate(() => {
+      void window.skillTest.logout();
+    });
+    await visible('Cần đăng nhập Student');
+    await fulfill(refresh, {
+      accessToken: 'late-refresh',
+      tokenType: 'Bearer',
+      expiresIn: 900,
+      user,
+    });
+    await page.evaluate(
+      () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve)),
+        ),
+    );
+    assert.equal(await page.getByText('Old session skill').count(), 0);
+    assert.equal(await page.locator('output').textContent(), '[99]');
+    await page.waitForFunction(() => window.skillRequests[0].signal.aborted);
+    assert.equal(skills, 1);
   },
 );

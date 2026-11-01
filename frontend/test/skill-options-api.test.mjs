@@ -1,10 +1,17 @@
 import assert from 'node:assert/strict';
-import { before, after, afterEach, test } from 'node:test';
+import { before, after, beforeEach, afterEach, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
 import { parseSkillOptions } from '../src/features/categories/contracts.ts';
 
-let vite, api;
+let vite, api, auth;
+const user = {
+  id: 42,
+  email: 'student@example.invalid',
+  fullName: 'Student',
+  avatarUrl: null,
+  role: 'Student',
+};
 const original = globalThis.fetch;
 let fetcher;
 const json = (body, status = 200) =>
@@ -22,8 +29,13 @@ before(async () => {
     server: { middlewareMode: true },
   });
   api = await vite.ssrLoadModule('/src/features/categories/api.ts');
+  auth = await vite.ssrLoadModule('/src/features/auth/auth-state.ts');
+});
+beforeEach(() => {
+  auth.setAuthenticated('test-student-token', user);
 });
 afterEach(() => {
+  auth.setGuest();
   fetcher = original;
 });
 after(async () => {
@@ -111,6 +123,7 @@ test('blank token fails locally without fetch; invalid/expired token and Admin p
     [503, 'SERVICE_UNAVAILABLE'],
     [500, 'INTERNAL_ERROR'],
   ]) {
+    auth.setAuthenticated('test-student-token', user);
     fetcher = async () =>
       json({ error: { code, message: 'Safe server error' } }, status);
     await assert.rejects(api.getSkillOptions('invalid-token'), {
@@ -144,4 +157,153 @@ test('malformed success, network and abort failures never become empty success',
     api.getSkillOptions('token'),
     (error) => error === aborted,
   );
+});
+
+const tokenResponse = (accessToken = 'refreshed-token', role = 'Student') => ({
+  accessToken,
+  tokenType: 'Bearer',
+  expiresIn: 900,
+  user: { ...user, role },
+});
+const denied = () =>
+  json({ error: { code: 'UNAUTHORIZED', message: 'Denied' } }, 401);
+function deferred() {
+  let resolve;
+  const promise = new Promise((r) => {
+    resolve = r;
+  });
+  return { promise, resolve };
+}
+
+test('401 refreshes once, verifies me, retries with Auth token rather than stale parent prop', async () => {
+  const calls = [];
+  fetcher = async (path, options) => {
+    calls.push(path);
+    if (path === '/api/auth/refresh') {
+      assert.equal(options.credentials, 'include');
+      return json(tokenResponse());
+    }
+    if (path === '/api/auth/me') return json({ user });
+    assert.equal(path, '/api/categories?type=Skill');
+    return options.headers.get('Authorization') === 'Bearer refreshed-token'
+      ? json({ items: [] })
+      : denied();
+  };
+  assert.deepEqual(await api.getSkillOptions('stale-parent-prop'), []);
+  assert.deepEqual(calls, [
+    '/api/categories?type=Skill',
+    '/api/auth/refresh',
+    '/api/auth/me',
+    '/api/categories?type=Skill',
+  ]);
+  assert.equal(auth.getAccessToken(), 'refreshed-token');
+});
+
+test('invalid refresh clears Auth, propagates 401 and never retries Skills', async () => {
+  const calls = [];
+  fetcher = async (path) => {
+    calls.push(path);
+    return denied();
+  };
+  await assert.rejects(api.getSkillOptions('prop'), {
+    status: 401,
+    code: 'UNAUTHORIZED',
+  });
+  assert.deepEqual(calls, ['/api/categories?type=Skill', '/api/auth/refresh']);
+  assert.equal(auth.getAuthSnapshot().status, 'guest');
+});
+
+test('refresh outage propagates safe service error and Auth unavailable', async () => {
+  fetcher = async (path) =>
+    path === '/api/auth/refresh'
+      ? json(
+          { error: { code: 'SERVICE_UNAVAILABLE', message: 'Unavailable' } },
+          503,
+        )
+      : denied();
+  await assert.rejects(api.getSkillOptions('prop'), {
+    status: 503,
+    code: 'SERVICE_UNAVAILABLE',
+  });
+  assert.equal(auth.getAuthSnapshot().status, 'unavailable');
+});
+
+test('a second 401 terminates retry without a refresh loop', async () => {
+  let refreshes = 0,
+    skills = 0;
+  fetcher = async (path) => {
+    if (path === '/api/auth/refresh') {
+      refreshes++;
+      return json(tokenResponse());
+    }
+    if (path === '/api/auth/me') return json({ user });
+    skills++;
+    return denied();
+  };
+  await assert.rejects(api.getSkillOptions('prop'), { status: 401 });
+  assert.equal(refreshes, 1);
+  assert.equal(skills, 2);
+  assert.equal(auth.getAuthSnapshot().status, 'guest');
+});
+
+test('abort during shared refresh preserves signal and prevents retry from reaching transport', async () => {
+  const controller = new AbortController();
+  const refresh = deferred(),
+    started = deferred();
+  let sent = 0;
+  fetcher = async (path, options) => {
+    if (path === '/api/auth/refresh') {
+      started.resolve();
+      return refresh.promise;
+    }
+    if (path === '/api/auth/me') return json({ user });
+    options.signal?.throwIfAborted();
+    sent++;
+    return denied();
+  };
+  const pending = api.getSkillOptions('prop', controller.signal);
+  await started.promise;
+  controller.abort();
+  refresh.resolve(json(tokenResponse()));
+  await assert.rejects(pending, { name: 'AbortError' });
+  assert.equal(sent, 1);
+  assert.equal(auth.getAuthSnapshot().status, 'authenticated');
+});
+
+test('abort during retry ignores even a transport that returns a late successful response', async () => {
+  const controller = new AbortController();
+  let skills = 0;
+  fetcher = async (path) => {
+    if (path === '/api/auth/refresh') return json(tokenResponse());
+    if (path === '/api/auth/me') return json({ user });
+    if (++skills === 1) return denied();
+    controller.abort();
+    return json({ items: [] });
+  };
+  await assert.rejects(api.getSkillOptions('prop', controller.signal), {
+    name: 'AbortError',
+  });
+});
+
+test('token rotated by another request is reused without a second refresh', async () => {
+  let calls = 0;
+  fetcher = async (path, options) => {
+    assert.equal(path, '/api/categories?type=Skill');
+    if (++calls === 1) {
+      auth.setAuthenticated('rotated', user);
+      return denied();
+    }
+    assert.equal(options.headers.get('Authorization'), 'Bearer rotated');
+    return json({ items: [] });
+  };
+  assert.deepEqual(await api.getSkillOptions('old-prop'), []);
+  assert.equal(calls, 2);
+});
+
+test('Guest and Admin cannot fetch Student options, even with forged nonempty parent prop', async () => {
+  fetcher = async () => assert.fail('must not fetch');
+  auth.setGuest();
+  await assert.rejects(api.getSkillOptions('prop'), { status: 401 });
+  auth.setAuthenticated('admin', { ...user, role: 'Admin' });
+  await assert.rejects(api.getSkillOptions('prop'), { status: 403 });
 });

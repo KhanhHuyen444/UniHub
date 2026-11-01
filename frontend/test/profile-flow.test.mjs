@@ -236,7 +236,7 @@ test(
       await login(page, '?returnTo=%2Frecommendations');
       await page.waitForURL(base + '/profile');
       await page.getByRole('link', { name: 'Để sau', exact: true }).click();
-      await page.waitForURL(base + '/_dev/health');
+      await page.waitForURL(base + '/');
       assert.equal(calls.filter(([, method]) => method === 'PUT').length, 0);
       await page.goto(base + '/opportunities');
       await page
@@ -252,7 +252,7 @@ test(
   async () => {
     await fixture({ profile: complete }, async ({ page }) => {
       await login(page);
-      await page.waitForURL(base + '/_dev/health');
+      await page.waitForURL(base + '/');
     });
   },
 );
@@ -290,7 +290,7 @@ test(
         await page
           .getByRole('button', { name: 'Lưu hồ sơ', exact: true })
           .click();
-        await page.waitForURL(base + '/_dev/health');
+        await page.waitForURL(base + '/');
         await page
           .getByText('Cập nhật hồ sơ thành công', { exact: true })
           .waitFor();

@@ -18,7 +18,10 @@ try {
   /* optional runner */
 }
 const databaseUrl = process.env.TEST_SKILL_OPTIONS_DATABASE_URL;
-const root = fileURLToPath(new URL('..', import.meta.url));
+const root = fileURLToPath(new URL('..', import.meta.url)).replaceAll(
+  '\\',
+  '/',
+);
 test(
   'real FR–BK–MySQL: Student selects Active Skill, Closed omitted, Guest/Admin denied and invalid token handled',
   {
@@ -148,9 +151,12 @@ test(
             `
         import React,{useState} from 'react'; import {createRoot} from 'react-dom/client';
         import {SkillOptionsField} from ${JSON.stringify(root + '/src/features/categories/SkillOptionsField.tsx')};
+        import {setAuthenticated,setGuest,getAuthSnapshot,getAccessToken,subscribeToAuth} from ${JSON.stringify(root + '/src/features/auth/auth-state.ts')};
         const e=React.createElement;
-        function Harness() {const [token,setToken]=useState(null);const [ids,setIds]=useState([]);
-          window.setSkillTestToken=setToken;
+        const user={id:1,email:'student@skill-options.test.invalid',fullName:'Student',avatarUrl:null,role:'Student'};
+        setGuest();
+        function Harness() {React.useSyncExternalStore(subscribeToAuth,getAuthSnapshot,getAuthSnapshot);const token=getAccessToken();const [ids,setIds]=useState([]);
+          window.setSkillTestToken=(value)=>{setGuest();if(value)setAuthenticated(value,user);};
           return e('div',null,e(SkillOptionsField,{accessToken:token,role:token?'Student':null,selectedIds:ids,onChange:setIds}),
             e('output',null,JSON.stringify(ids)));}
         createRoot(document.getElementById('root')).render(e(Harness));
@@ -223,12 +229,22 @@ test(
             await page.locator('output').textContent(),
             JSON.stringify([active.category_id]),
           );
+          // Only refresh denial is intercepted: category HTTP/Auth/MySQL stay real.
+          await page.route('**/api/auth/refresh', (route) =>
+            route.fulfill({
+              status: 401,
+              contentType: 'application/json',
+              body: JSON.stringify({
+                error: {
+                  code: 'UNAUTHORIZED',
+                  message: 'No test refresh cookie',
+                },
+              }),
+            }),
+          );
           await page.evaluate(() => window.setSkillTestToken('invalid-token'));
           await page
-            .getByText(
-              'Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.',
-              { exact: true },
-            )
+            .getByText('Cần đăng nhập Student', { exact: true })
             .waitFor();
           assert.equal(await page.getByRole('checkbox').count(), 0);
           await page.evaluate(
