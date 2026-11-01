@@ -47,6 +47,64 @@ function CategoryCreatedAt({ value }: { value: string | null }) {
   );
 }
 
+function PencilIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+      <path d="m15 5 4 4" />
+    </svg>
+  );
+}
+
+function CloseIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="m15 9-6 6" />
+      <path d="m9 9 6 6" />
+    </svg>
+  );
+}
+
+function ReopenIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+      <path d="M3 3v5h5" />
+    </svg>
+  );
+}
+
 export interface AdminCategoriesPageProps {
   accessToken: string | null;
   role: 'Admin' | 'Student' | null;
@@ -393,39 +451,61 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
                         <CategoryCreatedAt value={category.createdAt} />
                       </td>
                       <td className="whitespace-nowrap px-6 py-3 text-right">
-                        {(['rename', 'status'] as const).map((kind, index) => (
-                          <span key={kind}>
-                            {index > 0 && (
-                              <span
-                                aria-hidden="true"
-                                className="mx-3 text-line"
-                              >
-                                ·
-                              </span>
-                            )}
-                            <button
-                              type="button"
-                              disabled={busy}
-                              className="rounded type-caption font-medium text-brand disabled:text-muted"
-                              aria-label={`${kind === 'rename' ? 'Đổi tên' : category.status === 'Active' ? 'Đóng' : 'Mở lại'} ${category.name}`}
-                              onClick={(event) => {
-                                dialogTrigger.current = event.currentTarget;
-                                setCreating(false);
-                                setEdit({ category, kind });
-                                setEditName(category.name);
-                                setEditReason('');
-                                setError(null);
-                                setNotice(null);
-                              }}
-                            >
-                              {kind === 'rename'
-                                ? 'Đổi tên'
-                                : category.status === 'Active'
-                                  ? 'Đóng'
-                                  : 'Mở lại'}
-                            </button>
+                        <div className="inline-flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            disabled={busy}
+                            className="inline-flex items-center justify-center rounded p-1 text-brand hover:text-navy hover:bg-slate-100 transition-colors disabled:text-muted disabled:hover:bg-transparent"
+                            aria-label={`Đổi tên ${category.name}`}
+                            title="Đổi tên"
+                            onClick={(event) => {
+                              dialogTrigger.current = event.currentTarget;
+                              setCreating(false);
+                              setEdit({ category, kind: 'rename' });
+                              setEditName(category.name);
+                              setEditReason('');
+                              setError(null);
+                              setNotice(null);
+                            }}
+                          >
+                            <PencilIcon className="h-4 w-4" />
+                            <span className="sr-only">Đổi tên</span>
+                          </button>
+                          <span aria-hidden="true" className="text-line">
+                            ·
                           </span>
-                        ))}
+                          <button
+                            type="button"
+                            disabled={busy}
+                            className={
+                              category.status === 'Active'
+                                ? 'inline-flex items-center justify-center rounded p-1 text-muted hover:text-danger hover:bg-danger-surface transition-colors disabled:text-muted disabled:hover:bg-transparent'
+                                : 'inline-flex items-center justify-center rounded p-1 text-muted hover:text-success hover:bg-success-surface transition-colors disabled:text-muted disabled:hover:bg-transparent'
+                            }
+                            aria-label={`${category.status === 'Active' ? 'Đóng' : 'Mở lại'} ${category.name}`}
+                            title={
+                              category.status === 'Active' ? 'Đóng' : 'Mở lại'
+                            }
+                            onClick={(event) => {
+                              dialogTrigger.current = event.currentTarget;
+                              setCreating(false);
+                              setEdit({ category, kind: 'status' });
+                              setEditName(category.name);
+                              setEditReason('');
+                              setError(null);
+                              setNotice(null);
+                            }}
+                          >
+                            {category.status === 'Active' ? (
+                              <CloseIcon className="h-4 w-4" />
+                            ) : (
+                              <ReopenIcon className="h-4 w-4" />
+                            )}
+                            <span className="sr-only">
+                              {category.status === 'Active' ? 'Đóng' : 'Mở lại'}
+                            </span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

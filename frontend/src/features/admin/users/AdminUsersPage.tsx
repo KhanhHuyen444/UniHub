@@ -14,6 +14,46 @@ import { UserAvatar } from '../../profile/UserAvatar';
 import type { AdminUserItem, UserRole } from './contracts';
 import { useAdminUsers } from './useAdminUsers';
 
+function CloseIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+      stroke="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M6 18L18 6M6 6l12 12"
+      />
+    </svg>
+  );
+}
+
+function RefreshIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+      stroke="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+      />
+    </svg>
+  );
+}
+
 export interface AdminUsersPageProps {
   accessToken?: string | null;
   role?: string | null;
@@ -120,10 +160,12 @@ export function AdminUsersPage({
           <button
             type="button"
             onClick={clearFeedback}
-            className="text-success hover:underline focus:outline-none"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-success hover:bg-success/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-success"
             aria-label="Đóng thông báo thành công"
+            title="Đóng thông báo"
           >
-            Đóng
+            <CloseIcon className="h-4 w-4" />
+            <span className="sr-only">Đóng</span>
           </button>
         </div>
       )}
@@ -142,10 +184,12 @@ export function AdminUsersPage({
           <button
             type="button"
             onClick={clearFeedback}
-            className="text-danger hover:underline focus:outline-none"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-danger hover:bg-danger/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
             aria-label="Đóng thông báo lỗi"
+            title="Đóng thông báo"
           >
-            Đóng
+            <CloseIcon className="h-4 w-4" />
+            <span className="sr-only">Đóng</span>
           </button>
         </div>
       )}
@@ -172,8 +216,9 @@ export function AdminUsersPage({
                   onClick={() => setSearchInput('')}
                   className="absolute inset-y-0 right-0 flex items-center pr-3 text-secondary hover:text-navy"
                   aria-label="Xóa nội dung tìm kiếm"
+                  title="Xóa tìm kiếm"
                 >
-                  ✕
+                  <CloseIcon className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>
@@ -182,12 +227,15 @@ export function AdminUsersPage({
           <div className="flex items-center gap-2">
             <Button
               variant="neutral"
-              size="compact"
+              size="icon"
               onClick={reload}
               loading={loading}
               disabled={loading}
+              aria-label="Làm mới"
+              title="Làm mới"
             >
-              Làm mới
+              {!loading && <RefreshIcon className="h-4 w-4 text-secondary" />}
+              <span className="sr-only">Làm mới</span>
             </Button>
           </div>
         </div>
@@ -387,11 +435,21 @@ export function AdminUsersPage({
             role="dialog"
             aria-modal="true"
             aria-labelledby="confirm-dialog-title"
-            className="w-full max-w-md rounded-card border border-line bg-white p-6 shadow-float"
+            className="relative w-full max-w-md rounded-card border border-line bg-white p-6 shadow-float"
           >
+            <button
+              type="button"
+              onClick={() => setConfirmTarget(null)}
+              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              aria-label="Đóng hộp thoại"
+              title="Đóng"
+            >
+              <CloseIcon className="h-4 w-4" />
+              <span className="sr-only">Đóng</span>
+            </button>
             <h2
               id="confirm-dialog-title"
-              className="text-lg font-bold text-navy"
+              className="pr-8 text-lg font-bold text-navy"
             >
               Xác nhận thay đổi vai trò
             </h2>

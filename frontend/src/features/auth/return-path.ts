@@ -21,6 +21,29 @@ export function loginDestination(
   role: 'Student' | 'Admin' | null,
   origin = 'http://localhost',
 ): string {
-  if (returnTo !== null) return safeReturnPath(returnTo, origin);
+  if (returnTo !== null) {
+    const candidate = safeReturnPath(returnTo, origin);
+
+    // Ngăn chặn tài khoản không phải Admin (như Student) bị điều hướng vào trang quản trị /admin/*
+    if (
+      (candidate === '/admin' || candidate.startsWith('/admin/')) &&
+      role !== 'Admin'
+    ) {
+      return role === 'Student' ? '/' : '/opportunities';
+    }
+
+    // Ngăn chặn tài khoản Admin bị điều hướng vào các trang chỉ dành riêng cho Student
+    if (
+      (candidate === '/recommendations' ||
+        candidate.startsWith('/recommendations/') ||
+        candidate === '/profile' ||
+        candidate.startsWith('/profile/')) &&
+      role === 'Admin'
+    ) {
+      return '/admin/dashboard';
+    }
+
+    return candidate;
+  }
   return role === 'Admin' ? '/admin/dashboard' : '/';
 }
