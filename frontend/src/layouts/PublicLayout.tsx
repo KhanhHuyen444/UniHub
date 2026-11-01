@@ -46,11 +46,11 @@ export function PublicLayout({
         className={`relative z-40 ${isOpportunities ? 'h-[81px]' : 'h-[72px]'} shrink-0 border-b border-line bg-white/90 shadow-nav backdrop-blur-[24px]`}
       >
         <div
-          className={`mx-auto flex h-full items-center justify-between px-8 ${isOpportunities ? 'w-full max-w-[1280px]' : 'max-w-public'}`}
+          className={`mx-auto flex h-full items-center justify-between gap-6 px-8 xl:gap-8 ${isOpportunities || isStudent ? 'w-full max-w-[1280px]' : 'max-w-public'}`}
         >
           <Brand area={area} previewNavigation={previewNavigation} />
-          <nav aria-label="Điều hướng chính">
-            <ul className="flex items-center gap-6 xl:gap-8">
+          <nav aria-label="Điều hướng chính" className="min-w-0">
+            <ul className="flex items-center gap-4 lg:gap-5 xl:gap-6 2xl:gap-8">
               {navigation.map((item) => {
                 const active = activeKey === item.key;
                 return (
@@ -86,7 +86,7 @@ export function PublicLayout({
               Đăng nhập với Google
             </span>
           ) : auth.status === 'authenticated' && auth.user ? (
-            <div className="flex h-12 w-[270px] shrink-0 items-center justify-end gap-3">
+            <div className="flex h-12 shrink-0 items-center justify-end gap-3">
               {auth.user.role === 'Student' ? (
                 <>
                   <NotificationBell key={auth.user.id} />
