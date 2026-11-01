@@ -150,7 +150,7 @@ export function RecommendationsPage({
         <div className="grid min-w-0 gap-6">{content}</div>
         {showSidebar && (
           <aside className="grid gap-4" aria-label="Thông tin gợi ý">
-            <Card className="grid gap-5 p-5">
+            <Card className="grid gap-5 p-5 hover:shadow-md hover:border-brand/20 transition-all duration-300">
               <h3 className="type-body font-medium text-ink">Hồ sơ của bạn</h3>
               <p className="type-label text-muted">
                 Cập nhật chuyên ngành, năm học và kỹ năng trong hồ sơ để nhận cơ
@@ -167,7 +167,7 @@ export function RecommendationsPage({
               )}
             </Card>
             <section
-              className="grid gap-4 rounded-card bg-surface p-5"
+              className="grid gap-4 rounded-card bg-surface p-5 hover:shadow-md transition-all duration-300"
               aria-labelledby="recommendation-how"
             >
               <h3
