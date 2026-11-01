@@ -1,4 +1,6 @@
 import { apiRequest, ApiError } from '../../lib/api';
+import { protectedApiRequest } from '../auth/auth-api';
+import { getAuthSnapshot } from '../auth/auth-state';
 import {
   isGuidanceId,
   parseGuidanceList,
@@ -24,7 +26,14 @@ export async function getGuidanceList({
   }
   const query = new URLSearchParams();
   if (majorId !== undefined) query.set('majorId', String(majorId));
-  const value = await apiRequest<unknown>('/api/guidance', { query, signal });
+
+  const auth = getAuthSnapshot();
+  const value =
+    auth.status === 'authenticated' && auth.user?.role === 'Student'
+      ? await protectedApiRequest<unknown>('/api/guidance', { query, signal })
+      : await apiRequest<unknown>('/api/guidance', { query, signal });
+
+  signal?.throwIfAborted();
   return parseGuidanceList(value);
 }
 
@@ -39,5 +48,6 @@ export async function getGuidanceDetail(
     });
   }
   const value = await apiRequest<unknown>(`/api/guidance/${id}`, { signal });
+  signal?.throwIfAborted();
   return parseGuidanceDetail(value);
 }

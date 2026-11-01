@@ -39,17 +39,34 @@ function majorFromSearch(search: string): number | undefined {
 export function GuidanceRoadmapPage() {
   const [params, setParams] = useSearchParams();
   const search = params.toString();
+  const auth = useAuth();
+  const isStudent =
+    auth.status === 'authenticated' && auth.user?.role === 'Student';
+  const Layout = isStudent ? StudentLayout : PublicLayout;
+
+  const authIdentity =
+    auth.status === 'authenticated' && auth.user
+      ? `${auth.user.id}:${auth.user.role}`
+      : auth.status;
+  const isRestoring = auth.status === 'restoring';
+
   const load = useCallback(
-    (signal: AbortSignal) =>
-      getGuidanceList({ majorId: majorFromSearch(search), signal }),
-    [search],
+    (signal: AbortSignal) => {
+      if (isRestoring) {
+        return new Promise<never>((_, reject) => {
+          signal.addEventListener('abort', () => reject(signal.reason));
+        });
+      }
+      return getGuidanceList({ majorId: majorFromSearch(search), signal });
+    },
+    [search, isRestoring],
   );
   // The loader can reject synchronously when the URL is invalid.
   const safeLoad = useCallback(
     async (signal: AbortSignal) => load(signal),
     [load],
   );
-  const roadmap = useGuidanceRequest(search, safeLoad);
+  const roadmap = useGuidanceRequest(`${search}::${authIdentity}`, safeLoad);
   const majors = useGuidanceRequest('major-options', getMajorOptions);
   const rawMajor = params.get('majorId');
   const requestedMajor =
@@ -68,10 +85,6 @@ export function GuidanceRoadmapPage() {
     selectedId !== '' &&
     !options.some((major) => String(major.id) === selectedId);
   const returnTo = `/roadmaps${search ? `?${search}` : ''}`;
-  const auth = useAuth();
-  const isStudent =
-    auth.status === 'authenticated' && auth.user?.role === 'Student';
-  const Layout = isStudent ? StudentLayout : PublicLayout;
 
   return (
     <Layout activeKey="roadmaps">

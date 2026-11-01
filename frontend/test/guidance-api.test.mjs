@@ -6,7 +6,22 @@ import { createServer } from 'vite';
 const originalFetch = globalThis.fetch;
 let vite;
 let api;
+let authState;
 let mockFetch = originalFetch;
+const studentUser = {
+  id: 42,
+  email: 'student@example.invalid',
+  fullName: 'Student User',
+  avatarUrl: null,
+  role: 'Student',
+};
+const adminUser = {
+  id: 1,
+  email: 'admin@example.invalid',
+  fullName: 'Admin User',
+  avatarUrl: null,
+  role: 'Admin',
+};
 const empty = { selectedMajor: null, stages: [] };
 const detail = {
   item: {
@@ -37,8 +52,10 @@ before(async () => {
     server: { middlewareMode: true },
   });
   api = await vite.ssrLoadModule('/src/features/guidance/api.ts');
+  authState = await vite.ssrLoadModule('/src/features/auth/auth-state.ts');
 });
 afterEach(() => {
+  authState?.setGuest();
   mockFetch = originalFetch;
 });
 after(async () => {
@@ -169,4 +186,78 @@ test('AbortError reaches caller unchanged for both endpoints', async () => {
     api.getGuidanceDetail(81, controller.signal),
     (error) => error === aborted,
   );
+});
+
+test('authenticated Student uses protectedApiRequest with Bearer token', async () => {
+  authState.setAuthenticated('student-token-123', studentUser);
+  const controller = new AbortController();
+  mockFetch = async (path, options) => {
+    assert.equal(path, '/api/guidance');
+    assert.equal(options.method, 'GET');
+    assert.equal(
+      options.headers.get('Authorization'),
+      'Bearer student-token-123',
+    );
+    assert.equal(options.headers.get('Accept'), 'application/json');
+    return json({
+      selectedMajor: { id: 7, name: 'Công nghệ thông tin', type: 'Major' },
+      stages: [],
+    });
+  };
+  const response = await api.getGuidanceList({ signal: controller.signal });
+  assert.equal(response.selectedMajor.id, 7);
+});
+
+test('authenticated Admin sends public request without Bearer token', async () => {
+  authState.setAuthenticated('admin-token-456', adminUser);
+  mockFetch = async (path, options) => {
+    assert.equal(path, '/api/guidance');
+    assert.equal(options.headers.get('Authorization'), null);
+    return json(empty);
+  };
+  const response = await api.getGuidanceList();
+  assert.deepEqual(response, empty);
+});
+
+test('Student 401 triggers token refresh and retries with refreshed token', async () => {
+  authState.setAuthenticated('stale-token', studentUser);
+  let attempts = 0;
+  mockFetch = async (path, options) => {
+    if (path === '/api/guidance') {
+      attempts++;
+      if (attempts === 1) {
+        assert.equal(
+          options.headers.get('Authorization'),
+          'Bearer stale-token',
+        );
+        return json(
+          { error: { code: 'UNAUTHORIZED', message: 'Token expired' } },
+          401,
+        );
+      }
+      assert.equal(
+        options.headers.get('Authorization'),
+        'Bearer refreshed-token',
+      );
+      return json({
+        selectedMajor: { id: 9, name: 'Kỹ thuật phần mềm', type: 'Major' },
+        stages: [],
+      });
+    }
+    if (path === '/api/auth/refresh') {
+      return json({
+        accessToken: 'refreshed-token',
+        tokenType: 'Bearer',
+        expiresIn: 900,
+        user: studentUser,
+      });
+    }
+    if (path === '/api/auth/me') {
+      return json({ user: studentUser });
+    }
+    assert.fail(`unexpected path: ${path}`);
+  };
+  const response = await api.getGuidanceList();
+  assert.equal(attempts, 2);
+  assert.equal(response.selectedMajor.id, 9);
 });
