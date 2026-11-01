@@ -1,6 +1,6 @@
 # Hợp đồng API sự kiện, nhắc hạn và thông báo
 
-> **Contract: leader đã duyệt. Implementation: chưa có event/notification routes hoặc scheduler trên main.** Student là người sở hữu dữ liệu; không tự purge thông báo theo tuổi. Chính sách xóa Reminder khi sửa/xóa event vẫn giữ nguyên.
+> **Contract: leader đã duyệt. Event/notification routes và bell scheduler đã merge tại main `c310a4c`; email đang ở nhánh phát triển.** Student là người sở hữu dữ liệu; không tự purge thông báo theo tuổi. Chính sách xóa Reminder khi sửa/xóa event vẫn giữ nguyên.
 
 ## Hợp đồng thời gian và response dùng chung
 
@@ -55,6 +55,31 @@ Cấu hình vận hành đã chọn: scheduler chạy mỗi phút. Đây không 
 
 Concurrent worker phải khóa/conditional-update để không tạo trùng. Lỗi rollback notification/reminded_at cả hai; thử lại ở chu kỳ sau. Scheduler không chạy purge/retention. Không có endpoint gọi scheduler.
 
+### Email Reminder nội bộ — phần mở rộng đã duyệt
+
+Không thay request/response hoặc thêm endpoint. Khi email tắt (mặc định), scheduler
+giữ bell-only và không truy cập outbox. Khi bật, cùng transaction Serializable phải
+commit cả reminded_at, bell Reminder và job `event_reminder_emails` dùng notification
+ID làm PK/FK cascade. Recipient/payload/insert lỗi thì rollback cả ba, báo lỗi đã che
+dữ liệu, không có bell-only fallback. P2034 vẫn tối đa 3 lần; cursor có thể phải wrap
+mới quay lại Event lỗi, không bảo đảm ngay tick sau.
+
+Payload sender/recipient/subject/HTML/text và idempotency key được freeze khi enqueue.
+Title/notes sửa sau đó giữ nguyên job/content; deadline/remindBefore đổi xóa Reminder
+và cascade job. Completion khiến job chưa gửi mất eligibility, Event delete cascade.
+Worker revalidate quan hệ Notification/Event/User, owner Student, recipient, status,
+deadline và cửa sổ nhắc trước mỗi send; không gửi Violation/Completed/Overdue/zero lead.
+
+Worker poll 5 giây, 2 send slot/instance, claim READ COMMITTED + SKIP LOCKED, lease
+60 giây có UUID fencing, mỗi claim tiêu thụ 1/6 attempt. HTTP ngoài transaction,
+timeout 10 giây, body/key giữ nguyên. Backoff: 30 giây/2 phút/10 phút/30 phút/2 giờ;
+429 tôn trọng Retry-After, yêu cầu hơn 6 giờ thì Dead. Dừng trước deadline hoặc biên
+23 giờ từ first claim; không backfill/reconcile. Accepted chỉ nghĩa provider nhận
+xử lý. Race sau preflight không thu hồi được request đã phát. Không sửa activity_logs.
+
+Phase 3 có implementation và test fake-only trên nhánh email; MySQL lock/cascade,
+migration và provider thực tế chưa được kiểm chứng cho phần email.
+
 ## Notifications
 
 Student-only: Guest → 401; Admin → 403. Không có purge theo thời hạn, không có endpoint DELETE cho người dùng; notification được giữ cho đến khi một thao tác nghiệp vụ được duyệt xóa (ví dụ Reminder cũ khi đổi dueDate/remindBefore, hoặc FK cascade khi xóa event).
@@ -90,4 +115,4 @@ GET đọc notifications theo owner và count trong cùng thời điểm truy v�
 - Notifications: pagination, stable newest order, total unread across pages, idempotent read, error vs empty; no purge after age; Violation eventId:null and /forum.
 - DB unavailable → 503 and not empty; unexpected → 500 without internals.
 
-**Contract đã duyệt; routes/scheduler chưa triển khai trên main.**
+**Contract đã duyệt; routes và bell scheduler đã merge. Email Phase 3 chỉ có bằng chứng kiểm thử fake, chưa xác nhận triển khai trên database/provider.**

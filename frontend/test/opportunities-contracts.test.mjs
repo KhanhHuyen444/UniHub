@@ -57,6 +57,55 @@ test('parses list response and keeps backend deadline state and source date', ()
   );
 });
 
+test('list Skills project id/name, preserve linked Closed/order/plain text and normalize legacy omission', () => {
+  const skills = [
+    { id: 9, name: 'Closed Skill', status: 'Closed' },
+    { id: 3, name: '<script>plain text</script>' },
+  ];
+  const result = parseOpportunityList(
+    listResponse({ items: [item({ skills })] }),
+  );
+  assert.deepEqual(result.items[0].skills, [
+    { id: 9, name: 'Closed Skill' },
+    { id: 3, name: '<script>plain text</script>' },
+  ]);
+  assert.deepEqual(parseOpportunityList(listResponse()).items[0].skills, []);
+  assert.deepEqual(
+    parseOpportunityList(listResponse({ items: [item({ skills: [] })] }))
+      .items[0].skills,
+    [],
+  );
+  const longName = 'Kỹ năng '.repeat(20);
+  assert.equal(
+    parseOpportunityList(
+      listResponse({ items: [item({ skills: [{ id: 1, name: longName }] })] }),
+    ).items[0].skills[0].name,
+    longName,
+  );
+});
+
+test('malformed list Skills fail the whole response instead of silently hiding data', () => {
+  for (const skills of [
+    null,
+    {},
+    [null],
+    [{ id: 0, name: 'Skill' }],
+    [{ id: 2147483648, name: 'Skill' }],
+    [{ id: '1', name: 'Skill' }],
+    [{ id: 1, name: '  ' }],
+    [{ id: 1, name: null }],
+    [
+      { id: 1, name: 'A' },
+      { id: 1, name: 'B' },
+    ],
+  ]) {
+    assert.throws(
+      () => parseOpportunityList(listResponse({ items: [item({ skills })] })),
+      { code: 'INVALID_RESPONSE' },
+    );
+  }
+});
+
 test('parses datetime and legacy unknown without inferring display date', () => {
   const datetime = {
     precision: 'datetime',

@@ -1,0 +1,358 @@
+﻿/* Login-only rules. Shared Public/Student/Admin shells retain their own styling. */
+body.unihub-login {
+  min-width: 0;
+}
+.login-shell {
+  min-height: 100vh;
+  background: var(--unihub-page);
+  color: var(--unihub-navy);
+}
+.login-header {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  min-height: 80px;
+  padding: 16px 24px;
+  background: white;
+  border-bottom: 1px solid var(--unihub-border);
+  box-shadow: var(--unihub-shadow-soft);
+}
+.login-header nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 40px;
+}
+.login-header nav a {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--unihub-text-secondary);
+}
+.login-header nav a:hover {
+  color: var(--unihub-brand);
+}
+.login-account {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-left: auto;
+  background: var(--unihub-cyan);
+  color: var(--unihub-brand);
+}
+.login-account svg {
+  width: 18px;
+  height: 18px;
+}
+.login-main {
+  padding: 128px 32px 65px;
+  background:
+    radial-gradient(ellipse 330px 240px at 60% 20%, #caf0f8a6, transparent 80%),
+    radial-gradient(ellipse 260px 300px at 0% 92%, #caf0f899, transparent 80%);
+}
+.login-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 624px) minmax(0, 432px);
+  align-items: start;
+  gap: 48px;
+  max-width: 1104px;
+  margin: 0 auto;
+}
+.login-eyebrow {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background: var(--unihub-cyan);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+}
+.login-eyebrow img {
+  flex: none;
+}
+.login-introduction h1 {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  margin-top: 16px;
+}
+.login-introduction h1 > span,
+.login-brand > p:first-of-type {
+  color: #1e3a8a;
+}
+.login-introduction h1 > span > span,
+.login-brand > p > span {
+  color: #2563eb;
+}
+.login-description {
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--unihub-text-muted);
+  max-width: 540px;
+}
+.login-benefits {
+  display: grid;
+  gap: 16px;
+  margin-top: 32px;
+}
+.login-benefits li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--unihub-border);
+  background: white;
+  border-radius: var(--unihub-radius-card);
+  box-shadow: var(--unihub-shadow-soft);
+}
+.login-benefit-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--unihub-cyan);
+  color: var(--unihub-brand);
+  flex: none;
+}
+.login-benefits h2 {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.login-benefits p {
+  color: var(--unihub-text-muted);
+  font-size: 14px;
+  line-height: 20px;
+  margin-top: 8px;
+}
+.login-panel {
+  min-width: 0;
+  background: white;
+  border: 1px solid var(--unihub-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px -8px rgb(3 4 94 / 14%);
+  padding: 40px 40px 52px;
+  text-align: center;
+  scroll-margin-top: 24px;
+}
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.login-brand > img {
+  width: 144px;
+  height: 144px;
+  object-fit: contain;
+}
+.login-brand > p:first-of-type {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+.login-brand-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #0d9488;
+  margin-top: 4px;
+}
+.login-slogan {
+  font-size: 8px;
+  line-height: 12px;
+  letter-spacing: 2.4px;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-top: 12px;
+}
+.login-panel h2 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  margin-top: 28px;
+}
+.login-google {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  width: 270px;
+  max-width: 100%;
+  margin: 24px auto 0;
+  text-align: left;
+}
+.login-google > div {
+  width: 100%;
+  min-width: 0;
+}
+.login-privacy {
+  min-height: 104px;
+  margin-top: 24px;
+  padding: 14px 12px;
+  border: 1px solid var(--unihub-border);
+  border-radius: 8px;
+  background: var(--unihub-page);
+}
+.login-privacy h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--unihub-brand);
+}
+.login-privacy svg {
+  width: 14px;
+  height: 14px;
+}
+.login-privacy p {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--unihub-text-subtle);
+  margin-top: 6px;
+}
+.login-home {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 28px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--unihub-text-muted);
+}
+.login-home svg {
+  width: 16px;
+  height: 16px;
+}
+.login-notice {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid var(--unihub-border);
+  border-radius: var(--unihub-radius-control);
+  background: var(--unihub-page);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--unihub-text-muted);
+  overflow-wrap: anywhere;
+}
+.login-error {
+  color: var(--unihub-error-text);
+  background: var(--unihub-error-bg);
+  border-color: var(--unihub-error-border);
+}
+.login-shell > footer {
+  min-height: 301px;
+  padding: 48px 32px 12px;
+}
+.login-shell > footer > div {
+  grid-template-columns: minmax(0, 1fr) 280px 280px;
+}
+.login-shell > footer > div > div:first-child {
+  width: 244px;
+  max-width: 100%;
+  align-items: flex-start;
+}
+.login-shell > footer > div > div:first-child > img {
+  width: 180px;
+  height: 180px;
+}
+.login-shell > footer > div > div:first-child > span {
+  width: 128px;
+  text-align: center;
+  margin-top: 4px;
+  color: #1e3a8a;
+}
+.login-shell > footer > div > div:first-child > p {
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+  margin-left: -8px;
+}
+.login-shell > footer > p {
+  bottom: 6px;
+  right: 24px;
+  font-size: 12px;
+}
+@media (max-width: 1000px) {
+  .login-header {
+    gap: 24px;
+  }
+  .login-header nav ul {
+    gap: 20px;
+  }
+  .login-main {
+    padding: 64px 24px;
+  }
+  .login-columns {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+    gap: 32px;
+  }
+  .login-introduction h1 {
+    font-size: 28px;
+    line-height: 36px;
+  }
+  .login-panel {
+    padding: 32px 24px;
+  }
+  .login-shell > footer > div {
+    grid-template-columns: minmax(0, 1fr) 180px 180px;
+  }
+}
+@media (max-width: 760px) {
+  .login-header {
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px 20px;
+  }
+  .login-header nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+  .login-header nav ul {
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .login-header nav a {
+    font-size: 12px;
+  }
+  .login-main {
+    padding: 40px 20px;
+  }
+  .login-columns {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    max-width: 540px;
+  }
+  .login-panel {
+    padding: 32px 24px;
+  }
+  .login-benefits li {
+    padding: 16px;
+  }
+  .login-eyebrow {
+    font-size: 11px;
+  }
+  .login-shell > footer {
+    padding: 32px 20px 20px;
+  }
+  .login-shell > footer > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .login-shell > footer > div > div:first-child {
+    grid-column: 1/-1;
+  }
+  .login-shell > footer > p {
+    position: static;
+    margin-top: 24px;
+  }
+}

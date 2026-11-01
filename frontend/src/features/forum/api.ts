@@ -1,4 +1,5 @@
 import { apiRequest } from '../../lib/api';
+import { protectedApiRequest } from '../auth/auth-api';
 import {
   parseForumList,
   parseForumPost,
@@ -21,10 +22,12 @@ export async function getForumPosts(
   return parseForumList(value);
 }
 
-export async function createForumPost(
-  input: { topic: string; title: string; content: string },
-): Promise<ForumPostResponse> {
-  const value = await apiRequest<unknown>('/api/forum/posts', {
+export async function createForumPost(input: {
+  topic: string;
+  title: string;
+  content: string;
+}): Promise<ForumPostResponse> {
+  const value = await protectedApiRequest<unknown>('/api/forum/posts', {
     method: 'POST',
     body: input,
   });
@@ -58,7 +61,7 @@ export async function createForumComment(
   postId: string,
   content: string,
 ): Promise<ForumCommentResponse> {
-  const value = await apiRequest<unknown>(
+  const value = await protectedApiRequest<unknown>(
     `/api/forum/posts/${encodeURIComponent(postId)}/comments`,
     {
       method: 'POST',

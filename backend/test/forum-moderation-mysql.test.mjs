@@ -101,8 +101,7 @@ function expectedQueueItem(type, row) {
 test(
   'MySQL Forum moderation: queue ordering, atomic soft-delete, rollback and concurrent removal',
   {
-    skip:
-      !databaseUrl && 'TEST_FORUM_DATABASE_URL is not configured.',
+    skip: !databaseUrl && 'TEST_FORUM_DATABASE_URL is not configured.',
   },
   async (t) => {
     assertIsolatedDatabase(databaseUrl);
@@ -190,7 +189,12 @@ test(
         return row.post_id;
       }
 
-      async function createComment(postId, label, createdAt, isDeleted = false) {
+      async function createComment(
+        postId,
+        label,
+        createdAt,
+        isDeleted = false,
+      ) {
         const row = await prisma.comment.create({
           data: {
             post_id: postId,
@@ -232,7 +236,11 @@ test(
         'queue-comment-older',
         new Date('2999-12-29T23:59:50.000Z'),
       );
-      const deletedPostId = await createPost('queue-hidden-post', tieTime, true);
+      const deletedPostId = await createPost(
+        'queue-hidden-post',
+        tieTime,
+        true,
+      );
       const deletedCommentId = await createComment(
         postTieId,
         'queue-hidden-comment',
@@ -291,258 +299,279 @@ test(
           body: JSON.stringify({ reason }),
         });
 
-      await t.test('SQL queue ordering and pagination match MySQL rows', async () => {
-        const [posts, comments] = await Promise.all([
-          prisma.forumPost.findMany({
-            where: { is_deleted: false },
-            select: {
-              post_id: true,
-              title: true,
-              topic: true,
-              content: true,
-              created_at: true,
-              author: {
-                select: { user_id: true, full_name: true, avatar_url: true },
+      await t.test(
+        'SQL queue ordering and pagination match MySQL rows',
+        async () => {
+          const [posts, comments] = await Promise.all([
+            prisma.forumPost.findMany({
+              where: { is_deleted: false },
+              select: {
+                post_id: true,
+                title: true,
+                topic: true,
+                content: true,
+                created_at: true,
+                author: {
+                  select: { user_id: true, full_name: true, avatar_url: true },
+                },
               },
-            },
-          }),
-          prisma.comment.findMany({
-            where: { is_deleted: false },
-            select: {
-              comment_id: true,
-              content: true,
-              created_at: true,
-              author: {
-                select: { user_id: true, full_name: true, avatar_url: true },
+            }),
+            prisma.comment.findMany({
+              where: { is_deleted: false },
+              select: {
+                comment_id: true,
+                content: true,
+                created_at: true,
+                author: {
+                  select: { user_id: true, full_name: true, avatar_url: true },
+                },
+                post: { select: { post_id: true, title: true } },
               },
-              post: { select: { post_id: true, title: true } },
-            },
-          }),
-        ]);
-        const expected = [
-          ...posts.map((row) => expectedQueueItem('Post', row)),
-          ...comments.map((row) => expectedQueueItem('Comment', row)),
-        ].sort(queueOrder);
-        const expectedOwnItems = expected.filter((item) =>
-          [...postIds].includes(item.id) || [...commentIds].includes(item.id),
-        );
-        assert.deepEqual(
-          expectedOwnItems.map(({ targetType, id }) => [targetType, id]),
-          [
-            ['Comment', commentTieOneId],
-            ['Comment', commentTieTwoId],
-            ['Post', postTieId],
-            ['Post', postOlderId],
-            ['Comment', commentOlderId],
-            ['Post', postToRemoveId],
-            ['Comment', commentToRemoveId],
-            ['Post', postToRollbackId],
-            ['Post', postForRaceId],
-          ],
-        );
-        assert.equal(
-          expected.some(
+            }),
+          ]);
+          const expected = [
+            ...posts.map((row) => expectedQueueItem('Post', row)),
+            ...comments.map((row) => expectedQueueItem('Comment', row)),
+          ].sort(queueOrder);
+          const expectedOwnItems = expected.filter(
             (item) =>
-              (item.targetType === 'Post' && item.id === deletedPostId) ||
-              (item.targetType === 'Comment' && item.id === deletedCommentId),
-          ),
-          false,
-        );
+              [...postIds].includes(item.id) ||
+              [...commentIds].includes(item.id),
+          );
+          assert.deepEqual(
+            expectedOwnItems.map(({ targetType, id }) => [targetType, id]),
+            [
+              ['Comment', commentTieOneId],
+              ['Comment', commentTieTwoId],
+              ['Post', postTieId],
+              ['Post', postOlderId],
+              ['Comment', commentOlderId],
+              ['Post', postToRemoveId],
+              ['Comment', commentToRemoveId],
+              ['Post', postToRollbackId],
+              ['Post', postForRaceId],
+            ],
+          );
+          assert.equal(
+            expected.some(
+              (item) =>
+                (item.targetType === 'Post' && item.id === deletedPostId) ||
+                (item.targetType === 'Comment' && item.id === deletedCommentId),
+            ),
+            false,
+          );
 
-        for (const page of [1, 2, 3]) {
-          const response = await fetch(
-            `${baseUrl}/api/admin/moderation/forum?page=${page}&pageSize=2`,
-            { headers: adminHeaders },
+          for (const page of [1, 2, 3]) {
+            const response = await fetch(
+              `${baseUrl}/api/admin/moderation/forum?page=${page}&pageSize=2`,
+              { headers: adminHeaders },
+            );
+            assert.equal(response.status, 200);
+            const body = await response.json();
+            assert.deepEqual(
+              body.items,
+              expected.slice((page - 1) * 2, page * 2),
+            );
+            assert.deepEqual(body.meta, {
+              page,
+              pageSize: 2,
+              total: expected.length,
+              totalPages: Math.ceil(expected.length / 2),
+            });
+            for (const item of body.items) {
+              assert.equal('email' in item.author, false);
+              assert.equal('google_sub' in item.author, false);
+            }
+          }
+        },
+      );
+
+      await t.test(
+        'remove post soft-deletes and writes audit plus Violation',
+        async () => {
+          const response = await removeRequest(
+            `/api/admin/moderation/forum/posts/${postToRemoveId}/remove`,
+            reasons.post,
           );
           assert.equal(response.status, 200);
           const body = await response.json();
-          assert.deepEqual(body.items, expected.slice((page - 1) * 2, page * 2));
-          assert.deepEqual(body.meta, {
-            page,
-            pageSize: 2,
-            total: expected.length,
-            totalPages: Math.ceil(expected.length / 2),
+          assert.deepEqual(body.removed, {
+            targetType: 'Post',
+            id: postToRemoveId,
+            isDeleted: true,
+            deletedAt: body.removed.deletedAt,
           });
-          for (const item of body.items) {
-            assert.equal('email' in item.author, false);
-            assert.equal('google_sub' in item.author, false);
-          }
-        }
-      });
+          assert.equal(typeof body.removed.deletedAt, 'string');
+          assert.equal(
+            new Date(body.removed.deletedAt).toISOString(),
+            body.removed.deletedAt,
+          );
 
-      await t.test('remove post soft-deletes and writes audit plus Violation', async () => {
-        const response = await removeRequest(
-          `/api/admin/moderation/forum/posts/${postToRemoveId}/remove`,
-          reasons.post,
-        );
-        assert.equal(response.status, 200);
-        const body = await response.json();
-        assert.deepEqual(body.removed, {
-          targetType: 'Post',
-          id: postToRemoveId,
-          isDeleted: true,
-          deletedAt: body.removed.deletedAt,
-        });
-        assert.equal(typeof body.removed.deletedAt, 'string');
-        assert.equal(
-          new Date(body.removed.deletedAt).toISOString(),
-          body.removed.deletedAt,
-        );
+          const persistedPost = await prisma.forumPost.findUnique({
+            where: { post_id: postToRemoveId },
+          });
+          assert.ok(persistedPost);
+          assert.equal(persistedPost.is_deleted, true);
+          assert.ok(persistedPost.deleted_at);
+          assert.equal(persistedPost.deleted_reason, reasons.post);
 
-        const persistedPost = await prisma.forumPost.findUnique({
-          where: { post_id: postToRemoveId },
-        });
-        assert.ok(persistedPost);
-        assert.equal(persistedPost.is_deleted, true);
-        assert.ok(persistedPost.deleted_at);
-        assert.equal(persistedPost.deleted_reason, reasons.post);
+          const [log, notification] = await Promise.all([
+            prisma.activityLog.findFirst({
+              where: {
+                admin_id: adminId,
+                action_type: 'DELETE_POST',
+                target_type: 'ForumPost',
+                target_id: postToRemoveId,
+                reason: reasons.post,
+              },
+            }),
+            prisma.notification.findFirst({
+              where: {
+                user_id: authorA.user_id,
+                event_id: null,
+                type: 'Violation',
+                content: reasons.post,
+              },
+            }),
+          ]);
+          assert.ok(log);
+          assert.equal(log.old_value, '{"is_deleted":false}');
+          assert.equal(log.new_value, '{"is_deleted":true}');
+          assert.equal(log.reason, reasons.post);
+          assert.ok(notification);
+        },
+      );
 
-        const [log, notification] = await Promise.all([
-          prisma.activityLog.findFirst({
-            where: {
-              admin_id: adminId,
-              action_type: 'DELETE_POST',
-              target_type: 'ForumPost',
-              target_id: postToRemoveId,
-              reason: reasons.post,
-            },
-          }),
-          prisma.notification.findFirst({
-            where: {
-              user_id: authorA.user_id,
-              event_id: null,
-              type: 'Violation',
-              content: reasons.post,
-            },
-          }),
-        ]);
-        assert.ok(log);
-        assert.equal(log.old_value, '{"is_deleted":false}');
-        assert.equal(log.new_value, '{"is_deleted":true}');
-        assert.equal(log.reason, reasons.post);
-        assert.ok(notification);
-      });
+      await t.test(
+        'remove comment soft-deletes and notifies comment author',
+        async () => {
+          const response = await removeRequest(
+            `/api/admin/moderation/forum/comments/${commentToRemoveId}/remove`,
+            reasons.comment,
+          );
+          assert.equal(response.status, 200);
+          const persistedComment = await prisma.comment.findUnique({
+            where: { comment_id: commentToRemoveId },
+          });
+          assert.ok(persistedComment);
+          assert.equal(persistedComment.is_deleted, true);
+          assert.ok(persistedComment.deleted_at);
+          assert.equal(persistedComment.deleted_reason, reasons.comment);
 
-      await t.test('remove comment soft-deletes and notifies comment author', async () => {
-        const response = await removeRequest(
-          `/api/admin/moderation/forum/comments/${commentToRemoveId}/remove`,
-          reasons.comment,
-        );
-        assert.equal(response.status, 200);
-        const persistedComment = await prisma.comment.findUnique({
-          where: { comment_id: commentToRemoveId },
-        });
-        assert.ok(persistedComment);
-        assert.equal(persistedComment.is_deleted, true);
-        assert.ok(persistedComment.deleted_at);
-        assert.equal(persistedComment.deleted_reason, reasons.comment);
+          const [log, notification] = await Promise.all([
+            prisma.activityLog.findFirst({
+              where: {
+                admin_id: adminId,
+                action_type: 'DELETE_COMMENT',
+                target_type: 'Comment',
+                target_id: commentToRemoveId,
+                reason: reasons.comment,
+              },
+            }),
+            prisma.notification.findFirst({
+              where: {
+                user_id: authorB.user_id,
+                event_id: null,
+                type: 'Violation',
+                content: reasons.comment,
+              },
+            }),
+          ]);
+          assert.ok(log);
+          assert.equal(log.old_value, '{"is_deleted":false}');
+          assert.equal(log.new_value, '{"is_deleted":true}');
+          assert.equal(log.reason, reasons.comment);
+          assert.ok(notification);
+        },
+      );
 
-        const [log, notification] = await Promise.all([
-          prisma.activityLog.findFirst({
-            where: {
-              admin_id: adminId,
-              action_type: 'DELETE_COMMENT',
-              target_type: 'Comment',
-              target_id: commentToRemoveId,
-              reason: reasons.comment,
-            },
-          }),
-          prisma.notification.findFirst({
-            where: {
-              user_id: authorB.user_id,
-              event_id: null,
-              type: 'Violation',
-              content: reasons.comment,
-            },
-          }),
-        ]);
-        assert.ok(log);
-        assert.equal(log.old_value, '{"is_deleted":false}');
-        assert.equal(log.new_value, '{"is_deleted":true}');
-        assert.equal(log.reason, reasons.comment);
-        assert.ok(notification);
-      });
+      await t.test(
+        'failed Violation INSERT rolls back post and ActivityLog',
+        async () => {
+          await assert.rejects(
+            removeForumPost(
+              makeFailingViolationClient(prisma),
+              String(postToRollbackId),
+              adminId,
+              { reason: reasons.rollback },
+            ),
+          );
 
-      await t.test('failed Violation INSERT rolls back post and ActivityLog', async () => {
-        await assert.rejects(
-          removeForumPost(
-            makeFailingViolationClient(prisma),
-            String(postToRollbackId),
-            adminId,
-            { reason: reasons.rollback },
-          ),
-        );
+          const [post, log, notification] = await Promise.all([
+            prisma.forumPost.findUnique({
+              where: { post_id: postToRollbackId },
+            }),
+            prisma.activityLog.findFirst({
+              where: {
+                admin_id: adminId,
+                action_type: 'DELETE_POST',
+                target_id: postToRollbackId,
+                reason: reasons.rollback,
+              },
+            }),
+            prisma.notification.findFirst({
+              where: {
+                user_id: authorA.user_id,
+                content: reasons.rollback,
+                type: 'Violation',
+                event_id: null,
+              },
+            }),
+          ]);
+          assert.ok(post);
+          assert.equal(post.is_deleted, false);
+          assert.equal(post.deleted_at, null);
+          assert.equal(post.deleted_reason, null);
+          assert.equal(log, null);
+          assert.equal(notification, null);
+        },
+      );
 
-        const [post, log, notification] = await Promise.all([
-          prisma.forumPost.findUnique({
-            where: { post_id: postToRollbackId },
-          }),
-          prisma.activityLog.findFirst({
-            where: {
-              admin_id: adminId,
-              action_type: 'DELETE_POST',
-              target_id: postToRollbackId,
-              reason: reasons.rollback,
-            },
-          }),
-          prisma.notification.findFirst({
-            where: {
-              user_id: authorA.user_id,
-              content: reasons.rollback,
-              type: 'Violation',
-              event_id: null,
-            },
-          }),
-        ]);
-        assert.ok(post);
-        assert.equal(post.is_deleted, false);
-        assert.equal(post.deleted_at, null);
-        assert.equal(post.deleted_reason, null);
-        assert.equal(log, null);
-        assert.equal(notification, null);
-      });
-
-      await t.test('concurrent remove succeeds once and returns 409 once', async () => {
-        const responses = await Promise.all([
-          removeRequest(
-            `/api/admin/moderation/forum/posts/${postForRaceId}/remove`,
-            reasons.concurrent,
-          ),
-          removeRequest(
-            `/api/admin/moderation/forum/posts/${postForRaceId}/remove`,
-            reasons.concurrent,
-          ),
-        ]);
-        assert.deepEqual(
-          responses.map((response) => response.status).sort(),
-          [200, 409],
-        );
-        const [logCount, notificationCount, persistedPost] = await Promise.all([
-          prisma.activityLog.count({
-            where: {
-              admin_id: adminId,
-              action_type: 'DELETE_POST',
-              target_id: postForRaceId,
-              reason: reasons.concurrent,
-            },
-          }),
-          prisma.notification.count({
-            where: {
-              user_id: authorA.user_id,
-              type: 'Violation',
-              event_id: null,
-              content: reasons.concurrent,
-            },
-          }),
-          prisma.forumPost.findUnique({
-            where: { post_id: postForRaceId },
-          }),
-        ]);
-        assert.equal(logCount, 1);
-        assert.equal(notificationCount, 1);
-        assert.ok(persistedPost);
-        assert.equal(persistedPost.is_deleted, true);
-      });
+      await t.test(
+        'concurrent remove succeeds once and returns 409 once',
+        async () => {
+          const responses = await Promise.all([
+            removeRequest(
+              `/api/admin/moderation/forum/posts/${postForRaceId}/remove`,
+              reasons.concurrent,
+            ),
+            removeRequest(
+              `/api/admin/moderation/forum/posts/${postForRaceId}/remove`,
+              reasons.concurrent,
+            ),
+          ]);
+          assert.deepEqual(
+            responses.map((response) => response.status).sort(),
+            [200, 409],
+          );
+          const [logCount, notificationCount, persistedPost] =
+            await Promise.all([
+              prisma.activityLog.count({
+                where: {
+                  admin_id: adminId,
+                  action_type: 'DELETE_POST',
+                  target_id: postForRaceId,
+                  reason: reasons.concurrent,
+                },
+              }),
+              prisma.notification.count({
+                where: {
+                  user_id: authorA.user_id,
+                  type: 'Violation',
+                  event_id: null,
+                  content: reasons.concurrent,
+                },
+              }),
+              prisma.forumPost.findUnique({
+                where: { post_id: postForRaceId },
+              }),
+            ]);
+          assert.equal(logCount, 1);
+          assert.equal(notificationCount, 1);
+          assert.ok(persistedPost);
+          assert.equal(persistedPost.is_deleted, true);
+        },
+      );
     } finally {
       if (server?.listening) {
         await new Promise((resolve, reject) =>

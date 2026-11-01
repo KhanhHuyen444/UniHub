@@ -178,7 +178,7 @@ function formatVietnamDate(value: Date): string {
 
 function deadlineDto(
   row: Pick<
-    PublicOpportunityRow,
+    OpportunityWithRelations,
     'deadline' | 'deadline_source_date' | 'deadline_source_timezone'
   >,
   evaluatedAt: Date,
@@ -229,7 +229,7 @@ function safeSourceUrl(value: string | null): string | null {
   }
 }
 
-function toPublicItem(row: PublicOpportunityRow, evaluatedAt: Date) {
+function toPublicItem(row: OpportunityWithRelations, evaluatedAt: Date) {
   return {
     id: row.item_id,
     type: row.opportunity_type,
@@ -254,7 +254,19 @@ function toPublicItem(row: PublicOpportunityRow, evaluatedAt: Date) {
   };
 }
 
-function toListItem(row: PublicOpportunityListRow, evaluatedAt: Date) {
+export function toAdminOpportunityItem(
+  row: OpportunityWithRelations,
+  evaluatedAt: Date,
+) {
+  return {
+    ...toPublicItem(row, evaluatedAt),
+    createdAt: formatInstant(row.created_at),
+    status: row.status,
+    reviewedAt: row.reviewed_at ? formatInstant(row.reviewed_at) : null,
+  };
+}
+
+export function toListItem(row: PublicOpportunityListRow, evaluatedAt: Date) {
   return {
     id: row.item_id,
     type: row.opportunity_type,
@@ -272,7 +284,7 @@ const publicOpportunityWhere = {
   opportunity_type: { in: [...PUBLIC_TYPES] },
 } satisfies Prisma.OpportunityWhereInput;
 
-const publicOpportunityInclude = {
+export const opportunityRelationsInclude = {
   majors: {
     where: { major: { type: 'Major' } },
     select: { major: { select: { category_id: true, name: true } } },
@@ -289,11 +301,11 @@ const publicOpportunityInclude = {
   },
 } as const satisfies Prisma.OpportunityInclude;
 
-type PublicOpportunityRow = Prisma.OpportunityGetPayload<{
-  include: typeof publicOpportunityInclude;
+export type OpportunityWithRelations = Prisma.OpportunityGetPayload<{
+  include: typeof opportunityRelationsInclude;
 }>;
 
-const publicOpportunityListSelect = {
+export const publicOpportunityListSelect = {
   item_id: true,
   opportunity_type: true,
   title: true,
@@ -382,12 +394,39 @@ export async function listPublicOpportunities(
         })
       : [];
     const rowsById = new Map(rows.map((row) => [row.item_id, row]));
+    // Fetch links for this page in one batch. Never join N-N rows before LIMIT/count.
+    // Linked Closed Skills remain visible, matching detail/search policy.
+    const skillRows = ids.length
+      ? await transaction.$queryRaw<
+          Array<{ item_id: number; skill_id: number; name: string }>
+        >(
+          Prisma.sql`SELECT os.item_id, skill.category_id AS skill_id, skill.name
+            FROM opportunity_skills AS os
+            INNER JOIN categories AS skill ON skill.category_id = os.skill_id
+            WHERE os.item_id IN (${Prisma.join(ids)})
+              AND skill.type COLLATE utf8mb4_0900_as_cs = 'Skill'
+            ORDER BY os.item_id ASC, skill.name ASC, skill.category_id ASC`,
+        )
+      : [];
+    const skillsById = new Map<number, Array<{ id: number; name: string }>>();
+    for (const skill of skillRows) {
+      const links = skillsById.get(skill.item_id) ?? [];
+      links.push({ id: skill.skill_id, name: skill.name });
+      skillsById.set(skill.item_id, links);
+    }
 
     return {
       total,
       items: ids.flatMap((id) => {
         const row = rowsById.get(id);
-        return row ? [toListItem(row, evaluatedAt)] : [];
+        return row
+          ? [
+              {
+                ...toListItem(row, evaluatedAt),
+                skills: skillsById.get(id) ?? [],
+              },
+            ]
+          : [];
       }),
     };
   });
@@ -424,7 +463,7 @@ export async function getPublicOpportunity(
 
     return transaction.opportunity.findUnique({
       where: { item_id: id },
-      include: publicOpportunityInclude,
+      include: opportunityRelationsInclude,
     });
   });
 

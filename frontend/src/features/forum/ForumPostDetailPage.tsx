@@ -124,15 +124,20 @@ function CommentItem({ comment }: { comment: ForumComment }) {
 
 export function ForumPostDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { status: authStatus, user, role } = useAuth();
+  const { status: authStatus, user } = useAuth();
+  const role = user?.role ?? null;
 
   const [revision, setRevision] = useState(0);
   const [commentsRevision, setCommentsRevision] = useState(0);
   const [commentsPage, setCommentsPage] = useState(1);
   const [commentsTotal, setCommentsTotal] = useState<number | null>(null);
   const [commentDraft, setCommentDraft] = useState('');
-  const [commentFieldError, setCommentFieldError] = useState<string | null>(null);
-  const [commentSubmitError, setCommentSubmitError] = useState<string | null>(null);
+  const [commentFieldError, setCommentFieldError] = useState<string | null>(
+    null,
+  );
+  const [commentSubmitError, setCommentSubmitError] = useState<string | null>(
+    null,
+  );
   const [commentSuccess, setCommentSuccess] = useState<string | null>(null);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
@@ -241,10 +246,7 @@ export function ForumPostDetailPage() {
 
         // If comments were removed and the current page no longer exists,
         // move to the last available page.
-        if (
-          data.meta.totalPages > 0 &&
-          commentsPage > data.meta.totalPages
-        ) {
+        if (data.meta.totalPages > 0 && commentsPage > data.meta.totalPages) {
           setCommentsPage(data.meta.totalPages);
           return;
         }
@@ -292,7 +294,9 @@ export function ForumPostDetailPage() {
       return;
     }
     if (new TextEncoder().encode(content).byteLength > 65_535) {
-      setCommentFieldError('Nội dung bình luận không được vượt quá 65.535 byte.');
+      setCommentFieldError(
+        'Nội dung bình luận không được vượt quá 65.535 byte.',
+      );
       setCommentSubmitError(null);
       setCommentSuccess(null);
       return;
@@ -306,7 +310,9 @@ export function ForumPostDetailPage() {
       const result = await createForumComment(id, content);
       const currentTotal =
         commentsTotal ??
-        (commentsState.status === 'success' ? commentsState.data.meta.total : 0);
+        (commentsState.status === 'success'
+          ? commentsState.data.meta.total
+          : 0);
       const nextTotal = currentTotal + 1;
       const nextPage = Math.max(1, Math.ceil(nextTotal / commentsPageSize));
       const nextTotalPages = Math.ceil(nextTotal / commentsPageSize);
@@ -449,9 +455,15 @@ export function ForumPostDetailPage() {
                     className="type-title text-navy font-bold"
                   >
                     Bình luận{' '}
-                    {(commentsTotal !== null || commentsState.status === 'success') && (
+                    {(commentsTotal !== null ||
+                      commentsState.status === 'success') && (
                       <span className="text-secondary font-normal text-base">
-                        ({commentsTotal ?? (commentsState.status === 'success' ? commentsState.data.meta.total : 0)})
+                        (
+                        {commentsTotal ??
+                          (commentsState.status === 'success'
+                            ? commentsState.data.meta.total
+                            : 0)}
+                        )
                       </span>
                     )}
                   </h2>
@@ -553,7 +565,8 @@ export function ForumPostDetailPage() {
                       className="mb-4 flex items-center justify-between gap-4 rounded-control border border-green-200 bg-green-100 px-4 py-3 type-label text-green-800"
                     >
                       <span>
-                        <strong>Đăng bình luận thành công.</strong> {commentSuccess}
+                        <strong>Đăng bình luận thành công.</strong>{' '}
+                        {commentSuccess}
                       </span>
                       <button
                         type="button"
@@ -566,9 +579,15 @@ export function ForumPostDetailPage() {
                     </div>
                   )}
 
-                  {authStatus === 'loading' && (
+                  {authStatus === 'restoring' && (
                     <p role="status" className="type-label text-muted">
                       Đang kiểm tra phiên đăng nhập...
+                    </p>
+                  )}
+
+                  {authStatus === 'unavailable' && (
+                    <p role="alert" className="type-label text-danger">
+                      Chưa thể xác minh phiên đăng nhập. Vui lòng thử lại sau.
                     </p>
                   )}
 
@@ -578,13 +597,17 @@ export function ForumPostDetailPage() {
                         Đăng nhập để tham gia bình luận.
                       </p>
                       <p className="mt-1 type-caption text-muted">
-                        Hãy dùng nút Đăng nhập với Google ở đầu trang để gửi ý kiến.
+                        Hãy dùng nút Đăng nhập với Google ở đầu trang để gửi ý
+                        kiến.
                       </p>
                     </div>
                   )}
 
                   {authStatus === 'authenticated' && role === 'Student' && (
-                    <form onSubmit={(event) => void submitComment(event)} noValidate>
+                    <form
+                      onSubmit={(event) => void submitComment(event)}
+                      noValidate
+                    >
                       <label
                         htmlFor="forum-comment-content"
                         className="type-label font-semibold text-ink"
@@ -612,7 +635,9 @@ export function ForumPostDetailPage() {
                         disabled={isSubmittingComment}
                         rows={4}
                         aria-invalid={Boolean(commentFieldError)}
-                        aria-describedby={commentFieldError ? 'forum-comment-error' : undefined}
+                        aria-describedby={
+                          commentFieldError ? 'forum-comment-error' : undefined
+                        }
                         placeholder="Nhập ý kiến của bạn..."
                         onChange={(event) => {
                           setCommentDraft(event.target.value);

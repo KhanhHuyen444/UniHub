@@ -2,9 +2,14 @@ import type { PrismaClient } from '../../generated/prisma/client.js';
 
 export type CategoryReadClient = Pick<PrismaClient, 'category'>;
 
-export async function listActiveMajors(client: CategoryReadClient) {
+export type CategoryOptionType = 'Major' | 'Skill';
+
+export async function listActiveCategories(
+  client: CategoryReadClient,
+  type: CategoryOptionType,
+) {
   const categories = await client.category.findMany({
-    where: { type: 'Major', status: 'Active' },
+    where: { type, status: 'Active' },
     select: { category_id: true, name: true, type: true },
     orderBy: [{ name: 'asc' }, { category_id: 'asc' }],
   });

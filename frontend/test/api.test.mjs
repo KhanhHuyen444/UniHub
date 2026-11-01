@@ -2,6 +2,36 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { ApiError, createApiClient } from '../src/lib/api.ts';
 
+test('PUT support and optional fieldErrors preserve existing error envelope', async () => {
+  const field = {
+    source: 'body',
+    field: 'majorId',
+    code: 'INVALID_CATEGORY',
+    message: 'Invalid major',
+  };
+  const request = createApiClient(async (_path, init) => {
+    assert.equal(init.method, 'PUT');
+    assert.equal(init.body, '{"majorId":1}');
+    return new Response(
+      JSON.stringify({
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Invalid',
+          fieldErrors: [field, { source: 'unknown' }, null],
+        },
+      }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } },
+    );
+  });
+  await assert.rejects(
+    request('/api/users/me/profile', { method: 'PUT', body: { majorId: 1 } }),
+    (e) =>
+      e.code === 'VALIDATION_ERROR' &&
+      e.status === 400 &&
+      JSON.stringify(e.fieldErrors) === JSON.stringify([field]),
+  );
+});
+
 test('parses successful JSON responses', async () => {
   const request = createApiClient(
     async () =>

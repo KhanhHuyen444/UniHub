@@ -8,18 +8,10 @@ import {
   ErrorState,
   LoadingState,
 } from '../../../components/ui';
-import { useAuth } from '../../auth/AuthProvider';
-import { PublicLayout } from '../../../layouts/PublicLayout';
 import { AdminLayout } from '../../../layouts/AdminLayout';
 import { formatForumDate } from '../../forum/contracts';
-import {
-  getForumModerationQueue,
-  removeModerationTarget,
-} from './api';
-import type {
-  ModerationQueueItem,
-  ModerationQueueResponse,
-} from './contracts';
+import { getForumModerationQueue, removeModerationTarget } from './api';
+import type { ModerationQueueItem, ModerationQueueResponse } from './contracts';
 
 type QueueState =
   | { status: 'loading' }
@@ -32,7 +24,8 @@ function queueErrorCopy(code: string): { title: string; description: string } {
   if (code === 'UNAUTHORIZED') {
     return {
       title: 'Phiên quản trị đã hết hạn',
-      description: 'Vui lòng đăng nhập lại bằng tài khoản quản trị rồi thử lại.',
+      description:
+        'Vui lòng đăng nhập lại bằng tài khoản quản trị rồi thử lại.',
     };
   }
   if (code === 'FORBIDDEN') {
@@ -109,10 +102,7 @@ function QueueItemCard({
             </Badge>
             {isPost && <Badge variant="success">{item.topic}</Badge>}
           </div>
-          <time
-            dateTime={item.createdAt}
-            className="type-caption text-subtle"
-          >
+          <time dateTime={item.createdAt} className="type-caption text-subtle">
             {formatForumDate(item.createdAt)}
           </time>
         </div>
@@ -330,7 +320,10 @@ function ModerationQueue() {
         />
       )}
       {queue.status === 'success' && queue.data.items.length > 0 && (
-        <section aria-label="Danh sách nội dung cần xử lý" className="space-y-4">
+        <section
+          aria-label="Danh sách nội dung cần xử lý"
+          className="space-y-4"
+        >
           {queue.data.items.map((item) => (
             <QueueItemCard
               key={`${item.targetType}-${item.id}`}
@@ -375,8 +368,13 @@ function ModerationQueue() {
           >
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <h2 id="moderation-dialog-title" className="type-title text-navy">
-                  {target.targetType === 'Post' ? 'Gỡ bài viết' : 'Gỡ bình luận'}
+                <h2
+                  id="moderation-dialog-title"
+                  className="type-title text-navy"
+                >
+                  {target.targetType === 'Post'
+                    ? 'Gỡ bài viết'
+                    : 'Gỡ bình luận'}
                 </h2>
                 <p className="mt-2 type-label text-secondary">
                   {target.targetType === 'Post'
@@ -417,7 +415,11 @@ function ModerationQueue() {
                 disabled={isRemoving}
                 rows={4}
                 aria-invalid={Boolean(reasonError)}
-                aria-describedby={reasonError ? 'moderation-reason-error' : 'moderation-reason-hint'}
+                aria-describedby={
+                  reasonError
+                    ? 'moderation-reason-error'
+                    : 'moderation-reason-hint'
+                }
                 placeholder="Nhập lý do gỡ nội dung..."
                 onChange={(event) => {
                   setReason(event.target.value);
@@ -436,7 +438,10 @@ function ModerationQueue() {
                     {reasonError}
                   </p>
                 ) : (
-                  <p id="moderation-reason-hint" className="type-caption text-muted">
+                  <p
+                    id="moderation-reason-hint"
+                    className="type-caption text-muted"
+                  >
                     Bắt buộc, tối đa 500 ký tự.
                   </p>
                 )}
@@ -465,35 +470,6 @@ function ModerationQueue() {
 }
 
 export function AdminForumModerationPage() {
-  const { status, role } = useAuth();
-
-  if (status !== 'authenticated' || role !== 'Admin') {
-    const title =
-      status === 'loading'
-        ? 'Đang kiểm tra quyền truy cập'
-        : status === 'guest'
-          ? 'Đăng nhập bằng tài khoản quản trị để tiếp tục.'
-          : 'Bạn không có quyền truy cập khu vực kiểm duyệt.';
-    return (
-      <PublicLayout>
-        <div className="mx-auto max-w-2xl py-12">
-          {status === 'loading' ? (
-            <LoadingState title={title} description="Vui lòng chờ trong giây lát..." />
-          ) : (
-            <ErrorState
-              title={status === 'guest' ? 'Cần đăng nhập quản trị' : 'Không có quyền truy cập'}
-              description={
-                status === 'guest'
-                  ? 'Dùng nút Đăng nhập với Google ở đầu trang bằng tài khoản Admin.'
-                  : 'Chỉ Admin mới được xem hàng đợi kiểm duyệt diễn đàn.'
-              }
-            />
-          )}
-        </div>
-      </PublicLayout>
-    );
-  }
-
   return (
     <AdminLayout activeKey="moderation">
       <ModerationQueue />

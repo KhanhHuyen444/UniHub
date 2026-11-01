@@ -143,7 +143,11 @@ function parseQueueItem(value: unknown): ModerationQueueItem {
 }
 
 export function parseModerationQueue(value: unknown): ModerationQueueResponse {
-  if (!isRecord(value) || !Array.isArray(value.items) || !isRecord(value.meta)) {
+  if (
+    !isRecord(value) ||
+    !Array.isArray(value.items) ||
+    !isRecord(value.meta)
+  ) {
     throw invalidResponse();
   }
   const { page, pageSize, total, totalPages } = value.meta;
@@ -157,9 +161,7 @@ export function parseModerationQueue(value: unknown): ModerationQueueResponse {
     !Number.isSafeInteger(totalPages) ||
     Number(totalPages) < 0 ||
     Number(totalPages) !==
-      (Number(total) === 0
-        ? 0
-        : Math.ceil(Number(total) / Number(pageSize))) ||
+      (Number(total) === 0 ? 0 : Math.ceil(Number(total) / Number(pageSize))) ||
     value.items.length > pageSize ||
     value.items.length > Number(total)
   ) {

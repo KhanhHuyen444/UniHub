@@ -1,4 +1,4 @@
-import { apiRequest } from '../../../lib/api';
+import { protectedApiRequest } from '../../auth/auth-api';
 import {
   parseModerationQueue,
   parseRemoveModerationTarget,
@@ -17,10 +17,13 @@ export async function getForumModerationQueue(
     page: String(page),
     pageSize: String(queuePageSize),
   });
-  const value = await apiRequest<unknown>('/api/admin/moderation/forum', {
-    query,
-    signal,
-  });
+  const value = await protectedApiRequest<unknown>(
+    '/api/admin/moderation/forum',
+    {
+      query,
+      signal,
+    },
+  );
   return parseModerationQueue(value);
 }
 
@@ -33,7 +36,7 @@ export async function removeModerationTarget(
     targetType === 'Post'
       ? `/api/admin/moderation/forum/posts/${encodeURIComponent(String(id))}/remove`
       : `/api/admin/moderation/forum/comments/${encodeURIComponent(String(id))}/remove`;
-  const value = await apiRequest<unknown>(path, {
+  const value = await protectedApiRequest<unknown>(path, {
     method: 'POST',
     body: { reason },
   });

@@ -17,11 +17,14 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    'border border-transparent bg-brand text-white shadow-button hover:brightness-95',
-  outline: 'border border-brand bg-white text-brand hover:bg-brand/5',
-  text: 'border border-transparent bg-transparent text-brand hover:underline',
-  neutral: 'border border-line bg-surface text-secondary hover:bg-line/50',
-  danger: 'border border-transparent bg-danger text-white hover:brightness-95',
+    'border border-transparent bg-brand text-white shadow-button hover:brightness-95 hover:shadow-md active:shadow-button',
+  outline:
+    'border border-brand bg-white text-brand hover:bg-brand/5 hover:border-brand hover:shadow-sm',
+  text: 'border border-transparent bg-transparent text-brand hover:underline hover:bg-brand/5',
+  neutral:
+    'border border-line bg-surface text-secondary hover:bg-line/50 hover:text-ink hover:shadow-sm',
+  danger:
+    'border border-transparent bg-danger text-white hover:brightness-95 hover:shadow-md active:shadow-none',
 };
 
 const sizes: Record<ButtonSize, string> = {
@@ -47,7 +50,7 @@ export function Button({
       type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={`inline-flex items-center justify-center gap-2 rounded-control text-sm font-medium leading-5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:border-transparent disabled:bg-control disabled:text-subtle disabled:shadow-none ${sizes[size]} ${variants[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-control text-sm font-medium leading-5 transition-all duration-200 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:border-transparent disabled:bg-control disabled:text-subtle disabled:shadow-none disabled:transform-none disabled:hover:translate-y-0 disabled:active:scale-100 ${sizes[size]} ${variants[variant]} ${className}`}
     >
       {loading && (
         <span

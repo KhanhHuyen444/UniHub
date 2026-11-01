@@ -1,10 +1,25 @@
 # UniHub
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Nhánh hiện tại có bộ khung phát triển chung và luồng Public Hub cơ hội gồm danh sách cùng chi tiết; các module khác chưa triển khai. `GET /api/opportunities` và `GET /api/opportunities/:id` là API đọc công khai đã có trên `main`; `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
+Nhánh email Reminder bổ sung enqueue nguyên tử và worker Resend, mặc định tắt
+(`EVENT_REMINDER_EMAIL_ENABLED=false`). Cờ true bật cả enqueue và gửi; chỉ bật sau
+khi migration/quyền runtime, sender, URL ứng dụng, namespace và backend API key đã
+sẵn sàng. Xem [hướng dẫn vận hành và giới hạn kiểm thử](backend/src/modules/events/README.md).
+Phase 3 chỉ được kiểm chứng bằng fake transport/SQL; không suy ra đã migrate hoặc
+gửi email thành công trên MySQL/Resend thực tế.
 
-Health vẫn chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi chưa có `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration đã vào `main` qua PR #4, Prisma runtime qua PR #5. Xem [hướng dẫn runtime database](docs/database-runtime.md) để cấu hình tài khoản ứng dụng và [database-migrations.md](docs/database-migrations.md) để xem migration. Chưa có đăng nhập Google, JWT, tài khoản mẫu hoặc API ghi/Admin; API Hub cơ hội chỉ đọc. Shared UI preview chỉ dùng kiểm tra shell/component, không phải giao diện sản phẩm. Có thể chạy frontend health/preview mà không cần MySQL hoặc Docker.
+## TV4 Dashboard — kết quả review 31/10/2026 trên nhánh PR #35
 
-TV1 điều phối mục lục và trạng thái các hợp đồng API tại [docs/api-contracts.md](docs/api-contracts.md); leader duyệt toàn bộ contract trước khi thành viên triển khai. Hợp đồng không đồng nghĩa endpoint đã có code. Khác biệt giữa Chương 4 mới và Prisma main không ngăn việc hoàn thiện/duyệt tài liệu, nhưng auth chưa thể chạy trên database thật cho đến khi schema/migration riêng được duyệt và áp dụng.
+Đã sửa phép đếm opportunity theo ba loại chính xác, không phụ thuộc collation mặc định. Regression chạy MySQL 8.4.13 cô lập với migrations hiện có đã đạt; không dùng database cá nhân/nhóm. Xem [biên bản và conflict/phụ thuộc](docs/tv4-dashboard-review.md). Chức năng vẫn ở PR, không coi là đã merge main hoặc đã kiểm tra UI Google thật. Runner: `node backend/test/run-dashboard-mysql.mjs --run-isolated` sau build. Không sửa schema/grants.
+
+## TV4 Reminders — review 31/10/2026 trên PR #26
+
+Reminders, Calendar và Notifications đã có trên main `c310a4c` và được giữ lại khi cập nhật nhánh Dashboard PR #35. Reminders đã chạy lại **19/19 test MySQL 8.4.13 cô lập** theo báo cáo trên PR #26. Xem [module Events/Reminders](backend/src/modules/events/README.md); chạy lại bằng `node backend/test/run-reminders-mysql.mjs --run-isolated` sau build. Không dùng database cá nhân/nhóm, không sửa migration/grants hoặc thêm endpoint scheduler. Việc tích hợp mã nguồn không thay thế kiểm thử toàn luồng giao diện với MySQL thật.
+
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. `main` có bộ khung chung, Public Hub cơ hội, Guidance, Events, danh mục Major/Skill và API xác thực; `GET /api/opportunities` cùng `GET /api/opportunities/:id` là API đọc công khai. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
+
+Health chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi thiếu `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration và Prisma runtime đã merge. Auth schema/backend bốn API, frontend Google login/session và backend Admin review đã có trên `main`. Xem [hướng dẫn runtime database](docs/database-runtime.md) và [database-migrations.md](docs/database-migrations.md). Không có tài khoản mẫu; shared UI preview vẫn chỉ là preview, không xác thực. Health/preview không cần MySQL hoặc Docker. Giao diện Admin review ở nhánh `feat/admin-opportunities-frontend` này, chưa merge.
+
+TV1 điều phối mục lục và trạng thái các hợp đồng API tại [docs/api-contracts.md](docs/api-contracts.md); leader duyệt toàn bộ contract trước khi thành viên triển khai. Hợp đồng không đồng nghĩa endpoint đã có code. Auth schema/migration/GRANT đã có trên `main`; mỗi database đích phải xác nhận migration và quyền đã áp dụng trước khi chạy auth.
 
 ## 1. Công nghệ và điều kiện môi trường
 
@@ -177,15 +192,15 @@ UniHub/
 
 Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Phân công theo yêu cầu mới nhất, chưa gán tên/deadline:
 
-| Thành viên | Phần frontend và backend                                                             |
-| ---------- | ------------------------------------------------------------------------------------ |
-| TV1        | Nền tảng chung, Hub cơ hội/tìm kiếm/chi tiết; Admin duyệt cơ hội; điều phối tích hợp |
-| TV2        | Đăng nhập Google/JWT/role, hồ sơ và tài khoản; Admin quản lý tài khoản               |
-| TV3        | Lộ trình kỹ năng, gợi ý/cơ hội dành cho bạn; Admin danh mục                          |
-| TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                  |
-| TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction        |
+| Thành viên | Phần frontend và backend                                                                                        |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| TV1        | Nền tảng auth backend/frontend dùng chung; Hub cơ hội/tìm kiếm/chi tiết; Admin duyệt cơ hội; điều phối tích hợp |
+| TV2        | Hồ sơ và chức năng tài khoản; Admin quản lý tài khoản                                                           |
+| TV3        | Lộ trình kỹ năng, gợi ý/cơ hội dành cho bạn; Admin danh mục                                                     |
+| TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                                             |
+| TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction                                   |
 
-Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Ba shell và component preview đã được dựng từ handoff Page 3. Trang danh sách, trang chi tiết dùng chung cho ba loại và consumer Major của Hub đã có trên `main` sau PR #12. API provider Major có implementation trên `feat/categories-major-api` tại PR #13, chờ review/merge. Các module sản phẩm khác chưa triển khai. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người. Mỗi người tự kiểm thử phần mình; TV1 không thay thế trách nhiệm đó.
+Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Trang Public Hub, Guidance, Events, API Major/Skill, auth backend/frontend và backend Admin review đã có trên `main`; nhánh này bổ sung giao diện Admin review. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người; TV1 điều phối shell và route.
 
 ## 7. Lỗi thường gặp và giới hạn
 
@@ -195,4 +210,8 @@ Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Ph�
 - Lệnh không có script/workspace: kiểm tra terminal đang ở gốc UniHub và đã lấy đúng nhánh.
 - Không commit `.env`, node_modules, dist, coverage, khóa hoặc dữ liệu cục bộ. `.env.example` chỉ chứa cấu hình mẫu an toàn.
 
-Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. Shared UI/list/detail được kiểm tra trực quan theo ảnh handoff và fixture mock; bố cục ở 1920 px là lựa chọn triển khai, không phải số đo trực tiếp Figma, và mock không xác nhận API/MySQL thật. Đăng nhập, JWT và các module nghiệp vụ ngoài Hub cơ hội vẫn chưa triển khai.
+Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. Shared UI/list/detail được kiểm tra trực quan theo ảnh handoff và fixture mock; bố cục ở 1920 px là lựa chọn triển khai, không phải số đo trực tiếp Figma, và mock không xác nhận API/MySQL thật. Auth API và Admin review API đã có trên `main`; giao diện Admin review đang được hoàn thiện trên nhánh riêng và phụ thuộc frontend auth chưa merge.
+
+## Danh mục chuẩn dùng chung
+
+Bộ đã duyệt **11 Major + 19 Skill** ở [data/catalog/initial-categories.json](data/catalog/initial-categories.json). Git chỉ chia sẻ tên/loại và importer; mỗi thành viên tự nhập vào database riêng. Xem [hướng dẫn PowerShell tại gốc repo](data/catalog/README.md) để chuẩn bị migration, dry-run mặc định, apply rõ ràng và kiểm tra chạy lại. Không cần nhập 8 cơ hội; không chia sẻ ID local, `.env` hoặc database dump. [Kết quả kiểm thử](docs/catalog-import-validation.md).

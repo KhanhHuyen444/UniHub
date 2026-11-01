@@ -85,25 +85,25 @@ Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tố
 
 ## 3. Cấu trúc scaffold và vị trí Prisma sau này
 
-Theo yêu cầu ngày 24/10/2026, tổ chức frontend theo feature và backend theo module. Cây sau phản ánh phần scaffold chính; các thư mục nghiệp vụ mới có README phạm vi, không có endpoint hoặc component giả:
+Theo yêu cầu ngày 24/10/2026, tổ chức frontend theo feature và backend theo module. Cây sau phản ánh phần scaffold và auth frontend đang làm trên nhánh riêng; module nghiệp vụ chưa triển khai chỉ có README phạm vi:
 
 ```text
 UniHub/
 ├── frontend/                    # npm workspace: một ứng dụng React
 │   ├── src/
 │   │   ├── app/                 # router, health page và fallback 404
-│   │   ├── features/            # README theo chức năng, gồm admin/
+│   │   ├── features/            # auth dùng chung, Hub cơ hội và module theo chức năng
 │   │   ├── components/ui/       # primitive Button/Input/Select/Badge/states
 │   │   ├── layouts/             # PublicLayout/StudentLayout/AdminLayout
 │   │   ├── assets/              # logo và icon Figma được shell sử dụng
-│   │   ├── lib/                 # API client và kiểm tra health; không truy cập database
+│   │   ├── lib/                 # API client, protected request và kiểm tra health
 │   │   └── styles/              # Tailwind và design tokens shared UI
 │   └── package.json
 ├── backend/                     # npm workspace: Express REST API
 │   ├── src/
 │   │   ├── config/              # đọc và kiểm tra cấu hình server
-│   │   ├── middleware/          # 404 và xử lý lỗi; chưa có auth
-│   │   ├── modules/             # health/readiness có mã; nghiệp vụ chỉ README
+│   │   ├── middleware/          # 404, lỗi chung, requireAuth và requireRole
+│   │   ├── modules/             # health/readiness, auth và opportunities
 │   │   ├── lib/                 # singleton Prisma runtime
 │   │   ├── app.ts               # cấu hình Express, không mở cổng
 │   │   └── server.ts            # mở cổng, dừng server
@@ -361,7 +361,7 @@ Database: `@@id([item_id, academic_year])`, CHECK academic_year BETWEEN 1 AND 4.
 
 ### 5.13. `auth_sessions` → model `AuthSession`, `@@map("auth_sessions")`
 
-Nguồn: Chương 4 §4.3.2.13. Bảng session có sáu cột theo [bảng schema chi tiết](database-schema.md#bổ-sung-auth-identity-session-theo-chương-4). FK tới `users.user_id` dùng RESTRICT/RESTRICT; `session_id` là UUID, `refresh_token_hash` được lưu thay cho secret thô, timestamp UTC dùng `DATETIME(0)`. Nhánh auth hiện thêm model/migration; middleware, login, refresh và logout chưa có.
+Nguồn: Chương 4 §4.3.2.13. Bảng session có sáu cột theo [bảng schema chi tiết](database-schema.md#bổ-sung-auth-identity-session-theo-chương-4). FK tới `users.user_id` dùng RESTRICT/RESTRICT; `session_id` là UUID, `refresh_token_hash` được lưu thay cho secret thô, timestamp UTC dùng `DATETIME(0)`. Schema, middleware, Google login, refresh, `/me` và logout backend đã có trên `main`; frontend auth đang được triển khai trên nhánh riêng.
 
 ## 6. Ranh giới database và backend
 
@@ -392,6 +392,6 @@ Sau scaffold, các bước tiếp theo và phạm vi kiểm tra:
 2. Hai workspace tối thiểu, Tailwind 3/PostCSS và build target trình duyệt đã được cấu hình; duy trì kiểm tra typecheck/build, HTTP test và khởi động khi sửa. Chưa đưa chức năng nghiệp vụ vào scaffold.
 3. Initial migration đã có trên `main` qua PR #4; schema, CHECK, FK, collation, timestamp và GRANT đã được kiểm tra trên MySQL tạm theo [database-migrations.md](database-migrations.md). Runtime adapter/readiness và quyền tài khoản ứng dụng được kiểm tra riêng tại [database-runtime.md](database-runtime.md).
 4. Đối chiếu Node/MySQL với môi trường môn học và kiểm tra kết nối trên từng máy Windows. Mọi thay đổi dữ liệu tiếp theo phải dùng migration mới, được review trước khi áp dụng vào database phát triển riêng.
-5. Trước khi làm auth, xử lý các điểm Google identity/session ở mục 2; trước khi làm UI nghiệp vụ, dùng frame đúng mục đích trong [handoff Figma Page 3](shared-ui-design/README.md) và không coi spacing suy ra là token gốc.
+5. Contract auth và backend nền đã có; frontend auth đang được leader triển khai trên nhánh `feat/auth-frontend`. Trước khi dùng trên từng database, xác nhận migration/GRANT đích đã áp dụng; UI nghiệp vụ dùng frame đúng mục đích trong [handoff Figma Page 3](shared-ui-design/README.md) và không coi spacing suy ra là token gốc.
 
-Hiện có health/readiness HTTP, schema, Prisma runtime, hai API đọc công khai cho cơ hội, frontend list/detail và API provider Major trên `main` sau PR #11–#13. Luồng Public được kiểm tra trên MySQL tạm và Chromium; chi tiết ở [báo cáo tích hợp](opportunities-integration-test.md). Xem [trạng thái schema](database-schema.md#5-trạng-thái-kiểm-tra-và-giới-hạn) và [kiểm tra runtime](database-runtime.md). Chưa có API ghi/Admin, xác thực, dữ liệu nghiệp vụ thật hoặc hosting. Runtime chưa được đối chiếu với MySQL máy Windows của thành viên; pool cấu hình nhỏ chưa phải bằng chứng NFR hiệu năng hoặc 100 người dùng đồng thời.
+Hiện có health/readiness HTTP, schema, Prisma runtime, hai API đọc công khai cho cơ hội, frontend list/detail, API provider Major và auth backend trên `main`. Luồng Public được kiểm tra trên MySQL tạm và Chromium; chi tiết ở [báo cáo tích hợp](opportunities-integration-test.md). Frontend auth đang ở nhánh `feat/auth-frontend`. Xem [trạng thái schema](database-schema.md#5-trạng-thái-kiểm-tra-và-giới-hạn) và [kiểm tra runtime](database-runtime.md). Chưa có dữ liệu nghiệp vụ thật hoặc hosting; các API Admin khác vẫn theo trạng thái module. Runtime chưa được đối chiếu với MySQL máy Windows của thành viên; pool cấu hình nhỏ chưa phải bằng chứng NFR hiệu năng hoặc 100 người dùng đồng thời.

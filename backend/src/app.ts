@@ -1,4 +1,32 @@
+import {
+  createRecommendationsRouter,
+  type RecommendationsRouterDependencies,
+} from './modules/recommendations/recommendations.routes.js';
+import {
+  createAdminCategoriesRouter,
+  type AdminCategoriesRouterDependencies,
+} from './modules/categories/admin-categories.routes.js';
+import {
+  createAdminUsersRouter,
+  type AdminUsersRouterDependencies,
+} from './modules/users/admin-users.routes.js';
+import {
+  createGuidanceRouter,
+  type GuidanceRouterDependencies,
+} from './modules/guidance/guidance.routes.js';
 import express from 'express';
+import {
+  createProfileRouter,
+  type ProfileRouterDependencies,
+} from './modules/users/profile.routes.js';
+import {
+  createDashboardRouter,
+  type DashboardRouterDependencies,
+} from './modules/dashboard/dashboard.routes.js';
+import {
+  createNotificationsRouter,
+  type NotificationsRouterDependencies,
+} from './modules/notifications/notifications.routes.js';
 import { errorHandler, notFound } from './middleware/errors.js';
 import { healthRouter } from './modules/health/health.routes.js';
 import { createReadyRouter } from './modules/health/ready.routes.js';
@@ -22,29 +50,68 @@ import {
   createForumModerationRouter,
   type ForumModerationRouterDependencies,
 } from './modules/forum/forum-moderation.routes.js';
+import { createEventsRouter } from './modules/events/events.routes.js';
+import type { EventsRouterDependencies } from './modules/events/events.types.js';
+import {
+  createAdminOpportunitiesRouter,
+  type AdminOpportunitiesRouterDependencies,
+} from './modules/admin-opportunities/admin-opportunities.routes.js';
 
 interface AppDependencies {
+  profile?: ProfileRouterDependencies;
   checkDatabase?: () => Promise<void>;
   logDatabaseFailure?: () => void;
   categories?: CategoriesRouterDependencies;
+  adminCategories?: AdminCategoriesRouterDependencies;
+  adminUsers?: AdminUsersRouterDependencies;
+  guidance?: GuidanceRouterDependencies;
+  recommendations?: RecommendationsRouterDependencies;
   opportunities?: OpportunitiesRouterDependencies;
   auth?: GoogleAuthDependencies;
   forum?: ForumRouterDependencies;
   forumModeration?: ForumModerationRouterDependencies;
+  events?: EventsRouterDependencies;
+  notifications?: NotificationsRouterDependencies;
+  adminOpportunities?: AdminOpportunitiesRouterDependencies;
+  dashboard?: DashboardRouterDependencies;
 }
 
 export function createApp(dependencies: AppDependencies = {}) {
   const app = express();
 
   app.disable('x-powered-by');
+  app.use(
+    '/api/admin/categories',
+    createAdminCategoriesRouter(dependencies.adminCategories),
+  );
+  app.use('/api/admin/users', createAdminUsersRouter(dependencies.adminUsers));
   app.use(express.json({ limit: '100kb' }));
   app.use('/api/health', healthRouter);
   app.use('/api/ready', createReadyRouter(dependencies));
   app.use('/api/auth', createAuthRouter(dependencies.auth));
+  app.use('/api/users/me/profile', createProfileRouter(dependencies.profile));
   app.use('/api/categories', createCategoriesRouter(dependencies.categories));
+  app.use(
+    '/api/recommendations',
+    createRecommendationsRouter(dependencies.recommendations),
+  );
+  app.use('/api/guidance', createGuidanceRouter(dependencies.guidance));
   app.use(
     '/api/opportunities',
     createOpportunitiesRouter(dependencies.opportunities),
+  );
+  app.use('/api/events', createEventsRouter(dependencies.events));
+  app.use(
+    '/api/admin/dashboard',
+    createDashboardRouter(dependencies.dashboard),
+  );
+  app.use(
+    '/api/notifications',
+    createNotificationsRouter(dependencies.notifications),
+  );
+  app.use(
+    '/api/admin/opportunities',
+    createAdminOpportunitiesRouter(dependencies.adminOpportunities),
   );
   app.use('/api/forum', createForumRouter(dependencies.forum));
   app.use(

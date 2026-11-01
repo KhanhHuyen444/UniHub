@@ -32,7 +32,7 @@ export const adminNavigation: NavigationItem[] = [
   {
     key: 'moderation',
     label: 'Kiểm duyệt nội dung',
-    href: '/admin/moderation',
+    href: '/admin/opportunities',
   },
   { key: 'categories', label: 'Quản lý danh mục', href: '/admin/categories' },
   { key: 'users', label: 'Tài khoản & Phân quyền', href: '/admin/users' },

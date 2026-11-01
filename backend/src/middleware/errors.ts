@@ -5,19 +5,22 @@ import {
 } from '../lib/prisma.js';
 
 export class ApiError extends Error {
+  readonly fieldErrors?: readonly ApiFieldError[];
+
   constructor(
     readonly status: number,
     readonly code: string,
     message: string,
-    readonly fieldErrors?: ApiFieldError[],
+    fieldErrors?: readonly ApiFieldError[],
   ) {
     super(message);
     this.name = 'ApiError';
+    this.fieldErrors = fieldErrors;
   }
 }
 
 export interface ApiFieldError {
-  source: 'body' | 'query' | 'path';
+  source: 'body' | 'path' | 'query';
   field: string;
   code: string;
   message: string;
@@ -63,12 +66,29 @@ function isDatabaseUnavailable(error: unknown): boolean {
       code?: unknown;
       errorCode?: unknown;
       cause?: unknown;
+      meta?: {
+        driverAdapterError?: {
+          cause?: { kind?: unknown; originalCode?: unknown };
+        };
+      };
     };
     if (
       (typeof candidate.code === 'string' &&
         unavailableCodes.has(candidate.code)) ||
       (typeof candidate.errorCode === 'string' &&
         unavailableCodes.has(candidate.errorCode))
+    ) {
+      return true;
+    }
+    // P2039 is a generic driver-adapter failure, not an availability signal.
+    // MariaDB's 45028 (ER_GET_CONNECTION_TIMEOUT) specifically means the pool
+    // could not acquire a connection, including after rejected authentication.
+    // Inspect structured adapter metadata, never SQL/message text or P2039 alone.
+    const driverCause = candidate.meta?.driverAdapterError?.cause;
+    if (
+      candidate.code === 'P2039' &&
+      driverCause?.kind === 'mysql' &&
+      driverCause.originalCode === '45028'
     ) {
       return true;
     }
@@ -108,12 +128,11 @@ export const errorHandler: ErrorRequestHandler = (
   }
 
   if (error instanceof ApiError) {
-    const fieldErrors = error.fieldErrors;
     response.status(error.status).json({
       error: {
         code: error.code,
         message: error.message,
-        ...(fieldErrors ? { fieldErrors } : {}),
+        ...(error.fieldErrors ? { fieldErrors: error.fieldErrors } : {}),
       },
     });
     return;

@@ -1,6 +1,6 @@
 import { Prisma, type PrismaClient } from '../../generated/prisma/client.js';
 import { ApiError } from '../../middleware/errors.js';
-import { writeActivityLog } from '../activity-logs/activity-logs.service.js';
+import { writeActivityLog } from '../activity-logs/activity-log.writer.js';
 import { parseForumId } from './forum.service.js';
 
 type ForumModerationClient = Pick<
@@ -222,12 +222,12 @@ export async function removeForumPost(
 
     await writeActivityLog(transaction, {
       adminId,
-      action: 'DELETE_POST',
+      actionType: 'DELETE_POST',
+      targetType: 'ForumPost',
       targetId: postId,
       oldValue: { is_deleted: false },
       newValue: { is_deleted: true },
       reason,
-      createdAt: deletedAt,
     });
     await transaction.notification.create({
       data: {
@@ -290,12 +290,12 @@ export async function removeForumComment(
 
     await writeActivityLog(transaction, {
       adminId,
-      action: 'DELETE_COMMENT',
+      actionType: 'DELETE_COMMENT',
+      targetType: 'Comment',
       targetId: commentId,
       oldValue: { is_deleted: false },
       newValue: { is_deleted: true },
       reason,
-      createdAt: deletedAt,
     });
     await transaction.notification.create({
       data: {

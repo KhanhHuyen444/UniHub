@@ -226,7 +226,6 @@ export function parseCommentList(value: unknown): CommentListResponse {
 // Date formatting
 // ---------------------------------------------------------------------------
 
-
 /** Format ISO instant as "HH:MM DD/MM/YYYY" in Vietnam time */
 export function formatForumDate(instant: string): string {
   try {

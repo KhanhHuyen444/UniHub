@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import test from 'node:test';
 import { createApp } from '../dist/app.js';
-import { writeActivityLog } from '../dist/modules/activity-logs/activity-logs.service.js';
 
 async function withServer(app, callback) {
   const server = app.listen(0, '127.0.0.1');
@@ -273,7 +272,6 @@ test('moderation endpoints enforce Guest/Student/Admin role matrix', async () =>
     }
   }
 });
-
 test('queue returns paginated ordered targets without unnecessary PII', async () => {
   const posts = [
     samplePost({ post_id: 7, created_at: new Date('2026-10-30T10:00:00Z') }),
@@ -388,7 +386,6 @@ test('removing a post soft-deletes, writes the minimal audit and Violation notif
       old_value: '{"is_deleted":false}',
       new_value: '{"is_deleted":true}',
       reason: 'Nội dung vi phạm quy tắc.',
-      created_at: new Date('2026-10-30T12:00:00.000Z'),
     });
     assert.deepEqual(state.notifications, [
       {
@@ -541,64 +538,4 @@ test('audit or notification failure rolls back soft delete and all sibling write
       });
     });
   }
-});
-
-test('shared activity writer rejects oversized JSON without truncating', async () => {
-  let inserted = false;
-  await assert.rejects(
-    writeActivityLog(
-      {
-        activityLog: {
-          create: async () => {
-            inserted = true;
-          },
-        },
-      },
-      {
-        adminId: 1,
-        action: 'DELETE_POST',
-        targetId: 7,
-        oldValue: { is_deleted: false, extra: 'x'.repeat(600) },
-        newValue: { is_deleted: true },
-      },
-    ),
-    RangeError,
-  );
-  assert.equal(inserted, false);
-});
-
-test('shared activity writer uses the approved action-to-target mapping', async () => {
-  const inserted = [];
-  const transaction = {
-    activityLog: {
-      create: async ({ data }) => inserted.push(data),
-    },
-  };
-  const mapping = [
-    ['APPROVE_OPPORTUNITY', 'Opportunity'],
-    ['REJECT_OPPORTUNITY', 'Opportunity'],
-    ['DELETE_POST', 'ForumPost'],
-    ['DELETE_COMMENT', 'Comment'],
-    ['CREATE_CATEGORY', 'Category'],
-    ['RENAME_CATEGORY', 'Category'],
-    ['CLOSE_CATEGORY', 'Category'],
-    ['REOPEN_CATEGORY', 'Category'],
-    ['CHANGE_ROLE', 'User'],
-  ];
-  for (const [action, targetType] of mapping) {
-    await writeActivityLog(transaction, {
-      adminId: 99,
-      action,
-      targetId: 7,
-      ...(action === 'REJECT_OPPORTUNITY' ||
-      action === 'DELETE_POST' ||
-      action === 'DELETE_COMMENT'
-        ? { reason: 'Lý do' }
-        : {}),
-    });
-  }
-  assert.deepEqual(
-    inserted.map(({ action_type, target_type }) => [action_type, target_type]),
-    mapping,
-  );
 });

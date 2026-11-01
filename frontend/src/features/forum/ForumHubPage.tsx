@@ -213,7 +213,8 @@ function ForumPostCard({ item }: { item: ForumPost }) {
 }
 
 export function ForumHubPage() {
-  const { status: authStatus, role } = useAuth();
+  const { status: authStatus, user } = useAuth();
+  const role = user?.role ?? null;
   const routerLocation = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [revision, setRevision] = useState(0);
@@ -358,26 +359,39 @@ export function ForumHubPage() {
     }
   }
 
-  const canCreatePost = authStatus === 'guest' || role === 'Student';
+  const canCreatePost = authStatus !== 'authenticated' || role === 'Student';
 
   return (
     <PublicLayout activeKey="forum">
       <main className="mx-auto w-full max-w-public px-8 py-8">
+        {authStatus === 'unavailable' && (
+          <ErrorState
+            title="Chưa thể xác minh phiên đăng nhập"
+            description="Bạn có thể tiếp tục xem diễn đàn. Thử lại sau để sử dụng chức năng dành cho sinh viên."
+          />
+        )}
         <header className="mb-6 flex flex-wrap items-center justify-between gap-5 rounded-card bg-gradient-to-r from-navy to-brand px-6 py-8 text-white shadow-soft md:px-10">
           <div>
-            <Badge variant="info" className="mb-2 border border-white/20 bg-white/10 text-white">
+            <Badge
+              variant="info"
+              className="mb-2 border border-white/20 bg-white/10 text-white"
+            >
               Diễn đàn cộng đồng UniHub
             </Badge>
             <h1 className="type-display text-white">Diễn đàn sinh viên</h1>
             <p className="mt-1 max-w-[672px] type-body text-white/85">
-              Chia sẻ kiến thức, hỏi đáp và trao đổi kinh nghiệm học tập, thực tập và định hướng nghề nghiệp.
+              Chia sẻ kiến thức, hỏi đáp và trao đổi kinh nghiệm học tập, thực
+              tập và định hướng nghề nghiệp.
             </p>
           </div>
           {canCreatePost && (
             <Button
               variant="neutral"
               onClick={openCreatePost}
-              loading={authStatus === 'loading'}
+              loading={authStatus === 'restoring'}
+              disabled={
+                authStatus === 'restoring' || authStatus === 'unavailable'
+              }
               className="shrink-0 bg-white text-navy hover:bg-cyan"
             >
               + Đặt câu hỏi mới
@@ -386,7 +400,10 @@ export function ForumHubPage() {
         </header>
 
         {loginPrompt && (
-          <div role="status" className="mb-5 rounded-control border border-brand/20 bg-cyan/40 px-4 py-3 type-label text-navy">
+          <div
+            role="status"
+            className="mb-5 rounded-control border border-brand/20 bg-cyan/40 px-4 py-3 type-label text-navy"
+          >
             Vui lòng đăng nhập với Google ở đầu trang để đặt câu hỏi.
           </div>
         )}
@@ -479,7 +496,13 @@ export function ForumHubPage() {
               </Button>
             )}
             {canCreatePost && (
-              <Button onClick={openCreatePost} loading={authStatus === 'loading'}>
+              <Button
+                onClick={openCreatePost}
+                loading={authStatus === 'restoring'}
+                disabled={
+                  authStatus === 'restoring' || authStatus === 'unavailable'
+                }
+              >
                 Đặt câu hỏi mới
               </Button>
             )}
@@ -536,7 +559,10 @@ export function ForumHubPage() {
           >
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <h2 id="create-forum-post-title" className="type-title text-navy">
+                <h2
+                  id="create-forum-post-title"
+                  className="type-title text-navy"
+                >
                   Đặt câu hỏi mới
                 </h2>
                 <p className="mt-1 type-caption text-muted">
@@ -559,23 +585,34 @@ export function ForumHubPage() {
                 role="alert"
                 className="mb-5 rounded-control border border-danger-line bg-danger-surface px-4 py-3 text-danger"
               >
-                <p className="type-label font-semibold">Thông tin chưa hợp lệ</p>
+                <p className="type-label font-semibold">
+                  Thông tin chưa hợp lệ
+                </p>
                 <p className="mt-1 type-caption">{submitError}</p>
               </div>
             )}
 
             <form onSubmit={(event) => void submitCreatePost(event)} noValidate>
               <div className="grid gap-5">
-                <FormField id="forum-post-topic" label="Chủ đề" required error={fieldErrors.topic}>
+                <FormField
+                  id="forum-post-topic"
+                  label="Chủ đề"
+                  required
+                  error={fieldErrors.topic}
+                >
                   <Select
                     autoFocus
                     value={draft.topic}
                     disabled={isSubmitting}
-                    onChange={(event) => updateDraft('topic', event.target.value)}
+                    onChange={(event) =>
+                      updateDraft('topic', event.target.value)
+                    }
                   >
                     <option value="">-- Chọn chủ đề thảo luận --</option>
                     {FORUM_TOPICS.map((topic) => (
-                      <option key={topic} value={topic}>{topic}</option>
+                      <option key={topic} value={topic}>
+                        {topic}
+                      </option>
                     ))}
                   </Select>
                 </FormField>
@@ -592,7 +629,9 @@ export function ForumHubPage() {
                     maxLength={1020}
                     disabled={isSubmitting}
                     placeholder="Ví dụ: Xin kinh nghiệm chuẩn bị hồ sơ phỏng vấn..."
-                    onChange={(event) => updateDraft('title', event.target.value)}
+                    onChange={(event) =>
+                      updateDraft('title', event.target.value)
+                    }
                   />
                 </FormField>
 
@@ -607,12 +646,18 @@ export function ForumHubPage() {
                     id="forum-post-content"
                     required
                     aria-invalid={Boolean(fieldErrors.content)}
-                    aria-describedby={fieldErrors.content ? 'forum-post-content-error' : 'forum-post-content-hint'}
+                    aria-describedby={
+                      fieldErrors.content
+                        ? 'forum-post-content-error'
+                        : 'forum-post-content-hint'
+                    }
                     value={draft.content}
                     disabled={isSubmitting}
                     rows={5}
                     placeholder="Mô tả chi tiết câu hỏi, bối cảnh và những gì bạn đã thử..."
-                    onChange={(event) => updateDraft('content', event.target.value)}
+                    onChange={(event) =>
+                      updateDraft('content', event.target.value)
+                    }
                     className="w-full resize-y rounded-control border border-control bg-white px-3 py-3 text-sm leading-5 text-ink placeholder:text-placeholder focus-visible:border-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand aria-[invalid=true]:border-danger aria-[invalid=true]:ring-1 aria-[invalid=true]:ring-danger"
                   />
                 </FormField>
