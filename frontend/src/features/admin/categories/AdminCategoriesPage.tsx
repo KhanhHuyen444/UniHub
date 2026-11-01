@@ -309,7 +309,7 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
               type="button"
               aria-pressed={type === value}
               disabled={busy}
-              className={`border-b-2 px-0 py-4 type-label font-medium ${type === value ? 'border-brand text-brand' : 'border-transparent text-muted'}`}
+              className={`border-b-2 px-0 py-4 type-label font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 active:translate-y-0 ${type === value ? 'border-brand text-brand font-semibold' : 'border-transparent text-muted hover:text-brand hover:border-brand/40'}`}
               onClick={() => {
                 setType(value);
                 setEdit(null);
@@ -460,7 +460,7 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
                           <button
                             type="button"
                             disabled={busy}
-                            className="inline-flex items-center justify-center rounded p-1 text-brand hover:text-navy hover:bg-slate-100 transition-colors disabled:text-muted disabled:hover:bg-transparent"
+                            className="inline-flex items-center justify-center rounded p-1 text-brand hover:text-navy hover:bg-slate-100 hover:scale-110 active:scale-95 transition-all duration-200 disabled:text-muted disabled:hover:bg-transparent disabled:scale-100"
                             aria-label={`Đổi tên ${category.name}`}
                             title="Đổi tên"
                             onClick={(event) => {
@@ -484,8 +484,8 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
                             disabled={busy}
                             className={
                               category.status === 'Active'
-                                ? 'inline-flex items-center justify-center rounded p-1 text-muted hover:text-danger hover:bg-danger-surface transition-colors disabled:text-muted disabled:hover:bg-transparent'
-                                : 'inline-flex items-center justify-center rounded p-1 text-muted hover:text-success hover:bg-success-surface transition-colors disabled:text-muted disabled:hover:bg-transparent'
+                                ? 'inline-flex items-center justify-center rounded p-1 text-muted hover:text-danger hover:bg-danger-surface hover:scale-110 active:scale-95 transition-all duration-200 disabled:text-muted disabled:hover:bg-transparent disabled:scale-100'
+                                : 'inline-flex items-center justify-center rounded p-1 text-muted hover:text-success hover:bg-success-surface hover:scale-110 active:scale-95 transition-all duration-200 disabled:text-muted disabled:hover:bg-transparent disabled:scale-100'
                             }
                             aria-label={`${category.status === 'Active' ? 'Đóng' : 'Mở lại'} ${category.name}`}
                             title={

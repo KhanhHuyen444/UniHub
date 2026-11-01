@@ -160,7 +160,7 @@ export function AdminUsersPage({
           <button
             type="button"
             onClick={clearFeedback}
-            className="flex h-7 w-7 items-center justify-center rounded-control text-success hover:bg-success/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-success"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-success hover:bg-success/10 hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-success"
             aria-label="Đóng thông báo thành công"
             title="Đóng thông báo"
           >
@@ -184,7 +184,7 @@ export function AdminUsersPage({
           <button
             type="button"
             onClick={clearFeedback}
-            className="flex h-7 w-7 items-center justify-center rounded-control text-danger hover:bg-danger/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-danger hover:bg-danger/10 hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-danger"
             aria-label="Đóng thông báo lỗi"
             title="Đóng thông báo"
           >
@@ -214,7 +214,7 @@ export function AdminUsersPage({
                 <button
                   type="button"
                   onClick={() => setSearchInput('')}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-secondary hover:text-navy"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-secondary hover:text-navy hover:scale-110 active:scale-95 transition-all duration-200"
                   aria-label="Xóa nội dung tìm kiếm"
                   title="Xóa tìm kiếm"
                 >
@@ -440,7 +440,7 @@ export function AdminUsersPage({
             <button
               type="button"
               onClick={() => setConfirmTarget(null)}
-              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
               aria-label="Đóng hộp thoại"
               title="Đóng"
             >

@@ -73,9 +73,15 @@
   display: grid;
   align-content: center;
   gap: 3px;
+  transition: all 0.2s ease-out;
 }
 .calendar-days button:hover {
   background: #e0f7fc;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 119, 182, 0.15);
+}
+.calendar-days button:active {
+  transform: translateY(0) scale(0.96);
 }
 .calendar-days button:focus-visible {
   outline: 2px solid #0077b6;

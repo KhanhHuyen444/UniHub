@@ -468,7 +468,7 @@ export function CalendarContent() {
         <div className="mt-2 flex items-center justify-end gap-1">
           <button
             type="button"
-            className="flex h-7 w-7 items-center justify-center rounded-control text-brand hover:bg-brand/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-50"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-brand hover:bg-brand/10 hover:scale-110 active:scale-95 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-50 disabled:scale-100"
             disabled={busy}
             onClick={() => open(event, 'edit')}
             aria-label={`Sửa: ${event.title}`}
@@ -479,7 +479,7 @@ export function CalendarContent() {
           </button>
           <button
             type="button"
-            className="flex h-7 w-7 items-center justify-center rounded-control text-danger hover:bg-danger/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-danger disabled:opacity-50"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-danger hover:bg-danger/10 hover:scale-110 active:scale-95 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-danger disabled:opacity-50 disabled:scale-100"
             disabled={busy}
             onClick={() => open(event, 'delete')}
             aria-label={`Xóa: ${event.title}`}

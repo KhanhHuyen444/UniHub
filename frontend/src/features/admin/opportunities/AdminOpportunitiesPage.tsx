@@ -441,7 +441,7 @@ function AdminOpportunityDetail({
             type="button"
             aria-label="Đóng thông báo"
             title="Đóng thông báo"
-            className="flex h-6 w-6 items-center justify-center rounded-sm text-info hover:bg-info/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+            className="flex h-6 w-6 items-center justify-center rounded-sm text-info hover:bg-info/10 hover:scale-110 active:scale-95 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
             onClick={onClearNotice}
           >
             <CloseIcon className="h-4 w-4" />
@@ -601,7 +601,7 @@ function AdminOpportunityDetail({
               title="Đóng"
               disabled={busy}
               onClick={() => onCancelReject(item.id)}
-              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
+              className="absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50 disabled:scale-100"
             >
               <CloseIcon className="h-4 w-4" />
               <span className="sr-only">Đóng</span>

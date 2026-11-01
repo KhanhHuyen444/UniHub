@@ -103,7 +103,7 @@ export function PublicLayout({
                   <button
                     type="button"
                     onClick={() => void logout()}
-                    className="shrink-0 rounded-control border border-control bg-white px-3 py-2 type-label font-medium text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                    className="shrink-0 rounded-control border border-control bg-white px-3 py-2 type-label font-medium text-brand transition-all duration-200 ease-out hover:bg-brand/5 hover:border-brand hover:shadow-xs hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   >
                     Đăng xuất
                   </button>

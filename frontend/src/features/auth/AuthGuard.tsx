@@ -34,7 +34,7 @@ export function RequireRole({
           <button
             type="button"
             onClick={() => void retryRestore()}
-            className="mt-5 rounded-control bg-brand px-5 py-3 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            className="mt-5 rounded-control bg-brand px-5 py-3 text-sm font-semibold text-white shadow-button transition-all duration-200 ease-out hover:brightness-95 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             Thử lại
           </button>

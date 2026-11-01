@@ -62,7 +62,7 @@ export function CategoryDialog({
           title="Đóng hộp thoại"
           disabled={busy}
           onClick={onClose}
-          className="flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
+          className="flex h-7 w-7 items-center justify-center rounded-control text-secondary hover:bg-surface hover:text-navy hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50 disabled:scale-100"
         >
           <CloseIcon className="h-4 w-4" />
           <span className="sr-only">Đóng hộp thoại</span>

@@ -126,11 +126,11 @@ export function StudentAccountMenu() {
         <div className="border-t border-line my-1" />
         <button
           type="button"
-          className="flex w-full items-center gap-2.5 rounded-control px-3 py-2 text-left text-sm font-medium text-danger hover:bg-danger-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-danger"
+          className="group flex w-full items-center gap-2.5 rounded-control px-3 py-2 text-left text-sm font-medium text-danger hover:bg-danger-surface hover:translate-x-1 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-danger"
           onClick={() => void logout().catch(() => undefined)}
         >
           <svg
-            className="h-4 w-4 text-danger"
+            className="h-4 w-4 text-danger transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

@@ -429,7 +429,7 @@ function DashboardContent() {
           type="button"
           onClick={handleRefreshAll}
           disabled={isAnyLoading}
-          className="inline-flex h-10 items-center gap-2 rounded-control border border-line bg-white px-4 py-2 text-sm font-medium text-brand shadow-soft transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60"
+          className="inline-flex h-10 items-center gap-2 rounded-control border border-line bg-white px-4 py-2 text-sm font-medium text-brand shadow-soft transition-all duration-200 ease-out hover:bg-slate-50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60 disabled:hover:translate-y-0 disabled:shadow-none"
         >
           <RefreshIcon
             className={`h-4 w-4 ${isAnyLoading ? 'animate-spin' : ''}`}
@@ -642,7 +642,7 @@ function DashboardContent() {
                 type="button"
                 onClick={retryForum}
                 disabled={forumState.status === 'loading'}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full text-secondary transition-colors hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-60"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full text-secondary transition-all duration-200 hover:bg-slate-100 hover:scale-110 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-60 disabled:scale-100"
                 title="Tải lại thảo luận"
                 aria-label="Tải lại thảo luận"
               >
@@ -680,7 +680,7 @@ function DashboardContent() {
                   <button
                     type="button"
                     onClick={retryForum}
-                    className="mt-5 inline-flex items-center gap-2 rounded-control bg-brand px-5 py-2.5 text-sm font-medium text-white shadow-soft transition-colors hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                    className="mt-5 inline-flex items-center gap-2 rounded-control bg-brand px-5 py-2.5 text-sm font-medium text-white shadow-soft transition-all duration-200 ease-out hover:brightness-95 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   >
                     <RefreshIcon className="h-4 w-4" />
                     Tải lại
