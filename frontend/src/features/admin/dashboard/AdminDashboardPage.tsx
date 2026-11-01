@@ -174,14 +174,16 @@ function KpiCard({
 }) {
   return (
     <Card
-      className="flex min-h-[118px] flex-col justify-between rounded-xl border border-line bg-white p-5 shadow-soft transition-all"
+      className="group flex min-h-[118px] flex-col justify-between rounded-xl border border-line bg-white p-5 shadow-soft transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-brand/30"
       aria-label={ariaLabel}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-medium text-secondary">{title}</span>
+        <span className="text-sm font-medium text-secondary group-hover:text-brand transition-colors duration-200">
+          {title}
+        </span>
         {dotColor && (
           <span
-            className="h-2.5 w-2.5 shrink-0 rounded-full"
+            className="h-2.5 w-2.5 shrink-0 rounded-full transition-transform duration-200 group-hover:scale-125"
             style={{ backgroundColor: dotColor }}
             aria-hidden="true"
           />
@@ -191,7 +193,7 @@ function KpiCard({
         {loading ? (
           <div className="h-9 w-24 animate-pulse rounded bg-slate-100" />
         ) : error ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" role="alert">
             <span className="text-sm font-medium text-danger">
               Lỗi tải dữ liệu
             </span>
@@ -199,14 +201,14 @@ function KpiCard({
               <button
                 type="button"
                 onClick={onRetry}
-                className="text-xs font-semibold text-brand underline hover:opacity-80"
+                className="text-xs font-semibold text-brand underline hover:opacity-80 hover:scale-105 active:scale-95 transition-all duration-200"
               >
                 Thử lại
               </button>
             )}
           </div>
         ) : (
-          <span className="text-3xl font-bold tracking-tight text-navy">
+          <span className="text-3xl font-bold tracking-tight text-navy transition-transform duration-200 group-hover:scale-[1.02]">
             {value !== undefined ? formatNumber(value) : '0'}
           </span>
         )}
@@ -487,7 +489,7 @@ function DashboardContent() {
       <div className="mt-6 grid grid-cols-1 items-stretch gap-6 lg:grid-cols-12">
         {/* Left Panel: Phân bổ cơ hội theo trạng thái */}
         <Card
-          className="flex flex-col justify-between rounded-xl border border-line bg-white p-6 shadow-soft lg:col-span-7 xl:col-span-8"
+          className="flex flex-col justify-between rounded-xl border border-line bg-white p-6 shadow-soft transition-all duration-300 ease-out hover:shadow-lg hover:border-brand/20 lg:col-span-7 xl:col-span-8"
           aria-label="Cơ hội"
         >
           <div>
@@ -535,7 +537,7 @@ function DashboardContent() {
 
                   {/* Breakdown List & Progress Bar */}
                   <div className="flex flex-col gap-3 md:col-span-7">
-                    <div className="flex items-center justify-between gap-3 px-3 py-2">
+                    <div className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 transition-all duration-200 hover:bg-emerald-50/60 hover:translate-x-1">
                       <div className="flex items-center gap-2.5">
                         <span
                           className="h-3.5 w-3.5 rounded-sm bg-[#15803D]"
@@ -555,7 +557,7 @@ function DashboardContent() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-3 rounded-lg bg-slate-50/80 px-3 py-2">
+                    <div className="flex items-center justify-between gap-3 rounded-lg bg-slate-50/80 px-3 py-2 transition-all duration-200 hover:bg-amber-50/60 hover:translate-x-1">
                       <div className="flex items-center gap-2.5">
                         <span
                           className="h-3.5 w-3.5 rounded-sm bg-[#B45309]"
@@ -575,7 +577,7 @@ function DashboardContent() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-3 px-3 py-2">
+                    <div className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 transition-all duration-200 hover:bg-red-50/60 hover:translate-x-1">
                       <div className="flex items-center gap-2.5">
                         <span
                           className="h-3.5 w-3.5 rounded-sm bg-[#DC2626]"
@@ -628,7 +630,7 @@ function DashboardContent() {
 
         {/* Right Panel: Tương tác thảo luận */}
         <Card
-          className={`flex flex-col justify-between rounded-xl border bg-white p-6 shadow-soft lg:col-span-5 xl:col-span-4 ${
+          className={`flex flex-col justify-between rounded-xl border bg-white p-6 shadow-soft transition-all duration-300 ease-out hover:shadow-lg hover:border-brand/20 lg:col-span-5 xl:col-span-4 ${
             forumState.status === 'error' ? 'border-red-200' : 'border-line'
           }`}
           aria-label="Diễn đàn"
@@ -688,20 +690,20 @@ function DashboardContent() {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-4 py-4">
-                  <div className="flex flex-col items-center justify-center rounded-lg bg-slate-50 p-5 text-center">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+                  <div className="group flex flex-col items-center justify-center rounded-lg bg-slate-50 p-5 text-center transition-all duration-200 hover:-translate-y-1 hover:bg-slate-100/80 hover:shadow-sm">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted group-hover:text-brand transition-colors duration-200">
                       Bài viết
                     </span>
-                    <span className="mt-2 text-3xl font-bold tracking-tight text-navy">
+                    <span className="mt-2 text-3xl font-bold tracking-tight text-navy group-hover:scale-105 transition-transform duration-200">
                       {formatNumber(forumState.data.posts)}
                     </span>
                   </div>
 
-                  <div className="flex flex-col items-center justify-center rounded-lg bg-slate-50 p-5 text-center">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+                  <div className="group flex flex-col items-center justify-center rounded-lg bg-slate-50 p-5 text-center transition-all duration-200 hover:-translate-y-1 hover:bg-slate-100/80 hover:shadow-sm">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted group-hover:text-brand transition-colors duration-200">
                       Bình luận
                     </span>
-                    <span className="mt-2 text-3xl font-bold tracking-tight text-navy">
+                    <span className="mt-2 text-3xl font-bold tracking-tight text-navy group-hover:scale-105 transition-transform duration-200">
                       {formatNumber(forumState.data.comments)}
                     </span>
                   </div>

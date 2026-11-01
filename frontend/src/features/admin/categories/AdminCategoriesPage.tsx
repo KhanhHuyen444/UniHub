@@ -409,7 +409,7 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
             }
           />
         ) : (
-          <div className="overflow-hidden rounded-card border border-line bg-white shadow-soft">
+          <div className="overflow-hidden rounded-card border border-line bg-white shadow-soft transition-all duration-300 hover:shadow-md">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left type-label">
                 <caption className="sr-only">Danh sách {label}</caption>
@@ -436,7 +436,7 @@ function AdminCategoriesWorkspace({ token }: { token: string }) {
                   {rows.map((category) => (
                     <tr
                       key={category.id}
-                      className={`border-t border-line ${category.status === 'Closed' ? 'bg-page text-muted' : 'text-ink'}`}
+                      className={`border-t border-line transition-colors duration-150 hover:bg-slate-50/80 ${category.status === 'Closed' ? 'bg-page text-muted' : 'text-ink'}`}
                     >
                       <td className="break-words px-6 py-3">{category.name}</td>
                       <td className="px-6 py-3">
