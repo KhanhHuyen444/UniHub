@@ -117,10 +117,10 @@ function OpportunityCard({
   evaluatedAt: string;
 }) {
   return (
-    <Card className="p-5">
+    <Card className="group h-full p-5 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 ease-out">
       <article
         aria-labelledby={`opportunity-${item.id}-title`}
-        className="flex min-h-[247px] flex-col"
+        className="flex min-h-[247px] h-full flex-col justify-between"
       >
         {/* Badges row */}
         <div className="flex min-h-5 flex-wrap items-center gap-2">
@@ -138,7 +138,7 @@ function OpportunityCard({
         <div className="mt-3">
           <h2
             id={`opportunity-${item.id}-title`}
-            className="text-base font-bold leading-6 text-ink line-clamp-2"
+            className="text-base font-bold leading-6 text-ink line-clamp-2 group-hover:text-brand transition-colors"
           >
             {item.title}
           </h2>
@@ -195,10 +195,12 @@ function OpportunityCard({
               to={`/opportunities/${item.id}`}
               state={{ returnTo }}
               aria-label={`Xem chi tiết: ${item.title}`}
-              className="inline-flex min-h-7 items-center gap-1 rounded-sm type-caption font-semibold text-brand hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              className="inline-flex min-h-7 items-center gap-1.5 rounded-sm type-caption font-semibold text-brand hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >
-              Xem chi tiết
-              <ArrowRightIcon />
+              <span>Xem chi tiết</span>
+              <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
+                <ArrowRightIcon />
+              </span>
             </Link>
           </div>
         </div>
@@ -758,7 +760,7 @@ function OpportunityResults({
       {/* Grid of cards */}
       <ul className="mt-4 grid list-none grid-cols-1 items-start gap-x-6 gap-y-5 p-0 md:grid-cols-2 xl:grid-cols-3">
         {response.items.map((item) => (
-          <li key={item.id}>
+          <li key={item.id} className="h-full">
             <OpportunityCard
               item={item}
               returnTo={returnTo}
