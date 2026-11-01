@@ -21,6 +21,7 @@ import { LoginLayout } from '../features/auth/LoginLayout';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
+import { AdminUsersPage } from '../features/admin/users/AdminUsersPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
 import { ProfileSavedNotice } from '../features/profile/ProfileSavedNotice';
 import { StudentLayout } from '../layouts/StudentLayout';
@@ -52,6 +53,7 @@ export const appPaths = {
   roadmaps: '/roadmaps',
   adminOpportunities: '/admin/opportunities',
   adminDashboard: '/admin/dashboard',
+  adminUsers: '/admin/users',
   notFound: '/404',
 } as const;
 
@@ -132,6 +134,16 @@ export function AppRouter() {
               <RequireRole role="Admin">
                 <AdminLayout activeKey="moderation">
                   <AdminOpportunitiesPage />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path={appPaths.adminUsers}
+            element={
+              <RequireRole role="Admin">
+                <AdminLayout activeKey="users">
+                  <AdminUsersPage />
                 </AdminLayout>
               </RequireRole>
             }
