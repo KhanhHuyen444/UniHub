@@ -35,12 +35,14 @@ export async function startRecommendationsHarness({
       `
       import React,{useState} from 'react';import {createRoot} from 'react-dom/client';import {BrowserRouter} from 'react-router';
       import {RecommendationsPage} from ${JSON.stringify(root + '/src/features/recommendations/RecommendationsPage.tsx')};
-      import {setAccessToken} from ${JSON.stringify(root + '/src/features/auth/auth-state.ts')};
-      setAccessToken(${authenticated ? "'student-test-token'" : 'null'});
+      import {setAccessToken,setAuthenticated,setGuest,getAccessToken} from ${JSON.stringify(root + '/src/features/auth/auth-state.ts')};
+      const initialUser={id:1,email:'test@example.invalid',fullName:'Test',avatarUrl:null,role:'Student'};
+      ${authenticated ? "setAuthenticated('student-test-token',initialUser);" : 'setGuest();'}
       const e=React.createElement;
       function Harness(){const [token,updateToken]=useState(${authenticated ? "'student-test-token'" : 'null'});const [role,setRole]=useState(${authenticated ? "'Student'" : 'null'});const [visible,setVisible]=useState(true);
         const setToken=(value)=>{setAccessToken(value);updateToken(value);};
-        window.recommendationTest={setToken,setRole,setVisible};
+        const changeRole=(value)=>{setRole(value);if(value)setAuthenticated(getAccessToken() || 'student-test-token',{...initialUser,role:value});else setGuest();};
+        window.recommendationTest={setToken:(value)=>{setToken(value);if(!value)setGuest();},setRole:changeRole,setVisible,setUser:(id)=>setAuthenticated(getAccessToken() || token,{...initialUser,id}),logout:()=>{setGuest();updateToken(null);},rotate:(value)=>{setAuthenticated(value,initialUser);updateToken(value);}};
         return visible?e(RecommendationsPage,{accessToken:token,role,onCompleteProfile:()=>{window.profileRequested=true;},onSignIn:()=>{window.signInRequested=true;}}):e('p',null,'Unmounted');}
       createRoot(document.getElementById('root')).render(e(BrowserRouter,null,e(Harness)));
     `,

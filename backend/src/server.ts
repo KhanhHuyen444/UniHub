@@ -2,15 +2,18 @@ import { app } from './app.js';
 import { readPort } from './config/env.js';
 import { disconnectPrismaClient } from './lib/prisma.js';
 import { createReminderScheduler } from './modules/events/reminders.scheduler.js';
+import { createConfiguredReminderEmailWorker } from './modules/events/reminder-email.worker.js';
 import { shutdownServer } from './shutdown.js';
 
 const port = readPort();
 const host = '127.0.0.1';
 const reminderScheduler = createReminderScheduler();
+const reminderEmailWorker = createConfiguredReminderEmailWorker();
 
 const server = app.listen(port, host, () => {
   console.info(`UniHub HTTP server: http://${host}:${port}`);
   reminderScheduler.start();
+  reminderEmailWorker.start();
 });
 
 server.on('error', (error: NodeJS.ErrnoException) => {
@@ -25,7 +28,9 @@ async function shutdown() {
   shuttingDown = true;
   console.info('Đang dừng HTTP server…');
   await shutdownServer({
-    stopScheduler: () => reminderScheduler.stop(),
+    stopScheduler: async () => {
+      await Promise.all([reminderScheduler.stop(), reminderEmailWorker.stop()]);
+    },
     closeHttp: () =>
       new Promise<void>((resolve, reject) => {
         server.close((error) => (error ? reject(error) : resolve()));

@@ -4,7 +4,13 @@ import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
 let vite, api, contracts, fetcher;
 const original = globalThis.fetch;
-const row = { id: 12, type: 'Major', name: 'Data', status: 'Active' };
+const row = {
+  id: 12,
+  type: 'Major',
+  name: 'Data',
+  status: 'Active',
+  createdAt: '2026-10-28T18:30:00.000Z',
+};
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
@@ -20,6 +26,22 @@ before(async () => {
     server: { middlewareMode: true },
   });
   api = await vite.ssrLoadModule('/src/features/admin/categories/api.ts');
+  const state = await vite.ssrLoadModule('/src/features/auth/auth-state.ts');
+  const originalApi = api;
+  api = new Proxy(originalApi, {
+    get(target, key) {
+      return (...args) => {
+        state.setAuthenticated(args[0], {
+          id: 1,
+          email: 'test@example.com',
+          fullName: 'Test',
+          avatarUrl: null,
+          role: 'Admin',
+        });
+        return target[key](...args);
+      };
+    },
+  });
   contracts = await vite.ssrLoadModule(
     '/src/features/admin/categories/contracts.ts',
   );
@@ -190,4 +212,55 @@ test('HTTP permission/business/database errors, network and abort propagate with
     api.getAdminCategories('token', 'Major'),
     (error) => error === aborted,
   );
+});
+
+test('401 refresh retries with rotated auth token and preserves AbortSignal', async () => {
+  const user = {
+    id: 1,
+    email: 'test@example.com',
+    fullName: 'Test',
+    avatarUrl: null,
+    role: 'Admin',
+  };
+  const controller = new AbortController();
+  const seen = [];
+  fetcher = async (path, options) => {
+    seen.push(path);
+    if (path === '/api/auth/refresh')
+      return json({
+        accessToken: 'rotated',
+        tokenType: 'Bearer',
+        expiresIn: 900,
+        user,
+      });
+    if (path === '/api/auth/me') return json({ user });
+    assert.equal(options.signal, controller.signal);
+    if (options.headers.get('Authorization') !== 'Bearer rotated')
+      return json({ error: { code: 'UNAUTHORIZED', message: 'Expired' } }, 401);
+    return json({ items: [row] });
+  };
+  await api.getAdminCategories('old', 'Major', controller.signal);
+  assert.equal(seen.filter((path) => path === '/api/auth/refresh').length, 1);
+  assert.equal(seen.length, 4);
+});
+
+test('createdAt validates canonical UTC dates and safely normalizes invalid metadata', () => {
+  assert.equal(contracts.parseAdminCategory(row).createdAt, row.createdAt);
+  for (const createdAt of [
+    undefined,
+    null,
+    123,
+    '',
+    'invalid',
+    '2026-02-30T00:00:00.000Z',
+    '2026-10-28',
+    '2026-10-28T18:30:00.000+07:00',
+  ]) {
+    const result = contracts.parseAdminCategories(
+      { items: [{ ...row, createdAt }] },
+      'Major',
+    );
+    assert.equal(result[0].createdAt, null);
+    assert.equal(result[0].name, row.name);
+  }
 });

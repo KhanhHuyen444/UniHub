@@ -1,4 +1,5 @@
-import { ApiError, apiRequest } from '../../../lib/api';
+import { ApiError } from '../../../lib/api';
+import { protectedApiRequest } from '../../auth/auth-api';
 import {
   invalidResponse,
   isCategoryId,
@@ -17,14 +18,13 @@ function invalid(code = 'VALIDATION_ERROR'): never {
     { code, kind: 'request' },
   );
 }
-function headers(token: string) {
+function validateToken(token: string) {
   if (!token.trim())
     throw new ApiError('Cần đăng nhập Admin.', {
       code: 'UNAUTHORIZED',
       kind: 'request',
       status: 401,
     });
-  return { Authorization: `Bearer ${token}` };
 }
 function fields(name: string, reason: string | null) {
   if (
@@ -48,9 +48,9 @@ export async function getAdminCategories(
   type: CategoryType,
   signal?: AbortSignal,
 ) {
+  validateToken(token);
   if (!isCategoryType(type)) invalid('INVALID_QUERY');
-  const result = await apiRequest<unknown>('/api/admin/categories', {
-    headers: headers(token),
+  const result = await protectedApiRequest<unknown>('/api/admin/categories', {
     query: new URLSearchParams({ type }),
     signal,
   });
@@ -63,12 +63,12 @@ export async function createAdminCategory(
   reason: string | null,
   signal?: AbortSignal,
 ) {
+  validateToken(token);
   if (!isCategoryType(type)) invalid();
   const body = { type, ...fields(name, reason) };
   const category = parseCreatedCategory(
-    await apiRequest<unknown>('/api/admin/categories', {
+    await protectedApiRequest<unknown>('/api/admin/categories', {
       method: 'POST',
-      headers: headers(token),
       body,
       signal,
     }),
@@ -84,12 +84,12 @@ export async function renameAdminCategory(
   reason: string | null,
   signal?: AbortSignal,
 ) {
+  validateToken(token);
   if (!isCategoryId(id)) invalid('INVALID_ID');
   const body = fields(name, reason);
   const result = parseCategoryChange(
-    await apiRequest<unknown>(`/api/admin/categories/${id}`, {
+    await protectedApiRequest<unknown>(`/api/admin/categories/${id}`, {
       method: 'PATCH',
-      headers: headers(token),
       body,
       signal,
     }),
@@ -105,13 +105,13 @@ export async function setAdminCategoryStatus(
   reason: string | null,
   signal?: AbortSignal,
 ) {
+  validateToken(token);
   if (!isCategoryId(id)) invalid('INVALID_ID');
   if (!isCategoryStatus(status)) invalid();
   validateReason(reason);
   const result = parseCategoryChange(
-    await apiRequest<unknown>(`/api/admin/categories/${id}/status`, {
+    await protectedApiRequest<unknown>(`/api/admin/categories/${id}/status`, {
       method: 'PATCH',
-      headers: headers(token),
       body: { status, reason },
       signal,
     }),

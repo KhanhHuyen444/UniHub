@@ -1,26 +1,24 @@
-# Admin Categories frontend — TV3 / PR #25
+# Admin Categories frontend — TV3
 
 `AdminCategoriesPage` is reusable content for the existing Admin Categories API.
-No Backend/Auth/schema/migration changes are included in this frontend update.
+Admin responses include creation dates; no Auth/schema/migration changes are
+part of this module update. This documents the current checkout, including
+uncommitted integration changes, and does not claim they are merged.
 
 ## Verified dependencies and handoff
 
-Frontend Auth currently contains only its README, without an integrated session
-provider/token lifecycle. `AdminLayout` is a preview with placeholder identity
-and disabled logout; it is not an authenticated product shell. No shared route
-or layout is edited here. UI reuses existing controls/tokens but is not verified
-against Figma.
+`AdminCategoriesRoute` connects the page to existing Auth, `RequireRole('Admin')`
+and `AdminLayout` at `/admin/categories`. The user confirmed localhost CRUD,
+validation, authorization, audit and creation dates for Major and Skill.
+Automated page tests use a harness and do not verify the full product router or
+real Google login. Shared Auth/router/layout are not modified by this review.
 
 ```tsx
 <AdminCategoriesPage accessToken={accessToken} role={role} />
 ```
 
-Bình supplies the real Auth-owned token and role, handles refresh/re-login/logout,
-and clears/updates props when identity changes. No JWT decoding, login flow or
-persistent token storage is added. Huyền mounts this content in the guarded
-`/admin/categories` route and real Admin shell, preserving existing routes and
-resolving preview identity/logout. Until then this is not a complete product
-login-to-Admin integration.
+The page subscribes to existing Auth state. Auth owns refresh/re-login/logout;
+this module adds no independent JWT decoding, login flow or persistent storage.
 
 ## API and behavior
 
@@ -32,12 +30,28 @@ login-to-Admin integration.
 - `setAdminCategoryStatus`: PATCH `/api/admin/categories/:id/status` with
   status/reason. No DELETE, type change or reference replacement.
 
-All calls reuse shared `apiRequest` with Authorization Bearer. Runtime parsers
+All calls reuse shared `protectedApiRequest` with the current Auth Bearer token
+and refresh lifecycle. The token prop checks availability; it is not an independent
+credential source. Runtime parsers
 check envelopes, exact enums, unique positive INT IDs, names and mutation target/
 result consistency. Requests validate trimmed names (1–100 Unicode code points),
 optional/null reason (at most 500 code points), IDs and enum values. Invalid data
 never becomes an empty success. HTTP code/status, network and abort semantics
 are preserved; Backend remains authoritative for authorization and business rules.
+
+Every Admin category has `createdAt`, serialized from `created_at` as canonical
+ISO 8601 UTC, including mutation/no-op responses. The parser normalizes invalid
+or missing date metadata to null; only the date cell falls back to `—`.
+Valid dates display `dd/MM/yyyy` in `Asia/Ho_Chi_Minh`. Public Major/Student Skill
+Options responses do not change.
+
+Skill search filters the full loaded list before eight-row client pagination.
+It trims the query, ignores case and preserves accents. It does not normalize
+Unicode composition or implement fuzzy search. Search/tab changes reset page one;
+successful reloads clamp the stored page when results shrink. Loading preserves
+the page. The summary shows the visible range and total matching items.
+Major displays its full list without search or pagination. No q/page API parameters
+are added.
 
 The page provides Major/Skill selection, statuses, create/rename forms, status
 confirmation, optional reasons, loading/error/empty/retry/saving and no-op notice.
@@ -52,8 +66,8 @@ ordering/current state. Save success and subsequent list-reload failure remain
 distinct. Network failure after a mutation can be ambiguous: reload to inspect
 state before manually resubmitting. Mutations are not automatically retried.
 
-Reads abort on type/token/reload/unmount and ignore stale results. Replacing a
-token remounts the workspace, resets old forms/data and aborts pending operations.
+Reads abort on type/token/reload/unmount and ignore stale results. Token rotation
+preserves modal drafts; switching user or logging out resets the workspace.
 Abort does not guarantee cancellation of an already committed server mutation.
 
 ## Verification
@@ -100,6 +114,9 @@ in-process WASM generator outside the checkout. Then run
 these execute the checks without the blocked native generation lifecycle. Do not
 disable TLS/checksum verification or change dependency/schema/lockfiles.
 
-Not verified: real Google login/session UI, final guarded Admin routing/layout,
-Windows, production data/grants, performance NFRs, deployment or Figma fidelity.
+Verified by automated checks on Windows with Node 24: TypeScript/Vite, API tests
+and Chromium page tests, including date timezone/fallback and Skill pagination.
+User localhost confirmation is separate from automated coverage.
+Not verified by these tests: real Google login, full product routing/layout,
+production data/grants, performance NFRs, deployment or Figma fidelity.
 Profile, Guidance, Recommendations and other Admin modules are outside this update.

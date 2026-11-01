@@ -16,6 +16,7 @@ type CategoryRow = {
   type: string;
   name: string;
   status: string;
+  created_at: Date;
 };
 export type CategoryMutation =
   | { kind: 'create'; type: CategoryType; name: string; reason: string | null }
@@ -27,12 +28,14 @@ const select = {
   type: true,
   name: true,
   status: true,
+  created_at: true,
 } as const;
 const toCategory = (row: CategoryRow) => ({
   id: row.category_id,
   name: row.name,
   type: row.type,
   status: row.status,
+  createdAt: row.created_at.toISOString(),
 });
 const invalid = (code: string) =>
   new ApiError(400, code, 'Yêu cầu danh mục không hợp lệ.');
@@ -115,7 +118,7 @@ async function mutate(
   // acquire the same ordered locks, serializing lifecycle checks across types.
   // There is no pagination: lock all category rows (and InnoDB gaps) consistently.
   const rows = await tx.$queryRaw<CategoryRow[]>`
-    SELECT category_id, type, name, status FROM categories ORDER BY category_id FOR UPDATE
+    SELECT category_id, type, name, status, created_at FROM categories ORDER BY category_id FOR UPDATE
   `;
   if (input.kind === 'create') {
     const row = await tx.category.create({

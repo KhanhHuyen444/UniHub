@@ -19,10 +19,29 @@ const identity = {
   role: 'Admin',
   sessionId: 'd7f55cee-2d7c-4df9-aece-36b6eb446db5',
 };
+const createdAt = '2026-10-28T18:30:00.000Z';
 const initial = [
-  { category_id: 1, type: 'Major', name: 'A', status: 'Active' },
-  { category_id: 2, type: 'Major', name: 'B', status: 'Active' },
-  { category_id: 3, type: 'Skill', name: 'SQL', status: 'Closed' },
+  {
+    category_id: 1,
+    type: 'Major',
+    name: 'A',
+    status: 'Active',
+    created_at: new Date(createdAt),
+  },
+  {
+    category_id: 2,
+    type: 'Major',
+    name: 'B',
+    status: 'Active',
+    created_at: new Date(createdAt),
+  },
+  {
+    category_id: 3,
+    type: 'Skill',
+    name: 'SQL',
+    status: 'Closed',
+    created_at: new Date(createdAt),
+  },
 ];
 
 async function fixture({
@@ -46,6 +65,7 @@ async function fixture({
           type: true,
           name: true,
           status: true,
+          created_at: true,
         });
         assert.deepEqual(orderBy, [{ name: 'asc' }, { category_id: 'asc' }]);
         return state.filter((row) => row.type === where.type);
@@ -72,7 +92,11 @@ async function fixture({
         category: {
           create: async ({ data }) => {
             if (duplicate) throw { code: 'P2002' };
-            const row = { category_id: 10, ...data };
+            const row = {
+              category_id: 10,
+              created_at: new Date(createdAt),
+              ...data,
+            };
             rows.push(row);
             return row;
           },
@@ -160,12 +184,21 @@ test('Admin create/list/rename/close/reopen use compact shared audit and preserv
     });
     assert.equal(created.status, 201);
     assert.deepEqual(await created.json(), {
-      category: { id: 10, type: 'Skill', name: 'TypeScript', status: 'Active' },
+      category: {
+        id: 10,
+        type: 'Skill',
+        name: 'TypeScript',
+        status: 'Active',
+        createdAt,
+      },
     });
     const list = await send(base, f.token, 'GET', '?type=Skill');
     assert.equal(list.status, 200);
     assert.deepEqual(
-      (await list.json()).items.map((row) => row.status),
+      (await list.json()).items.map((row) => {
+        assert.equal(row.createdAt, createdAt);
+        return row.status;
+      }),
       ['Closed', 'Active'],
     );
     for (const [path, body] of [
@@ -175,7 +208,9 @@ test('Admin create/list/rename/close/reopen use compact shared audit and preserv
     ]) {
       const response = await send(base, f.token, 'PATCH', path, body);
       assert.equal(response.status, 200);
-      assert.equal((await response.json()).changed, true);
+      const result = await response.json();
+      assert.equal(result.changed, true);
+      assert.equal(result.category.createdAt, createdAt);
     }
   });
   const { logs, state } = f.snapshot();
@@ -241,7 +276,11 @@ test('strict query/path/body validation rejects invalid requests before mutation
     [
       'POST',
       '',
-      { type: 'Major', name: 'X', status: 'Active' },
+      {
+        type: 'Major',
+        name: 'X',
+        status: 'Active',
+      },
       'INVALID_REQUEST',
     ],
     ['POST', '', { type: 'major', name: 'X' }, 'VALIDATION_ERROR'],
@@ -337,7 +376,9 @@ test('no-op, missing target and final Active never write logs', async () => {
     ]) {
       const response = await send(base, f.token, 'PATCH', path, body);
       assert.equal(response.status, 200);
-      assert.equal((await response.json()).changed, false);
+      const result = await response.json();
+      assert.equal(result.changed, false);
+      assert.equal(result.category.createdAt, createdAt);
     }
     const missing = await send(base, f.token, 'PATCH', '/99', { name: 'X' });
     assert.equal(missing.status, 404);

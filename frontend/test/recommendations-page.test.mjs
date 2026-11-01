@@ -172,7 +172,7 @@ test(
 );
 
 test(
-  'Guest/Admin props never fetch; Student with invalid token gets 401, denied token gets 403',
+  'terminal 401 clears identity; Guest/Admin gates and direct 403 remain safe',
   options,
   async () => {
     await page.route('**/api/recommendations', (route) => {
@@ -186,38 +186,41 @@ test(
           );
     });
     await visit();
-    await visible('Phiên đăng nhập không hợp lệ');
+    await page.waitForFunction(
+      () =>
+        !document.querySelector('article') &&
+        document.body.textContent.includes('Student'),
+    );
     await page.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     assert.equal(await page.evaluate(() => window.signInRequested), true);
-    await page.evaluate(() => {
-      window.recommendationTest.setToken(null);
-      window.recommendationTest.setRole(null);
-    });
-    await visible('Cần đăng nhập Student');
-    assert.equal(
-      await page.evaluate(() => window.recommendationRequests.length),
-      1,
+    const count = await page.evaluate(
+      () => window.recommendationRequests.length,
     );
     await page.evaluate(() => {
       window.recommendationTest.setToken('admin-token');
       window.recommendationTest.setRole('Admin');
     });
-    await visible('Không có quyền xem gợi ý');
+    await page.waitForFunction(() => !document.querySelector('article'));
     assert.equal(
       await page.evaluate(() => window.recommendationRequests.length),
-      1,
+      count,
     );
     await page.evaluate(() => window.recommendationTest.setRole('Student'));
-    await visible('Tài khoản hiện tại không có quyền Student để xem gợi ý.');
-    await page.evaluate(() =>
-      window.recommendationTest.setToken('valid-token'),
-    );
+    await page
+      .getByText('Tài khoản hiện tại không có quyền Student để xem gợi ý.', {
+        exact: true,
+      })
+      .waitFor();
+    await page.evaluate(() => {
+      window.recommendationTest.setToken('valid-token');
+      window.recommendationTest.setUser(2);
+    });
     await visible('First opportunity');
   },
 );
 
 test(
-  'token change/unmount abort old requests, hide old data and ignore late results',
+  'user change/unmount abort old requests, hide old data and ignore late results',
   options,
   async () => {
     const pending = [];
@@ -226,9 +229,7 @@ test(
     });
     await visit();
     await visible('Đang tải cơ hội phù hợp');
-    await page.evaluate(() =>
-      window.recommendationTest.setToken('second-token'),
-    );
+    await page.evaluate(() => window.recommendationTest.setUser(2));
     await page.waitForFunction(
       () =>
         window.recommendationRequests.length === 2 &&
@@ -244,9 +245,7 @@ test(
       await page.getByText('Stale private item', { exact: true }).count(),
       0,
     );
-    await page.evaluate(() =>
-      window.recommendationTest.setToken('third-token'),
-    );
+    await page.evaluate(() => window.recommendationTest.setUser(3));
     await visible('Đang tải cơ hội phù hợp');
     assert.equal(
       await page.getByText('First opportunity', { exact: true }).count(),
@@ -274,6 +273,117 @@ test(
     await visible('Vui lòng thử lại. Mã lỗi: INVALID_RESPONSE');
     assert.equal(
       await page.getByText('Chưa có cơ hội phù hợp', { exact: true }).count(),
+      0,
+    );
+  },
+);
+
+test(
+  'same-user rotation keeps pending request and data; explicit retry fetches and logout clears data',
+  options,
+  async () => {
+    const pending = [];
+    await page.route('**/api/recommendations', (route) => pending.push(route));
+    await visit();
+    await page.waitForFunction(
+      () => window.recommendationRequests.length === 1,
+    );
+    await page.evaluate(() => window.recommendationTest.rotate('rotated'));
+    await page.waitForTimeout(100);
+    assert.equal(
+      await page.evaluate(() => window.recommendationRequests.length),
+      1,
+    );
+    assert.equal(
+      await page.evaluate(
+        () => window.recommendationRequests[0].signal.aborted,
+      ),
+      false,
+    );
+    await fulfill(pending[0]);
+    await visible('First opportunity');
+    await page.evaluate(() =>
+      window.recommendationTest.rotate('rotated-again'),
+    );
+    await page.waitForTimeout(100);
+    assert.equal(
+      await page.evaluate(() => window.recommendationRequests.length),
+      1,
+    );
+    await page.getByRole('button', { name: /Tải lại gợi ý/ }).click();
+    await page.waitForFunction(
+      () => window.recommendationRequests.length === 2,
+    );
+    assert.equal(
+      pending[1].request().headers().authorization,
+      'Bearer rotated-again',
+    );
+    await page.evaluate(() => window.recommendationTest.logout());
+    await page.waitForFunction(
+      () => window.recommendationRequests[1].signal.aborted,
+    );
+    await fulfill(
+      pending[1],
+      payload([{ ...item, title: 'Late after logout' }]),
+    ).catch(() => {});
+    assert.equal(await page.locator('article').count(), 0);
+    await page.evaluate(() => window.recommendationTest.rotate('new-session'));
+    await page.waitForFunction(
+      () => window.recommendationRequests.length === 3,
+    );
+    assert.equal(await page.locator('article').count(), 0);
+    await fulfill(pending[2]);
+    await visible('First opportunity');
+    await page.evaluate(() => window.recommendationTest.setRole('Admin'));
+    assert.equal(await page.locator('article').count(), 0);
+    await page.evaluate(() => window.recommendationTest.setRole('Student'));
+    await page.waitForFunction(
+      () => window.recommendationRequests.length === 4,
+    );
+    assert.equal(await page.locator('article').count(), 0);
+  },
+);
+
+test(
+  'role revocation aborts pending data and batched logout/login for same user starts a fresh scope',
+  options,
+  async () => {
+    const pending = [];
+    await page.route('**/api/recommendations', (route) => pending.push(route));
+    await visit();
+    await page.waitForFunction(
+      () => window.recommendationRequests.length === 1,
+    );
+    await page.evaluate(() => window.recommendationTest.setRole('Admin'));
+    await page.waitForFunction(
+      () => window.recommendationRequests[0].signal.aborted,
+    );
+    await fulfill(
+      pending[0],
+      payload([{ ...item, title: 'Revoked response' }]),
+    ).catch(() => {});
+    assert.equal(await page.locator('article').count(), 0);
+    await page.evaluate(() => window.recommendationTest.setRole('Student'));
+    await page.waitForFunction(
+      () => window.recommendationRequests.length === 2,
+    );
+    await fulfill(pending[1]);
+    await visible('First opportunity');
+    await page.evaluate(() => {
+      window.recommendationTest.logout();
+      window.recommendationTest.rotate('fresh-same-user');
+    });
+    await page.waitForFunction(
+      () => window.recommendationRequests.length === 3,
+    );
+    assert.equal(await page.locator('article').count(), 0);
+    await fulfill(
+      pending[2],
+      payload([{ ...item, title: 'Fresh session item' }]),
+    );
+    await visible('Fresh session item');
+    assert.equal(
+      await page.getByText('First opportunity', { exact: true }).count(),
       0,
     );
   },

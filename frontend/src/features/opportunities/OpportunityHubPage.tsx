@@ -13,10 +13,11 @@ import {
   Select,
 } from '../../components/ui';
 import { PublicLayout } from '../../layouts/PublicLayout';
+import { StudentLayout } from '../../layouts/StudentLayout';
+import { useAuth } from '../auth/AuthProvider';
 import {
   buildOpportunityQuery,
   filtersFromSearch,
-  formatOpportunityDate,
   hasOpportunityFilters,
   pageFromSearch,
   pageSizeFromSearch,
@@ -24,10 +25,12 @@ import {
   type OpportunityFilters,
   type OpportunityListResponse,
   type OpportunityDeadline,
-  type PublicOpportunitySummary,
+  type PublicOpportunityListItem,
 } from './contracts';
 import { getMajorOptions, getOpportunityList } from './api';
 import arrowRightIcon from '../../assets/arrow-right.svg';
+import { hubDeadlineLabel } from './hub-deadline';
+import './opportunity-hub.css';
 
 type RequestState<T> =
   | { status: 'loading' }
@@ -80,34 +83,46 @@ function listErrorCopy(code: string): { title: string; description: string } {
   };
 }
 
-function deadlineCopy(deadline: OpportunityDeadline | null): {
-  date: string;
-  state: 'open' | 'expired' | null;
-} | null {
-  if (!deadline || deadline.precision === 'unknown' || !deadline.date) {
-    return null;
+/** Deadline display với urgency indicator theo design V2 */
+function DeadlineBadge({
+  deadline,
+  evaluatedAt,
+}: {
+  deadline: OpportunityDeadline;
+  evaluatedAt: string;
+}) {
+  const label = hubDeadlineLabel(deadline, evaluatedAt);
+  if (!label) return null;
+  if (label.variant !== 'plain') {
+    return (
+      <Badge
+        variant={label.variant}
+        className="hub-deadline-badge rounded-control font-medium"
+      >
+        {label.text}
+      </Badge>
+    );
   }
-  return {
-    date: formatOpportunityDate(deadline.date),
-    state: deadline.state,
-  };
+
+  return <p className="type-caption text-secondary">{label.text}</p>;
 }
 
 function OpportunityCard({
   item,
   returnTo,
+  evaluatedAt,
 }: {
-  item: PublicOpportunitySummary;
+  item: PublicOpportunityListItem;
   returnTo: string;
+  evaluatedAt: string;
 }) {
-  const deadline = deadlineCopy(item.deadline);
-
   return (
-    <Card className="min-h-[289px] p-5">
+    <Card className="p-5">
       <article
         aria-labelledby={`opportunity-${item.id}-title`}
         className="flex min-h-[247px] flex-col"
       >
+        {/* Badges row */}
         <div className="flex min-h-5 flex-wrap items-center gap-2">
           <Badge variant="info" className="min-w-[72px] justify-center">
             {item.type}
@@ -118,10 +133,12 @@ function OpportunityCard({
             </Badge>
           )}
         </div>
+
+        {/* Title & publisher */}
         <div className="mt-3">
           <h2
             id={`opportunity-${item.id}-title`}
-            className="min-h-8 text-base font-bold leading-7 text-ink"
+            className="text-base font-bold leading-6 text-ink line-clamp-2"
           >
             {item.title}
           </h2>
@@ -129,27 +146,48 @@ function OpportunityCard({
             <p className="mt-1 type-caption text-muted">{item.publisher}</p>
           )}
         </div>
-        {item.workFormat && (
-          <div className="mt-4 grid gap-2 type-caption text-secondary">
-            <p className="flex min-h-7 items-center gap-2">
+
+        {/* Work format & location */}
+        <div className="mt-3 grid gap-1.5 type-caption text-secondary">
+          {item.workFormat && (
+            <p className="flex items-center gap-2">
               <BuildingIcon />
-              <span className="font-medium text-ink">Hình thức:</span>
+              <span className="font-medium text-secondary">Hình thức:</span>
               <span>{item.workFormat}</span>
             </p>
-          </div>
-        )}
+          )}
+          {item.skills.length > 0 && (
+            <p className="flex min-w-0 items-start gap-2">
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 16 16"
+                className="h-4 w-4 shrink-0 text-subtle"
+                fill="none"
+              >
+                <path
+                  d="m5 4-4 4 4 4m6-8 4 4-4 4M9 2 7 14"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span className="shrink-0 font-medium">Kỹ năng:</span>
+              <span className="min-w-0 [overflow-wrap:anywhere]">
+                {item.skills.map((skill) => skill.name).join(', ')}
+              </span>
+            </p>
+          )}
+        </div>
+
+        {/* Bottom: deadline + CTA */}
         <div className="mt-auto border-t border-line pt-3">
-          {deadline && (
+          {item.deadline && item.deadline.precision !== 'unknown' && (
             <div className="mb-3">
-              {deadline.state === 'expired' ? (
-                <Badge variant="error" className="rounded-control font-medium">
-                  Hạn nộp: Đã hết hạn ({deadline.date})
-                </Badge>
-              ) : (
-                <p className="type-caption text-secondary">
-                  Hạn nộp: {deadline.date}
-                </p>
-              )}
+              <DeadlineBadge
+                deadline={item.deadline}
+                evaluatedAt={evaluatedAt}
+              />
             </div>
           )}
           <div className="flex min-h-7 items-center justify-end">
@@ -168,6 +206,8 @@ function OpportunityCard({
     </Card>
   );
 }
+
+/* ─── Icons ─── */
 
 function BuildingIcon() {
   return (
@@ -239,7 +279,26 @@ function BriefcaseIcon() {
   );
 }
 
+function XIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4" fill="none">
+      <path
+        d="M12 4 4 12M4 4l8 8"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/* ─── Main page ─── */
+
 export function OpportunityHubPage() {
+  useEffect(() => {
+    document.body.classList.add('opportunity-hub-page');
+    return () => document.body.classList.remove('opportunity-hub-page');
+  }, []);
   const routerLocation = useLocation();
   const [, setSearchParams] = useSearchParams();
   const [draft, setDraft] = useState<OpportunityFilters>(emptyFilters);
@@ -325,6 +384,7 @@ export function OpportunityHubPage() {
   }, [majorRevision]);
 
   const returnTo = `${routerLocation.pathname}${routerLocation.search}`;
+  const appliedFilters = filtersFromSearch(routerLocation.search);
   const hasFilters = hasOpportunityFilters(routerLocation.search);
   const page = pageFromSearch(routerLocation.search);
   const pageSize = pageSizeFromSearch(routerLocation.search);
@@ -337,8 +397,9 @@ export function OpportunityHubPage() {
   );
   const selectedMajorName =
     majorState.status === 'success'
-      ? majorState.data.find((major) => String(major.id) === draft.majorId)
-          ?.name
+      ? majorState.data.find(
+          (major) => String(major.id) === appliedFilters.majorId,
+        )?.name
       : undefined;
 
   function updateDraft(key: keyof OpportunityFilters, value: string) {
@@ -394,203 +455,230 @@ export function OpportunityHubPage() {
         ? 'Hiện chưa có chuyên ngành để chọn.'
         : '';
 
+  const auth = useAuth();
+  const isStudent =
+    auth.status === 'authenticated' && auth.user?.role === 'Student';
+
+  const pageContent = (
+    <div className="pb-[58px]">
+      {/* ── Hero header ── */}
+      <header className="pb-2 pt-1">
+        <Badge
+          variant="info"
+          className="inline-flex h-[26px] min-h-[26px] items-center gap-1 whitespace-nowrap bg-cyan px-3 text-navy"
+        >
+          <BriefcaseIcon />
+          Cổng thông tin tuyển dụng &amp; học bổng
+        </Badge>
+        <h1 className="mt-3 type-display text-ink">Khám phá Cơ hội</h1>
+        <p className="mt-2 max-w-[672px] type-body text-secondary">
+          Hàng trăm cơ hội thực tập, việc làm và học bổng uy tín dành riêng cho
+          sinh viên Việt Nam, cập nhật liên tục mỗi ngày.
+        </p>
+      </header>
+
+      {/* ── Filter card ── */}
+      <Card className="mt-6 px-6 pb-6 pt-5">
+        <form onSubmit={submitSearch} noValidate>
+          {/* 4-column filter row */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Keyword */}
+            <div className="grid gap-1.5">
+              <label
+                htmlFor="opportunity-query"
+                className="type-label font-medium text-secondary"
+              >
+                Từ khóa
+              </label>
+              <div className="relative">
+                <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-subtle">
+                  <SearchIcon />
+                </span>
+                <Input
+                  id="opportunity-query"
+                  value={draft.q}
+                  onChange={(event) =>
+                    updateDraft('q', event.currentTarget.value)
+                  }
+                  placeholder="Nhập tiêu đề, đơn vị đăng hoặc kỹ năng..."
+                  autoComplete="off"
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
+            {/* Major */}
+            <FormField
+              id="opportunity-major"
+              label="Chuyên ngành"
+              className="gap-1.5"
+            >
+              <Select
+                value={draft.majorId}
+                disabled={
+                  majorState.status !== 'success' ||
+                  majorState.data.length === 0
+                }
+                onChange={(event) =>
+                  updateDraft('majorId', event.currentTarget.value)
+                }
+              >
+                <option value="">
+                  {majorState.status === 'error'
+                    ? 'Chuyên ngành chưa khả dụng'
+                    : majorState.status === 'loading'
+                      ? 'Đang tải chuyên ngành...'
+                      : majorState.data.length === 0
+                        ? 'Chưa có chuyên ngành'
+                        : 'Tất cả chuyên ngành'}
+                </option>
+                {draft.majorId && !availableMajorIds.has(draft.majorId) && (
+                  <option value={draft.majorId} disabled>
+                    Chuyên ngành đã chọn không còn khả dụng
+                  </option>
+                )}
+                {majorState.status === 'success' &&
+                  majorState.data.map((major) => (
+                    <option key={major.id} value={String(major.id)}>
+                      {major.name}
+                    </option>
+                  ))}
+              </Select>
+            </FormField>
+
+            {/* Type */}
+            <FormField
+              id="opportunity-type"
+              label="Loại cơ hội"
+              className="gap-1.5"
+            >
+              <Select
+                value={draft.type}
+                onChange={(event) =>
+                  updateDraft('type', event.currentTarget.value)
+                }
+              >
+                <option value="">Tất cả loại cơ hội</option>
+                <option value="Thực tập">Thực tập</option>
+                <option value="Việc làm">Việc làm</option>
+                <option value="Học bổng">Học bổng</option>
+              </Select>
+            </FormField>
+
+            {/* Work format */}
+            <FormField
+              id="opportunity-work-format"
+              label="Hình thức làm việc"
+              className="gap-1.5"
+            >
+              <Select
+                value={draft.workFormat}
+                onChange={(event) =>
+                  updateDraft('workFormat', event.currentTarget.value)
+                }
+              >
+                <option value="">Tất cả hình thức</option>
+                <option value="Online">Online</option>
+                <option value="Offline">Offline</option>
+                <option value="Hybrid">Hybrid</option>
+              </Select>
+            </FormField>
+          </div>
+
+          {/* Action row */}
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              {(submitHint || majorStatusMessage) && (
+                <p className="type-caption text-danger" role="status">
+                  {submitHint || majorStatusMessage}
+                </p>
+              )}
+              {majorState.status === 'error' && (
+                <Button
+                  variant="text"
+                  onClick={() => setMajorRevision((value) => value + 1)}
+                  className="shrink-0 px-2"
+                >
+                  Thử lại
+                </Button>
+              )}
+            </div>
+            <div className="ml-auto flex shrink-0 items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={clearFilters}
+                className="min-w-[120px] gap-1.5"
+              >
+                <XIcon />
+                Xóa bộ lọc
+              </Button>
+              <Button
+                type="submit"
+                className="min-w-[125px] gap-2 shadow-button"
+              >
+                <SearchIcon />
+                Tìm kiếm
+              </Button>
+            </div>
+          </div>
+        </form>
+      </Card>
+
+      {/* ── List states ── */}
+      {listState.status === 'loading' && (
+        <LoadingState
+          className="mt-8"
+          title="Đang tải cơ hội"
+          description="Danh sách sẽ xuất hiện khi dữ liệu sẵn sàng."
+        />
+      )}
+
+      {listState.status === 'error' && listError && (
+        <ErrorState
+          className="mt-8"
+          title={listError.title}
+          description={listError.description}
+          onRetry={() => setListRevision((value) => value + 1)}
+        >
+          {isClosedMajorError && (
+            <Button variant="outline" onClick={clearClosedMajorFilter}>
+              Xóa bộ lọc chuyên ngành
+            </Button>
+          )}
+        </ErrorState>
+      )}
+
+      {listState.status === 'success' && (
+        <OpportunityResults
+          className="mt-8"
+          response={listState.data}
+          page={page}
+          hasFilters={hasFilters}
+          filters={appliedFilters}
+          selectedMajorName={selectedMajorName}
+          returnTo={returnTo}
+          onPageChange={goToPage}
+        />
+      )}
+    </div>
+  );
+
+  if (isStudent) {
+    return (
+      <StudentLayout activeKey="opportunities" variant="opportunities">
+        {pageContent}
+      </StudentLayout>
+    );
+  }
+
   return (
     <PublicLayout activeKey="opportunities" variant="opportunities">
-      <div className="pb-[58px]">
-        <header className="h-[134px]">
-          <Badge
-            variant="info"
-            className="h-[26px] min-h-[26px] w-[268px] gap-1 whitespace-nowrap bg-cyan px-2 text-navy"
-          >
-            <BriefcaseIcon />
-            Cổng thông tin tuyển dụng &amp; học bổng
-          </Badge>
-          <h1 className="mt-3 type-display text-ink">Khám phá Cơ hội</h1>
-          <p className="mt-1 max-w-[672px] type-body text-secondary">
-            Hàng trăm cơ hội thực tập, việc làm và học bổng uy tín dành riêng
-            cho sinh viên Việt Nam, cập nhật liên tục mỗi ngày.
-          </p>
-        </header>
-
-        <Card className="mt-6 h-[188px] px-6 pb-6 pt-8">
-          <form
-            onSubmit={submitSearch}
-            noValidate
-            className="flex h-[130px] flex-col gap-4"
-          >
-            <div className="grid h-[66px] grid-cols-1 gap-4 lg:grid-cols-4">
-              <div className="grid gap-1.5">
-                <label
-                  htmlFor="opportunity-query"
-                  className="type-label font-medium text-secondary"
-                >
-                  Từ khóa
-                </label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-subtle">
-                    <SearchIcon />
-                  </span>
-                  <Input
-                    id="opportunity-query"
-                    value={draft.q}
-                    onChange={(event) =>
-                      updateDraft('q', event.currentTarget.value)
-                    }
-                    placeholder="Nhập tiêu đề, đơn vị đăng hoặc kỹ năng..."
-                    autoComplete="off"
-                    className="pl-9"
-                  />
-                </div>
-              </div>
-
-              <FormField
-                id="opportunity-major"
-                label="Chuyên ngành"
-                className="gap-1.5"
-              >
-                <Select
-                  value={draft.majorId}
-                  disabled={
-                    majorState.status !== 'success' ||
-                    majorState.data.length === 0
-                  }
-                  onChange={(event) =>
-                    updateDraft('majorId', event.currentTarget.value)
-                  }
-                >
-                  <option value="">
-                    {majorState.status === 'error'
-                      ? 'Chuyên ngành chưa khả dụng'
-                      : majorState.status === 'loading'
-                        ? 'Đang tải chuyên ngành...'
-                        : majorState.data.length === 0
-                          ? 'Chưa có chuyên ngành'
-                          : 'Tất cả chuyên ngành'}
-                  </option>
-                  {draft.majorId && !availableMajorIds.has(draft.majorId) && (
-                    <option value={draft.majorId} disabled>
-                      Chuyên ngành đã chọn không còn khả dụng
-                    </option>
-                  )}
-                  {majorState.status === 'success' &&
-                    majorState.data.map((major) => (
-                      <option key={major.id} value={String(major.id)}>
-                        {major.name}
-                      </option>
-                    ))}
-                </Select>
-              </FormField>
-
-              <FormField
-                id="opportunity-type"
-                label="Loại cơ hội"
-                className="gap-1.5"
-              >
-                <Select
-                  value={draft.type}
-                  onChange={(event) =>
-                    updateDraft('type', event.currentTarget.value)
-                  }
-                >
-                  <option value="">Tất cả loại cơ hội</option>
-                  <option value="Thực tập">Thực tập</option>
-                  <option value="Việc làm">Việc làm</option>
-                  <option value="Học bổng">Học bổng</option>
-                </Select>
-              </FormField>
-
-              <FormField
-                id="opportunity-work-format"
-                label="Hình thức làm việc"
-                className="gap-1.5"
-              >
-                <Select
-                  value={draft.workFormat}
-                  onChange={(event) =>
-                    updateDraft('workFormat', event.currentTarget.value)
-                  }
-                >
-                  <option value="">Tất cả hình thức</option>
-                  <option value="Online">Online</option>
-                  <option value="Offline">Offline</option>
-                  <option value="Hybrid">Hybrid</option>
-                </Select>
-              </FormField>
-            </div>
-
-            <div className="flex h-12 items-center justify-between">
-              <div className="flex min-w-0 items-center gap-3">
-                {(submitHint || majorStatusMessage) && (
-                  <p className="type-caption text-danger" role="status">
-                    {submitHint || majorStatusMessage}
-                  </p>
-                )}
-                {majorState.status === 'error' && (
-                  <Button
-                    variant="text"
-                    onClick={() => setMajorRevision((value) => value + 1)}
-                    className="shrink-0 px-2"
-                  >
-                    Thử lại
-                  </Button>
-                )}
-              </div>
-              <div className="flex shrink-0 items-center gap-3">
-                <Button
-                  variant="outline"
-                  onClick={clearFilters}
-                  className="min-w-[104px]"
-                >
-                  Xóa bộ lọc
-                </Button>
-                <Button type="submit" className="min-w-[125px] shadow-soft">
-                  <SearchIcon />
-                  Tìm kiếm
-                </Button>
-              </div>
-            </div>
-          </form>
-        </Card>
-
-        {listState.status === 'loading' && (
-          <LoadingState
-            className="mt-8"
-            title="Đang tải cơ hội"
-            description="Danh sách sẽ xuất hiện khi dữ liệu sẵn sàng."
-          />
-        )}
-
-        {listState.status === 'error' && listError && (
-          <ErrorState
-            className="mt-8"
-            title={listError.title}
-            description={listError.description}
-            onRetry={() => setListRevision((value) => value + 1)}
-          >
-            {isClosedMajorError && (
-              <Button variant="outline" onClick={clearClosedMajorFilter}>
-                Xóa bộ lọc chuyên ngành
-              </Button>
-            )}
-          </ErrorState>
-        )}
-
-        {listState.status === 'success' && (
-          <OpportunityResults
-            className="mt-8"
-            response={listState.data}
-            page={page}
-            hasFilters={hasFilters}
-            filters={draft}
-            selectedMajorName={selectedMajorName}
-            returnTo={returnTo}
-            onPageChange={goToPage}
-          />
-        )}
-      </div>
+      {pageContent}
     </PublicLayout>
   );
 }
+
+/* ─── Results section ─── */
 
 function OpportunityResults({
   className,
@@ -645,6 +733,7 @@ function OpportunityResults({
     );
   }
 
+  // Build human-readable result summary
   const summaryFilters = [
     filters.type ? filters.type.toLocaleLowerCase('vi-VN') : '',
     selectedMajorName ?? '',
@@ -653,39 +742,45 @@ function OpportunityResults({
     ? ` ${summaryFilters.join(' ')} phù hợp`
     : ' phù hợp';
   const visiblePages = pageWindow(page, response.meta.totalPages);
+  const evaluatedAt = response.meta.evaluatedAt;
 
   return (
     <section className={className} aria-label="Kết quả cơ hội">
-      <p
-        className="flex h-[35.5px] items-center type-body text-secondary"
-        aria-live="polite"
-      >
+      {/* Result count summary */}
+      <p className="min-h-[35.5px] type-body text-secondary" aria-live="polite">
         Tìm thấy{' '}
-        <strong className="mx-0.5 font-bold text-brand">
+        <strong className="mx-1 font-bold text-brand">
           {response.meta.total}
         </strong>{' '}
         cơ hội{summarySuffix}
       </p>
 
+      {/* Grid of cards */}
       <ul className="mt-4 grid list-none grid-cols-1 items-start gap-x-6 gap-y-5 p-0 md:grid-cols-2 xl:grid-cols-3">
         {response.items.map((item) => (
           <li key={item.id}>
-            <OpportunityCard item={item} returnTo={returnTo} />
+            <OpportunityCard
+              item={item}
+              returnTo={returnTo}
+              evaluatedAt={evaluatedAt}
+            />
           </li>
         ))}
       </ul>
 
+      {/* Pagination */}
       {response.meta.totalPages > 1 && (
         <nav
           aria-label="Phân trang danh sách cơ hội"
-          className="mt-4 flex h-[120px] flex-wrap items-center justify-center gap-1.5"
+          className="mt-8 flex flex-wrap items-center justify-center gap-1.5"
         >
           <Button
             variant="outline"
             size="compact"
-            className="w-[83px] whitespace-nowrap border-control bg-white px-2 text-secondary disabled:border-control disabled:bg-white disabled:text-muted"
+            className="min-w-[83px] whitespace-nowrap border-control bg-white px-3 text-secondary disabled:border-control disabled:bg-white disabled:text-muted"
             disabled={page <= 1}
             onClick={() => onPageChange(page - 1)}
+            aria-label="Trang trước"
           >
             &lt; Trước
           </Button>
@@ -697,6 +792,11 @@ function OpportunityResults({
               aria-current={pageNumber === page ? 'page' : undefined}
               aria-label={`Trang ${pageNumber}`}
               onClick={() => onPageChange(pageNumber)}
+              className={
+                pageNumber !== page
+                  ? 'border-control bg-white text-secondary hover:bg-brand/5'
+                  : ''
+              }
             >
               {pageNumber}
             </Button>
@@ -704,9 +804,10 @@ function OpportunityResults({
           <Button
             variant="outline"
             size="compact"
-            className="w-[73px] whitespace-nowrap border-control bg-white px-2 text-secondary disabled:border-control disabled:bg-white disabled:text-muted"
+            className="min-w-[73px] whitespace-nowrap border-control bg-white px-3 text-secondary disabled:border-control disabled:bg-white disabled:text-muted"
             disabled={page >= response.meta.totalPages}
             onClick={() => onPageChange(page + 1)}
+            aria-label="Trang tiếp"
           >
             Tiếp &gt;
           </Button>

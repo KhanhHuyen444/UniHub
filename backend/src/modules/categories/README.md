@@ -1,7 +1,7 @@
 # Categories
 
 TV3 owns `backend/src/modules/categories` for shared categories, guidance and
-future category administration. The public Major read endpoint is implemented
+category administration. The public Major read endpoint is implemented
 on `main` after PR #13.
 
 ## Major options endpoint
@@ -129,12 +129,19 @@ Implemented under `/api/admin/categories`, using the existing shared
 Student returns 403. Public Major and Student Skill Options routes are unchanged.
 
 - `GET ?type=Major|Skill`: exact, required query; returns Active and Closed rows
-  sorted by `name ASC, category_id ASC`, with only `id/name/type/status`.
+  sorted by `name ASC, category_id ASC`, with `id/name/type/status/createdAt`.
 - `POST /`: `{type,name,reason?}` creates an Active category (201).
 - `PATCH /:id`: `{name,reason?}` renames either Active or Closed categories.
 - `PATCH /:id/status`: `{status,reason?}` closes/reopens a category.
 - No DELETE route, type change, reference replacement, search or pagination.
   Existing IDs and all profile/opportunity/skill references are preserved.
+
+Every Admin category response (list, create, rename, status and no-op) includes
+`createdAt`, serialized from `created_at` using `Date.toISOString()` in UTC.
+Rename/status operations preserve the original timestamp. This read-only field
+is not accepted in requests and is not added to Public Major/Student Skill Options.
+The Admin frontend displays `dd/MM/yyyy` in `Asia/Ho_Chi_Minh`; invalid or missing
+date metadata falls back to `—` without discarding the list.
 
 Names are trimmed, nonempty and at most 100 Unicode code points. Reasons are
 optional/null or strings of at most 500 code points and are stored separately.

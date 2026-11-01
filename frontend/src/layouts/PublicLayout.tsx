@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { useAuth } from '../features/auth/AuthProvider';
 import { NotificationBell } from '../features/notifications/NotificationBell';
+import { StudentAccountMenu } from '../features/auth/StudentAccountMenu';
 import googleGLogo from '../assets/google-g-logo.svg';
 import { Brand } from './Brand';
 import { SiteFooter } from './SiteFooter';
@@ -27,13 +28,9 @@ export function PublicLayout({
   const area: Extract<ShellArea, 'public'> = 'public';
   const isOpportunities = variant === 'opportunities';
   const auth = useAuth();
-  const navigation =
-    auth.status === 'authenticated' && auth.user?.role === 'Student'
-      ? [
-          ...publicNavigation,
-          ...studentNavigation.filter((item) => item.key === 'calendar'),
-        ]
-      : publicNavigation;
+  const isStudent =
+    auth.status === 'authenticated' && auth.user?.role === 'Student';
+  const navigation = isStudent ? studentNavigation : publicNavigation;
 
   async function logout() {
     try {
@@ -46,20 +43,20 @@ export function PublicLayout({
   return (
     <div className="flex min-h-screen flex-col bg-page">
       <header
-        className={`${isOpportunities ? 'h-[81px]' : 'h-[72px]'} shrink-0 border-b border-line bg-white/90 shadow-nav backdrop-blur-[24px]`}
+        className={`relative z-40 ${isOpportunities ? 'h-[81px]' : 'h-[72px]'} shrink-0 border-b border-line bg-white/90 shadow-nav backdrop-blur-[24px]`}
       >
         <div
           className={`mx-auto flex h-full items-center justify-between px-8 ${isOpportunities ? 'w-full max-w-[1280px]' : 'max-w-public'}`}
         >
           <Brand area={area} previewNavigation={previewNavigation} />
           <nav aria-label="Điều hướng chính">
-            <ul className="flex items-center gap-8">
+            <ul className="flex items-center gap-6 xl:gap-8">
               {navigation.map((item) => (
                 <li key={item.key}>
                   <Link
                     to={navigationTarget(item, area, previewNavigation)}
                     aria-current={activeKey === item.key ? 'page' : undefined}
-                    className={`type-label inline-flex min-h-7 items-center border-b pb-1 font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${activeKey === item.key ? 'border-brand text-brand' : 'border-transparent text-secondary hover:text-brand'}`}
+                    className={`type-label inline-flex min-h-7 items-center whitespace-nowrap border-b pb-1 font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${activeKey === item.key ? 'border-brand text-brand' : 'border-transparent text-secondary hover:text-brand'}`}
                   >
                     {item.label}
                   </Link>
@@ -83,30 +80,28 @@ export function PublicLayout({
             </span>
           ) : auth.status === 'authenticated' && auth.user ? (
             <div className="flex h-12 w-[270px] shrink-0 items-center justify-end gap-3">
-              {auth.user.role === 'Student' && (
-                <NotificationBell key={auth.user.id} />
+              {auth.user.role === 'Student' ? (
+                <>
+                  <NotificationBell key={auth.user.id} />
+                  <StudentAccountMenu />
+                </>
+              ) : (
+                <>
+                  <span
+                    className="min-w-0 truncate type-label font-medium text-secondary"
+                    title={auth.user.fullName}
+                  >
+                    {auth.user.fullName}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => void logout()}
+                    className="shrink-0 rounded-control border border-control bg-white px-3 py-2 type-label font-medium text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  >
+                    Đăng xuất
+                  </button>
+                </>
               )}
-              <span
-                className="min-w-0 truncate type-label font-medium text-secondary"
-                title={auth.user.fullName}
-              >
-                {auth.user.fullName}
-              </span>
-              {auth.user.role === 'Student' && (
-                <Link
-                  to="/profile"
-                  className="shrink-0 text-sm text-brand underline"
-                >
-                  Hồ sơ cá nhân
-                </Link>
-              )}
-              <button
-                type="button"
-                onClick={() => void logout()}
-                className="shrink-0 rounded-control border border-control bg-white px-3 py-2 type-label font-medium text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-              >
-                Đăng xuất
-              </button>
             </div>
           ) : auth.status === 'restoring' ? (
             <span
