@@ -21,16 +21,16 @@ export function Brand({ area, previewNavigation }: BrandProps) {
     <Link
       to={target}
       aria-label={`${label} — Trang chủ`}
-      className="inline-flex shrink-0 items-center gap-3 rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+      className="group inline-flex shrink-0 items-center gap-3 rounded-sm transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
     >
       <img
         aria-hidden="true"
         src={logo}
         width={isAdmin ? 36 : 40}
         height={isAdmin ? 36 : 40}
-        className={isAdmin ? 'h-9 w-9' : 'h-10 w-10'}
+        className={`${isAdmin ? 'h-9 w-9' : 'h-10 w-10'} transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-3`}
       />
-      <span className="text-2xl font-bold leading-8">
+      <span className="text-2xl font-bold leading-8 transition-colors duration-200">
         <span className={wordmarkBase}>Uni</span>
         <span className="text-[#2563EB]">Hub</span>
       </span>

@@ -49,15 +49,17 @@ export function StudentAccountMenu() {
       }}
     >
       <summary
-        className="flex cursor-pointer list-none items-center gap-2 rounded-control p-1 hover:bg-surface/80 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden"
+        className="group flex cursor-pointer list-none items-center gap-2 rounded-control p-1 hover:bg-surface/80 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden"
         aria-label="Tài khoản sinh viên"
       >
-        <span className="hidden max-w-36 truncate text-sm font-semibold text-ink xl:block">
+        <span className="hidden max-w-36 truncate text-sm font-semibold text-ink group-hover:text-brand transition-colors xl:block">
           {user.fullName}
         </span>
-        <UserAvatar key={user.id} name={user.fullName} url={user.avatarUrl} />
+        <div className="transition-transform duration-200 group-hover:scale-105">
+          <UserAvatar key={user.id} name={user.fullName} url={user.avatarUrl} />
+        </div>
         <svg
-          className="h-3.5 w-3.5 text-secondary transition-transform"
+          className="h-3.5 w-3.5 text-secondary group-hover:text-brand transition-colors duration-200"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

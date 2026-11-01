@@ -43,24 +43,33 @@ export function StudentLayout({
           <Brand area={area} previewNavigation={previewNavigation} />
           <nav aria-label="Điều hướng sinh viên" className="min-w-0 flex-1">
             <ul className="flex items-center justify-between gap-4">
-              {studentNavigation.map((item) => (
-                <li key={item.key}>
-                  <Link
-                    to={navigationTarget(item, area, previewNavigation)}
-                    aria-current={activeKey === item.key ? 'page' : undefined}
-                    className={`type-label inline-flex min-h-7 items-center whitespace-nowrap border-b-2 px-0 pb-1 font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${activeKey === item.key ? 'border-brand text-brand' : 'border-transparent text-secondary hover:text-brand'}`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              {studentNavigation.map((item) => {
+                const active = activeKey === item.key;
+                return (
+                  <li key={item.key}>
+                    <Link
+                      to={navigationTarget(item, area, previewNavigation)}
+                      aria-current={active ? 'page' : undefined}
+                      className={`type-label group relative inline-flex min-h-7 items-center whitespace-nowrap border-b-2 px-1 pb-1 font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+                        active
+                          ? 'border-brand text-brand font-semibold shadow-xs'
+                          : 'border-transparent text-secondary hover:border-brand/40 hover:text-brand'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
           <div className="flex shrink-0 items-center gap-3">
-            <NotificationBell
-              key={user?.id ?? 'guest'}
-              preview={previewNavigation}
-            />
+            <div className="transition-transform duration-200 hover:scale-110 active:scale-95">
+              <NotificationBell
+                key={user?.id ?? 'guest'}
+                preview={previewNavigation}
+              />
+            </div>
             {previewNavigation ? (
               <>
                 <div className="hidden text-right xl:block">

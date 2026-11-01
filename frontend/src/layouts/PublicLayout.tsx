@@ -51,17 +51,24 @@ export function PublicLayout({
           <Brand area={area} previewNavigation={previewNavigation} />
           <nav aria-label="Điều hướng chính">
             <ul className="flex items-center gap-6 xl:gap-8">
-              {navigation.map((item) => (
-                <li key={item.key}>
-                  <Link
-                    to={navigationTarget(item, area, previewNavigation)}
-                    aria-current={activeKey === item.key ? 'page' : undefined}
-                    className={`type-label inline-flex min-h-7 items-center whitespace-nowrap border-b pb-1 font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${activeKey === item.key ? 'border-brand text-brand' : 'border-transparent text-secondary hover:text-brand'}`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              {navigation.map((item) => {
+                const active = activeKey === item.key;
+                return (
+                  <li key={item.key}>
+                    <Link
+                      to={navigationTarget(item, area, previewNavigation)}
+                      aria-current={active ? 'page' : undefined}
+                      className={`type-label group relative inline-flex min-h-7 items-center whitespace-nowrap border-b px-1 pb-1 font-medium transition-all duration-200 ease-out hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+                        active
+                          ? 'border-brand text-brand font-semibold'
+                          : 'border-transparent text-secondary hover:border-brand/40 hover:text-brand'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
           {previewNavigation ? (
