@@ -414,7 +414,7 @@ function OpportunityFacts({
         )}
       </dl>
 
-      {item.sourceUrl && (
+      {item.sourceUrl && !item.sourceUrl.includes('.invalid') && (
         <div className="mt-4 border-t border-line pt-4">
           <h3 className="type-label font-medium text-muted">Nguồn tin gốc</h3>
           <a

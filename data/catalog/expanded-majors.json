@@ -1,0 +1,466 @@
+[
+  {
+    "type": "Major",
+    "name": "Quản trị nhân lực"
+  },
+  {
+    "type": "Major",
+    "name": "Quản trị kinh doanh"
+  },
+  {
+    "type": "Major",
+    "name": "Quản trị rủi ro"
+  },
+  {
+    "type": "Major",
+    "name": "Đảm bảo chất lượng"
+  },
+  {
+    "type": "Major",
+    "name": "Kiểm toán"
+  },
+  {
+    "type": "Major",
+    "name": "Marketing"
+  },
+  {
+    "type": "Major",
+    "name": "Truyền thông"
+  },
+  {
+    "type": "Major",
+    "name": "Báo chí"
+  },
+  {
+    "type": "Major",
+    "name": "Kế toán"
+  },
+  {
+    "type": "Major",
+    "name": "Tài chính"
+  },
+  {
+    "type": "Major",
+    "name": "Kinh tế"
+  },
+  {
+    "type": "Major",
+    "name": "Công nghệ thông tin"
+  },
+  {
+    "type": "Major",
+    "name": "Khoa học máy tính"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật phần mềm"
+  },
+  {
+    "type": "Major",
+    "name": "Hệ thống thông tin"
+  },
+  {
+    "type": "Major",
+    "name": "Mạng máy tính và truyền thông dữ liệu"
+  },
+  {
+    "type": "Major",
+    "name": "An toàn thông tin"
+  },
+  {
+    "type": "Major",
+    "name": "Khoa học dữ liệu"
+  },
+  {
+    "type": "Major",
+    "name": "Trí tuệ nhân tạo"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật máy tính"
+  },
+  {
+    "type": "Major",
+    "name": "Thương mại điện tử"
+  },
+  {
+    "type": "Major",
+    "name": "Công nghệ kỹ thuật máy tính"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật điện"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật điện tử - viễn thông"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật điều khiển và tự động hóa"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật cơ điện tử"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật cơ khí"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật ô tô"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật xây dựng"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật xây dựng công trình giao thông"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật hóa học"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật vật liệu"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật y sinh"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật môi trường"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật hệ thống công nghiệp"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật hàng không"
+  },
+  {
+    "type": "Major",
+    "name": "Kiến trúc"
+  },
+  {
+    "type": "Major",
+    "name": "Thiết kế công nghiệp"
+  },
+  {
+    "type": "Major",
+    "name": "Toán học"
+  },
+  {
+    "type": "Major",
+    "name": "Toán ứng dụng"
+  },
+  {
+    "type": "Major",
+    "name": "Vật lý học"
+  },
+  {
+    "type": "Major",
+    "name": "Hóa học"
+  },
+  {
+    "type": "Major",
+    "name": "Sinh học"
+  },
+  {
+    "type": "Major",
+    "name": "Công nghệ sinh học"
+  },
+  {
+    "type": "Major",
+    "name": "Địa chất học"
+  },
+  {
+    "type": "Major",
+    "name": "Khoa học môi trường"
+  },
+  {
+    "type": "Major",
+    "name": "Khoa học vật liệu"
+  },
+  {
+    "type": "Major",
+    "name": "Công nghệ thực phẩm"
+  },
+  {
+    "type": "Major",
+    "name": "Khoa học và công nghệ thực phẩm"
+  },
+  {
+    "type": "Major",
+    "name": "Hải dương học"
+  },
+  {
+    "type": "Major",
+    "name": "Địa lý tự nhiên"
+  },
+  {
+    "type": "Major",
+    "name": "Kinh tế quốc tế"
+  },
+  {
+    "type": "Major",
+    "name": "Kinh tế phát triển"
+  },
+  {
+    "type": "Major",
+    "name": "Tài chính - Ngân hàng"
+  },
+  {
+    "type": "Major",
+    "name": "Công nghệ tài chính"
+  },
+  {
+    "type": "Major",
+    "name": "Kinh doanh quốc tế"
+  },
+  {
+    "type": "Major",
+    "name": "Kinh doanh thương mại"
+  },
+  {
+    "type": "Major",
+    "name": "Logistics và Quản lý chuỗi cung ứng"
+  },
+  {
+    "type": "Major",
+    "name": "Bất động sản"
+  },
+  {
+    "type": "Major",
+    "name": "Quản lý công"
+  },
+  {
+    "type": "Major",
+    "name": "Luật"
+  },
+  {
+    "type": "Major",
+    "name": "Luật kinh tế"
+  },
+  {
+    "type": "Major",
+    "name": "Quản trị văn phòng"
+  },
+  {
+    "type": "Major",
+    "name": "Hệ thống thông tin quản lý"
+  },
+  {
+    "type": "Major",
+    "name": "Ngôn ngữ Anh"
+  },
+  {
+    "type": "Major",
+    "name": "Ngôn ngữ Trung Quốc"
+  },
+  {
+    "type": "Major",
+    "name": "Ngôn ngữ Nhật"
+  },
+  {
+    "type": "Major",
+    "name": "Ngôn ngữ Hàn Quốc"
+  },
+  {
+    "type": "Major",
+    "name": "Ngôn ngữ Pháp"
+  },
+  {
+    "type": "Major",
+    "name": "Văn học"
+  },
+  {
+    "type": "Major",
+    "name": "Lịch sử"
+  },
+  {
+    "type": "Major",
+    "name": "Triết học"
+  },
+  {
+    "type": "Major",
+    "name": "Tâm lý học"
+  },
+  {
+    "type": "Major",
+    "name": "Xã hội học"
+  },
+  {
+    "type": "Major",
+    "name": "Công tác xã hội"
+  },
+  {
+    "type": "Major",
+    "name": "Quan hệ quốc tế"
+  },
+  {
+    "type": "Major",
+    "name": "Đông phương học"
+  },
+  {
+    "type": "Major",
+    "name": "Việt Nam học"
+  },
+  {
+    "type": "Major",
+    "name": "Nhân học"
+  },
+  {
+    "type": "Major",
+    "name": "Quan hệ công chúng"
+  },
+  {
+    "type": "Major",
+    "name": "Truyền thông đa phương tiện"
+  },
+  {
+    "type": "Major",
+    "name": "Thông tin - Thư viện"
+  },
+  {
+    "type": "Major",
+    "name": "Quản lý thông tin"
+  },
+  {
+    "type": "Major",
+    "name": "Du lịch học"
+  },
+  {
+    "type": "Major",
+    "name": "Giáo dục học"
+  },
+  {
+    "type": "Major",
+    "name": "Quản lý giáo dục"
+  },
+  {
+    "type": "Major",
+    "name": "Giáo dục Tiểu học"
+  },
+  {
+    "type": "Major",
+    "name": "Giáo dục Mầm non"
+  },
+  {
+    "type": "Major",
+    "name": "Sư phạm Toán học"
+  },
+  {
+    "type": "Major",
+    "name": "Sư phạm Ngữ văn"
+  },
+  {
+    "type": "Major",
+    "name": "Sư phạm Tiếng Anh"
+  },
+  {
+    "type": "Major",
+    "name": "Sư phạm Tin học"
+  },
+  {
+    "type": "Major",
+    "name": "Nông học"
+  },
+  {
+    "type": "Major",
+    "name": "Khoa học cây trồng"
+  },
+  {
+    "type": "Major",
+    "name": "Bảo vệ thực vật"
+  },
+  {
+    "type": "Major",
+    "name": "Chăn nuôi"
+  },
+  {
+    "type": "Major",
+    "name": "Thú y"
+  },
+  {
+    "type": "Major",
+    "name": "Nuôi trồng thủy sản"
+  },
+  {
+    "type": "Major",
+    "name": "Quản lý tài nguyên và môi trường"
+  },
+  {
+    "type": "Major",
+    "name": "Quản lý đất đai"
+  },
+  {
+    "type": "Major",
+    "name": "Kinh tế nông nghiệp"
+  },
+  {
+    "type": "Major",
+    "name": "Y khoa"
+  },
+  {
+    "type": "Major",
+    "name": "Răng - Hàm - Mặt"
+  },
+  {
+    "type": "Major",
+    "name": "Dược học"
+  },
+  {
+    "type": "Major",
+    "name": "Điều dưỡng"
+  },
+  {
+    "type": "Major",
+    "name": "Y học cổ truyền"
+  },
+  {
+    "type": "Major",
+    "name": "Y tế công cộng"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật xét nghiệm y học"
+  },
+  {
+    "type": "Major",
+    "name": "Kỹ thuật hình ảnh y học"
+  },
+  {
+    "type": "Major",
+    "name": "Dinh dưỡng"
+  },
+  {
+    "type": "Major",
+    "name": "Thiết kế đồ họa"
+  },
+  {
+    "type": "Major",
+    "name": "Thiết kế thời trang"
+  },
+  {
+    "type": "Major",
+    "name": "Thiết kế nội thất"
+  },
+  {
+    "type": "Major",
+    "name": "Quản trị khách sạn"
+  },
+  {
+    "type": "Major",
+    "name": "Quản trị dịch vụ du lịch và lữ hành"
+  },
+  {
+    "type": "Major",
+    "name": "Quản trị nhà hàng và dịch vụ ăn uống"
+  }
+]

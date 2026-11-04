@@ -300,7 +300,7 @@ test('incomplete profile differs from empty recommendations and prevents candida
     });
     assert.equal(f.calls.includes('candidates'), false);
   }
-  for (const rows of [[], [article(1, { majors: [], years: [] })]]) {
+  for (const rows of [[], [article(1, { majors: [{ major_id: 999 }] })]]) {
     const f = await fixture({ rows });
     await list(f, async (response) => {
       assert.equal(response.status, 200);
@@ -312,20 +312,30 @@ test('incomplete profile differs from empty recommendations and prevents candida
   }
 });
 
-test('40/30/30 formula, empty year, no required skills, and threshold exactly 0.5', async () => {
+test('40/30/30 formula, Major Gate, open year, no required skills, and threshold exactly 0.5', async () => {
   const f = await fixture({
     rows: [
-      article(1),
-      article(2, { majors: [] }), // 0 + .3 + .3
-      article(3, { years: [] }), // .4 + 0 + .3
-      article(4, { skills: [] }), // .4 + .3 + .3
-      article(5, { years: [], skills: [{ skill_id: 31 }, { skill_id: 32 }] }), // .55
+      article(1), // 0.4 + 0.3 + 0.3 = 1
+      article(2, { majors: [] }), // open major: 0 + 0.3 + 0.3 = 0.6
+      article(3, { years: [] }), // open year: 0.4 + 0.3 + 0.3 = 1
+      article(4, { skills: [] }), // no skills: 0.4 + 0.3 + 0.3 = 1
+      article(5, {
+        years: [{ academic_year: 99 }],
+        skills: [{ skill_id: 31 }, { skill_id: 32 }],
+      }), // year mismatch: 0.4 + 0 + 0.15 = 0.55
       article(6, {
-        years: [],
+        years: [{ academic_year: 99 }],
         skills: [{ skill_id: 31 }, { skill_id: 32 }, { skill_id: 33 }],
-      }), // .5
-      article(7, { majors: [], skills: [{ skill_id: 99 }] }), // .3
-      article(8, { years: [], skills: [{ skill_id: 99 }] }), // .4
+      }), // year mismatch: 0.4 + 0 + 0.1 = 0.5
+      article(7, { majors: [{ major_id: 999 }] }), // major gate excludes mismatched major
+      article(8, {
+        years: [{ academic_year: 99 }],
+        skills: [{ skill_id: 99 }],
+      }), // below threshold: 0.4 + 0 + 0 = 0.4
+      article(9, { majors: [], skills: [] }), // unmapped: excluded at gate
+      article(10, {
+        majors: [{ major_id: 999 }, { major_id: 4 }], // multi-major matches student: 0.4 + 0.3 + 0.3 = 1
+      }),
     ],
   });
   await list(f, async (response) => {
@@ -337,8 +347,9 @@ test('40/30/30 formula, empty year, no required skills, and threshold exactly 0.
       ]),
       [
         [1, 1],
+        [3, 1],
         [4, 1],
-        [3, 0.7],
+        [10, 1],
         [2, 0.6],
         [5, 0.55],
         [6, 0.5],
@@ -378,13 +389,19 @@ test('raw threshold and raw score sorting precede 4-decimal response rounding', 
     profile: { ...complete, skills: required(10000) },
     rows: [
       article(1, {
-        years: [],
+        years: [{ academic_year: 99 }],
         skills: required(30000),
         deadline: new Date(now.getTime() + 1000),
         deadline_source_timezone: 'UTC',
       }),
-      article(99, { years: [], skills: required(29999) }),
-      article(2, { years: [], skills: required(30001) }),
+      article(99, {
+        years: [{ academic_year: 99 }],
+        skills: required(29999),
+      }),
+      article(2, {
+        years: [{ academic_year: 99 }],
+        skills: required(30001),
+      }),
     ],
   });
   await list(f, async (response) => {

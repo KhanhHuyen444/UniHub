@@ -1,0 +1,8 @@
+review_id,source_type,title,publisher,deadline_source_date,location,source_url,review_status,rejection_or_review_reason
+SMART-MKT,SmartOSC,B2B Marketing Fresher,SmartOSC,2026-11-30,Hà Nội,https://careers.smartosc.com/job/b2b-marketing-fresher/,NEEDS_REVIEW,SOURCE_CLOSED
+SMART-LD,SmartOSC,L&D Intern,SmartOSC,2026-11-30,Hồ Chí Minh,https://careers.smartosc.com/job/intern-ld/,NEEDS_REVIEW,SOURCE_CLOSED
+COL-001,official,Chuyên viên Quản trị rủi ro - Open fresher,MISA,2026-11-30,Hà Nội,https://www.misa.vn/tuyen-dung/5937/chuyen-vien-quan-tri-rui-ro-open-fresher/,NEEDS_REVIEW,DUPLICATE_EXISTING_DB
+COL-002,official,Thực tập sinh Tuyển dụng,MISA,2026-11-30,Hồ Chí Minh,https://www.misa.vn/tuyen-dung/5965/thuc-tap-sinh-tuyen-dung/,NEEDS_REVIEW,DUPLICATE_EXISTING_DB
+COL-005,official,General Affairs Fresher,SmartOSC,2026-11-30,"Hồ Chí Minh, Đà Nẵng",https://careers.smartosc.com/job/general-affairs-fresher/,NEEDS_REVIEW,DUPLICATE_EXISTING_DB
+COL-006,official,Fresher Tester,SmartOSC,2026-11-30,Hà Nội,https://careers.smartosc.com/job/fresher-tester/,NEEDS_REVIEW,DUPLICATE_EXISTING_DB
+COL-007,scholarship,Học bổng thường niên Khoa Môi trường năm 2026,HCMUS - Khoa Môi trường,2026-11-09,Hồ Chí Minh,https://environment.hcmus.edu.vn/thong-bao-hoc-bong-thuong-nien-khoa-moi-truong-nam-2026-16538/,NEEDS_REVIEW,NO_JD_MAJOR_MATCH

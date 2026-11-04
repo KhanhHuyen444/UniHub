@@ -1,0 +1,10 @@
+{
+  "command": "node --env-file=backend/.env backend/dist/scripts/opportunities-import.js --file data/opportunities/demo/batch-proposal.json --dry-run",
+  "exitCode": 1,
+  "result": "blocked_pending_leader_approval",
+  "message": "Invalid import batch: leader approval",
+  "writes": 0,
+  "approvalFieldsChanged": false,
+  "limitation": "Importer stops at approval gate before validating item fields. Independent demo checks and read-only plan are recorded separately.",
+  "datasetRevision": "mapping-fix: 101 Major / 179 Skill; 100 opportunities unchanged"
+}

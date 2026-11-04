@@ -5,6 +5,7 @@ import { UserAvatar } from './UserAvatar';
 import { useAuth } from '../auth/AuthProvider';
 import { getAccessToken } from '../auth/auth-state';
 import { SkillOptionsField } from '../categories/SkillOptionsField';
+import { getCareersForMajor } from '../categories/major-skill-mapping';
 import { getMajorOptions } from '../opportunities/api';
 import type { MajorOption } from '../opportunities/contracts';
 import { ApiError } from '../../lib/api';
@@ -85,7 +86,7 @@ function ProfileEditor({ userId }: { userId: number }) {
       </p>
     ) : null;
   const submit = async () => {
-    const validation = validateForm(form);
+    const validation = validateForm(form, { requireCareerGoal: true });
     setErrors(validation);
     setMessage('');
     if (Object.keys(validation).length || saving) return;
@@ -121,6 +122,12 @@ function ProfileEditor({ userId }: { userId: number }) {
   };
   const closedMajor =
     data.profile.major?.status === 'Closed' ? data.profile.major : null;
+  const selectedMajorName =
+    majors.find((m) => String(m.id) === String(form.majorId))?.name ??
+    (closedMajor && String(closedMajor.id) === String(form.majorId)
+      ? closedMajor.name
+      : null);
+  const availableCareers = getCareersForMajor(selectedMajorName);
   return (
     <section>
       <h1 className="text-[32px] font-bold leading-10 text-navy">
@@ -265,12 +272,87 @@ function ProfileEditor({ userId }: { userId: number }) {
                   Hiện chưa có chuyên ngành Active để chọn mới.
                 </p>
               )}
+              <div className="grid gap-2">
+                <label className="grid gap-2">
+                  <span className="flex items-center justify-between gap-2">
+                    <span>
+                      Vị trí nghề nghiệp mục tiêu{' '}
+                      <span aria-hidden="true" className="text-red-600">
+                        *
+                      </span>
+                    </span>
+                  </span>
+                  <select
+                    aria-label="Vị trí nghề nghiệp mục tiêu"
+                    aria-required="true"
+                    value={form.careerGoal}
+                    onChange={(e) => change({ careerGoal: e.target.value })}
+                    aria-invalid={!!errors.careerGoal}
+                    aria-describedby={
+                      errors.careerGoal ? 'careerGoal-error' : undefined
+                    }
+                    disabled={!selectedMajorName}
+                    className="min-w-0 rounded-control border border-slate-100 bg-white px-3 py-2.5 text-sm shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand disabled:bg-slate-50 disabled:text-muted"
+                  >
+                    <option value="">
+                      {selectedMajorName
+                        ? 'Chọn vị trí nghề nghiệp mục tiêu...'
+                        : 'Vui lòng chọn chuyên ngành trước...'}
+                    </option>
+                    {/* Giữ lại giá trị cũ đã lưu nếu không thuộc danh mục gợi ý để không âm thầm mất dữ liệu */}
+                    {form.careerGoal &&
+                      !availableCareers.some(
+                        (c) =>
+                          c.name.toLowerCase() ===
+                          form.careerGoal.trim().toLowerCase(),
+                      ) && (
+                        <option value={form.careerGoal}>
+                          {form.careerGoal} (Giá trị hiện tại)
+                        </option>
+                      )}
+                    {availableCareers.map((c) => (
+                      <option key={c.name} value={c.name}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  {fieldError('careerGoal')}
+                </label>
+                {availableCareers.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                    <span className="font-medium text-muted">Chọn nhanh:</span>
+                    {availableCareers.map((c) => {
+                      const isSelected =
+                        form.careerGoal.trim().toLowerCase() ===
+                        c.name.toLowerCase();
+                      return (
+                        <button
+                          key={c.name}
+                          type="button"
+                          onClick={() =>
+                            change({ careerGoal: isSelected ? '' : c.name })
+                          }
+                          className={`cursor-pointer rounded-full px-3 py-1 transition-colors ${
+                            isSelected
+                              ? 'bg-brand font-medium text-white shadow-xs'
+                              : 'border border-line bg-surface text-secondary hover:border-brand hover:text-brand'
+                          }`}
+                        >
+                          {c.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
               <SkillOptionsField
                 accessToken={getAccessToken()}
                 role="Student"
                 selectedIds={form.skillIds}
                 onChange={(skillIds) => change({ skillIds })}
                 disabled={saving}
+                selectedMajorName={selectedMajorName}
+                selectedCareerName={form.careerGoal}
               />
               {data.profile.skills
                 .filter(
@@ -295,24 +377,6 @@ function ProfileEditor({ userId }: { userId: number }) {
                   </div>
                 ))}
               {fieldError('skillIds')}
-              <label className="grid gap-2">
-                <span className="flex items-center justify-between gap-2">
-                  Vị trí nghề nghiệp mục tiêu{' '}
-                  <span className="text-xs text-muted">(Tùy chọn)</span>
-                </span>
-                <input
-                  aria-label="Vị trí nghề nghiệp mục tiêu"
-                  value={form.careerGoal}
-                  onChange={(e) => change({ careerGoal: e.target.value })}
-                  aria-invalid={!!errors.careerGoal}
-                  className="min-w-0 rounded-control border border-slate-100 bg-white px-3 py-2.5 text-sm shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
-                  placeholder="Ví dụ: Thực tập sinh Frontend"
-                  aria-describedby={
-                    errors.careerGoal ? 'careerGoal-error' : undefined
-                  }
-                />
-                {fieldError('careerGoal')}
-              </label>
             </fieldset>
           </section>
         </div>
