@@ -30,9 +30,14 @@ export const studentNavigation: NavigationItem[] = [
 export const adminNavigation: NavigationItem[] = [
   { key: 'dashboard', label: 'Dashboard thống kê', href: '/admin/dashboard' },
   {
-    key: 'moderation',
-    label: 'Kiểm duyệt nội dung',
+    key: 'opportunity-moderation',
+    label: 'Kiểm duyệt cơ hội',
     href: '/admin/opportunities',
+  },
+  {
+    key: 'forum-moderation',
+    label: 'Kiểm duyệt diễn đàn',
+    href: '/admin/moderation',
   },
   { key: 'categories', label: 'Quản lý danh mục', href: '/admin/categories' },
   { key: 'users', label: 'Tài khoản & Phân quyền', href: '/admin/users' },

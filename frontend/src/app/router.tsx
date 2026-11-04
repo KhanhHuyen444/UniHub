@@ -153,7 +153,7 @@ export function AppRouter() {
             path={appPaths.adminOpportunities}
             element={
               <RequireRole role="Admin">
-                <AdminLayout activeKey="moderation">
+                <AdminLayout activeKey="opportunity-moderation">
                   <AdminOpportunitiesPage />
                 </AdminLayout>
               </RequireRole>
@@ -173,7 +173,7 @@ export function AppRouter() {
             path={`${appPaths.adminOpportunities}/:id`}
             element={
               <RequireRole role="Admin">
-                <AdminLayout activeKey="moderation">
+                <AdminLayout activeKey="opportunity-moderation">
                   <AdminOpportunitiesPage />
                 </AdminLayout>
               </RequireRole>

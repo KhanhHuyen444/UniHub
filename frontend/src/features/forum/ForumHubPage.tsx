@@ -14,6 +14,7 @@ import {
 } from '../../components/ui';
 import { useAuth } from '../auth/AuthProvider';
 import { PublicLayout } from '../../layouts/PublicLayout';
+import { StudentLayout } from '../../layouts/StudentLayout';
 import {
   FORUM_TOPICS,
   formatForumDate,
@@ -44,8 +45,6 @@ function validateCreatePost(draft: CreatePostDraft): CreatePostErrors {
   const titleLength = [...title].length;
   if (!title) {
     errors.title = 'Tiêu đề không được để trống.';
-  } else if (titleLength < 10) {
-    errors.title = 'Tiêu đề cần có ít nhất 10 ký tự.';
   } else if (titleLength > 255) {
     errors.title = 'Tiêu đề không được vượt quá 255 ký tự.';
   }
@@ -360,9 +359,13 @@ export function ForumHubPage() {
   }
 
   const canCreatePost = authStatus !== 'authenticated' || role === 'Student';
+  const Layout =
+    authStatus === 'authenticated' && role === 'Student'
+      ? StudentLayout
+      : PublicLayout;
 
   return (
-    <PublicLayout activeKey="forum">
+    <Layout activeKey="forum">
       <main className="mx-auto w-full max-w-public px-8 py-8">
         {authStatus === 'unavailable' && (
           <ErrorState
@@ -638,7 +641,7 @@ export function ForumHubPage() {
                 <FormField
                   id="forum-post-content"
                   label="Nội dung chi tiết"
-                  hint="Mô tả câu hỏi, bối cảnh và những gì bạn đã thử. Hỗ trợ Markdown cơ bản."
+                  hint="Mô tả câu hỏi, bối cảnh và những gì bạn đã thử. Nội dung chỉ hỗ trợ văn bản thuần."
                   required
                   error={fieldErrors.content}
                 >
@@ -679,6 +682,6 @@ export function ForumHubPage() {
           </section>
         </div>
       )}
-    </PublicLayout>
+    </Layout>
   );
 }

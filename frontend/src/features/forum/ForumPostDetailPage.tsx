@@ -11,6 +11,7 @@ import {
 } from '../../components/ui';
 import { useAuth } from '../auth/AuthProvider';
 import { PublicLayout } from '../../layouts/PublicLayout';
+import { StudentLayout } from '../../layouts/StudentLayout';
 import {
   formatForumDate,
   type CommentListResponse,
@@ -126,6 +127,10 @@ export function ForumPostDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { status: authStatus, user } = useAuth();
   const role = user?.role ?? null;
+  const Layout =
+    authStatus === 'authenticated' && role === 'Student'
+      ? StudentLayout
+      : PublicLayout;
 
   const [revision, setRevision] = useState(0);
   const [commentsRevision, setCommentsRevision] = useState(0);
@@ -356,7 +361,7 @@ export function ForumPostDetailPage() {
   }
 
   return (
-    <PublicLayout activeKey="forum">
+    <Layout activeKey="forum">
       <main className="mx-auto w-full max-w-public px-8 py-8">
         {/* Navigation back */}
         <div className="mb-6">
@@ -702,6 +707,6 @@ export function ForumPostDetailPage() {
           </div>
         )}
       </main>
-    </PublicLayout>
+    </Layout>
   );
 }

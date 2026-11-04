@@ -471,7 +471,7 @@ function ModerationQueue() {
 
 export function AdminForumModerationPage() {
   return (
-    <AdminLayout activeKey="moderation">
+    <AdminLayout activeKey="forum-moderation">
       <ModerationQueue />
     </AdminLayout>
   );
