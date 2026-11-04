@@ -623,7 +623,7 @@ export function ForumHubPage() {
                 <FormField
                   id="forum-post-title"
                   label="Tiêu đề câu hỏi"
-                  hint="Tối thiểu 10 ký tự, tối đa 255 ký tự."
+                  hint="Nhập tiêu đề từ 1 đến 255 ký tự."
                   required
                   error={fieldErrors.title}
                 >
