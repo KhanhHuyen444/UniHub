@@ -23,6 +23,8 @@ const icons: Record<string, string> = {
   moderation: moderationIcon,
   categories: categoriesIcon,
   users: accountsIcon,
+  'opportunity-moderation': moderationIcon,
+  'forum-moderation': moderationIcon,
 };
 
 export function AdminLayout({

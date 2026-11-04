@@ -7,7 +7,7 @@ import { OpportunityHubPage } from '../features/opportunities/OpportunityHubPage
 import { OpportunityDetailPage } from '../features/opportunities/OpportunityDetailPage';
 import { GuidanceRoadmapPage } from '../features/guidance/GuidanceRoadmapPage';
 import { GuidanceDetailPage } from '../features/guidance/GuidanceDetailPage';
-import { AuthProvider } from '../features/auth/AuthProvider';
+import { AuthProvider, useAuth } from '../features/auth/AuthProvider';
 import { ForbiddenPage, RequireRole } from '../features/auth/AuthGuard';
 import { LoginPage } from '../features/auth/LoginPage';
 import { LoginLayout } from '../features/auth/LoginLayout';
@@ -20,12 +20,13 @@ import { AdminUsersPage } from '../features/admin/users/AdminUsersPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
 import { ProfileSavedNotice } from '../features/profile/ProfileSavedNotice';
 import { RecommendationsPage } from '../features/recommendations/RecommendationsPage';
-import { useAuth } from '../features/auth/AuthProvider';
 import { getAccessToken } from '../features/auth/auth-state';
 import { AdminDashboardPage } from '../features/admin/dashboard/AdminDashboardPage';
 import { CalendarPage } from '../features/calendar/CalendarPage';
 import { HomePage } from '../features/home/HomePage';
-import { PendingFeatureNotice } from '../features/auth/PendingFeatureNotice';
+import { ForumHubPage } from '../features/forum/ForumHubPage';
+import { ForumPostDetailPage } from '../features/forum/ForumPostDetailPage';
+import { AdminForumModerationPage } from '../features/admin/forum/ForumModerationPage';
 
 function RecommendationsRoute() {
   const { user } = useAuth();
@@ -40,26 +41,6 @@ function RecommendationsRoute() {
   );
 }
 
-function ForumPendingRoute() {
-  const { user } = useAuth();
-  const isStudent = user?.role === 'Student';
-  const Layout = isStudent ? StudentLayout : PublicLayout;
-
-  return (
-    <Layout activeKey="forum">
-      <div className="mx-auto max-w-public px-8 py-16">
-        <PendingFeatureNotice
-          title="Diễn đàn sinh viên"
-          badgeText="Sắp ra mắt"
-          description="Kênh thảo luận, hỏi đáp học tập và kinh nghiệm phỏng vấn dành cho cộng đồng sinh viên UniHub đang trong quá trình hoàn thiện."
-          backTo="/opportunities"
-          backLabel="Khám phá cơ hội"
-        />
-      </div>
-    </Layout>
-  );
-}
-
 export const appPaths = {
   home: '/',
   developmentHealth: '/_dev/health',
@@ -67,6 +48,7 @@ export const appPaths = {
   opportunities: '/opportunities',
   roadmaps: '/roadmaps',
   forum: '/forum',
+  adminForumModeration: '/admin/moderation',
   profile: '/profile',
   recommendations: '/recommendations',
   calendar: '/calendar',
@@ -112,7 +94,19 @@ export function AppRouter() {
             path={appPaths.adminCategories}
             element={<AdminCategoriesRoute />}
           />
-          <Route path={appPaths.forum} element={<ForumPendingRoute />} />
+          <Route path={appPaths.forum} element={<ForumHubPage />} />
+          <Route
+            path={`${appPaths.forum}/:id`}
+            element={<ForumPostDetailPage />}
+          />
+          <Route
+            path={appPaths.adminForumModeration}
+            element={
+              <RequireRole role="Admin">
+                <AdminForumModerationPage />
+              </RequireRole>
+            }
+          />
           <Route
             path={appPaths.adminDashboard}
             element={
@@ -159,7 +153,7 @@ export function AppRouter() {
             path={appPaths.adminOpportunities}
             element={
               <RequireRole role="Admin">
-                <AdminLayout activeKey="moderation">
+                <AdminLayout activeKey="opportunity-moderation">
                   <AdminOpportunitiesPage />
                 </AdminLayout>
               </RequireRole>
@@ -179,7 +173,7 @@ export function AppRouter() {
             path={`${appPaths.adminOpportunities}/:id`}
             element={
               <RequireRole role="Admin">
-                <AdminLayout activeKey="moderation">
+                <AdminLayout activeKey="opportunity-moderation">
                   <AdminOpportunitiesPage />
                 </AdminLayout>
               </RequireRole>

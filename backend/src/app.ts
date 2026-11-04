@@ -42,6 +42,14 @@ import {
   createOpportunitiesRouter,
   type OpportunitiesRouterDependencies,
 } from './modules/opportunities/opportunities.routes.js';
+import {
+  createForumRouter,
+  type ForumRouterDependencies,
+} from './modules/forum/forum.routes.js';
+import {
+  createForumModerationRouter,
+  type ForumModerationRouterDependencies,
+} from './modules/forum/forum-moderation.routes.js';
 import { createEventsRouter } from './modules/events/events.routes.js';
 import type { EventsRouterDependencies } from './modules/events/events.types.js';
 import {
@@ -60,6 +68,8 @@ interface AppDependencies {
   recommendations?: RecommendationsRouterDependencies;
   opportunities?: OpportunitiesRouterDependencies;
   auth?: GoogleAuthDependencies;
+  forum?: ForumRouterDependencies;
+  forumModeration?: ForumModerationRouterDependencies;
   events?: EventsRouterDependencies;
   notifications?: NotificationsRouterDependencies;
   adminOpportunities?: AdminOpportunitiesRouterDependencies;
@@ -102,6 +112,11 @@ export function createApp(dependencies: AppDependencies = {}) {
   app.use(
     '/api/admin/opportunities',
     createAdminOpportunitiesRouter(dependencies.adminOpportunities),
+  );
+  app.use('/api/forum', createForumRouter(dependencies.forum));
+  app.use(
+    '/api/admin/moderation/forum',
+    createForumModerationRouter(dependencies.forumModeration),
   );
   app.use(notFound);
   app.use(errorHandler);
