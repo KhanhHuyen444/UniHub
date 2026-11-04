@@ -77,16 +77,40 @@ export async function listRecommendations(
             item.deadline.state !== 'open')
         )
           return [];
-        const majorMatch = row.majors.some(
+        // Major Eligibility Gate:
+        // - Nếu cơ hội có Major cụ thể: bắt buộc Major của sinh viên nằm trong danh sách Major của cơ hội.
+        // - Nếu cơ hội mở cho mọi ngành (majors: []): cho phép đi qua gate nếu có kỹ năng hợp lệ; majorMatch = 0.
+        // - Phân biệt mở cho mọi ngành vs thiếu mapping: cơ hội thiếu cả Major lẫn Skill bị loại bỏ.
+        const hasSpecificMajors = row.majors.length > 0;
+        const matchesStudentMajor = row.majors.some(
           ({ major_id }) => major_id === profile.major_id,
-        )
-          ? 1
-          : 0;
-        const yearMatch = row.years.some(
-          ({ academic_year }) => academic_year === profile.academic_year,
-        )
-          ? 1
-          : 0;
+        );
+
+        if (hasSpecificMajors) {
+          if (!matchesStudentMajor) {
+            return []; // Excluded at Major Eligibility Gate
+          }
+        } else {
+          // majors rỗng: loại bỏ nếu thiếu mapping (cả major và skill đều rỗng)
+          if (row.skills.length === 0) {
+            return []; // Excluded: unmapped opportunity
+          }
+        }
+
+        const majorMatch = matchesStudentMajor ? 1 : 0;
+
+        // YearMatch:
+        // - Cơ hội không giới hạn năm học (years: []): yearMatch = 1 cho cả ba loại cơ hội.
+        // - Cơ hội có quy định năm học cụ thể: so khớp năm học của sinh viên.
+        const yearMatch =
+          row.years.length === 0
+            ? 1
+            : row.years.some(
+                  ({ academic_year }) =>
+                    academic_year === profile.academic_year,
+                )
+              ? 1
+              : 0;
         // Join-table primary keys guarantee distinct IDs; category status/name
         // deliberately does not participate in either the numerator or denominator.
         const skillMatch =

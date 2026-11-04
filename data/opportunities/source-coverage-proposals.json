@@ -1,0 +1,137 @@
+{
+  "format_version": 2,
+  "items": [
+    {
+      "review_id": "COL-003",
+      "evidence": {
+        "source_status": "open",
+        "source_identity": {
+          "url_kind": "detail",
+          "basis": "Thu thập tự động từ cổng tuyển dụng chính thức (official: MISA)"
+        }
+      },
+      "opportunity": {
+        "opportunity_type": "Việc làm",
+        "title": "Human Resources Business Partner (HRBP) - Open For Fresher",
+        "publisher": "MISA",
+        "description": "Phối hợp hoạch định nhân sự và đánh giá hiệu suất; tổng hợp vấn đề nhân sự, hỗ trợ giải quyết xung đột và cải tiến quy trình HRBP.",
+        "requirements": "Tốt nghiệp ngành Quản trị nhân lực, Quản trị kinh doanh, Luật hoặc liên quan. Cần giao tiếp, nghiên cứu, phân tích và tổng hợp thông tin; ưu tiên kinh nghiệm HRBP tương đương. Tin ghi rõ nhận Fresher.",
+        "source_url": "https://www.misa.vn/tuyen-dung/5964/human-resources-business-partner-hrbp-open-for-fresher/",
+        "location": "Hà Nội",
+        "work_format": "Offline",
+        "deadline": "2026-11-07T17:00:00.000Z",
+        "deadline_source_date": "2026-11-07",
+        "deadline_source_timezone": null,
+        "status": "Pending",
+        "is_verified": false,
+        "reviewed_by": null,
+        "reviewed_at": null
+      },
+      "relations": {
+        "major_ids": [],
+        "skill_ids": [],
+        "academic_years": [4]
+      }
+    },
+    {
+      "review_id": "COL-004",
+      "evidence": {
+        "source_status": "open",
+        "source_identity": {
+          "url_kind": "detail",
+          "basis": "Thu thập tự động từ cổng tuyển dụng chính thức (official: MISA)"
+        }
+      },
+      "opportunity": {
+        "opportunity_type": "Việc làm",
+        "title": "Web Developer (GPA 3.2+) — Lương khởi điểm từ 15M (Open for Fresher)",
+        "publisher": "MISA",
+        "description": "Phát triển ứng dụng web fullstack, xử lý frontend, backend và cơ sở dữ liệu; tối ưu hiệu năng, phối hợp với các nhóm dự án và thực hiện code review.",
+        "requirements": "Tốt nghiệp hoặc đang chờ bằng ngành Công nghệ thông tin, Kỹ thuật phần mềm, Khoa học máy tính hoặc liên quan; GPA từ 3.2. Cần OOP, HTML, CSS, cơ sở dữ liệu, MySQL hoặc SQL Server; sử dụng Vue, Angular hoặc React và giao tiếp tốt.",
+        "source_url": "https://www.misa.vn/tuyen-dung/5822/web-developer-gpa-32-luong-khoi-diem-tu-15m-open-for-fresher/",
+        "location": "Hà Nội",
+        "work_format": "Offline",
+        "deadline": "2026-11-21T17:00:00.000Z",
+        "deadline_source_date": "2026-11-21",
+        "deadline_source_timezone": null,
+        "status": "Pending",
+        "is_verified": false,
+        "reviewed_by": null,
+        "reviewed_at": null
+      },
+      "relations": {
+        "major_ids": [],
+        "skill_ids": [],
+        "academic_years": [4]
+      }
+    }
+  ],
+  "initial_catalog_proposal": {
+    "status": "needs_review",
+    "categories": [
+      {
+        "type": "Major",
+        "name": "Quản trị nhân lực",
+        "status": "needs_review"
+      },
+      {
+        "type": "Major",
+        "name": "Quản trị kinh doanh",
+        "status": "needs_review"
+      },
+      {
+        "type": "Major",
+        "name": "Luật",
+        "status": "needs_review"
+      },
+      {
+        "type": "Skill",
+        "name": "Giao tiếp",
+        "status": "needs_review"
+      },
+      {
+        "type": "Major",
+        "name": "Công nghệ thông tin",
+        "status": "needs_review"
+      },
+      {
+        "type": "Major",
+        "name": "Khoa học máy tính",
+        "status": "needs_review"
+      },
+      {
+        "type": "Major",
+        "name": "Kỹ thuật phần mềm",
+        "status": "needs_review"
+      },
+      {
+        "type": "Skill",
+        "name": "React",
+        "status": "needs_review"
+      },
+      {
+        "type": "Skill",
+        "name": "SQL",
+        "status": "needs_review"
+      }
+    ],
+    "opportunity_links": [
+      {
+        "review_id": "COL-003",
+        "major_names": ["Quản trị nhân lực", "Quản trị kinh doanh", "Luật"],
+        "skill_names": ["Giao tiếp"],
+        "status": "needs_review"
+      },
+      {
+        "review_id": "COL-004",
+        "major_names": [
+          "Công nghệ thông tin",
+          "Khoa học máy tính",
+          "Kỹ thuật phần mềm"
+        ],
+        "skill_names": ["Giao tiếp", "React", "SQL"],
+        "status": "needs_review"
+      }
+    ]
+  }
+}

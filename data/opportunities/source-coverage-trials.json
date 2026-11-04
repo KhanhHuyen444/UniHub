@@ -1,0 +1,58 @@
+[
+  {
+    "source": "MISA",
+    "url": "https://www.misa.vn/tuyen-dung/",
+    "result": "effective",
+    "testedDetails": 4,
+    "proposed": 2
+  },
+  {
+    "source": "SmartOSC",
+    "url": "https://careers.smartosc.com/job-type/fresh-graduate/",
+    "result": "accessible; two existing/batched and two explicitly closed",
+    "testedDetails": 4,
+    "proposed": 0
+  },
+  {
+    "source": "HCMUS Environment",
+    "url": "https://environment.hcmus.edu.vn/thong-bao-hoc-bong-thuong-nien-khoa-moi-truong-nam-2026-16538/",
+    "result": "open until 2026-11-09; faculty scope not exact Major; no required occupational Skill",
+    "testedDetails": 1,
+    "proposed": 0
+  },
+  {
+    "source": "KMS",
+    "url": "https://careers.kms-technology.com/job/",
+    "result": "HTTP 403; no bypass; not registered for automated collection"
+  },
+  {
+    "source": "KMS SmartRecruiters",
+    "url": "https://jobs.smartrecruiters.com/kmstechnology1/744000155975597",
+    "result": "detail HTTP 200 and complete English JD; exact catalog mapping/location evidence still needs review; not registered"
+  },
+  {
+    "source": "Hasaki",
+    "url": "https://tuyendung.hasaki.vn/vi/find-job",
+    "result": "HTTP 200 shell; detail discovery requires JS; not registered"
+  },
+  {
+    "source": "FPT IS Tech Careers",
+    "url": "https://techcareers.fis.com.vn/",
+    "result": "HTTP 200; sampled page says 2024; current opening status unconfirmed; not registered"
+  },
+  {
+    "source": "RMIT current-student scholarships",
+    "url": "https://www.rmit.edu.vn/study-at-rmit/scholarships/current-student-scholarships",
+    "result": "HTTP 200; 2027 round opens 2026-12-18; not yet open; not registered"
+  },
+  {
+    "source": "HCMUS Quy Vuot Kho",
+    "url": "https://fbb.hcmus.edu.vn/thong-bao-ve-hoc-bong-quy-vuot-kho-nam-hoc-2026-2027.html",
+    "result": "HTTP 200; deadline 2026-10-25 17:00 passed; not registered"
+  },
+  {
+    "source": "IIG Vietnam",
+    "url": "https://tuyendung.iigvn.com/en/tuyen-dung",
+    "result": "Official listing checked via web; sampled Academic Intern deadline 2026-10-31 passed; not registered"
+  }
+]

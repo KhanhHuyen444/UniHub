@@ -270,3 +270,55 @@ test('reused full importer accepts different positions on a listing and preserve
   b.items[1].opportunity.title = 'One';
   assert.throws(() => validateBatch(b), /duplicate/);
 });
+
+test('NULL deadline validates paired metadata and open evidence; dry-run writes zero', async () => {
+  const b = batch();
+  const x = b.items[0];
+  x.opportunity.deadline = null;
+  x.opportunity.deadline_source_date = null;
+  x.evidence.source_status = 'open';
+  validateBatch(b);
+  const client = {
+    category: { findMany: async () => [] },
+    opportunity: { findMany: async () => [] },
+    $transaction: () => {
+      throw Error('dry-run attempted write');
+    },
+  };
+  const r = await importOpportunities(client, b);
+  assert.equal(r.writes, 0);
+  assert.equal(r.plan.blocked, false);
+  for (const patch of [
+    { deadline_source_date: '2099-12-31' },
+    { deadline_source_timezone: '+07:00' },
+    { deadline: undefined },
+  ]) {
+    const copy = structuredClone(b);
+    Object.assign(copy.items[0].opportunity, patch);
+    assert.throws(() => validateBatch(copy));
+  }
+  for (const state of [undefined, 'unknown', 'closed']) {
+    const copy = structuredClone(b);
+    copy.items[0].evidence.source_status = state;
+    assert.throws(() => validateBatch(copy));
+  }
+  for (const date of ['2020-01-01T00:00:00Z', 'invalid']) {
+    const copy = batch();
+    copy.items[0].opportunity.deadline = date;
+    assert.throws(() => validateBatch(copy), /deadline/);
+  }
+});
+
+test('dated deadlines reject mismatched or invalid timezone metadata', () => {
+  for (const metadata of [
+    { deadline_source_date: null, deadline_source_timezone: null },
+    { deadline_source_date: null, deadline_source_timezone: '+99:99' },
+    { deadline_source_date: null, deadline_source_timezone: '+14:30' },
+    { deadline_source_date: '2099-12-30', deadline_source_timezone: null },
+    { deadline_source_date: '2099-12-31', deadline_source_timezone: '+07:00' },
+  ]) {
+    const copy = batch();
+    Object.assign(copy.items[0].opportunity, metadata);
+    assert.throws(() => validateBatch(copy));
+  }
+});

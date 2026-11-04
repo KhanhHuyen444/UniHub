@@ -17,6 +17,7 @@ type Item = {
   review_id: string;
   evidence: {
     source_identity: { url_kind: 'detail' | 'listing'; basis: string };
+    source_status?: 'open' | 'closed' | 'unknown';
   };
   opportunity: {
     opportunity_type: string;
@@ -27,7 +28,7 @@ type Item = {
     source_url: string;
     location: string | null;
     work_format: string | null;
-    deadline: string;
+    deadline: string | null;
     deadline_source_date: string | null;
     deadline_source_timezone: string | null;
     status: string;
@@ -271,34 +272,51 @@ export function validateBatch(value: unknown, now = new Date()): ImportBatch {
     );
     sources.set(sk, identity.url_kind);
     titles.add(tk);
-    const instant = Date.parse(o.deadline);
-    check(
-      Number.isFinite(instant) && instant > now.getTime(),
-      'expired/unresolved deadline',
-    );
-    if (o.deadline_source_date !== null) {
+    if (x.evidence.source_status !== undefined)
+      check(x.evidence.source_status === 'open', 'source not confirmed open');
+    if (o.deadline === null) {
       check(
-        /^\d{4}-\d{2}-\d{2}$/.test(o.deadline_source_date) &&
-          o.deadline_source_timezone === null,
-        'date metadata',
+        o.deadline_source_date === null && o.deadline_source_timezone === null,
+        'null deadline metadata',
       );
       check(
-        new Date(o.deadline_source_date + 'T00:00:00Z')
-          .toISOString()
-          .slice(0, 10) === o.deadline_source_date,
-        'calendar date',
-      );
-      check(
-        instant ===
-          Date.parse(o.deadline_source_date + 'T00:00:00+07:00') + 86400000,
-        'date cutoff',
+        x.evidence.source_status === 'open',
+        'null deadline requires open source evidence',
       );
     } else {
+      check(typeof o.deadline === 'string', 'deadline type');
+      const instant = Date.parse(o.deadline);
       check(
-        typeof o.deadline_source_timezone === 'string' &&
-          /^[+-]\d{2}:\d{2}$/.test(o.deadline_source_timezone),
-        'explicit offset required',
+        Number.isFinite(instant) && instant > now.getTime(),
+        'expired/unresolved deadline',
       );
+      if (o.deadline_source_date !== null) {
+        check(
+          /^\d{4}-\d{2}-\d{2}$/.test(o.deadline_source_date) &&
+            o.deadline_source_timezone === null,
+          'date metadata',
+        );
+        check(
+          new Date(o.deadline_source_date + 'T00:00:00Z')
+            .toISOString()
+            .slice(0, 10) === o.deadline_source_date,
+          'calendar date',
+        );
+        check(
+          instant ===
+            Date.parse(o.deadline_source_date + 'T00:00:00+07:00') + 86400000,
+          'date cutoff',
+        );
+      } else {
+        check(
+          typeof o.deadline_source_timezone === 'string' &&
+            /^[+-](?:0\d|1[0-4]):[0-5]\d$/.test(o.deadline_source_timezone) &&
+            ((!o.deadline_source_timezone.startsWith('+14:') &&
+              !o.deadline_source_timezone.startsWith('-14:')) ||
+              o.deadline_source_timezone.endsWith(':00')),
+          'explicit offset required',
+        );
+      }
     }
     check(
       x.relations?.major_ids?.length === 0 &&
@@ -430,7 +448,7 @@ export async function importOpportunities(
             source_url: o.source_url,
             location: o.location,
             work_format: o.work_format,
-            deadline: new Date(o.deadline),
+            deadline: o.deadline === null ? null : new Date(o.deadline),
             deadline_source_date: o.deadline_source_date
               ? new Date(o.deadline_source_date + 'T00:00:00Z')
               : null,

@@ -1,0 +1,11 @@
+{
+  "writes": 0,
+  "importerValidation": "blocked_pending_leader_approval",
+  "readOnlyPlan": {
+    "blocked": false,
+    "create": 2,
+    "reuse": 9,
+    "newCategories": 0
+  },
+  "note": "Read-only plan is not an importer-approved dry-run. Approval fields were not changed."
+}

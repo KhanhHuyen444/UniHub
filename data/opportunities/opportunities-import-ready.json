@@ -1,0 +1,304 @@
+{
+  "format_version": 2,
+  "items": [
+    {
+      "review_id": "UNI-NEW-009",
+      "evidence": {
+        "source_identity": {
+          "url_kind": "detail",
+          "basis": "Trang tuyển dụng chính thức của doanh nghiệp (SmartOSC Careers)"
+        }
+      },
+      "opportunity": {
+        "opportunity_type": "Việc làm",
+        "title": "Fresher Tester",
+        "publisher": "SmartOSC",
+        "description": "## Mô tả công việc\n- Tham gia chương trình đào tạo toàn thời gian 3 tháng về lý thuyết, quy trình và công cụ kiểm thử phần mềm.\n- Làm việc trên các dự án quốc tế thực tế dưới sự hướng dẫn của QA và lập trình viên giàu kinh nghiệm.\n- Phối hợp với đội ngũ dự án viết và thực thi test case.\n- Phát hiện, ghi nhận và theo dõi lỗi; phối hợp với lập trình viên xử lý sự cố.\n- Liên tục cải tiến quy trình và hiệu quả kiểm thử trong nhóm.\n- Học hỏi và áp dụng các công nghệ thương mại điện tử và phương pháp kiểm thử mới nhất.",
+        "requirements": "## Yêu cầu ứng viên\n- Sử dụng tiếng Anh tốt cả kỹ năng nói và viết.\n- Sinh viên năm cuối hoặc mới tốt nghiệp chuyên ngành CNTT, Khoa học máy tính, Kỹ thuật phần mềm hoặc các ngành liên quan.\n- Có kiến thức cơ bản về vòng đời phát triển phần mềm và các khái niệm kiểm thử.\n- Ưu tiên ứng viên quen thuộc với viết test case, báo cáo lỗi và công cụ kiểm thử.\n- Tỉ mỉ, tư duy logic và kỹ năng giao tiếp tốt.\n- Khả năng làm việc nhóm và tinh thần sẵn sàng học hỏi.",
+        "source_url": "https://careers.smartosc.com/job/fresher-tester/",
+        "location": "Hà Nội",
+        "work_format": "Offline",
+        "deadline": "2026-11-30T17:00:00.000Z",
+        "deadline_source_date": "2026-11-30",
+        "deadline_source_timezone": null,
+        "status": "Pending",
+        "is_verified": false,
+        "reviewed_by": null,
+        "reviewed_at": null
+      },
+      "relations": {
+        "major_ids": [],
+        "skill_ids": [],
+        "academic_years": [4]
+      }
+    },
+    {
+      "review_id": "UNI-003",
+      "evidence": {
+        "source_identity": {
+          "url_kind": "detail",
+          "basis": "Cổng thông tin tuyển dụng trực tiếp của doanh nghiệp (Hasaki Careers)"
+        }
+      },
+      "opportunity": {
+        "opportunity_type": "Thực tập",
+        "title": "Thực tập sinh Tuyển dụng",
+        "publisher": "Hasaki",
+        "description": "## Mô tả công việc\n- Thực hiện công tác tuyển dụng (xây dựng nguồn ứng viên, tìm kiếm hồ sơ, đăng tin tuyển dụng, sàng lọc hồ sơ, liên hệ và phản hồi ứng viên).\n- Xây dựng thương hiệu tuyển dụng (viết nội dung tuyển dụng, seeding bài viết trên các kênh truyền thông).\n- Hỗ trợ các công tác hành chính nhân sự.\n- Thực hiện các công việc khác theo sự hướng dẫn của quản lý.\n## Quyền lợi và đãi ngộ\n- Phụ cấp: 2.000.000 VNĐ/tháng.\n- Hỗ trợ đóng dấu mộc thực tập tốt nghiệp.\n- Được đào tạo nghiệp vụ và tham gia trực tiếp vào các hoạt động tuyển dụng thực tế.\n- Môi trường làm việc trẻ trung, năng động, chuyên nghiệp.",
+        "requirements": "## Yêu cầu ứng viên\n- Ưu tiên làm việc toàn thời gian (Thứ 2 - Thứ 6: 8h00 - 17h00; Thứ 7: 8h00 - 12h00).\n- Sinh viên năm 4 hoặc sắp tốt nghiệp các chuyên ngành Quản trị nhân lực, Quản trị kinh doanh hoặc các ngành liên quan.\n- Có laptop cá nhân phục vụ công việc.\n- Năng động, chịu khó, ham học hỏi, chủ động và có tinh thần trách nhiệm.\n- Thành thạo tin học văn phòng cơ bản (Word, Excel).",
+        "source_url": "https://tuyendung.hasaki.vn/viec-lam/thuc-tap-sinh-tuyen-dung-1670.html",
+        "location": "568 Lũy Bán Bích, Phường Tân Phú, TP.HCM",
+        "work_format": "Offline",
+        "deadline": "2026-11-30T17:00:00.000Z",
+        "deadline_source_date": "2026-11-30",
+        "deadline_source_timezone": null,
+        "status": "Pending",
+        "is_verified": false,
+        "reviewed_by": null,
+        "reviewed_at": null
+      },
+      "relations": {
+        "major_ids": [],
+        "skill_ids": [],
+        "academic_years": [4]
+      }
+    },
+    {
+      "review_id": "UNI-004",
+      "evidence": {
+        "source_identity": {
+          "url_kind": "detail",
+          "basis": "Thông báo tuyển dụng chính thức của tổ chức quốc tế (ILRI trên CareerONE)"
+        }
+      },
+      "opportunity": {
+        "opportunity_type": "Thực tập",
+        "title": "Administrative Intern",
+        "publisher": "ILRI",
+        "description": "## Mô tả công việc\n- Hỗ trợ công tác hậu cần trong việc tổ chức các cuộc họp, hội thảo, khóa đào tạo, sự kiện và chuyến công tác thực địa của văn phòng.\n- Hỗ trợ nhân viên và khách đến công tác đặt vé máy bay, khách sạn, thuê xe, thủ tục visa, v.v.\n- Quản lý hệ thống lưu trữ hồ sơ, đảm bảo tài liệu được lưu trữ đúng quy chuẩn.\n- Quản lý văn phòng phẩm và các công việc hành chính văn phòng theo phân công.",
+        "requirements": "## Yêu cầu ứng viên\n- Là công dân Việt Nam đang học 2 năm cuối bậc đại học (năm 3, năm 4) trước khi bắt đầu kỳ thực tập.\n- Theo học ngành Quản trị kinh doanh, Kinh tế, Kế toán hoặc các ngành liên quan.\n- Thành thạo tiếng Anh cả văn viết và giao tiếp.\n- Sử dụng tốt công cụ Microsoft Office (Word, Excel, PowerPoint).\n- Trách nhiệm, linh hoạt, chú trọng chi tiết và định hướng hỗ trợ khách hàng.",
+        "source_url": "https://careerone.vn/jobs/administrative-intern-3",
+        "location": "Hà Nội",
+        "work_format": "Offline",
+        "deadline": "2026-11-06T17:00:00.000Z",
+        "deadline_source_date": "2026-11-06",
+        "deadline_source_timezone": null,
+        "status": "Pending",
+        "is_verified": false,
+        "reviewed_by": null,
+        "reviewed_at": null
+      },
+      "relations": {
+        "major_ids": [],
+        "skill_ids": [],
+        "academic_years": [3, 4]
+      }
+    },
+    {
+      "review_id": "UNI-002",
+      "evidence": {
+        "source_identity": {
+          "url_kind": "detail",
+          "basis": "Thông tin tuyển dụng thực tập trực tiếp của doanh nghiệp (NACY Studio trên Sàn việc làm Đà Nẵng)"
+        }
+      },
+      "opportunity": {
+        "opportunity_type": "Thực tập",
+        "title": "Thực tập sinh Media",
+        "publisher": "NACY Studio",
+        "description": "## Mô tả công việc\n- Xử lý hình ảnh và video (80%): Retouch hình ảnh sản phẩm/mẫu theo content plan; chỉnh sửa video cơ bản theo hướng dẫn.\n- Hỗ trợ hậu kỳ (10%): Chuẩn bị đạo cụ, setup bối cảnh, ánh sáng, thiết bị và thu dọn sau buổi quay chụp.\n- Khác (10%): Thiết kế social post và ấn phẩm quảng cáo cơ bản phục vụ hoạt động marketing.\n- Được đào tạo kỹ năng quay/chụp, sử dụng gimbal, dựng video và quy trình sản xuất nội dung.",
+        "requirements": "## Yêu cầu ứng viên\n- Sinh viên đang theo học hoặc mới tốt nghiệp các ngành Thiết kế đồ họa, Truyền thông đa phương tiện hoặc yêu thích sáng tạo nội dung hình ảnh/video.\n- Biết sử dụng cơ bản phần mềm chỉnh sửa ảnh và dựng video (Photoshop, Premiere, CapCut).\n- Có tinh thần trách nhiệm, chủ động, chỉn chu và cẩn thận trong công việc.",
+        "source_url": "https://sanvieclamdanang.com/nacy-studio-tuyen-dung-thuc-tap-sinh-media-125042.html",
+        "location": "Đà Nẵng",
+        "work_format": "Offline",
+        "deadline": "2026-11-30T17:00:00.000Z",
+        "deadline_source_date": "2026-11-30",
+        "deadline_source_timezone": null,
+        "status": "Pending",
+        "is_verified": false,
+        "reviewed_by": null,
+        "reviewed_at": null
+      },
+      "relations": {
+        "major_ids": [],
+        "skill_ids": [],
+        "academic_years": [2, 3, 4]
+      }
+    }
+  ],
+  "initial_catalog_proposal": {
+    "status": "leader_approved",
+    "categories": [
+      {
+        "type": "Major",
+        "name": "Kỹ thuật phần mềm",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Công nghệ thông tin",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Khoa học máy tính",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Quản trị nhân lực",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Quản trị kinh doanh",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Kinh tế",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Kế toán",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Thiết kế đồ họa",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Truyền thông đa phương tiện",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Kiểm thử phần mềm",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Đảm bảo chất lượng (QA)",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Tiếng Anh",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Git",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Tuyển dụng và sàng lọc hồ sơ",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Quản trị nhân sự",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Sáng tạo nội dung",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Microsoft Word",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Quản lý hồ sơ và lưu trữ",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Quản trị văn phòng",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Microsoft Excel",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Adobe Photoshop",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Adobe Premiere Pro",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Dựng video",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Sản xuất nội dung đa phương tiện",
+        "status": "leader_approved"
+      }
+    ],
+    "opportunity_links": [
+      {
+        "review_id": "UNI-NEW-009",
+        "major_names": [
+          "Kỹ thuật phần mềm",
+          "Công nghệ thông tin",
+          "Khoa học máy tính"
+        ],
+        "skill_names": [
+          "Kiểm thử phần mềm",
+          "Đảm bảo chất lượng (QA)",
+          "Tiếng Anh",
+          "Git"
+        ],
+        "status": "leader_approved"
+      },
+      {
+        "review_id": "UNI-003",
+        "major_names": ["Quản trị nhân lực", "Quản trị kinh doanh"],
+        "skill_names": [
+          "Tuyển dụng và sàng lọc hồ sơ",
+          "Quản trị nhân sự",
+          "Sáng tạo nội dung",
+          "Microsoft Word"
+        ],
+        "status": "leader_approved"
+      },
+      {
+        "review_id": "UNI-004",
+        "major_names": ["Quản trị kinh doanh", "Kinh tế", "Kế toán"],
+        "skill_names": [
+          "Quản lý hồ sơ và lưu trữ",
+          "Quản trị văn phòng",
+          "Microsoft Excel",
+          "Tiếng Anh"
+        ],
+        "status": "leader_approved"
+      },
+      {
+        "review_id": "UNI-002",
+        "major_names": ["Thiết kế đồ họa", "Truyền thông đa phương tiện"],
+        "skill_names": [
+          "Adobe Photoshop",
+          "Adobe Premiere Pro",
+          "Dựng video",
+          "Sản xuất nội dung đa phương tiện"
+        ],
+        "status": "leader_approved"
+      }
+    ]
+  }
+}

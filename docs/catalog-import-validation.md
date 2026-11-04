@@ -29,3 +29,69 @@ Unit riêng: **9 pass, 0 fail/skip**. Root typecheck/build/format và diff-check
 ## Giới hạn
 
 Không chạy UI, không tạo tài khoản/token, không kiểm thử NFR hoặc kết luận concurrency nhiều máy đã đạt. Serializable + UNIQUE giúp xung đột abort toàn bộ; khi gặp lỗi phải kiểm tra dry-run lại. Full import 8 cơ hội không được chạy trên DB cá nhân/nhóm trong nhiệm vụ này.
+
+## Nullable deadlines in collector/importer v2
+
+The importer accepts explicit `deadline: null` only with both metadata fields
+`deadline_source_date: null` and `deadline_source_timezone: null`, plus
+`evidence.source_status: "open"`. Missing fields, mixed metadata, closed or
+unknown source status are rejected. A dated item still requires a future cutoff
+and valid date/offset metadata. Calendar rollover dates are invalid.
+
+Greenhouse/Lever successful public posting lists provide open-publication evidence;
+explicit non-open states override it. A failed request provides no evidence.
+Malformed or unresolved published deadlines go to review, never become null.
+Scholarship configuration alone does not verify that applications are open.
+Publication does not prove location, student suitability or catalog mapping.
+
+Collector output uses `needs_review` on the catalog proposal, categories and links.
+The importer retains its explicit leader-approval gate. Do not manufacture approval
+just to run a batch. Source evidence must be rechecked before leader approval;
+null means no published deadline, not a guarantee that applications stay open.
+
+Schema already permits all three NULL fields; no migration is needed. Admin
+approval does not require a deadline. Public Hub/Detail omit null dates/countdowns;
+Recommendations accepts NULL and sorts it after known dates on equal scores.
+The 40/30/30 scoring formula is unchanged.
+
+Validation on 02/11/2026 (Windows Node 24.22.1): live public API lists returned
+Axon 471, Canonical 314, Palantir 301, Coupa 40 postings with no published date:
+785 Greenhouse + 341 Lever newly pass the deadline check. These are pre-dedup
+counts, not import-ready counts. With repository catalog fallback, 54 proposals
+remained; 756 failed catalog matching and 316 were internal duplicates (per source).
+No MySQL deduplication or student/location suitability verification was performed
+for these live counts. Existing output files were preserved.
+
+Importer CLI dry-run against the existing four-item dated batch: writes=0,
+blocked=false, 24 categories reused, 4 planned creates. NULL dry-run uses synthetic
+unit fixtures with a read-only fake client; collector proposals remain unapproved.
+
+### Student audience and Vietnam eligibility gates
+
+Collector proposals now require an Intern/Fresher/Graduate/Junior/entry-level title.
+Senior/Lead/Manager/Staff/Principal/Director/Head titles are excluded from proposals.
+Experience requirements exceeding two years go to review; Junior without clear
+experience requirements also needs review. These conservative keyword gates do
+not replace human JD review. Unrecognized language/requirements remain candidates
+for manual assessment, never grounds for inventing eligibility.
+
+Location must explicitly name Vietnam/a recognized Vietnamese city, or explicitly
+state worldwide/global remote eligibility. Remote US/Europe/UK and explicit foreign
+residence/work-authorization restrictions do not qualify; Remote/APAC alone is
+insufficient. No inference from the employer having a Vietnam office.
+
+Both Major and Skill must match JD sections in the active catalog. Missing Major
+or Skill generates NO_JD_MAJOR_MATCH / NO_JD_SKILL_MATCH; no empty Skill proposal,
+no automatic new category and no fixed scholarship mapping fallback. English JD
+terms without an exact catalog match still require manual mapping; proposals are
+not verified mappings and require leader review before importer execution.
+
+After the audience/location/JD gates, a fresh live read returned Axon 0,
+Canonical 1, Palantir 0 and Coupa 0 proposals (1126 postings read).
+The remaining proposal is Canonical Graduate Sales Development Representative,
+location Home based - Worldwide, source job 5915299. Its lexical Marketing/Linux
+mapping remains needs_review; keyword presence alone does not establish that a
+Major/Skill is required for the role. No proposal is approved or imported.
+These counts use repository catalogs without MySQL deduplication.
+
+Source coverage expansion, reviewed-page CLI, per-source rates and current proposal files: [ETL source coverage](etl-source-coverage.md).

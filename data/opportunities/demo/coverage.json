@@ -1,0 +1,502 @@
+[
+  {
+    "review_id": "DEMO-001",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Chuyên viên tuyển dụng"
+  },
+  {
+    "review_id": "DEMO-002",
+    "group": "CNTT và công nghệ số",
+    "career": "Nhân viên hỗ trợ hệ thống CNTT"
+  },
+  {
+    "review_id": "DEMO-003",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ sư thiết kế điện"
+  },
+  {
+    "review_id": "DEMO-004",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Chuyên viên mô hình hóa toán"
+  },
+  {
+    "review_id": "DEMO-005",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Trợ lý phân tích thương mại quốc tế"
+  },
+  {
+    "review_id": "DEMO-006",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Biên tập viên nội dung tiếng Anh"
+  },
+  {
+    "review_id": "DEMO-007",
+    "group": "Giáo dục",
+    "career": "Trợ lý nghiên cứu giáo dục"
+  },
+  {
+    "review_id": "DEMO-008",
+    "group": "Nông nghiệp, môi trường và thủy sản",
+    "career": "Trợ lý nghiên cứu nông học"
+  },
+  {
+    "review_id": "DEMO-009",
+    "group": "Y dược và sức khỏe",
+    "career": "Trợ lý lâm sàng dưới giám sát"
+  },
+  {
+    "review_id": "DEMO-010",
+    "group": "Thiết kế và dịch vụ",
+    "career": "Brand Identity Designer"
+  },
+  {
+    "review_id": "DEMO-011",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Nhân viên phát triển kinh doanh"
+  },
+  {
+    "review_id": "DEMO-012",
+    "group": "CNTT và công nghệ số",
+    "career": "Trợ lý nghiên cứu thuật toán"
+  },
+  {
+    "review_id": "DEMO-013",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ sư điện tử"
+  },
+  {
+    "review_id": "DEMO-014",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Chuyên viên tối ưu hóa"
+  },
+  {
+    "review_id": "DEMO-015",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Trợ lý nghiên cứu chính sách phát triển"
+  },
+  {
+    "review_id": "DEMO-016",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Nhân viên đối ngoại tiếng Trung"
+  },
+  {
+    "review_id": "DEMO-017",
+    "group": "Giáo dục",
+    "career": "Chuyên viên quản lý đào tạo"
+  },
+  {
+    "review_id": "DEMO-018",
+    "group": "Nông nghiệp, môi trường và thủy sản",
+    "career": "Nhân viên quản lý chất lượng cây trồng"
+  },
+  {
+    "review_id": "DEMO-019",
+    "group": "Y dược và sức khỏe",
+    "career": "Phụ tá nha khoa"
+  },
+  {
+    "review_id": "DEMO-020",
+    "group": "Thiết kế và dịch vụ",
+    "career": "Nhân viên thiết kế rập và may mẫu"
+  },
+  {
+    "review_id": "DEMO-021",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Chuyên viên quản trị rủi ro"
+  },
+  {
+    "review_id": "DEMO-022",
+    "group": "CNTT và công nghệ số",
+    "career": "Backend Developer"
+  },
+  {
+    "review_id": "DEMO-023",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "PLC Programmer"
+  },
+  {
+    "review_id": "DEMO-024",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Trợ lý phân tích dữ liệu thực nghiệm"
+  },
+  {
+    "review_id": "DEMO-025",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Chuyên viên phân tích tín dụng"
+  },
+  {
+    "review_id": "DEMO-026",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Nhân viên đối ngoại tiếng Nhật"
+  },
+  {
+    "review_id": "DEMO-027",
+    "group": "Giáo dục",
+    "career": "Giáo viên tiểu học tập sự"
+  },
+  {
+    "review_id": "DEMO-028",
+    "group": "Nông nghiệp, môi trường và thủy sản",
+    "career": "Trợ lý nghiên cứu dịch hại"
+  },
+  {
+    "review_id": "DEMO-029",
+    "group": "Y dược và sức khỏe",
+    "career": "Nhân viên kiểm nghiệm dược"
+  },
+  {
+    "review_id": "DEMO-030",
+    "group": "Thiết kế và dịch vụ",
+    "career": "3D Interior Visualizer"
+  },
+  {
+    "review_id": "DEMO-031",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Chuyên viên đảm bảo chất lượng"
+  },
+  {
+    "review_id": "DEMO-032",
+    "group": "CNTT và công nghệ số",
+    "career": "Chuyên viên quản trị cơ sở dữ liệu"
+  },
+  {
+    "review_id": "DEMO-033",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ sư thiết kế cơ điện tử"
+  },
+  {
+    "review_id": "DEMO-034",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Nhân viên kiểm soát chất lượng phòng thí nghiệm"
+  },
+  {
+    "review_id": "DEMO-035",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Fintech Data Analyst"
+  },
+  {
+    "review_id": "DEMO-036",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Nhân viên đối ngoại tiếng Hàn"
+  },
+  {
+    "review_id": "DEMO-037",
+    "group": "Giáo dục",
+    "career": "Giáo viên mầm non tập sự"
+  },
+  {
+    "review_id": "DEMO-038",
+    "group": "Nông nghiệp, môi trường và thủy sản",
+    "career": "Nhân viên kiểm soát chất lượng chăn nuôi"
+  },
+  {
+    "review_id": "DEMO-039",
+    "group": "Y dược và sức khỏe",
+    "career": "Điều dưỡng tập sự dưới giám sát"
+  },
+  {
+    "review_id": "DEMO-040",
+    "group": "Thiết kế và dịch vụ",
+    "career": "Nhân viên đặt phòng khách sạn"
+  },
+  {
+    "review_id": "DEMO-041",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Trợ lý kiểm toán"
+  },
+  {
+    "review_id": "DEMO-042",
+    "group": "CNTT và công nghệ số",
+    "career": "Nhân viên vận hành hệ thống mạng"
+  },
+  {
+    "review_id": "DEMO-043",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ sư thiết kế cơ khí"
+  },
+  {
+    "review_id": "DEMO-044",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Kỹ thuật viên phòng thí nghiệm sinh học"
+  },
+  {
+    "review_id": "DEMO-045",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Nhân viên xuất nhập khẩu"
+  },
+  {
+    "review_id": "DEMO-046",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Nhân viên đối ngoại tiếng Pháp"
+  },
+  {
+    "review_id": "DEMO-047",
+    "group": "Giáo dục",
+    "career": "Giáo viên Toán tập sự"
+  },
+  {
+    "review_id": "DEMO-048",
+    "group": "Nông nghiệp, môi trường và thủy sản",
+    "career": "Kỹ thuật viên xét nghiệm thú y"
+  },
+  {
+    "review_id": "DEMO-049",
+    "group": "Y dược và sức khỏe",
+    "career": "Trợ lý nghiên cứu y học cổ truyền"
+  },
+  {
+    "review_id": "DEMO-050",
+    "group": "Thiết kế và dịch vụ",
+    "career": "Nhân viên tư vấn dịch vụ du lịch"
+  },
+  {
+    "review_id": "DEMO-051",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Chuyên viên Digital Marketing"
+  },
+  {
+    "review_id": "DEMO-052",
+    "group": "CNTT và công nghệ số",
+    "career": "Penetration Tester"
+  },
+  {
+    "review_id": "DEMO-053",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ thuật viên chẩn đoán ô tô"
+  },
+  {
+    "review_id": "DEMO-054",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Trợ lý nghiên cứu công nghệ sinh học"
+  },
+  {
+    "review_id": "DEMO-055",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Nhân viên kinh doanh"
+  },
+  {
+    "review_id": "DEMO-056",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Chuyên viên nội dung"
+  },
+  {
+    "review_id": "DEMO-057",
+    "group": "Giáo dục",
+    "career": "Giáo viên Ngữ văn tập sự"
+  },
+  {
+    "review_id": "DEMO-058",
+    "group": "Nông nghiệp, môi trường và thủy sản",
+    "career": "Nhân viên quản lý chất lượng nước nuôi"
+  },
+  {
+    "review_id": "DEMO-059",
+    "group": "Y dược và sức khỏe",
+    "career": "Trợ lý nghiên cứu dịch tễ"
+  },
+  {
+    "review_id": "DEMO-060",
+    "group": "Thiết kế và dịch vụ",
+    "career": "Giám sát dịch vụ nhà hàng tập sự"
+  },
+  {
+    "review_id": "DEMO-061",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Chuyên viên truyền thông"
+  },
+  {
+    "review_id": "DEMO-062",
+    "group": "CNTT và công nghệ số",
+    "career": "Junior Machine Learning Engineer"
+  },
+  {
+    "review_id": "DEMO-063",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ sư thiết kế xây dựng"
+  },
+  {
+    "review_id": "DEMO-064",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Chuyên viên phân tích dữ liệu địa chất"
+  },
+  {
+    "review_id": "DEMO-065",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Nhân viên chứng từ xuất nhập khẩu"
+  },
+  {
+    "review_id": "DEMO-066",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Nhân viên lưu trữ tư liệu"
+  },
+  {
+    "review_id": "DEMO-067",
+    "group": "Giáo dục",
+    "career": "Giáo viên tiếng Anh tập sự"
+  },
+  {
+    "review_id": "DEMO-068",
+    "group": "Nông nghiệp, môi trường và thủy sản",
+    "career": "Chuyên viên GIS môi trường"
+  },
+  {
+    "review_id": "DEMO-069",
+    "group": "Y dược và sức khỏe",
+    "career": "Kỹ thuật viên xét nghiệm y học tập sự"
+  },
+  {
+    "review_id": "DEMO-070",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Biên tập viên nội dung"
+  },
+  {
+    "review_id": "DEMO-071",
+    "group": "CNTT và công nghệ số",
+    "career": "AI Engineer"
+  },
+  {
+    "review_id": "DEMO-072",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ sư giám sát công trình giao thông"
+  },
+  {
+    "review_id": "DEMO-073",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Kỹ thuật viên quan trắc môi trường"
+  },
+  {
+    "review_id": "DEMO-074",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Trợ lý định giá bất động sản"
+  },
+  {
+    "review_id": "DEMO-075",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Trợ lý nghiên cứu triết học"
+  },
+  {
+    "review_id": "DEMO-076",
+    "group": "Giáo dục",
+    "career": "Chuyên viên phát triển học liệu Tin học"
+  },
+  {
+    "review_id": "DEMO-077",
+    "group": "Nông nghiệp, môi trường và thủy sản",
+    "career": "Kỹ thuật viên địa chính"
+  },
+  {
+    "review_id": "DEMO-078",
+    "group": "Y dược và sức khỏe",
+    "career": "Nhân viên hỗ trợ vận hành thiết bị hình ảnh y tế"
+  },
+  {
+    "review_id": "DEMO-079",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Nhân viên kế toán"
+  },
+  {
+    "review_id": "DEMO-080",
+    "group": "CNTT và công nghệ số",
+    "career": "Kỹ thuật viên thiết kế phần cứng"
+  },
+  {
+    "review_id": "DEMO-081",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ thuật viên phòng thí nghiệm hóa"
+  },
+  {
+    "review_id": "DEMO-082",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Trợ lý nghiên cứu khoa học vật liệu"
+  },
+  {
+    "review_id": "DEMO-083",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Chuyên viên hành chính công"
+  },
+  {
+    "review_id": "DEMO-084",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Trợ lý tham vấn tâm lý dưới giám sát"
+  },
+  {
+    "review_id": "DEMO-085",
+    "group": "Nông nghiệp, môi trường và thủy sản",
+    "career": "Chuyên viên phân tích kinh tế nông nghiệp"
+  },
+  {
+    "review_id": "DEMO-086",
+    "group": "Y dược và sức khỏe",
+    "career": "Nhân viên quản lý chất lượng dinh dưỡng"
+  },
+  {
+    "review_id": "DEMO-087",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Chuyên viên phân tích tài chính"
+  },
+  {
+    "review_id": "DEMO-088",
+    "group": "CNTT và công nghệ số",
+    "career": "Chuyên viên phân tích vận hành thương mại điện tử"
+  },
+  {
+    "review_id": "DEMO-089",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ sư kiểm tra chất lượng vật liệu"
+  },
+  {
+    "review_id": "DEMO-090",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Kỹ thuật viên kiểm nghiệm thực phẩm"
+  },
+  {
+    "review_id": "DEMO-091",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Trợ lý pháp lý"
+  },
+  {
+    "review_id": "DEMO-092",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Trợ lý nghiên cứu xã hội học"
+  },
+  {
+    "review_id": "DEMO-093",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Chuyên viên phân tích dữ liệu kinh tế"
+  },
+  {
+    "review_id": "DEMO-094",
+    "group": "CNTT và công nghệ số",
+    "career": "Kỹ thuật viên phần cứng máy tính"
+  },
+  {
+    "review_id": "DEMO-095",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ sư thiết bị y tế"
+  },
+  {
+    "review_id": "DEMO-096",
+    "group": "Khoa học tự nhiên và sự sống",
+    "career": "Chuyên viên kiểm soát an toàn thực phẩm"
+  },
+  {
+    "review_id": "DEMO-097",
+    "group": "Kinh tế, kinh doanh và luật",
+    "career": "Trợ lý pháp chế doanh nghiệp"
+  },
+  {
+    "review_id": "DEMO-098",
+    "group": "Ngôn ngữ, xã hội và nhân văn",
+    "career": "Điều phối viên chương trình cộng đồng"
+  },
+  {
+    "review_id": "DEMO-099",
+    "group": "Kinh tế, quản trị và truyền thông",
+    "career": "Chuyên viên phát triển kinh doanh số"
+  },
+  {
+    "review_id": "DEMO-100",
+    "group": "Kỹ thuật và công nghiệp",
+    "career": "Kỹ thuật viên xử lý nước thải"
+  }
+]

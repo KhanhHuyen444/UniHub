@@ -1,0 +1,2706 @@
+{
+  "version": "1.0.0",
+  "description": "Danh mục tham khảo ánh xạ 116 Ngành (Major) sang Kỹ năng (Skill) cho UniHub (chỉ dùng tài liệu tham khảo/gợi ý, không tạo bảng quan hệ trong DB).",
+  "total_majors": 117,
+  "total_skills": 328,
+  "total_mapping_links": 701,
+  "groups": {
+    "Kinh tế, quản trị và truyền thông": [
+      {
+        "major": "Quản trị nhân lực",
+        "skills": [
+          "Tuyển dụng và sàng lọc hồ sơ",
+          "Quản trị nhân sự",
+          "Đào tạo và phát triển nhân sự",
+          "Microsoft Excel",
+          "Phỏng vấn và khảo sát",
+          "Quản lý hiệu suất nhân sự"
+        ]
+      },
+      {
+        "major": "Quản trị kinh doanh",
+        "skills": [
+          "Lập kế hoạch kinh doanh",
+          "Phân tích nghiệp vụ (Business Analysis)",
+          "Microsoft Excel",
+          "Quản lý dự án",
+          "Nghiên cứu thị trường",
+          "Lập kế hoạch chiến lược"
+        ]
+      },
+      {
+        "major": "Quản trị rủi ro",
+        "skills": [
+          "Quản trị rủi ro doanh nghiệp",
+          "Microsoft Excel",
+          "Phân tích dữ liệu",
+          "Kiểm soát nội bộ",
+          "Quản trị rủi ro tài chính",
+          "Xây dựng ma trận rủi ro"
+        ]
+      },
+      {
+        "major": "Đảm bảo chất lượng",
+        "skills": [
+          "Đảm bảo chất lượng (QA)",
+          "Kiểm soát chất lượng (QC)",
+          "Quản lý chất lượng phòng thí nghiệm",
+          "ISO 9001",
+          "Phân tích nguyên nhân gốc (RCA)",
+          "Six Sigma"
+        ]
+      },
+      {
+        "major": "Kiểm toán",
+        "skills": [
+          "Kiểm toán nội bộ",
+          "Kiểm soát nội bộ",
+          "Microsoft Excel",
+          "Chuẩn mực kế toán Việt Nam (VAS)",
+          "IFRS",
+          "Phân tích báo cáo tài chính"
+        ]
+      },
+      {
+        "major": "Marketing",
+        "skills": [
+          "Digital Marketing",
+          "SEO",
+          "Google Analytics 4",
+          "Nghiên cứu thị trường",
+          "Content Marketing",
+          "Meta Ads"
+        ]
+      },
+      {
+        "major": "Truyền thông",
+        "skills": [
+          "Lập kế hoạch truyền thông",
+          "Quan hệ công chúng (PR)",
+          "Sáng tạo nội dung",
+          "Quản trị thương hiệu",
+          "Canva",
+          "Quản lý khủng hoảng truyền thông"
+        ]
+      },
+      {
+        "major": "Báo chí",
+        "skills": [
+          "Viết và trình bày nội dung",
+          "Phỏng vấn và khảo sát",
+          "Biên tập và kiểm chứng thông tin",
+          "Nghiên cứu khoa học",
+          "Adobe Premiere Pro",
+          "Sáng tạo nội dung"
+        ]
+      },
+      {
+        "major": "Kế toán",
+        "skills": [
+          "Hạch toán kế toán",
+          "Microsoft Excel",
+          "Lập báo cáo tài chính",
+          "Kế toán thuế",
+          "Chuẩn mực kế toán Việt Nam (VAS)",
+          "Phần mềm kế toán MISA"
+        ]
+      },
+      {
+        "major": "Tài chính",
+        "skills": [
+          "Phân tích tài chính",
+          "Microsoft Excel",
+          "Lập ngân sách",
+          "Phân tích báo cáo tài chính",
+          "Định giá doanh nghiệp",
+          "Power BI"
+        ]
+      },
+      {
+        "major": "Kinh tế",
+        "skills": [
+          "Phân tích dữ liệu",
+          "Thống kê ứng dụng",
+          "Nghiên cứu thị trường",
+          "Microsoft Excel",
+          "Phương pháp nghiên cứu định lượng",
+          "Kinh tế lượng"
+        ]
+      },
+      {
+        "major": "Kinh doanh số và trí tuệ nhân tạo",
+        "skills": [
+          "Python",
+          "Machine Learning",
+          "Phân tích dữ liệu",
+          "Thương mại điện tử",
+          "Phân tích nghiệp vụ (Business Analysis)",
+          "Microsoft Excel"
+        ]
+      }
+    ],
+    "CNTT và công nghệ số": [
+      {
+        "major": "Công nghệ thông tin",
+        "skills": ["Python", "JavaScript", "SQL", "Git", "REST API", "Linux"]
+      },
+      {
+        "major": "Khoa học máy tính",
+        "skills": [
+          "Cấu trúc dữ liệu và giải thuật",
+          "Python",
+          "C++",
+          "Lập trình hướng đối tượng",
+          "Git",
+          "Thiết kế hệ thống"
+        ]
+      },
+      {
+        "major": "Kỹ thuật phần mềm",
+        "skills": [
+          "TypeScript",
+          "React",
+          "Node.js",
+          "Git",
+          "Kiểm thử phần mềm",
+          "REST API",
+          "SQL"
+        ]
+      },
+      {
+        "major": "Hệ thống thông tin",
+        "skills": [
+          "SQL",
+          "Thiết kế cơ sở dữ liệu",
+          "Phân tích nghiệp vụ (Business Analysis)",
+          "UML",
+          "ERP",
+          "Phân tích yêu cầu phần mềm"
+        ]
+      },
+      {
+        "major": "Mạng máy tính và truyền thông dữ liệu",
+        "skills": [
+          "TCP/IP",
+          "Quản trị hệ thống mạng",
+          "Linux",
+          "An ninh mạng",
+          "Wireshark",
+          "Cấu hình thiết bị mạng Cisco"
+        ]
+      },
+      {
+        "major": "An toàn thông tin",
+        "skills": [
+          "Phân tích lỗ hổng bảo mật",
+          "Kiểm thử xâm nhập",
+          "Linux",
+          "TCP/IP",
+          "SIEM",
+          "OWASP Top 10"
+        ]
+      },
+      {
+        "major": "Khoa học dữ liệu",
+        "skills": [
+          "Python",
+          "SQL",
+          "Phân tích dữ liệu",
+          "Machine Learning",
+          "Power BI",
+          "Thống kê ứng dụng"
+        ]
+      },
+      {
+        "major": "Trí tuệ nhân tạo",
+        "skills": [
+          "Python",
+          "PyTorch",
+          "Deep Learning",
+          "Xử lý ngôn ngữ tự nhiên (NLP)",
+          "Machine Learning",
+          "MLOps"
+        ]
+      },
+      {
+        "major": "Kỹ thuật máy tính",
+        "skills": [
+          "C",
+          "C++",
+          "Vi điều khiển",
+          "Thiết kế mạch điện",
+          "Linux",
+          "Thiết kế hệ thống nhúng"
+        ]
+      },
+      {
+        "major": "Thương mại điện tử",
+        "skills": [
+          "Thương mại điện tử",
+          "Vận hành sàn thương mại điện tử",
+          "Google Analytics 4",
+          "SEO",
+          "Quản lý đơn hàng",
+          "Quản lý quan hệ khách hàng (CRM)"
+        ]
+      },
+      {
+        "major": "Công nghệ kỹ thuật máy tính",
+        "skills": [
+          "C",
+          "C++",
+          "Vi điều khiển",
+          "Thiết kế mạch điện",
+          "Arduino",
+          "Đọc bản vẽ kỹ thuật"
+        ]
+      }
+    ],
+    "Kỹ thuật và công nghiệp": [
+      {
+        "major": "Kỹ thuật điện",
+        "skills": [
+          "Thiết kế mạch điện",
+          "AutoCAD",
+          "MATLAB",
+          "PLC",
+          "Đọc bản vẽ kỹ thuật",
+          "An toàn điện"
+        ]
+      },
+      {
+        "major": "Kỹ thuật điện tử - viễn thông",
+        "skills": [
+          "Thiết kế mạch điện",
+          "MATLAB",
+          "TCP/IP",
+          "Vi điều khiển",
+          "Xử lý tín hiệu số",
+          "Thiết kế PCB"
+        ]
+      },
+      {
+        "major": "Kỹ thuật điều khiển và tự động hóa",
+        "skills": [
+          "PLC",
+          "SCADA",
+          "MATLAB",
+          "Simulink",
+          "Vi điều khiển",
+          "Lập trình HMI"
+        ]
+      },
+      {
+        "major": "Kỹ thuật cơ điện tử",
+        "skills": [
+          "SolidWorks",
+          "AutoCAD",
+          "PLC",
+          "Thiết kế cơ khí",
+          "MATLAB",
+          "Robot công nghiệp"
+        ]
+      },
+      {
+        "major": "Kỹ thuật cơ khí",
+        "skills": [
+          "AutoCAD",
+          "SolidWorks",
+          "Công nghệ CAD/CAM",
+          "Đọc bản vẽ kỹ thuật",
+          "Thiết kế cơ khí",
+          "Gia công CNC"
+        ]
+      },
+      {
+        "major": "Kỹ thuật ô tô",
+        "skills": [
+          "AutoCAD",
+          "SolidWorks",
+          "Đọc bản vẽ kỹ thuật",
+          "Chẩn đoán hệ thống ô tô",
+          "MATLAB",
+          "Điện - điện tử ô tô"
+        ]
+      },
+      {
+        "major": "Kỹ thuật xây dựng",
+        "skills": [
+          "AutoCAD",
+          "Revit",
+          "BIM",
+          "Lập dự toán công trình",
+          "Giám sát công trình",
+          "Quản lý thi công"
+        ]
+      },
+      {
+        "major": "Kỹ thuật xây dựng công trình giao thông",
+        "skills": [
+          "AutoCAD",
+          "BIM",
+          "Lập dự toán công trình",
+          "Đọc bản vẽ kỹ thuật",
+          "Thiết kế kết cấu cầu đường",
+          "Giám sát công trình"
+        ]
+      },
+      {
+        "major": "Kỹ thuật hóa học",
+        "skills": [
+          "Phân tích hóa học",
+          "Sắc ký (HPLC/GC)",
+          "Thiết kế thí nghiệm",
+          "An toàn hóa chất",
+          "Kiểm soát chất lượng (QC)",
+          "Cân bằng vật chất và năng lượng"
+        ]
+      },
+      {
+        "major": "Kỹ thuật vật liệu",
+        "skills": [
+          "Phân tích vật liệu",
+          "Thiết kế thí nghiệm",
+          "Phân tích hóa học",
+          "Kiểm soát chất lượng (QC)",
+          "Đặc trưng vật liệu bằng XRD/SEM"
+        ]
+      },
+      {
+        "major": "Kỹ thuật y sinh",
+        "skills": [
+          "Đọc hiểu tài liệu y khoa",
+          "Thiết kế mạch điện",
+          "MATLAB",
+          "Xử lý tín hiệu y sinh",
+          "Thiết kế thiết bị y tế",
+          "An toàn điện"
+        ]
+      },
+      {
+        "major": "Kỹ thuật môi trường",
+        "skills": [
+          "Đánh giá tác động môi trường (ĐTM)",
+          "Phân tích mẫu nước và đất",
+          "Quản lý môi trường",
+          "AutoCAD",
+          "GIS",
+          "Xử lý nước thải"
+        ]
+      },
+      {
+        "major": "Kỹ thuật hệ thống công nghiệp",
+        "skills": [
+          "Lean Manufacturing",
+          "Six Sigma",
+          "Lập kế hoạch nhu cầu",
+          "Phân tích dữ liệu",
+          "Quản lý sản xuất",
+          "ERP"
+        ]
+      },
+      {
+        "major": "Kỹ thuật hàng không",
+        "skills": [
+          "MATLAB",
+          "Simulink",
+          "SolidWorks",
+          "Thiết kế cơ khí",
+          "Khí động học ứng dụng",
+          "Đọc bản vẽ kỹ thuật"
+        ]
+      },
+      {
+        "major": "Kiến trúc",
+        "skills": [
+          "AutoCAD",
+          "Revit",
+          "BIM",
+          "Thiết kế kiến trúc",
+          "SketchUp",
+          "Diễn họa kiến trúc"
+        ]
+      },
+      {
+        "major": "Thiết kế công nghiệp",
+        "skills": [
+          "SolidWorks",
+          "Công nghệ CAD/CAM",
+          "Thiết kế đồ họa",
+          "Figma",
+          "Thiết kế sản phẩm",
+          "Dựng mô hình 3D"
+        ]
+      }
+    ],
+    "Khoa học tự nhiên và sự sống": [
+      {
+        "major": "Toán học",
+        "skills": [
+          "Toán cao cấp",
+          "Thống kê ứng dụng",
+          "Python",
+          "MATLAB",
+          "Nghiên cứu khoa học",
+          "Mô hình hóa toán học"
+        ]
+      },
+      {
+        "major": "Toán ứng dụng",
+        "skills": [
+          "Python",
+          "MATLAB",
+          "Thống kê ứng dụng",
+          "Mô hình hóa toán học",
+          "Tối ưu hóa",
+          "Phân tích dữ liệu"
+        ]
+      },
+      {
+        "major": "Vật lý học",
+        "skills": [
+          "MATLAB",
+          "Python",
+          "Thiết kế thí nghiệm",
+          "Phân tích dữ liệu phòng thí nghiệm",
+          "Xử lý số liệu thực nghiệm",
+          "Nghiên cứu khoa học"
+        ]
+      },
+      {
+        "major": "Hóa học",
+        "skills": [
+          "Phân tích hóa học",
+          "Sắc ký (HPLC/GC)",
+          "Thiết kế thí nghiệm",
+          "Quản lý chất lượng phòng thí nghiệm",
+          "An toàn hóa chất",
+          "Xử lý số liệu thực nghiệm"
+        ]
+      },
+      {
+        "major": "Sinh học",
+        "skills": [
+          "Nghiên cứu khoa học",
+          "Thiết kế thí nghiệm",
+          "Kỹ thuật PCR",
+          "Nuôi cấy vi sinh",
+          "Phân tích dữ liệu phòng thí nghiệm",
+          "Sinh học phân tử"
+        ]
+      },
+      {
+        "major": "Công nghệ sinh học",
+        "skills": [
+          "Kỹ thuật PCR",
+          "Nuôi cấy vi sinh",
+          "Nuôi cấy mô",
+          "Thiết kế thí nghiệm",
+          "Sinh học phân tử",
+          "Phân tích dữ liệu phòng thí nghiệm"
+        ]
+      },
+      {
+        "major": "Địa chất học",
+        "skills": [
+          "GIS",
+          "QGIS",
+          "ArcGIS",
+          "Đọc bản đồ địa chất",
+          "Khảo sát địa chất thực địa",
+          "Phân tích mẫu đất đá"
+        ]
+      },
+      {
+        "major": "Khoa học môi trường",
+        "skills": [
+          "Đánh giá tác động môi trường (ĐTM)",
+          "GIS",
+          "Phân tích mẫu nước và đất",
+          "Quản lý môi trường",
+          "Thống kê ứng dụng",
+          "Quan trắc môi trường"
+        ]
+      },
+      {
+        "major": "Khoa học vật liệu",
+        "skills": [
+          "Phân tích vật liệu",
+          "Đặc trưng vật liệu bằng XRD/SEM",
+          "Thiết kế thí nghiệm",
+          "Phân tích dữ liệu phòng thí nghiệm",
+          "Nghiên cứu khoa học"
+        ]
+      },
+      {
+        "major": "Công nghệ thực phẩm",
+        "skills": [
+          "Kiểm soát an toàn thực phẩm",
+          "HACCP",
+          "ISO 22000",
+          "Kiểm soát chất lượng (QC)",
+          "Nuôi cấy vi sinh",
+          "Phân tích hóa học"
+        ]
+      },
+      {
+        "major": "Khoa học và công nghệ thực phẩm",
+        "skills": [
+          "HACCP",
+          "ISO 22000",
+          "Thiết kế thí nghiệm",
+          "Kiểm soát an toàn thực phẩm",
+          "Phân tích hóa học",
+          "Nghiên cứu phát triển sản phẩm thực phẩm"
+        ]
+      },
+      {
+        "major": "Hải dương học",
+        "skills": [
+          "Phân tích dữ liệu",
+          "GIS",
+          "Quan trắc môi trường",
+          "Đo đạc hải văn",
+          "Thống kê ứng dụng",
+          "Mô hình hóa môi trường"
+        ]
+      },
+      {
+        "major": "Địa lý tự nhiên",
+        "skills": [
+          "GIS",
+          "QGIS",
+          "ArcGIS",
+          "Viễn thám",
+          "Phân tích dữ liệu không gian",
+          "Khảo sát thực địa"
+        ]
+      }
+    ],
+    "Kinh tế, kinh doanh và luật": [
+      {
+        "major": "Kinh tế quốc tế",
+        "skills": [
+          "Microsoft Excel",
+          "Phân tích dữ liệu",
+          "Kinh tế lượng",
+          "Thương mại quốc tế",
+          "Phân tích chính sách thương mại",
+          "Tiếng Anh"
+        ]
+      },
+      {
+        "major": "Kinh tế phát triển",
+        "skills": [
+          "Kinh tế lượng",
+          "Phân tích dữ liệu",
+          "Đánh giá tác động chính sách",
+          "Microsoft Excel",
+          "Thống kê ứng dụng",
+          "Nghiên cứu khoa học"
+        ]
+      },
+      {
+        "major": "Tài chính - Ngân hàng",
+        "skills": [
+          "Phân tích tài chính",
+          "Phân tích tín dụng",
+          "Microsoft Excel",
+          "Phân tích đầu tư",
+          "Quản trị rủi ro tài chính",
+          "Lập báo cáo tài chính"
+        ]
+      },
+      {
+        "major": "Công nghệ tài chính",
+        "skills": [
+          "Python",
+          "SQL",
+          "Phân tích tài chính",
+          "Phân tích dữ liệu",
+          "Thanh toán số",
+          "Quản trị rủi ro tài chính"
+        ]
+      },
+      {
+        "major": "Kinh doanh quốc tế",
+        "skills": [
+          "Xuất nhập khẩu",
+          "Đàm phán thương mại",
+          "Incoterms",
+          "Tiếng Anh",
+          "Nghiên cứu thị trường",
+          "Chứng từ xuất nhập khẩu"
+        ]
+      },
+      {
+        "major": "Kinh doanh thương mại",
+        "skills": [
+          "Bán hàng (Sales)",
+          "Quản lý đơn hàng",
+          "Microsoft Excel",
+          "Đàm phán thương mại",
+          "Quản lý quan hệ khách hàng (CRM)",
+          "Nghiên cứu thị trường"
+        ]
+      },
+      {
+        "major": "Logistics và Quản lý chuỗi cung ứng",
+        "skills": [
+          "Quản lý chuỗi cung ứng",
+          "Quản lý kho hàng",
+          "Incoterms",
+          "Chứng từ xuất nhập khẩu",
+          "Microsoft Excel",
+          "SAP"
+        ]
+      },
+      {
+        "major": "Bất động sản",
+        "skills": [
+          "Định giá bất động sản",
+          "Nghiên cứu thị trường",
+          "Microsoft Excel",
+          "Pháp luật đất đai",
+          "Bán hàng (Sales)",
+          "Phân tích đầu tư"
+        ]
+      },
+      {
+        "major": "Quản lý công",
+        "skills": [
+          "Phân tích chính sách công",
+          "Phương pháp nghiên cứu định lượng",
+          "Microsoft Excel",
+          "Quản lý dự án",
+          "Soạn thảo văn bản hành chính",
+          "Phỏng vấn và khảo sát"
+        ]
+      },
+      {
+        "major": "Luật",
+        "skills": [
+          "Nghiên cứu pháp lý",
+          "Soạn thảo hợp đồng",
+          "Pháp luật doanh nghiệp",
+          "Tra cứu văn bản quy phạm pháp luật",
+          "Phân tích hồ sơ pháp lý",
+          "Tiếng Anh"
+        ]
+      },
+      {
+        "major": "Luật kinh tế",
+        "skills": [
+          "Pháp luật doanh nghiệp",
+          "Soạn thảo hợp đồng",
+          "Nghiên cứu pháp lý",
+          "Pháp luật thương mại",
+          "Tuân thủ pháp luật (Compliance)",
+          "Tiếng Anh"
+        ]
+      },
+      {
+        "major": "Quản trị văn phòng",
+        "skills": [
+          "Microsoft Word",
+          "Microsoft Excel",
+          "Soạn thảo văn bản hành chính",
+          "Quản trị văn phòng",
+          "Quản lý hồ sơ và lưu trữ",
+          "Quản lý công việc"
+        ]
+      },
+      {
+        "major": "Hệ thống thông tin quản lý",
+        "skills": [
+          "SQL",
+          "Phân tích nghiệp vụ (Business Analysis)",
+          "Power BI",
+          "ERP",
+          "BPMN",
+          "Thiết kế cơ sở dữ liệu"
+        ]
+      }
+    ],
+    "Ngôn ngữ, xã hội và nhân văn": [
+      {
+        "major": "Ngôn ngữ Anh",
+        "skills": [
+          "Tiếng Anh",
+          "Biên dịch",
+          "Phiên dịch",
+          "Biên tập nội dung tiếng Anh",
+          "Giao tiếp",
+          "Viết và trình bày nội dung"
+        ]
+      },
+      {
+        "major": "Ngôn ngữ Trung Quốc",
+        "skills": [
+          "Tiếng Trung",
+          "Biên dịch",
+          "Phiên dịch",
+          "Biên tập nội dung đa ngôn ngữ",
+          "Giao tiếp",
+          "Tiếng Anh"
+        ]
+      },
+      {
+        "major": "Ngôn ngữ Nhật",
+        "skills": [
+          "Tiếng Nhật",
+          "Biên dịch",
+          "Phiên dịch",
+          "Biên tập nội dung đa ngôn ngữ",
+          "Giao tiếp",
+          "Tiếng Anh"
+        ]
+      },
+      {
+        "major": "Ngôn ngữ Hàn Quốc",
+        "skills": [
+          "Tiếng Hàn",
+          "Biên dịch",
+          "Phiên dịch",
+          "Biên tập nội dung đa ngôn ngữ",
+          "Giao tiếp",
+          "Tiếng Anh"
+        ]
+      },
+      {
+        "major": "Ngôn ngữ Pháp",
+        "skills": [
+          "Tiếng Pháp",
+          "Biên dịch",
+          "Phiên dịch",
+          "Biên tập nội dung đa ngôn ngữ",
+          "Giao tiếp",
+          "Tiếng Anh"
+        ]
+      },
+      {
+        "major": "Văn học",
+        "skills": [
+          "Biên tập và kiểm chứng thông tin",
+          "Viết và trình bày nội dung",
+          "Phân tích văn bản",
+          "Nghiên cứu khoa học",
+          "Sáng tạo nội dung",
+          "Biên tập xuất bản"
+        ]
+      },
+      {
+        "major": "Lịch sử",
+        "skills": [
+          "Nghiên cứu tư liệu lịch sử",
+          "Phỏng vấn và khảo sát",
+          "Quản lý hồ sơ và lưu trữ",
+          "Biên tập và kiểm chứng thông tin",
+          "Nghiên cứu khoa học",
+          "Viết báo cáo nghiên cứu"
+        ]
+      },
+      {
+        "major": "Triết học",
+        "skills": [
+          "Tư duy phản biện",
+          "Nghiên cứu khoa học",
+          "Phân tích văn bản",
+          "Lập luận học thuật",
+          "Viết báo cáo nghiên cứu",
+          "Thuyết trình"
+        ]
+      },
+      {
+        "major": "Tâm lý học",
+        "skills": [
+          "Tư vấn tâm lý cơ bản",
+          "Phỏng vấn và khảo sát",
+          "Phương pháp nghiên cứu định lượng",
+          "Phương pháp nghiên cứu định tính",
+          "Đánh giá tâm lý cơ bản",
+          "Đạo đức nghề nghiệp tâm lý"
+        ]
+      },
+      {
+        "major": "Xã hội học",
+        "skills": [
+          "Phỏng vấn và khảo sát",
+          "Phương pháp nghiên cứu định tính",
+          "Phương pháp nghiên cứu định lượng",
+          "Phân tích dữ liệu",
+          "SPSS",
+          "Viết báo cáo nghiên cứu"
+        ]
+      },
+      {
+        "major": "Công tác xã hội",
+        "skills": [
+          "Tư vấn tâm lý cơ bản",
+          "Đánh giá nhu cầu cộng đồng",
+          "Phỏng vấn và khảo sát",
+          "Quản lý ca công tác xã hội",
+          "Phối hợp liên phòng ban",
+          "Đạo đức nghề công tác xã hội"
+        ]
+      },
+      {
+        "major": "Quan hệ quốc tế",
+        "skills": [
+          "Tiếng Anh",
+          "Nghiên cứu chính sách quốc tế",
+          "Phân tích chính sách công",
+          "Viết báo cáo nghiên cứu",
+          "Thuyết trình",
+          "Đàm phán thương mại"
+        ]
+      },
+      {
+        "major": "Đông phương học",
+        "skills": [
+          "Phương pháp nghiên cứu định tính",
+          "Tiếng Anh",
+          "Biên dịch",
+          "Phỏng vấn và khảo sát",
+          "Nghiên cứu văn hóa khu vực",
+          "Viết báo cáo nghiên cứu"
+        ]
+      },
+      {
+        "major": "Việt Nam học",
+        "skills": [
+          "Viết và trình bày nội dung",
+          "Phương pháp nghiên cứu định tính",
+          "Tiếng Anh",
+          "Nghiên cứu văn hóa Việt Nam",
+          "Phỏng vấn và khảo sát",
+          "Vận hành dịch vụ du lịch"
+        ]
+      },
+      {
+        "major": "Nhân học",
+        "skills": [
+          "Khảo sát thực địa",
+          "Phương pháp nghiên cứu định tính",
+          "Phỏng vấn và khảo sát",
+          "Nghiên cứu dân tộc học",
+          "Viết báo cáo nghiên cứu",
+          "Đạo đức nghiên cứu"
+        ]
+      },
+      {
+        "major": "Quan hệ công chúng",
+        "skills": [
+          "Quan hệ công chúng (PR)",
+          "Lập kế hoạch truyền thông",
+          "Quản lý khủng hoảng truyền thông",
+          "Sáng tạo nội dung",
+          "Quản trị thương hiệu",
+          "Tổ chức sự kiện"
+        ]
+      },
+      {
+        "major": "Truyền thông đa phương tiện",
+        "skills": [
+          "Adobe Premiere Pro",
+          "Adobe Photoshop",
+          "Figma",
+          "Dựng video",
+          "Thiết kế đồ họa",
+          "Sản xuất nội dung đa phương tiện"
+        ]
+      },
+      {
+        "major": "Thông tin - Thư viện",
+        "skills": [
+          "Quản lý hồ sơ và lưu trữ",
+          "Biên mục tài liệu",
+          "Tra cứu cơ sở dữ liệu thông tin",
+          "Quản lý thư viện số",
+          "Microsoft Excel",
+          "Dịch vụ người dùng thư viện"
+        ]
+      },
+      {
+        "major": "Quản lý thông tin",
+        "skills": [
+          "Quản trị dữ liệu",
+          "SQL",
+          "Quản lý hồ sơ và lưu trữ",
+          "Phân loại thông tin",
+          "Quản lý dự án",
+          "Phân tích dữ liệu"
+        ]
+      },
+      {
+        "major": "Du lịch học",
+        "skills": [
+          "Vận hành dịch vụ du lịch",
+          "Thiết kế tour du lịch",
+          "Thuyết minh du lịch",
+          "Tiếng Anh",
+          "Phỏng vấn và khảo sát",
+          "Nghiên cứu văn hóa khu vực"
+        ]
+      }
+    ],
+    "Giáo dục": [
+      {
+        "major": "Giáo dục học",
+        "skills": [
+          "Thiết kế bài giảng",
+          "Đánh giá kết quả học tập",
+          "Phương pháp nghiên cứu định lượng",
+          "Phỏng vấn và khảo sát",
+          "Quản lý lớp học",
+          "Thiết kế chương trình đào tạo"
+        ]
+      },
+      {
+        "major": "Quản lý giáo dục",
+        "skills": [
+          "Quản lý lớp học",
+          "Thiết kế chương trình đào tạo",
+          "Quản lý dự án",
+          "Đánh giá kết quả học tập",
+          "Phân tích dữ liệu giáo dục",
+          "Quản trị nhân sự"
+        ]
+      },
+      {
+        "major": "Giáo dục Tiểu học",
+        "skills": [
+          "Xây dựng kế hoạch giảng dạy",
+          "Quản lý lớp học",
+          "Thiết kế bài giảng",
+          "Đánh giá kết quả học tập",
+          "Dạy học phân hóa",
+          "Công nghệ giáo dục"
+        ]
+      },
+      {
+        "major": "Giáo dục Mầm non",
+        "skills": [
+          "Xây dựng kế hoạch giảng dạy",
+          "Quản lý lớp học",
+          "Tổ chức hoạt động giáo dục mầm non",
+          "Quan sát phát triển trẻ",
+          "Thiết kế bài giảng",
+          "Giao tiếp"
+        ]
+      },
+      {
+        "major": "Sư phạm Toán học",
+        "skills": [
+          "Toán cao cấp",
+          "Thiết kế bài giảng",
+          "Xây dựng kế hoạch giảng dạy",
+          "Đánh giá kết quả học tập",
+          "Công nghệ giáo dục",
+          "Quản lý lớp học"
+        ]
+      },
+      {
+        "major": "Sư phạm Ngữ văn",
+        "skills": [
+          "Biên tập và kiểm chứng thông tin",
+          "Thiết kế bài giảng",
+          "Xây dựng kế hoạch giảng dạy",
+          "Đánh giá kết quả học tập",
+          "Quản lý lớp học",
+          "Dạy học đọc hiểu"
+        ]
+      },
+      {
+        "major": "Sư phạm Tiếng Anh",
+        "skills": [
+          "Tiếng Anh",
+          "Thiết kế bài giảng",
+          "Xây dựng kế hoạch giảng dạy",
+          "Đánh giá kết quả học tập",
+          "Quản lý lớp học",
+          "Phương pháp giảng dạy tiếng Anh (TESOL)"
+        ]
+      },
+      {
+        "major": "Sư phạm Tin học",
+        "skills": [
+          "Python",
+          "Thiết kế bài giảng",
+          "Xây dựng kế hoạch giảng dạy",
+          "Quản lý lớp học",
+          "Công nghệ giáo dục",
+          "Đánh giá kết quả học tập"
+        ]
+      }
+    ],
+    "Nông nghiệp, môi trường và thủy sản": [
+      {
+        "major": "Nông học",
+        "skills": [
+          "Quản lý sản xuất nông nghiệp",
+          "Đánh giá chất lượng đất",
+          "Thiết kế thí nghiệm",
+          "Quản lý dịch hại tổng hợp (IPM)",
+          "Microsoft Excel",
+          "Nghiên cứu khoa học"
+        ]
+      },
+      {
+        "major": "Khoa học cây trồng",
+        "skills": [
+          "Quản lý sản xuất nông nghiệp",
+          "Đánh giá chất lượng đất",
+          "Chọn tạo giống cây trồng",
+          "Quản lý tưới tiêu",
+          "Thiết kế thí nghiệm",
+          "Kiểm soát chất lượng (QC)"
+        ]
+      },
+      {
+        "major": "Bảo vệ thực vật",
+        "skills": [
+          "Quản lý dịch hại tổng hợp (IPM)",
+          "Nhận diện sâu bệnh hại",
+          "Sử dụng thuốc bảo vệ thực vật an toàn",
+          "Thiết kế thí nghiệm",
+          "Quản lý sản xuất nông nghiệp",
+          "Nghiên cứu khoa học"
+        ]
+      },
+      {
+        "major": "Chăn nuôi",
+        "skills": [
+          "Chăm sóc và dinh dưỡng vật nuôi",
+          "Quản lý trang trại chăn nuôi",
+          "An toàn sinh học trang trại",
+          "Kiểm soát chất lượng (QC)",
+          "Quản lý sản xuất nông nghiệp",
+          "Microsoft Excel"
+        ]
+      },
+      {
+        "major": "Thú y",
+        "skills": [
+          "Chăm sóc và dinh dưỡng vật nuôi",
+          "Khám lâm sàng thú y",
+          "Chẩn đoán bệnh động vật",
+          "An toàn sinh học trang trại",
+          "Quản lý trang trại chăn nuôi",
+          "Kỹ thuật xét nghiệm thú y"
+        ]
+      },
+      {
+        "major": "Nuôi trồng thủy sản",
+        "skills": [
+          "Quản lý chất lượng nước nuôi trồng",
+          "Nuôi trồng thủy sản bền vững",
+          "Quản lý sản xuất nông nghiệp",
+          "Phân tích mẫu nước và đất",
+          "An toàn sinh học trang trại",
+          "Kiểm soát chất lượng (QC)"
+        ]
+      },
+      {
+        "major": "Quản lý tài nguyên và môi trường",
+        "skills": [
+          "Đánh giá tác động môi trường (ĐTM)",
+          "GIS",
+          "Quản lý môi trường",
+          "Quan trắc môi trường",
+          "Pháp luật môi trường",
+          "Phân tích dữ liệu"
+        ]
+      },
+      {
+        "major": "Quản lý đất đai",
+        "skills": [
+          "GIS",
+          "QGIS",
+          "ArcGIS",
+          "Pháp luật đất đai",
+          "Đo đạc địa chính",
+          "Quản lý cơ sở dữ liệu đất đai"
+        ]
+      },
+      {
+        "major": "Kinh tế nông nghiệp",
+        "skills": [
+          "Microsoft Excel",
+          "Phân tích tài chính",
+          "Kinh tế lượng",
+          "Quản lý sản xuất nông nghiệp",
+          "Phân tích chuỗi giá trị nông sản",
+          "Nghiên cứu thị trường"
+        ]
+      }
+    ],
+    "Y dược và sức khỏe": [
+      {
+        "major": "Y khoa",
+        "skills": [
+          "Đọc hiểu tài liệu y khoa",
+          "Khám lâm sàng cơ bản",
+          "Giao tiếp với người bệnh",
+          "Kiểm soát nhiễm khuẩn",
+          "Thực hành y khoa dựa trên bằng chứng",
+          "Hồ sơ bệnh án điện tử"
+        ]
+      },
+      {
+        "major": "Răng - Hàm - Mặt",
+        "skills": [
+          "Kiểm soát nhiễm khuẩn",
+          "Giao tiếp với người bệnh",
+          "Phụ tá nha khoa",
+          "Đọc hiểu tài liệu y khoa",
+          "Khử khuẩn dụng cụ nha khoa",
+          "Hồ sơ bệnh án điện tử"
+        ]
+      },
+      {
+        "major": "Dược học",
+        "skills": [
+          "Đọc hiểu tài liệu y khoa",
+          "Thực hành tốt nhà thuốc (GPP)",
+          "Thực hành tốt sản xuất thuốc (GMP)",
+          "Kiểm nghiệm dược phẩm",
+          "Tư vấn sử dụng thuốc trong phạm vi chuyên môn",
+          "Sắc ký (HPLC/GC)"
+        ]
+      },
+      {
+        "major": "Điều dưỡng",
+        "skills": [
+          "Thực hành điều dưỡng cơ bản",
+          "Chăm sóc người bệnh",
+          "Kiểm soát nhiễm khuẩn",
+          "Giao tiếp với người bệnh",
+          "Quản lý hồ sơ bệnh án",
+          "Theo dõi dấu hiệu sinh tồn"
+        ]
+      },
+      {
+        "major": "Y học cổ truyền",
+        "skills": [
+          "Đọc hiểu tài liệu y khoa",
+          "Giao tiếp với người bệnh",
+          "Dược liệu học",
+          "Kiểm soát nhiễm khuẩn",
+          "Quản lý hồ sơ bệnh án",
+          "Thực hành y học cổ truyền dưới giám sát"
+        ]
+      },
+      {
+        "major": "Y tế công cộng",
+        "skills": [
+          "Thống kê ứng dụng",
+          "Phân tích dữ liệu",
+          "Dịch tễ học",
+          "Phương pháp nghiên cứu định lượng",
+          "Truyền thông giáo dục sức khỏe",
+          "Quản lý chương trình y tế"
+        ]
+      },
+      {
+        "major": "Kỹ thuật xét nghiệm y học",
+        "skills": [
+          "Kỹ thuật PCR",
+          "Nuôi cấy vi sinh",
+          "Kiểm soát nhiễm khuẩn",
+          "Quản lý chất lượng phòng thí nghiệm",
+          "Kỹ thuật xét nghiệm huyết học",
+          "An toàn sinh học phòng xét nghiệm"
+        ]
+      },
+      {
+        "major": "Kỹ thuật hình ảnh y học",
+        "skills": [
+          "Đọc hiểu tài liệu y khoa",
+          "Kiểm soát nhiễm khuẩn",
+          "Vận hành thiết bị chẩn đoán hình ảnh",
+          "An toàn bức xạ y tế",
+          "Hồ sơ bệnh án điện tử",
+          "Giao tiếp với người bệnh"
+        ]
+      },
+      {
+        "major": "Dinh dưỡng",
+        "skills": [
+          "Đánh giá dinh dưỡng",
+          "Lập khẩu phần ăn",
+          "Tư vấn dinh dưỡng",
+          "Kiểm soát an toàn thực phẩm",
+          "Giao tiếp với người bệnh",
+          "Microsoft Excel"
+        ]
+      }
+    ],
+    "Thiết kế và dịch vụ": [
+      {
+        "major": "Thiết kế đồ họa",
+        "skills": [
+          "Adobe Photoshop",
+          "Adobe Illustrator",
+          "Figma",
+          "Thiết kế đồ họa",
+          "Bố cục và typography",
+          "Thiết kế bộ nhận diện thương hiệu"
+        ]
+      },
+      {
+        "major": "Thiết kế thời trang",
+        "skills": [
+          "Adobe Illustrator",
+          "Thiết kế thời trang",
+          "Thiết kế rập",
+          "May mẫu",
+          "Dựng mô hình 3D",
+          "Nghiên cứu xu hướng thời trang"
+        ]
+      },
+      {
+        "major": "Thiết kế nội thất",
+        "skills": [
+          "AutoCAD",
+          "SketchUp",
+          "Revit",
+          "Dựng mô hình 3D",
+          "Diễn họa nội thất",
+          "Triển khai hồ sơ thiết kế nội thất"
+        ]
+      },
+      {
+        "major": "Quản trị khách sạn",
+        "skills": [
+          "Dịch vụ khách hàng ngành khách sạn",
+          "Nghiệp vụ lễ tân",
+          "Phần mềm quản lý khách sạn (PMS)",
+          "Tiếng Anh",
+          "Quản lý đặt phòng",
+          "Xử lý khiếu nại khách hàng"
+        ]
+      },
+      {
+        "major": "Quản trị dịch vụ du lịch và lữ hành",
+        "skills": [
+          "Vận hành dịch vụ du lịch",
+          "Thiết kế tour du lịch",
+          "Điều hành tour",
+          "Tiếng Anh",
+          "Thuyết minh du lịch",
+          "Chăm sóc khách hàng"
+        ]
+      },
+      {
+        "major": "Quản trị nhà hàng và dịch vụ ăn uống",
+        "skills": [
+          "Dịch vụ khách hàng ngành khách sạn",
+          "Nghiệp vụ phục vụ nhà hàng",
+          "An toàn vệ sinh thực phẩm",
+          "Quản lý chi phí F&B",
+          "Tiếng Anh",
+          "Xử lý khiếu nại khách hàng"
+        ]
+      }
+    ]
+  },
+  "mappings": [
+    {
+      "major": "Quản trị nhân lực",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Tuyển dụng và sàng lọc hồ sơ",
+        "Quản trị nhân sự",
+        "Đào tạo và phát triển nhân sự",
+        "Microsoft Excel",
+        "Phỏng vấn và khảo sát",
+        "Quản lý hiệu suất nhân sự"
+      ]
+    },
+    {
+      "major": "Quản trị kinh doanh",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Lập kế hoạch kinh doanh",
+        "Phân tích nghiệp vụ (Business Analysis)",
+        "Microsoft Excel",
+        "Quản lý dự án",
+        "Nghiên cứu thị trường",
+        "Lập kế hoạch chiến lược"
+      ]
+    },
+    {
+      "major": "Quản trị rủi ro",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Quản trị rủi ro doanh nghiệp",
+        "Microsoft Excel",
+        "Phân tích dữ liệu",
+        "Kiểm soát nội bộ",
+        "Quản trị rủi ro tài chính",
+        "Xây dựng ma trận rủi ro"
+      ]
+    },
+    {
+      "major": "Đảm bảo chất lượng",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Đảm bảo chất lượng (QA)",
+        "Kiểm soát chất lượng (QC)",
+        "Quản lý chất lượng phòng thí nghiệm",
+        "ISO 9001",
+        "Phân tích nguyên nhân gốc (RCA)",
+        "Six Sigma"
+      ]
+    },
+    {
+      "major": "Kiểm toán",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Kiểm toán nội bộ",
+        "Kiểm soát nội bộ",
+        "Microsoft Excel",
+        "Chuẩn mực kế toán Việt Nam (VAS)",
+        "IFRS",
+        "Phân tích báo cáo tài chính"
+      ]
+    },
+    {
+      "major": "Marketing",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Digital Marketing",
+        "SEO",
+        "Google Analytics 4",
+        "Nghiên cứu thị trường",
+        "Content Marketing",
+        "Meta Ads"
+      ]
+    },
+    {
+      "major": "Truyền thông",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Lập kế hoạch truyền thông",
+        "Quan hệ công chúng (PR)",
+        "Sáng tạo nội dung",
+        "Quản trị thương hiệu",
+        "Canva",
+        "Quản lý khủng hoảng truyền thông"
+      ]
+    },
+    {
+      "major": "Báo chí",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Viết và trình bày nội dung",
+        "Phỏng vấn và khảo sát",
+        "Biên tập và kiểm chứng thông tin",
+        "Nghiên cứu khoa học",
+        "Adobe Premiere Pro",
+        "Sáng tạo nội dung"
+      ]
+    },
+    {
+      "major": "Kế toán",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Hạch toán kế toán",
+        "Microsoft Excel",
+        "Lập báo cáo tài chính",
+        "Kế toán thuế",
+        "Chuẩn mực kế toán Việt Nam (VAS)",
+        "Phần mềm kế toán MISA"
+      ]
+    },
+    {
+      "major": "Tài chính",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Phân tích tài chính",
+        "Microsoft Excel",
+        "Lập ngân sách",
+        "Phân tích báo cáo tài chính",
+        "Định giá doanh nghiệp",
+        "Power BI"
+      ]
+    },
+    {
+      "major": "Kinh tế",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Phân tích dữ liệu",
+        "Thống kê ứng dụng",
+        "Nghiên cứu thị trường",
+        "Microsoft Excel",
+        "Phương pháp nghiên cứu định lượng",
+        "Kinh tế lượng"
+      ]
+    },
+    {
+      "major": "Công nghệ thông tin",
+      "group": "CNTT và công nghệ số",
+      "skills": ["Python", "JavaScript", "SQL", "Git", "REST API", "Linux"]
+    },
+    {
+      "major": "Khoa học máy tính",
+      "group": "CNTT và công nghệ số",
+      "skills": [
+        "Cấu trúc dữ liệu và giải thuật",
+        "Python",
+        "C++",
+        "Lập trình hướng đối tượng",
+        "Git",
+        "Thiết kế hệ thống"
+      ]
+    },
+    {
+      "major": "Kỹ thuật phần mềm",
+      "group": "CNTT và công nghệ số",
+      "skills": [
+        "TypeScript",
+        "React",
+        "Node.js",
+        "Git",
+        "Kiểm thử phần mềm",
+        "REST API",
+        "SQL"
+      ]
+    },
+    {
+      "major": "Hệ thống thông tin",
+      "group": "CNTT và công nghệ số",
+      "skills": [
+        "SQL",
+        "Thiết kế cơ sở dữ liệu",
+        "Phân tích nghiệp vụ (Business Analysis)",
+        "UML",
+        "ERP",
+        "Phân tích yêu cầu phần mềm"
+      ]
+    },
+    {
+      "major": "Mạng máy tính và truyền thông dữ liệu",
+      "group": "CNTT và công nghệ số",
+      "skills": [
+        "TCP/IP",
+        "Quản trị hệ thống mạng",
+        "Linux",
+        "An ninh mạng",
+        "Wireshark",
+        "Cấu hình thiết bị mạng Cisco"
+      ]
+    },
+    {
+      "major": "An toàn thông tin",
+      "group": "CNTT và công nghệ số",
+      "skills": [
+        "Phân tích lỗ hổng bảo mật",
+        "Kiểm thử xâm nhập",
+        "Linux",
+        "TCP/IP",
+        "SIEM",
+        "OWASP Top 10"
+      ]
+    },
+    {
+      "major": "Khoa học dữ liệu",
+      "group": "CNTT và công nghệ số",
+      "skills": [
+        "Python",
+        "SQL",
+        "Phân tích dữ liệu",
+        "Machine Learning",
+        "Power BI",
+        "Thống kê ứng dụng"
+      ]
+    },
+    {
+      "major": "Trí tuệ nhân tạo",
+      "group": "CNTT và công nghệ số",
+      "skills": [
+        "Python",
+        "PyTorch",
+        "Deep Learning",
+        "Xử lý ngôn ngữ tự nhiên (NLP)",
+        "Machine Learning",
+        "MLOps"
+      ]
+    },
+    {
+      "major": "Kỹ thuật máy tính",
+      "group": "CNTT và công nghệ số",
+      "skills": [
+        "C",
+        "C++",
+        "Vi điều khiển",
+        "Thiết kế mạch điện",
+        "Linux",
+        "Thiết kế hệ thống nhúng"
+      ]
+    },
+    {
+      "major": "Thương mại điện tử",
+      "group": "CNTT và công nghệ số",
+      "skills": [
+        "Thương mại điện tử",
+        "Vận hành sàn thương mại điện tử",
+        "Google Analytics 4",
+        "SEO",
+        "Quản lý đơn hàng",
+        "Quản lý quan hệ khách hàng (CRM)"
+      ]
+    },
+    {
+      "major": "Công nghệ kỹ thuật máy tính",
+      "group": "CNTT và công nghệ số",
+      "skills": [
+        "C",
+        "C++",
+        "Vi điều khiển",
+        "Thiết kế mạch điện",
+        "Arduino",
+        "Đọc bản vẽ kỹ thuật"
+      ]
+    },
+    {
+      "major": "Kỹ thuật điện",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "Thiết kế mạch điện",
+        "AutoCAD",
+        "MATLAB",
+        "PLC",
+        "Đọc bản vẽ kỹ thuật",
+        "An toàn điện"
+      ]
+    },
+    {
+      "major": "Kỹ thuật điện tử - viễn thông",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "Thiết kế mạch điện",
+        "MATLAB",
+        "TCP/IP",
+        "Vi điều khiển",
+        "Xử lý tín hiệu số",
+        "Thiết kế PCB"
+      ]
+    },
+    {
+      "major": "Kỹ thuật điều khiển và tự động hóa",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "PLC",
+        "SCADA",
+        "MATLAB",
+        "Simulink",
+        "Vi điều khiển",
+        "Lập trình HMI"
+      ]
+    },
+    {
+      "major": "Kỹ thuật cơ điện tử",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "SolidWorks",
+        "AutoCAD",
+        "PLC",
+        "Thiết kế cơ khí",
+        "MATLAB",
+        "Robot công nghiệp"
+      ]
+    },
+    {
+      "major": "Kỹ thuật cơ khí",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "AutoCAD",
+        "SolidWorks",
+        "Công nghệ CAD/CAM",
+        "Đọc bản vẽ kỹ thuật",
+        "Thiết kế cơ khí",
+        "Gia công CNC"
+      ]
+    },
+    {
+      "major": "Kỹ thuật ô tô",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "AutoCAD",
+        "SolidWorks",
+        "Đọc bản vẽ kỹ thuật",
+        "Chẩn đoán hệ thống ô tô",
+        "MATLAB",
+        "Điện - điện tử ô tô"
+      ]
+    },
+    {
+      "major": "Kỹ thuật xây dựng",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "AutoCAD",
+        "Revit",
+        "BIM",
+        "Lập dự toán công trình",
+        "Giám sát công trình",
+        "Quản lý thi công"
+      ]
+    },
+    {
+      "major": "Kỹ thuật xây dựng công trình giao thông",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "AutoCAD",
+        "BIM",
+        "Lập dự toán công trình",
+        "Đọc bản vẽ kỹ thuật",
+        "Thiết kế kết cấu cầu đường",
+        "Giám sát công trình"
+      ]
+    },
+    {
+      "major": "Kỹ thuật hóa học",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "Phân tích hóa học",
+        "Sắc ký (HPLC/GC)",
+        "Thiết kế thí nghiệm",
+        "An toàn hóa chất",
+        "Kiểm soát chất lượng (QC)",
+        "Cân bằng vật chất và năng lượng"
+      ]
+    },
+    {
+      "major": "Kỹ thuật vật liệu",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "Phân tích vật liệu",
+        "Thiết kế thí nghiệm",
+        "Phân tích hóa học",
+        "Kiểm soát chất lượng (QC)",
+        "Đặc trưng vật liệu bằng XRD/SEM"
+      ]
+    },
+    {
+      "major": "Kỹ thuật y sinh",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "Đọc hiểu tài liệu y khoa",
+        "Thiết kế mạch điện",
+        "MATLAB",
+        "Xử lý tín hiệu y sinh",
+        "Thiết kế thiết bị y tế",
+        "An toàn điện"
+      ]
+    },
+    {
+      "major": "Kỹ thuật môi trường",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "Đánh giá tác động môi trường (ĐTM)",
+        "Phân tích mẫu nước và đất",
+        "Quản lý môi trường",
+        "AutoCAD",
+        "GIS",
+        "Xử lý nước thải"
+      ]
+    },
+    {
+      "major": "Kỹ thuật hệ thống công nghiệp",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "Lean Manufacturing",
+        "Six Sigma",
+        "Lập kế hoạch nhu cầu",
+        "Phân tích dữ liệu",
+        "Quản lý sản xuất",
+        "ERP"
+      ]
+    },
+    {
+      "major": "Kỹ thuật hàng không",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "MATLAB",
+        "Simulink",
+        "SolidWorks",
+        "Thiết kế cơ khí",
+        "Khí động học ứng dụng",
+        "Đọc bản vẽ kỹ thuật"
+      ]
+    },
+    {
+      "major": "Kiến trúc",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "AutoCAD",
+        "Revit",
+        "BIM",
+        "Thiết kế kiến trúc",
+        "SketchUp",
+        "Diễn họa kiến trúc"
+      ]
+    },
+    {
+      "major": "Thiết kế công nghiệp",
+      "group": "Kỹ thuật và công nghiệp",
+      "skills": [
+        "SolidWorks",
+        "Công nghệ CAD/CAM",
+        "Thiết kế đồ họa",
+        "Figma",
+        "Thiết kế sản phẩm",
+        "Dựng mô hình 3D"
+      ]
+    },
+    {
+      "major": "Toán học",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "Toán cao cấp",
+        "Thống kê ứng dụng",
+        "Python",
+        "MATLAB",
+        "Nghiên cứu khoa học",
+        "Mô hình hóa toán học"
+      ]
+    },
+    {
+      "major": "Toán ứng dụng",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "Python",
+        "MATLAB",
+        "Thống kê ứng dụng",
+        "Mô hình hóa toán học",
+        "Tối ưu hóa",
+        "Phân tích dữ liệu"
+      ]
+    },
+    {
+      "major": "Vật lý học",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "MATLAB",
+        "Python",
+        "Thiết kế thí nghiệm",
+        "Phân tích dữ liệu phòng thí nghiệm",
+        "Xử lý số liệu thực nghiệm",
+        "Nghiên cứu khoa học"
+      ]
+    },
+    {
+      "major": "Hóa học",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "Phân tích hóa học",
+        "Sắc ký (HPLC/GC)",
+        "Thiết kế thí nghiệm",
+        "Quản lý chất lượng phòng thí nghiệm",
+        "An toàn hóa chất",
+        "Xử lý số liệu thực nghiệm"
+      ]
+    },
+    {
+      "major": "Sinh học",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "Nghiên cứu khoa học",
+        "Thiết kế thí nghiệm",
+        "Kỹ thuật PCR",
+        "Nuôi cấy vi sinh",
+        "Phân tích dữ liệu phòng thí nghiệm",
+        "Sinh học phân tử"
+      ]
+    },
+    {
+      "major": "Công nghệ sinh học",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "Kỹ thuật PCR",
+        "Nuôi cấy vi sinh",
+        "Nuôi cấy mô",
+        "Thiết kế thí nghiệm",
+        "Sinh học phân tử",
+        "Phân tích dữ liệu phòng thí nghiệm"
+      ]
+    },
+    {
+      "major": "Địa chất học",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "GIS",
+        "QGIS",
+        "ArcGIS",
+        "Đọc bản đồ địa chất",
+        "Khảo sát địa chất thực địa",
+        "Phân tích mẫu đất đá"
+      ]
+    },
+    {
+      "major": "Khoa học môi trường",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "Đánh giá tác động môi trường (ĐTM)",
+        "GIS",
+        "Phân tích mẫu nước và đất",
+        "Quản lý môi trường",
+        "Thống kê ứng dụng",
+        "Quan trắc môi trường"
+      ]
+    },
+    {
+      "major": "Khoa học vật liệu",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "Phân tích vật liệu",
+        "Đặc trưng vật liệu bằng XRD/SEM",
+        "Thiết kế thí nghiệm",
+        "Phân tích dữ liệu phòng thí nghiệm",
+        "Nghiên cứu khoa học"
+      ]
+    },
+    {
+      "major": "Công nghệ thực phẩm",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "Kiểm soát an toàn thực phẩm",
+        "HACCP",
+        "ISO 22000",
+        "Kiểm soát chất lượng (QC)",
+        "Nuôi cấy vi sinh",
+        "Phân tích hóa học"
+      ]
+    },
+    {
+      "major": "Khoa học và công nghệ thực phẩm",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "HACCP",
+        "ISO 22000",
+        "Thiết kế thí nghiệm",
+        "Kiểm soát an toàn thực phẩm",
+        "Phân tích hóa học",
+        "Nghiên cứu phát triển sản phẩm thực phẩm"
+      ]
+    },
+    {
+      "major": "Hải dương học",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "Phân tích dữ liệu",
+        "GIS",
+        "Quan trắc môi trường",
+        "Đo đạc hải văn",
+        "Thống kê ứng dụng",
+        "Mô hình hóa môi trường"
+      ]
+    },
+    {
+      "major": "Địa lý tự nhiên",
+      "group": "Khoa học tự nhiên và sự sống",
+      "skills": [
+        "GIS",
+        "QGIS",
+        "ArcGIS",
+        "Viễn thám",
+        "Phân tích dữ liệu không gian",
+        "Khảo sát thực địa"
+      ]
+    },
+    {
+      "major": "Kinh tế quốc tế",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Microsoft Excel",
+        "Phân tích dữ liệu",
+        "Kinh tế lượng",
+        "Thương mại quốc tế",
+        "Phân tích chính sách thương mại",
+        "Tiếng Anh"
+      ]
+    },
+    {
+      "major": "Kinh tế phát triển",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Kinh tế lượng",
+        "Phân tích dữ liệu",
+        "Đánh giá tác động chính sách",
+        "Microsoft Excel",
+        "Thống kê ứng dụng",
+        "Nghiên cứu khoa học"
+      ]
+    },
+    {
+      "major": "Tài chính - Ngân hàng",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Phân tích tài chính",
+        "Phân tích tín dụng",
+        "Microsoft Excel",
+        "Phân tích đầu tư",
+        "Quản trị rủi ro tài chính",
+        "Lập báo cáo tài chính"
+      ]
+    },
+    {
+      "major": "Công nghệ tài chính",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Python",
+        "SQL",
+        "Phân tích tài chính",
+        "Phân tích dữ liệu",
+        "Thanh toán số",
+        "Quản trị rủi ro tài chính"
+      ]
+    },
+    {
+      "major": "Kinh doanh quốc tế",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Xuất nhập khẩu",
+        "Đàm phán thương mại",
+        "Incoterms",
+        "Tiếng Anh",
+        "Nghiên cứu thị trường",
+        "Chứng từ xuất nhập khẩu"
+      ]
+    },
+    {
+      "major": "Kinh doanh thương mại",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Bán hàng (Sales)",
+        "Quản lý đơn hàng",
+        "Microsoft Excel",
+        "Đàm phán thương mại",
+        "Quản lý quan hệ khách hàng (CRM)",
+        "Nghiên cứu thị trường"
+      ]
+    },
+    {
+      "major": "Logistics và Quản lý chuỗi cung ứng",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Quản lý chuỗi cung ứng",
+        "Quản lý kho hàng",
+        "Incoterms",
+        "Chứng từ xuất nhập khẩu",
+        "Microsoft Excel",
+        "SAP"
+      ]
+    },
+    {
+      "major": "Bất động sản",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Định giá bất động sản",
+        "Nghiên cứu thị trường",
+        "Microsoft Excel",
+        "Pháp luật đất đai",
+        "Bán hàng (Sales)",
+        "Phân tích đầu tư"
+      ]
+    },
+    {
+      "major": "Quản lý công",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Phân tích chính sách công",
+        "Phương pháp nghiên cứu định lượng",
+        "Microsoft Excel",
+        "Quản lý dự án",
+        "Soạn thảo văn bản hành chính",
+        "Phỏng vấn và khảo sát"
+      ]
+    },
+    {
+      "major": "Luật",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Nghiên cứu pháp lý",
+        "Soạn thảo hợp đồng",
+        "Pháp luật doanh nghiệp",
+        "Tra cứu văn bản quy phạm pháp luật",
+        "Phân tích hồ sơ pháp lý",
+        "Tiếng Anh"
+      ]
+    },
+    {
+      "major": "Luật kinh tế",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Pháp luật doanh nghiệp",
+        "Soạn thảo hợp đồng",
+        "Nghiên cứu pháp lý",
+        "Pháp luật thương mại",
+        "Tuân thủ pháp luật (Compliance)",
+        "Tiếng Anh"
+      ]
+    },
+    {
+      "major": "Quản trị văn phòng",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "Microsoft Word",
+        "Microsoft Excel",
+        "Soạn thảo văn bản hành chính",
+        "Quản trị văn phòng",
+        "Quản lý hồ sơ và lưu trữ",
+        "Quản lý công việc"
+      ]
+    },
+    {
+      "major": "Hệ thống thông tin quản lý",
+      "group": "Kinh tế, kinh doanh và luật",
+      "skills": [
+        "SQL",
+        "Phân tích nghiệp vụ (Business Analysis)",
+        "Power BI",
+        "ERP",
+        "BPMN",
+        "Thiết kế cơ sở dữ liệu"
+      ]
+    },
+    {
+      "major": "Ngôn ngữ Anh",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Tiếng Anh",
+        "Biên dịch",
+        "Phiên dịch",
+        "Biên tập nội dung tiếng Anh",
+        "Giao tiếp",
+        "Viết và trình bày nội dung"
+      ]
+    },
+    {
+      "major": "Ngôn ngữ Trung Quốc",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Tiếng Trung",
+        "Biên dịch",
+        "Phiên dịch",
+        "Biên tập nội dung đa ngôn ngữ",
+        "Giao tiếp",
+        "Tiếng Anh"
+      ]
+    },
+    {
+      "major": "Ngôn ngữ Nhật",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Tiếng Nhật",
+        "Biên dịch",
+        "Phiên dịch",
+        "Biên tập nội dung đa ngôn ngữ",
+        "Giao tiếp",
+        "Tiếng Anh"
+      ]
+    },
+    {
+      "major": "Ngôn ngữ Hàn Quốc",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Tiếng Hàn",
+        "Biên dịch",
+        "Phiên dịch",
+        "Biên tập nội dung đa ngôn ngữ",
+        "Giao tiếp",
+        "Tiếng Anh"
+      ]
+    },
+    {
+      "major": "Ngôn ngữ Pháp",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Tiếng Pháp",
+        "Biên dịch",
+        "Phiên dịch",
+        "Biên tập nội dung đa ngôn ngữ",
+        "Giao tiếp",
+        "Tiếng Anh"
+      ]
+    },
+    {
+      "major": "Văn học",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Biên tập và kiểm chứng thông tin",
+        "Viết và trình bày nội dung",
+        "Phân tích văn bản",
+        "Nghiên cứu khoa học",
+        "Sáng tạo nội dung",
+        "Biên tập xuất bản"
+      ]
+    },
+    {
+      "major": "Lịch sử",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Nghiên cứu tư liệu lịch sử",
+        "Phỏng vấn và khảo sát",
+        "Quản lý hồ sơ và lưu trữ",
+        "Biên tập và kiểm chứng thông tin",
+        "Nghiên cứu khoa học",
+        "Viết báo cáo nghiên cứu"
+      ]
+    },
+    {
+      "major": "Triết học",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Tư duy phản biện",
+        "Nghiên cứu khoa học",
+        "Phân tích văn bản",
+        "Lập luận học thuật",
+        "Viết báo cáo nghiên cứu",
+        "Thuyết trình"
+      ]
+    },
+    {
+      "major": "Tâm lý học",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Tư vấn tâm lý cơ bản",
+        "Phỏng vấn và khảo sát",
+        "Phương pháp nghiên cứu định lượng",
+        "Phương pháp nghiên cứu định tính",
+        "Đánh giá tâm lý cơ bản",
+        "Đạo đức nghề nghiệp tâm lý"
+      ]
+    },
+    {
+      "major": "Xã hội học",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Phỏng vấn và khảo sát",
+        "Phương pháp nghiên cứu định tính",
+        "Phương pháp nghiên cứu định lượng",
+        "Phân tích dữ liệu",
+        "SPSS",
+        "Viết báo cáo nghiên cứu"
+      ]
+    },
+    {
+      "major": "Công tác xã hội",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Tư vấn tâm lý cơ bản",
+        "Đánh giá nhu cầu cộng đồng",
+        "Phỏng vấn và khảo sát",
+        "Quản lý ca công tác xã hội",
+        "Phối hợp liên phòng ban",
+        "Đạo đức nghề công tác xã hội"
+      ]
+    },
+    {
+      "major": "Quan hệ quốc tế",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Tiếng Anh",
+        "Nghiên cứu chính sách quốc tế",
+        "Phân tích chính sách công",
+        "Viết báo cáo nghiên cứu",
+        "Thuyết trình",
+        "Đàm phán thương mại"
+      ]
+    },
+    {
+      "major": "Đông phương học",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Phương pháp nghiên cứu định tính",
+        "Tiếng Anh",
+        "Biên dịch",
+        "Phỏng vấn và khảo sát",
+        "Nghiên cứu văn hóa khu vực",
+        "Viết báo cáo nghiên cứu"
+      ]
+    },
+    {
+      "major": "Việt Nam học",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Viết và trình bày nội dung",
+        "Phương pháp nghiên cứu định tính",
+        "Tiếng Anh",
+        "Nghiên cứu văn hóa Việt Nam",
+        "Phỏng vấn và khảo sát",
+        "Vận hành dịch vụ du lịch"
+      ]
+    },
+    {
+      "major": "Nhân học",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Khảo sát thực địa",
+        "Phương pháp nghiên cứu định tính",
+        "Phỏng vấn và khảo sát",
+        "Nghiên cứu dân tộc học",
+        "Viết báo cáo nghiên cứu",
+        "Đạo đức nghiên cứu"
+      ]
+    },
+    {
+      "major": "Quan hệ công chúng",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Quan hệ công chúng (PR)",
+        "Lập kế hoạch truyền thông",
+        "Quản lý khủng hoảng truyền thông",
+        "Sáng tạo nội dung",
+        "Quản trị thương hiệu",
+        "Tổ chức sự kiện"
+      ]
+    },
+    {
+      "major": "Truyền thông đa phương tiện",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Adobe Premiere Pro",
+        "Adobe Photoshop",
+        "Figma",
+        "Dựng video",
+        "Thiết kế đồ họa",
+        "Sản xuất nội dung đa phương tiện"
+      ]
+    },
+    {
+      "major": "Thông tin - Thư viện",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Quản lý hồ sơ và lưu trữ",
+        "Biên mục tài liệu",
+        "Tra cứu cơ sở dữ liệu thông tin",
+        "Quản lý thư viện số",
+        "Microsoft Excel",
+        "Dịch vụ người dùng thư viện"
+      ]
+    },
+    {
+      "major": "Quản lý thông tin",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Quản trị dữ liệu",
+        "SQL",
+        "Quản lý hồ sơ và lưu trữ",
+        "Phân loại thông tin",
+        "Quản lý dự án",
+        "Phân tích dữ liệu"
+      ]
+    },
+    {
+      "major": "Du lịch học",
+      "group": "Ngôn ngữ, xã hội và nhân văn",
+      "skills": [
+        "Vận hành dịch vụ du lịch",
+        "Thiết kế tour du lịch",
+        "Thuyết minh du lịch",
+        "Tiếng Anh",
+        "Phỏng vấn và khảo sát",
+        "Nghiên cứu văn hóa khu vực"
+      ]
+    },
+    {
+      "major": "Giáo dục học",
+      "group": "Giáo dục",
+      "skills": [
+        "Thiết kế bài giảng",
+        "Đánh giá kết quả học tập",
+        "Phương pháp nghiên cứu định lượng",
+        "Phỏng vấn và khảo sát",
+        "Quản lý lớp học",
+        "Thiết kế chương trình đào tạo"
+      ]
+    },
+    {
+      "major": "Quản lý giáo dục",
+      "group": "Giáo dục",
+      "skills": [
+        "Quản lý lớp học",
+        "Thiết kế chương trình đào tạo",
+        "Quản lý dự án",
+        "Đánh giá kết quả học tập",
+        "Phân tích dữ liệu giáo dục",
+        "Quản trị nhân sự"
+      ]
+    },
+    {
+      "major": "Giáo dục Tiểu học",
+      "group": "Giáo dục",
+      "skills": [
+        "Xây dựng kế hoạch giảng dạy",
+        "Quản lý lớp học",
+        "Thiết kế bài giảng",
+        "Đánh giá kết quả học tập",
+        "Dạy học phân hóa",
+        "Công nghệ giáo dục"
+      ]
+    },
+    {
+      "major": "Giáo dục Mầm non",
+      "group": "Giáo dục",
+      "skills": [
+        "Xây dựng kế hoạch giảng dạy",
+        "Quản lý lớp học",
+        "Tổ chức hoạt động giáo dục mầm non",
+        "Quan sát phát triển trẻ",
+        "Thiết kế bài giảng",
+        "Giao tiếp"
+      ]
+    },
+    {
+      "major": "Sư phạm Toán học",
+      "group": "Giáo dục",
+      "skills": [
+        "Toán cao cấp",
+        "Thiết kế bài giảng",
+        "Xây dựng kế hoạch giảng dạy",
+        "Đánh giá kết quả học tập",
+        "Công nghệ giáo dục",
+        "Quản lý lớp học"
+      ]
+    },
+    {
+      "major": "Sư phạm Ngữ văn",
+      "group": "Giáo dục",
+      "skills": [
+        "Biên tập và kiểm chứng thông tin",
+        "Thiết kế bài giảng",
+        "Xây dựng kế hoạch giảng dạy",
+        "Đánh giá kết quả học tập",
+        "Quản lý lớp học",
+        "Dạy học đọc hiểu"
+      ]
+    },
+    {
+      "major": "Sư phạm Tiếng Anh",
+      "group": "Giáo dục",
+      "skills": [
+        "Tiếng Anh",
+        "Thiết kế bài giảng",
+        "Xây dựng kế hoạch giảng dạy",
+        "Đánh giá kết quả học tập",
+        "Quản lý lớp học",
+        "Phương pháp giảng dạy tiếng Anh (TESOL)"
+      ]
+    },
+    {
+      "major": "Sư phạm Tin học",
+      "group": "Giáo dục",
+      "skills": [
+        "Python",
+        "Thiết kế bài giảng",
+        "Xây dựng kế hoạch giảng dạy",
+        "Quản lý lớp học",
+        "Công nghệ giáo dục",
+        "Đánh giá kết quả học tập"
+      ]
+    },
+    {
+      "major": "Nông học",
+      "group": "Nông nghiệp, môi trường và thủy sản",
+      "skills": [
+        "Quản lý sản xuất nông nghiệp",
+        "Đánh giá chất lượng đất",
+        "Thiết kế thí nghiệm",
+        "Quản lý dịch hại tổng hợp (IPM)",
+        "Microsoft Excel",
+        "Nghiên cứu khoa học"
+      ]
+    },
+    {
+      "major": "Khoa học cây trồng",
+      "group": "Nông nghiệp, môi trường và thủy sản",
+      "skills": [
+        "Quản lý sản xuất nông nghiệp",
+        "Đánh giá chất lượng đất",
+        "Chọn tạo giống cây trồng",
+        "Quản lý tưới tiêu",
+        "Thiết kế thí nghiệm",
+        "Kiểm soát chất lượng (QC)"
+      ]
+    },
+    {
+      "major": "Bảo vệ thực vật",
+      "group": "Nông nghiệp, môi trường và thủy sản",
+      "skills": [
+        "Quản lý dịch hại tổng hợp (IPM)",
+        "Nhận diện sâu bệnh hại",
+        "Sử dụng thuốc bảo vệ thực vật an toàn",
+        "Thiết kế thí nghiệm",
+        "Quản lý sản xuất nông nghiệp",
+        "Nghiên cứu khoa học"
+      ]
+    },
+    {
+      "major": "Chăn nuôi",
+      "group": "Nông nghiệp, môi trường và thủy sản",
+      "skills": [
+        "Chăm sóc và dinh dưỡng vật nuôi",
+        "Quản lý trang trại chăn nuôi",
+        "An toàn sinh học trang trại",
+        "Kiểm soát chất lượng (QC)",
+        "Quản lý sản xuất nông nghiệp",
+        "Microsoft Excel"
+      ]
+    },
+    {
+      "major": "Thú y",
+      "group": "Nông nghiệp, môi trường và thủy sản",
+      "skills": [
+        "Chăm sóc và dinh dưỡng vật nuôi",
+        "Khám lâm sàng thú y",
+        "Chẩn đoán bệnh động vật",
+        "An toàn sinh học trang trại",
+        "Quản lý trang trại chăn nuôi",
+        "Kỹ thuật xét nghiệm thú y"
+      ]
+    },
+    {
+      "major": "Nuôi trồng thủy sản",
+      "group": "Nông nghiệp, môi trường và thủy sản",
+      "skills": [
+        "Quản lý chất lượng nước nuôi trồng",
+        "Nuôi trồng thủy sản bền vững",
+        "Quản lý sản xuất nông nghiệp",
+        "Phân tích mẫu nước và đất",
+        "An toàn sinh học trang trại",
+        "Kiểm soát chất lượng (QC)"
+      ]
+    },
+    {
+      "major": "Quản lý tài nguyên và môi trường",
+      "group": "Nông nghiệp, môi trường và thủy sản",
+      "skills": [
+        "Đánh giá tác động môi trường (ĐTM)",
+        "GIS",
+        "Quản lý môi trường",
+        "Quan trắc môi trường",
+        "Pháp luật môi trường",
+        "Phân tích dữ liệu"
+      ]
+    },
+    {
+      "major": "Quản lý đất đai",
+      "group": "Nông nghiệp, môi trường và thủy sản",
+      "skills": [
+        "GIS",
+        "QGIS",
+        "ArcGIS",
+        "Pháp luật đất đai",
+        "Đo đạc địa chính",
+        "Quản lý cơ sở dữ liệu đất đai"
+      ]
+    },
+    {
+      "major": "Kinh tế nông nghiệp",
+      "group": "Nông nghiệp, môi trường và thủy sản",
+      "skills": [
+        "Microsoft Excel",
+        "Phân tích tài chính",
+        "Kinh tế lượng",
+        "Quản lý sản xuất nông nghiệp",
+        "Phân tích chuỗi giá trị nông sản",
+        "Nghiên cứu thị trường"
+      ]
+    },
+    {
+      "major": "Y khoa",
+      "group": "Y dược và sức khỏe",
+      "skills": [
+        "Đọc hiểu tài liệu y khoa",
+        "Khám lâm sàng cơ bản",
+        "Giao tiếp với người bệnh",
+        "Kiểm soát nhiễm khuẩn",
+        "Thực hành y khoa dựa trên bằng chứng",
+        "Hồ sơ bệnh án điện tử"
+      ]
+    },
+    {
+      "major": "Răng - Hàm - Mặt",
+      "group": "Y dược và sức khỏe",
+      "skills": [
+        "Kiểm soát nhiễm khuẩn",
+        "Giao tiếp với người bệnh",
+        "Phụ tá nha khoa",
+        "Đọc hiểu tài liệu y khoa",
+        "Khử khuẩn dụng cụ nha khoa",
+        "Hồ sơ bệnh án điện tử"
+      ]
+    },
+    {
+      "major": "Dược học",
+      "group": "Y dược và sức khỏe",
+      "skills": [
+        "Đọc hiểu tài liệu y khoa",
+        "Thực hành tốt nhà thuốc (GPP)",
+        "Thực hành tốt sản xuất thuốc (GMP)",
+        "Kiểm nghiệm dược phẩm",
+        "Tư vấn sử dụng thuốc trong phạm vi chuyên môn",
+        "Sắc ký (HPLC/GC)"
+      ]
+    },
+    {
+      "major": "Điều dưỡng",
+      "group": "Y dược và sức khỏe",
+      "skills": [
+        "Thực hành điều dưỡng cơ bản",
+        "Chăm sóc người bệnh",
+        "Kiểm soát nhiễm khuẩn",
+        "Giao tiếp với người bệnh",
+        "Quản lý hồ sơ bệnh án",
+        "Theo dõi dấu hiệu sinh tồn"
+      ]
+    },
+    {
+      "major": "Y học cổ truyền",
+      "group": "Y dược và sức khỏe",
+      "skills": [
+        "Đọc hiểu tài liệu y khoa",
+        "Giao tiếp với người bệnh",
+        "Dược liệu học",
+        "Kiểm soát nhiễm khuẩn",
+        "Quản lý hồ sơ bệnh án",
+        "Thực hành y học cổ truyền dưới giám sát"
+      ]
+    },
+    {
+      "major": "Y tế công cộng",
+      "group": "Y dược và sức khỏe",
+      "skills": [
+        "Thống kê ứng dụng",
+        "Phân tích dữ liệu",
+        "Dịch tễ học",
+        "Phương pháp nghiên cứu định lượng",
+        "Truyền thông giáo dục sức khỏe",
+        "Quản lý chương trình y tế"
+      ]
+    },
+    {
+      "major": "Kỹ thuật xét nghiệm y học",
+      "group": "Y dược và sức khỏe",
+      "skills": [
+        "Kỹ thuật PCR",
+        "Nuôi cấy vi sinh",
+        "Kiểm soát nhiễm khuẩn",
+        "Quản lý chất lượng phòng thí nghiệm",
+        "Kỹ thuật xét nghiệm huyết học",
+        "An toàn sinh học phòng xét nghiệm"
+      ]
+    },
+    {
+      "major": "Kỹ thuật hình ảnh y học",
+      "group": "Y dược và sức khỏe",
+      "skills": [
+        "Đọc hiểu tài liệu y khoa",
+        "Kiểm soát nhiễm khuẩn",
+        "Vận hành thiết bị chẩn đoán hình ảnh",
+        "An toàn bức xạ y tế",
+        "Hồ sơ bệnh án điện tử",
+        "Giao tiếp với người bệnh"
+      ]
+    },
+    {
+      "major": "Dinh dưỡng",
+      "group": "Y dược và sức khỏe",
+      "skills": [
+        "Đánh giá dinh dưỡng",
+        "Lập khẩu phần ăn",
+        "Tư vấn dinh dưỡng",
+        "Kiểm soát an toàn thực phẩm",
+        "Giao tiếp với người bệnh",
+        "Microsoft Excel"
+      ]
+    },
+    {
+      "major": "Thiết kế đồ họa",
+      "group": "Thiết kế và dịch vụ",
+      "skills": [
+        "Adobe Photoshop",
+        "Adobe Illustrator",
+        "Figma",
+        "Thiết kế đồ họa",
+        "Bố cục và typography",
+        "Thiết kế bộ nhận diện thương hiệu"
+      ]
+    },
+    {
+      "major": "Thiết kế thời trang",
+      "group": "Thiết kế và dịch vụ",
+      "skills": [
+        "Adobe Illustrator",
+        "Thiết kế thời trang",
+        "Thiết kế rập",
+        "May mẫu",
+        "Dựng mô hình 3D",
+        "Nghiên cứu xu hướng thời trang"
+      ]
+    },
+    {
+      "major": "Thiết kế nội thất",
+      "group": "Thiết kế và dịch vụ",
+      "skills": [
+        "AutoCAD",
+        "SketchUp",
+        "Revit",
+        "Dựng mô hình 3D",
+        "Diễn họa nội thất",
+        "Triển khai hồ sơ thiết kế nội thất"
+      ]
+    },
+    {
+      "major": "Quản trị khách sạn",
+      "group": "Thiết kế và dịch vụ",
+      "skills": [
+        "Dịch vụ khách hàng ngành khách sạn",
+        "Nghiệp vụ lễ tân",
+        "Phần mềm quản lý khách sạn (PMS)",
+        "Tiếng Anh",
+        "Quản lý đặt phòng",
+        "Xử lý khiếu nại khách hàng"
+      ]
+    },
+    {
+      "major": "Quản trị dịch vụ du lịch và lữ hành",
+      "group": "Thiết kế và dịch vụ",
+      "skills": [
+        "Vận hành dịch vụ du lịch",
+        "Thiết kế tour du lịch",
+        "Điều hành tour",
+        "Tiếng Anh",
+        "Thuyết minh du lịch",
+        "Chăm sóc khách hàng"
+      ]
+    },
+    {
+      "major": "Quản trị nhà hàng và dịch vụ ăn uống",
+      "group": "Thiết kế và dịch vụ",
+      "skills": [
+        "Dịch vụ khách hàng ngành khách sạn",
+        "Nghiệp vụ phục vụ nhà hàng",
+        "An toàn vệ sinh thực phẩm",
+        "Quản lý chi phí F&B",
+        "Tiếng Anh",
+        "Xử lý khiếu nại khách hàng"
+      ]
+    },
+    {
+      "major": "Kinh doanh số và trí tuệ nhân tạo",
+      "group": "Kinh tế, quản trị và truyền thông",
+      "skills": [
+        "Python",
+        "Machine Learning",
+        "Phân tích dữ liệu",
+        "Thương mại điện tử",
+        "Phân tích nghiệp vụ (Business Analysis)",
+        "Microsoft Excel"
+      ]
+    }
+  ]
+}
