@@ -1,0 +1,135 @@
+{
+  "format_version": 2,
+  "items": [
+    {
+      "review_id": "COL-1127",
+      "evidence": {
+        "source_identity": {
+          "url_kind": "detail",
+          "basis": "Thu thập tự động từ cổng tuyển dụng chính thức (scholarship: RMIT University Vietnam)"
+        }
+      },
+      "opportunity": {
+        "opportunity_type": "Học bổng",
+        "title": "RMIT Vice-Chancellor’s Scholars",
+        "publisher": "RMIT University Vietnam",
+        "description": "## Mô tả học bổng\nHọc bổng Vice-Chancellor dành cho sinh viên Việt Nam có thành tích học tập xuất sắc và phẩm chất lãnh đạo vượt trội theo học chương trình cử nhân tại RMIT Việt Nam.\n## Giá trị học bổng\nTài trợ 100% học phí toàn khóa học cử nhân.",
+        "requirements": "## Yêu cầu ứng viên\n- Là công dân Việt Nam chuẩn bị nhập học chương trình cử nhân.\n- Điểm trung bình học tập THPT lớp 12 từ 9.0/10 trở lên.\n- Trình độ tiếng Anh tối thiểu IELTS 6.5 (không kỹ năng nào dưới 6.0) hoặc tương đương.\n- Thể hiện năng lực lãnh đạo và đóng góp tích cực cho cộng đồng.",
+        "source_url": "https://www.rmit.edu.vn/study-at-rmit/scholarships/future-undergraduate-student-scholarships",
+        "location": "Hà Nội & Hồ Chí Minh",
+        "work_format": "Offline",
+        "deadline": "2026-11-30T17:00:00.000Z",
+        "deadline_source_date": "2026-11-30",
+        "deadline_source_timezone": null,
+        "status": "Pending",
+        "is_verified": false,
+        "reviewed_by": null,
+        "reviewed_at": null
+      },
+      "relations": {
+        "major_ids": [],
+        "skill_ids": [],
+        "academic_years": []
+      }
+    },
+    {
+      "review_id": "COL-1128",
+      "evidence": {
+        "source_identity": {
+          "url_kind": "detail",
+          "basis": "Thu thập tự động từ cổng tuyển dụng chính thức (scholarship: Tập đoàn Vingroup)"
+        }
+      },
+      "opportunity": {
+        "opportunity_type": "Học bổng",
+        "title": "Vingroup Science and Technology Scholarship",
+        "publisher": "Tập đoàn Vingroup",
+        "description": "## Mô tả học bổng\nChương trình học bổng Khoa học Công nghệ đào tạo thạc sĩ, tiến sĩ và hỗ trợ tài năng trẻ xuất sắc trong các lĩnh vực công nghệ trọng điểm.\n## Quyền lợi\nTài trợ toàn phần học phí, sinh hoạt phí và bảo hiểm y tế trong suốt thời gian đào tạo.",
+        "requirements": "## Yêu cầu ứng viên\n- Tốt nghiệp đại học loại giỏi trở lên các ngành Khoa học máy tính, Công nghệ thông tin hoặc kỹ thuật liên quan.\n- Có năng lực và đam mê nghiên cứu khoa học, ưu tiên ứng viên có bài báo khoa học.\n- Thành thạo tiếng Anh học thuật (IELTS 6.5 trở lên).",
+        "source_url": "https://vinuni.edu.vn/admission-scholarships/",
+        "location": "Hà Nội & Hồ Chí Minh",
+        "work_format": "Offline",
+        "deadline": "2026-12-15T17:00:00.000Z",
+        "deadline_source_date": "2026-12-15",
+        "deadline_source_timezone": null,
+        "status": "Pending",
+        "is_verified": false,
+        "reviewed_by": null,
+        "reviewed_at": null
+      },
+      "relations": {
+        "major_ids": [],
+        "skill_ids": [],
+        "academic_years": []
+      }
+    }
+  ],
+  "initial_catalog_proposal": {
+    "status": "leader_approved",
+    "categories": [
+      {
+        "type": "Major",
+        "name": "Hóa học",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Công nghệ thông tin",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Quản trị kinh doanh",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Thiết kế đồ họa",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Tiếng Anh",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Khoa học máy tính",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Major",
+        "name": "Kỹ thuật phần mềm",
+        "status": "leader_approved"
+      },
+      {
+        "type": "Skill",
+        "name": "Nghiên cứu khoa học",
+        "status": "leader_approved"
+      }
+    ],
+    "opportunity_links": [
+      {
+        "review_id": "COL-1127",
+        "major_names": [
+          "Hóa học",
+          "Công nghệ thông tin",
+          "Quản trị kinh doanh",
+          "Thiết kế đồ họa"
+        ],
+        "skill_names": ["Tiếng Anh"],
+        "status": "leader_approved"
+      },
+      {
+        "review_id": "COL-1128",
+        "major_names": [
+          "Công nghệ thông tin",
+          "Khoa học máy tính",
+          "Kỹ thuật phần mềm"
+        ],
+        "skill_names": ["Tiếng Anh", "Nghiên cứu khoa học"],
+        "status": "leader_approved"
+      }
+    ]
+  }
+}

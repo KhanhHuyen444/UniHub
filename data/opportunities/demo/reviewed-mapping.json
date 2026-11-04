@@ -1,0 +1,932 @@
+[
+  {
+    "review_id": "DEMO-001",
+    "major_names": ["Quản trị nhân lực"],
+    "skill_names": [
+      "Tuyển dụng và sàng lọc hồ sơ",
+      "Quản trị nhân sự",
+      "Microsoft Excel"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-002",
+    "major_names": ["Công nghệ thông tin"],
+    "skill_names": ["Linux", "Quản trị hệ thống mạng", "TCP/IP"],
+    "task": "Kiểm tra cấu hình Linux và kết nối TCP/IP, ghi nhận sự cố và hỗ trợ quản trị mạng trên hệ thống lab mô phỏng.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-003",
+    "major_names": ["Kỹ thuật điện", "Kỹ thuật điện tử - viễn thông"],
+    "skill_names": [
+      "Thiết kế mạch điện",
+      "Đọc bản vẽ kỹ thuật",
+      "An toàn điện"
+    ],
+    "task": "Đọc sơ đồ điện, mô phỏng mạch cấp nguồn và kiểm tra nguyên tắc an toàn trên mô hình điện–điện tử; phù hợp hai ngành điện và điện tử.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-004",
+    "major_names": ["Toán học"],
+    "skill_names": ["Mô hình hóa toán học", "Python", "MATLAB"],
+    "task": "Xây dựng mô hình toán cho bộ dữ liệu mô phỏng, giải bài toán bằng Python hoặc MATLAB và giải thích sai số.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-005",
+    "major_names": ["Kinh tế quốc tế"],
+    "skill_names": ["Thương mại quốc tế", "Phân tích dữ liệu", "Kinh tế lượng"],
+    "task": "Phân tích dữ liệu thương mại mô phỏng, so sánh xu hướng xuất nhập khẩu và viết nhận xét kinh tế.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-006",
+    "major_names": ["Ngôn ngữ Anh"],
+    "skill_names": ["Biên tập nội dung tiếng Anh", "Tiếng Anh", "Biên dịch"],
+    "task": "Biên tập bài viết tiếng Anh, kiểm tra cách dùng từ và đối chiếu bản dịch cho tài liệu mô phỏng.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-007",
+    "major_names": ["Giáo dục học"],
+    "skill_names": [
+      "Thiết kế bài giảng",
+      "Đánh giá kết quả học tập",
+      "Phỏng vấn và khảo sát"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-008",
+    "major_names": ["Nông học"],
+    "skill_names": [
+      "Thiết kế thí nghiệm",
+      "Quản lý dịch hại tổng hợp (IPM)",
+      "Nghiên cứu khoa học"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-009",
+    "major_names": ["Y khoa"],
+    "skill_names": ["Đọc hiểu tài liệu y khoa", "Khám lâm sàng cơ bản"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-010",
+    "major_names": ["Thiết kế đồ họa"],
+    "skill_names": [
+      "Figma",
+      "Thiết kế đồ họa",
+      "Bố cục và typography",
+      "Adobe Photoshop"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-011",
+    "major_names": ["Quản trị kinh doanh"],
+    "skill_names": ["Lập kế hoạch kinh doanh", "Microsoft Excel"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-012",
+    "major_names": ["Khoa học máy tính"],
+    "skill_names": ["C++", "Lập trình hướng đối tượng", "Git"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-013",
+    "major_names": ["Kỹ thuật điện tử - viễn thông"],
+    "skill_names": ["Thiết kế mạch điện", "Thiết kế PCB", "Xử lý tín hiệu số"],
+    "task": "Đọc sơ đồ điện tử, mô phỏng tín hiệu và chuẩn bị bản thiết kế PCB đơn giản.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-014",
+    "major_names": ["Toán ứng dụng"],
+    "skill_names": ["Mô hình hóa toán học", "Tối ưu hóa", "Thống kê ứng dụng"],
+    "task": "Lập mô hình tối ưu, so sánh phương án và đánh giá kết quả trên dữ liệu giả lập.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-015",
+    "major_names": ["Kinh tế phát triển"],
+    "skill_names": [
+      "Kinh tế lượng",
+      "Phân tích chính sách công",
+      "Phân tích dữ liệu"
+    ],
+    "task": "Phân tích chỉ tiêu phát triển và so sánh tác động của các phương án chính sách trên dữ liệu mô phỏng.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-016",
+    "major_names": ["Ngôn ngữ Trung Quốc"],
+    "skill_names": [
+      "Tiếng Trung",
+      "Phiên dịch",
+      "Biên tập nội dung đa ngôn ngữ"
+    ],
+    "task": "Soạn thư đối ngoại tiếng Trung, mô phỏng phiên dịch cuộc họp và biên tập tài liệu song ngữ.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-017",
+    "major_names": ["Quản lý giáo dục"],
+    "skill_names": ["Quản lý lớp học", "Thiết kế chương trình đào tạo"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-018",
+    "major_names": ["Khoa học cây trồng"],
+    "skill_names": [
+      "Chọn tạo giống cây trồng",
+      "Quản lý tưới tiêu",
+      "Thiết kế thí nghiệm"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-019",
+    "major_names": ["Răng - Hàm - Mặt"],
+    "skill_names": [
+      "Kiểm soát nhiễm khuẩn",
+      "Giao tiếp với người bệnh",
+      "Đọc hiểu tài liệu y khoa"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-020",
+    "major_names": ["Thiết kế thời trang"],
+    "skill_names": ["Thiết kế rập", "May mẫu", "Dựng mô hình 3D"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-021",
+    "major_names": ["Quản trị rủi ro"],
+    "skill_names": ["Quản trị rủi ro doanh nghiệp", "Microsoft Excel"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-022",
+    "major_names": ["Kỹ thuật phần mềm"],
+    "skill_names": ["Git", "Kiểm thử phần mềm", "REST API", "TypeScript"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-023",
+    "major_names": ["Kỹ thuật điều khiển và tự động hóa"],
+    "skill_names": ["PLC", "SCADA", "Lập trình HMI"],
+    "task": "Lập trình trình tự điều khiển trên PLC mô phỏng, hiển thị HMI và theo dõi tín hiệu bằng SCADA.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-024",
+    "major_names": ["Vật lý học"],
+    "skill_names": [
+      "Thiết kế thí nghiệm",
+      "Phân tích dữ liệu phòng thí nghiệm",
+      "Xử lý số liệu thực nghiệm"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-025",
+    "major_names": ["Tài chính - Ngân hàng"],
+    "skill_names": [
+      "Phân tích tài chính",
+      "Phân tích tín dụng",
+      "Quản trị rủi ro tài chính"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-026",
+    "major_names": ["Ngôn ngữ Nhật"],
+    "skill_names": [
+      "Tiếng Nhật",
+      "Phiên dịch",
+      "Biên tập nội dung đa ngôn ngữ"
+    ],
+    "task": "Soạn thư đối ngoại tiếng Nhật, mô phỏng phiên dịch cuộc họp và biên tập tài liệu song ngữ.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-027",
+    "major_names": ["Giáo dục Tiểu học"],
+    "skill_names": ["Xây dựng kế hoạch giảng dạy", "Quản lý lớp học"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-028",
+    "major_names": ["Bảo vệ thực vật"],
+    "skill_names": [
+      "Sử dụng thuốc bảo vệ thực vật an toàn",
+      "Thiết kế thí nghiệm",
+      "Quản lý sản xuất nông nghiệp",
+      "Nghiên cứu khoa học"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-029",
+    "major_names": ["Dược học"],
+    "skill_names": [
+      "Kiểm nghiệm dược phẩm",
+      "Sắc ký (HPLC/GC)",
+      "An toàn hóa chất"
+    ],
+    "task": "Đọc quy trình kiểm nghiệm, phân tích kết quả sắc ký giả lập và thực hành nguyên tắc an toàn hóa chất trong bài tập phòng thí nghiệm.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-030",
+    "major_names": ["Thiết kế nội thất"],
+    "skill_names": ["Revit", "Dựng mô hình 3D", "Diễn họa nội thất"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-031",
+    "major_names": ["Đảm bảo chất lượng"],
+    "skill_names": [
+      "Đảm bảo chất lượng (QA)",
+      "Kiểm soát chất lượng (QC)",
+      "Phân tích nguyên nhân gốc (RCA)"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-032",
+    "major_names": ["Hệ thống thông tin"],
+    "skill_names": ["SQL", "Thiết kế cơ sở dữ liệu", "Quản trị dữ liệu"],
+    "task": "Thiết kế lược đồ dữ liệu lab, viết truy vấn SQL và kiểm tra quy tắc quản trị dữ liệu trên bộ dữ liệu giả lập.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-033",
+    "major_names": ["Kỹ thuật cơ điện tử"],
+    "skill_names": ["Thiết kế cơ khí", "SolidWorks", "AutoCAD"],
+    "task": "Dựng mô hình cụm cơ cấu và kiểm tra bản vẽ cơ khí cho thiết bị cơ điện tử mô phỏng.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-034",
+    "major_names": ["Hóa học"],
+    "skill_names": [
+      "Thiết kế thí nghiệm",
+      "Quản lý chất lượng phòng thí nghiệm",
+      "An toàn hóa chất",
+      "Phân tích hóa học"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-035",
+    "major_names": ["Công nghệ tài chính"],
+    "skill_names": ["Python", "SQL"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-036",
+    "major_names": ["Ngôn ngữ Hàn Quốc"],
+    "skill_names": ["Tiếng Hàn", "Phiên dịch", "Biên tập nội dung đa ngôn ngữ"],
+    "task": "Soạn thư đối ngoại tiếng Hàn, mô phỏng phiên dịch cuộc họp và biên tập tài liệu song ngữ.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-037",
+    "major_names": ["Giáo dục Mầm non"],
+    "skill_names": [
+      "Xây dựng kế hoạch giảng dạy",
+      "Quản lý lớp học",
+      "Quan sát phát triển trẻ"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-038",
+    "major_names": ["Chăn nuôi"],
+    "skill_names": [
+      "An toàn sinh học trang trại",
+      "Kiểm soát chất lượng (QC)",
+      "Quản lý sản xuất nông nghiệp"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-039",
+    "major_names": ["Điều dưỡng"],
+    "skill_names": ["Thực hành điều dưỡng cơ bản", "Chăm sóc người bệnh"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-040",
+    "major_names": ["Quản trị khách sạn"],
+    "skill_names": [
+      "Phần mềm quản lý khách sạn (PMS)",
+      "Tiếng Anh",
+      "Quản lý đặt phòng",
+      "Dịch vụ khách hàng ngành khách sạn"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-041",
+    "major_names": ["Kiểm toán"],
+    "skill_names": ["Chuẩn mực kế toán Việt Nam (VAS)", "IFRS"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-042",
+    "major_names": ["Mạng máy tính và truyền thông dữ liệu"],
+    "skill_names": ["Linux", "An ninh mạng", "Wireshark"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-043",
+    "major_names": ["Kỹ thuật cơ khí"],
+    "skill_names": ["AutoCAD", "SolidWorks", "Thiết kế cơ khí"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-044",
+    "major_names": ["Sinh học"],
+    "skill_names": [
+      "Kỹ thuật PCR",
+      "Nuôi cấy vi sinh",
+      "Phân tích dữ liệu phòng thí nghiệm"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-045",
+    "major_names": ["Kinh doanh quốc tế"],
+    "skill_names": ["Xuất nhập khẩu", "Đàm phán thương mại"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-046",
+    "major_names": ["Ngôn ngữ Pháp"],
+    "skill_names": [
+      "Tiếng Pháp",
+      "Phiên dịch",
+      "Biên tập nội dung đa ngôn ngữ"
+    ],
+    "task": "Soạn thư đối ngoại tiếng Pháp, mô phỏng phiên dịch cuộc họp và biên tập tài liệu song ngữ.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-047",
+    "major_names": ["Sư phạm Toán học"],
+    "skill_names": ["Toán cao cấp", "Thiết kế bài giảng"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-048",
+    "major_names": ["Thú y"],
+    "skill_names": [
+      "Chẩn đoán bệnh động vật",
+      "An toàn sinh học trang trại",
+      "Quản lý trang trại chăn nuôi"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-049",
+    "major_names": ["Y học cổ truyền"],
+    "skill_names": [
+      "Đọc hiểu tài liệu y khoa",
+      "Giao tiếp với người bệnh",
+      "Kiểm soát nhiễm khuẩn"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-050",
+    "major_names": ["Quản trị dịch vụ du lịch và lữ hành"],
+    "skill_names": ["Điều hành tour", "Tiếng Anh", "Thuyết minh du lịch"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-051",
+    "major_names": ["Marketing"],
+    "skill_names": ["Digital Marketing", "SEO"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-052",
+    "major_names": ["An toàn thông tin"],
+    "skill_names": ["Linux", "TCP/IP", "SIEM", "Phân tích lỗ hổng bảo mật"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-053",
+    "major_names": ["Kỹ thuật ô tô"],
+    "skill_names": [
+      "Chẩn đoán hệ thống ô tô",
+      "Điện - điện tử ô tô",
+      "Đọc bản vẽ kỹ thuật"
+    ],
+    "task": "Đọc sơ đồ điện ô tô, phân tích lỗi mô phỏng và đề xuất trình tự kiểm tra chẩn đoán hệ thống.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-054",
+    "major_names": ["Công nghệ sinh học"],
+    "skill_names": ["Nuôi cấy mô", "Thiết kế thí nghiệm", "Sinh học phân tử"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-055",
+    "major_names": ["Kinh doanh thương mại"],
+    "skill_names": [
+      "Bán hàng (Sales)",
+      "Quản lý đơn hàng",
+      "Quản lý quan hệ khách hàng (CRM)"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-056",
+    "major_names": ["Văn học"],
+    "skill_names": [
+      "Phân tích văn bản",
+      "Sáng tạo nội dung",
+      "Biên tập và kiểm chứng thông tin"
+    ],
+    "task": "Phân tích văn bản, viết bài và biên tập nội dung chữ; không yêu cầu thiết kế hoặc dựng video.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-057",
+    "major_names": ["Sư phạm Ngữ văn"],
+    "skill_names": ["Biên tập và kiểm chứng thông tin", "Thiết kế bài giảng"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-058",
+    "major_names": ["Nuôi trồng thủy sản"],
+    "skill_names": [
+      "Quản lý sản xuất nông nghiệp",
+      "Phân tích mẫu nước và đất",
+      "An toàn sinh học trang trại",
+      "Quản lý chất lượng nước nuôi trồng"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-059",
+    "major_names": ["Y tế công cộng"],
+    "skill_names": ["Thống kê ứng dụng", "Phân tích dữ liệu"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-060",
+    "major_names": ["Quản trị nhà hàng và dịch vụ ăn uống"],
+    "skill_names": [
+      "An toàn vệ sinh thực phẩm",
+      "Quản lý chi phí F&B",
+      "Xử lý khiếu nại khách hàng"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-061",
+    "major_names": ["Truyền thông"],
+    "skill_names": [
+      "Lập kế hoạch truyền thông",
+      "Quan hệ công chúng (PR)",
+      "Canva"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-062",
+    "major_names": ["Khoa học dữ liệu"],
+    "skill_names": ["Phân tích dữ liệu", "Machine Learning", "Power BI"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-063",
+    "major_names": ["Kỹ thuật xây dựng"],
+    "skill_names": ["AutoCAD", "Revit"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-064",
+    "major_names": ["Địa chất học"],
+    "skill_names": [
+      "ArcGIS",
+      "Đọc bản đồ địa chất",
+      "Khảo sát địa chất thực địa",
+      "GIS"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-065",
+    "major_names": ["Logistics và Quản lý chuỗi cung ứng"],
+    "skill_names": ["Chứng từ xuất nhập khẩu", "Incoterms", "Xuất nhập khẩu"],
+    "task": "Kiểm tra bộ chứng từ xuất nhập khẩu giả lập và đối chiếu điều kiện giao hàng Incoterms để phát hiện sai sót.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-066",
+    "major_names": ["Lịch sử", "Thông tin - Thư viện"],
+    "skill_names": [
+      "Quản lý hồ sơ và lưu trữ",
+      "Nghiên cứu tư liệu lịch sử",
+      "Biên mục tài liệu"
+    ],
+    "task": "Phân loại và biên mục bộ tư liệu lịch sử giả lập, lập danh mục tra cứu và kiểm tra nguồn gốc tài liệu; phù hợp chuyên môn lịch sử và thông tin–thư viện.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-067",
+    "major_names": ["Sư phạm Tiếng Anh"],
+    "skill_names": [
+      "Thiết kế bài giảng",
+      "Xây dựng kế hoạch giảng dạy",
+      "Tiếng Anh"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-068",
+    "major_names": ["Quản lý tài nguyên và môi trường"],
+    "skill_names": [
+      "GIS",
+      "QGIS",
+      "Phân tích dữ liệu không gian",
+      "Quản lý môi trường"
+    ],
+    "task": "Tạo lớp bản đồ môi trường trên QGIS, kiểm tra dữ liệu không gian và trình bày kết quả phân tích trên dữ liệu giả lập.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-069",
+    "major_names": ["Kỹ thuật xét nghiệm y học"],
+    "skill_names": ["Kỹ thuật PCR", "Nuôi cấy vi sinh"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-070",
+    "major_names": ["Báo chí"],
+    "skill_names": [
+      "Biên tập và kiểm chứng thông tin",
+      "Nghiên cứu khoa học",
+      "Adobe Premiere Pro",
+      "Viết và trình bày nội dung"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-071",
+    "major_names": ["Trí tuệ nhân tạo"],
+    "skill_names": ["Python", "PyTorch"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-072",
+    "major_names": ["Kỹ thuật xây dựng công trình giao thông"],
+    "skill_names": [
+      "Lập dự toán công trình",
+      "Đọc bản vẽ kỹ thuật",
+      "Thiết kế kết cấu cầu đường"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-073",
+    "major_names": ["Khoa học môi trường"],
+    "skill_names": [
+      "Đánh giá tác động môi trường (ĐTM)",
+      "GIS",
+      "Quản lý môi trường"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-074",
+    "major_names": ["Bất động sản"],
+    "skill_names": [
+      "Pháp luật đất đai",
+      "Bán hàng (Sales)",
+      "Phân tích đầu tư"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-075",
+    "major_names": ["Triết học"],
+    "skill_names": [
+      "Tư duy phản biện",
+      "Lập luận học thuật",
+      "Nghiên cứu khoa học"
+    ],
+    "task": "Phân tích lập luận triết học, đối chiếu tài liệu và trình bày báo cáo học thuật; không yêu cầu SQL hay quản trị dữ liệu.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-076",
+    "major_names": ["Sư phạm Tin học"],
+    "skill_names": [
+      "Xây dựng kế hoạch giảng dạy",
+      "Quản lý lớp học",
+      "Công nghệ giáo dục",
+      "Python"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-077",
+    "major_names": ["Quản lý đất đai"],
+    "skill_names": ["GIS", "QGIS"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-078",
+    "major_names": ["Kỹ thuật hình ảnh y học"],
+    "skill_names": [
+      "Vận hành thiết bị chẩn đoán hình ảnh",
+      "An toàn bức xạ y tế",
+      "Hồ sơ bệnh án điện tử"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-079",
+    "major_names": ["Kế toán"],
+    "skill_names": [
+      "Hạch toán kế toán",
+      "Microsoft Excel",
+      "Chuẩn mực kế toán Việt Nam (VAS)"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-080",
+    "major_names": ["Kỹ thuật máy tính"],
+    "skill_names": ["Vi điều khiển", "Thiết kế mạch điện", "Linux"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-081",
+    "major_names": ["Kỹ thuật hóa học"],
+    "skill_names": ["Phân tích hóa học", "Sắc ký (HPLC/GC)"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-082",
+    "major_names": ["Khoa học vật liệu"],
+    "skill_names": [
+      "Thiết kế thí nghiệm",
+      "Phân tích dữ liệu phòng thí nghiệm",
+      "Nghiên cứu khoa học",
+      "Phân tích vật liệu"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-083",
+    "major_names": ["Quản lý công"],
+    "skill_names": [
+      "Phân tích chính sách công",
+      "Phương pháp nghiên cứu định lượng"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-084",
+    "major_names": ["Tâm lý học"],
+    "skill_names": [
+      "Đánh giá tâm lý cơ bản",
+      "Tư vấn tâm lý cơ bản",
+      "Đạo đức nghề nghiệp tâm lý"
+    ],
+    "task": "Thực hiện đề án học tập về đánh giá nhu cầu và kỹ năng tham vấn trong tình huống giả lập dưới giám sát, bảo đảm đạo đức nghề nghiệp tâm lý.",
+    "rationale": "Mapping theo nhiệm vụ DEMO cụ thể, không theo nhóm ngành hoặc chỉ số."
+  },
+  {
+    "review_id": "DEMO-085",
+    "major_names": ["Kinh tế nông nghiệp"],
+    "skill_names": [
+      "Microsoft Excel",
+      "Phân tích tài chính",
+      "Phân tích chuỗi giá trị nông sản"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-086",
+    "major_names": ["Dinh dưỡng"],
+    "skill_names": [
+      "Tư vấn dinh dưỡng",
+      "Kiểm soát an toàn thực phẩm",
+      "Giao tiếp với người bệnh"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-087",
+    "major_names": ["Tài chính"],
+    "skill_names": ["Phân tích tài chính", "Microsoft Excel"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-088",
+    "major_names": ["Thương mại điện tử"],
+    "skill_names": [
+      "Google Analytics 4",
+      "SEO",
+      "Quản lý đơn hàng",
+      "Thương mại điện tử"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-089",
+    "major_names": ["Kỹ thuật vật liệu"],
+    "skill_names": ["Phân tích vật liệu", "Thiết kế thí nghiệm"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-090",
+    "major_names": ["Công nghệ thực phẩm"],
+    "skill_names": [
+      "ISO 22000",
+      "Kiểm soát chất lượng (QC)",
+      "Nuôi cấy vi sinh"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-091",
+    "major_names": ["Luật"],
+    "skill_names": [
+      "Nghiên cứu pháp lý",
+      "Soạn thảo hợp đồng",
+      "Tra cứu văn bản quy phạm pháp luật"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-092",
+    "major_names": ["Xã hội học"],
+    "skill_names": [
+      "Phương pháp nghiên cứu định lượng",
+      "Phân tích dữ liệu",
+      "SPSS"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-093",
+    "major_names": ["Kinh tế"],
+    "skill_names": ["Phân tích dữ liệu", "Thống kê ứng dụng"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-094",
+    "major_names": ["Công nghệ kỹ thuật máy tính"],
+    "skill_names": [
+      "Vi điều khiển",
+      "Thiết kế mạch điện",
+      "Arduino",
+      "Đọc bản vẽ kỹ thuật"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-095",
+    "major_names": ["Kỹ thuật y sinh"],
+    "skill_names": ["Đọc hiểu tài liệu y khoa", "Thiết kế mạch điện"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-096",
+    "major_names": ["Khoa học và công nghệ thực phẩm"],
+    "skill_names": [
+      "Thiết kế thí nghiệm",
+      "Kiểm soát an toàn thực phẩm",
+      "Phân tích hóa học"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-097",
+    "major_names": ["Luật kinh tế"],
+    "skill_names": [
+      "Pháp luật doanh nghiệp",
+      "Soạn thảo hợp đồng",
+      "Pháp luật thương mại"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-098",
+    "major_names": ["Công tác xã hội"],
+    "skill_names": [
+      "Phỏng vấn và khảo sát",
+      "Quản lý ca công tác xã hội",
+      "Phối hợp liên phòng ban"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-099",
+    "major_names": ["Kinh doanh số và trí tuệ nhân tạo"],
+    "skill_names": [
+      "Thương mại điện tử",
+      "Phân tích nghiệp vụ (Business Analysis)"
+    ],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  },
+  {
+    "review_id": "DEMO-100",
+    "major_names": ["Kỹ thuật môi trường"],
+    "skill_names": ["Quản lý môi trường", "AutoCAD", "GIS", "Xử lý nước thải"],
+    "task": null,
+    "rationale": "Giữ mapping nghề chính đã rà soát; không thêm ngành để tăng coverage."
+  }
+]

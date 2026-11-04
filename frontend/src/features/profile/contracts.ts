@@ -88,7 +88,10 @@ export function toForm(p: Profile): ProfileForm {
     careerGoal: p.careerGoal ?? '',
   };
 }
-export function validateForm(form: ProfileForm): Record<string, string> {
+export function validateForm(
+  form: ProfileForm,
+  options: { requireCareerGoal?: boolean } = {},
+): Record<string, string> {
   const errors: Record<string, string> = {};
   if (!/^\d+$/.test(form.majorId) || !id(Number(form.majorId)))
     errors.majorId = 'Vui lòng chọn chuyên ngành.';
@@ -100,7 +103,9 @@ export function validateForm(form: ProfileForm): Record<string, string> {
     new Set(form.skillIds).size !== form.skillIds.length
   )
     errors.skillIds = 'Chọn ít nhất một kỹ năng hợp lệ.';
-  if (Array.from(form.careerGoal.trim()).length > 200)
+  if (options.requireCareerGoal && !form.careerGoal.trim())
+    errors.careerGoal = 'Vui lòng chọn hoặc nhập vị trí nghề nghiệp mục tiêu.';
+  else if (Array.from(form.careerGoal.trim()).length > 200)
     errors.careerGoal = 'Mục tiêu nghề nghiệp tối đa 200 ký tự.';
   return errors;
 }

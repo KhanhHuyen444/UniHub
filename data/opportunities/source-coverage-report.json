@@ -1,0 +1,38 @@
+{
+  "checkedAt": "2026-11-01T17:17:30.664Z",
+  "writes": 0,
+  "databaseRows": 11,
+  "oldBatchRows": 12,
+  "catalog": {
+    "majors": 117,
+    "skills": 328
+  },
+  "sources": [
+    {
+      "publisher": "MISA",
+      "attempted": 4,
+      "proposed": 2,
+      "acceptanceRate": 0.5
+    },
+    {
+      "publisher": "SmartOSC",
+      "attempted": 4,
+      "proposed": 0,
+      "acceptanceRate": 0
+    },
+    {
+      "publisher": "HCMUS - Khoa Môi trường",
+      "attempted": 1,
+      "proposed": 0,
+      "acceptanceRate": 0
+    }
+  ],
+  "byType": {
+    "Việc làm": 2,
+    "Thực tập": 0,
+    "Học bổng": 0
+  },
+  "proposed": 2,
+  "needsReview": 7,
+  "missingFrom60": 58
+}

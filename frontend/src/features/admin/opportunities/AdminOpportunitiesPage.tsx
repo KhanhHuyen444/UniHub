@@ -488,7 +488,7 @@ function AdminOpportunityDetail({
         <p className="mt-2 type-label text-secondary">
           {item.publisher ?? 'Chưa có đơn vị đăng'}
         </p>
-        {item.sourceUrl && (
+        {item.sourceUrl && !item.sourceUrl.includes('.invalid') && (
           <a
             href={item.sourceUrl}
             target="_blank"

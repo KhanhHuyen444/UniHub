@@ -1,0 +1,40 @@
+{
+  "synthetic": true,
+  "writes": 0,
+  "total": 100,
+  "byType": {
+    "Thực tập": 40,
+    "Việc làm": 35,
+    "Học bổng": 25
+  },
+  "byGroup": {
+    "Kinh tế, quản trị và truyền thông": 12,
+    "CNTT và công nghệ số": 11,
+    "Kỹ thuật và công nghiệp": 12,
+    "Khoa học tự nhiên và sự sống": 11,
+    "Kinh tế, kinh doanh và luật": 11,
+    "Ngôn ngữ, xã hội và nhân văn": 11,
+    "Giáo dục": 8,
+    "Nông nghiệp, môi trường và thủy sản": 9,
+    "Y dược và sức khỏe": 9,
+    "Thiết kế và dịch vụ": 6
+  },
+  "activeCatalog": {
+    "Major": 117,
+    "Skill": 328
+  },
+  "usedMajors": 101,
+  "usedSkills": 179,
+  "nullDeadlines": 20,
+  "multiMajorItems": 2,
+  "validation": "passed_demo_checks",
+  "mapping": "explicit reviewed per-item mapping; no coverage padding or index-based Skill selection",
+  "databaseIsolation": "NOT VERIFIED; last review target unihub_dev is not an isolated demo database",
+  "readOnlyPlan": {
+    "blocked": false,
+    "create": 100,
+    "reuse": 280,
+    "newCategories": 0
+  },
+  "approval": "needs_review; importer dry-run must stop at leader approval"
+}

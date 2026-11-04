@@ -1,0 +1,70 @@
+{
+  "synthetic": true,
+  "note": "Profiles are name-based test inputs, not accounts to create. Pending items are excluded by production Recommendations. Scores below describe hypothetical eligibility AFTER a separately authorized Admin approval in a demo database.",
+  "cases": [
+    {
+      "name": "full_match_and_null_deadline",
+      "review_id": "DEMO-001",
+      "profile": {
+        "major": "Quản trị nhân lực",
+        "academic_year": 3,
+        "skills": [
+          "Tuyển dụng và sàng lọc hồ sơ",
+          "Quản trị nhân sự",
+          "Microsoft Excel"
+        ]
+      },
+      "expectedScore": 1,
+      "expectedVisibleAfterApproval": true
+    },
+    {
+      "name": "partial_skill_match",
+      "review_id": "DEMO-001",
+      "profile": {
+        "major": "Quản trị nhân lực",
+        "academic_year": 3,
+        "skills": ["Tuyển dụng và sàng lọc hồ sơ"]
+      },
+      "expectedScore": 0.8,
+      "expectedVisibleAfterApproval": true
+    },
+    {
+      "name": "different_major_no_skills_overlap",
+      "review_id": "DEMO-001",
+      "profile": {
+        "major": "Công nghệ thông tin",
+        "academic_year": 3,
+        "skills": ["Microsoft Word"]
+      },
+      "expectedScore": 0.3,
+      "expectedVisibleAfterApproval": false
+    },
+    {
+      "name": "multiple_majors_and_skills",
+      "review_id": "DEMO-003",
+      "profile": {
+        "major": "Kỹ thuật điện tử - viễn thông",
+        "academic_year": 3,
+        "skills": ["Thiết kế mạch điện", "Đọc bản vẽ kỹ thuật", "An toàn điện"]
+      },
+      "expectedScore": 1,
+      "expectedVisibleAfterApproval": true
+    },
+    {
+      "name": "scholarship_without_year_filter",
+      "review_id": "DEMO-076",
+      "profile": {
+        "major": "Sư phạm Tin học",
+        "academic_year": 1,
+        "skills": [
+          "Xây dựng kế hoạch giảng dạy",
+          "Quản lý lớp học",
+          "Công nghệ giáo dục",
+          "Python"
+        ]
+      },
+      "expectedScore": 1,
+      "expectedVisibleAfterApproval": true
+    }
+  ]
+}
