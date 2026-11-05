@@ -1,0 +1,173 @@
+{
+  "manifest_version": "1.0.0",
+  "generated_at": "2026-11-05T02:00:00Z",
+  "description": "Danh mục tài liệu tham khảo và khung chương trình đào tạo chuẩn phục vụ biên soạn dữ liệu Skill Roadmap UniHub.",
+  "sources": [
+    {
+      "source_id": "SRC-ACM-CS2023",
+      "name": "ACM/IEEE-CS Computer Science Curricula 2023 (CS2023)",
+      "publisher": "Association for Computing Machinery (ACM) & IEEE Computer Society",
+      "url": "https://csed.acm.org/cs2023-report/",
+      "status": "verified",
+      "scope": [
+        "Công nghệ thông tin",
+        "Khoa học máy tính",
+        "Kỹ thuật phần mềm",
+        "Hệ thống thông tin",
+        "Khoa học dữ liệu",
+        "Trí tuệ nhân tạo",
+        "An toàn thông tin"
+      ],
+      "notes": "Khung chuẩn kiến thức đại học quốc tế về cấu trúc dữ liệu, thuật toán, kiến trúc máy tính và công nghệ phần mềm."
+    },
+    {
+      "source_id": "SRC-DHQG-CNTT",
+      "name": "Khung chương trình đào tạo Cử nhân & Kỹ sư Công nghệ thông tin",
+      "publisher": "Đại học Quốc gia TP.HCM (Trường ĐH Công nghệ Thông tin & Trường ĐH Bách Khoa)",
+      "url": "https://www.uit.edu.vn/chuong-trinh-dao-tao",
+      "status": "verified",
+      "scope": [
+        "Công nghệ thông tin",
+        "Kỹ thuật phần mềm",
+        "Hệ thống thông tin",
+        "Mạng máy tính và truyền thông dữ liệu",
+        "An toàn thông tin"
+      ],
+      "notes": "Khung chương trình đào tạo đại học chính quy 4 năm theo định hướng ứng dụng thực tế."
+    },
+    {
+      "source_id": "SRC-HUST-ENG",
+      "name": "Chương trình đào tạo Kỹ thuật & Công nghệ HUST",
+      "publisher": "Đại học Bách Khoa Hà Nội",
+      "url": "https://hust.edu.vn/vi/academic/",
+      "status": "verified",
+      "scope": [
+        "Kỹ thuật điện",
+        "Kỹ thuật điều khiển và tự động hóa",
+        "Kỹ thuật cơ điện tử",
+        "Kỹ thuật cơ khí",
+        "Kỹ thuật ô tô",
+        "Kỹ thuật hóa học"
+      ],
+      "notes": "Chuẩn đầu ra và lộ trình học phần khối ngành Kỹ thuật - Công nghệ theo chuẩn kiểm định ABET."
+    },
+    {
+      "source_id": "SRC-UEH-BIZ",
+      "name": "Chương trình đào tạo Kinh tế, Quản trị và Kinh doanh số UEH",
+      "publisher": "Đại học Kinh tế TP. Hồ Chí Minh",
+      "url": "https://ueh.edu.vn/dao-tao",
+      "status": "verified",
+      "scope": [
+        "Quản trị kinh doanh",
+        "Marketing",
+        "Tài chính - Ngân hàng",
+        "Kế toán",
+        "Kinh doanh quốc tế",
+        "Logistics và Quản lý chuỗi cung ứng",
+        "Thương mại điện tử",
+        "Công nghệ tài chính"
+      ],
+      "notes": "Khung năng lực kinh tế số, tài chính doanh nghiệp và quản trị chuỗi cung ứng hiện đại."
+    },
+    {
+      "source_id": "SRC-INCOTERMS-2020",
+      "name": "Incoterms 2020 Rules for Domestic and International Trade",
+      "publisher": "International Chamber of Commerce (ICC)",
+      "url": "https://iccwbo.org/business-solutions/incoterms-2020/",
+      "status": "verified",
+      "scope": [
+        "Logistics và Quản lý chuỗi cung ứng",
+        "Kinh doanh quốc tế",
+        "Thương mại điện tử"
+      ],
+      "notes": "Bộ quy tắc thương mại quốc tế chuẩn về điều kiện giao hàng và trách nhiệm logistics."
+    },
+    {
+      "source_id": "SRC-VAS-VAA",
+      "name": "Hệ thống Chuẩn mực Kế toán Việt Nam (VAS) & Thông tư 200/2014/TT-BTC",
+      "publisher": "Bộ Tài chính & Hội Kế toán và Kiểm toán Việt Nam (VAA)",
+      "url": "https://mof.gov.vn",
+      "status": "verified",
+      "scope": ["Kế toán", "Kiểm toán", "Tài chính - Ngân hàng"],
+      "notes": "Chuẩn mực ghi nhận nghiệp vụ kinh tế tài chính, hạch toán và lập báo cáo tài chính tại Việt Nam."
+    },
+    {
+      "source_id": "SRC-PMI-PMBOK",
+      "name": "A Guide to the Project Management Body of Knowledge (PMBOK Guide)",
+      "publisher": "Project Management Institute (PMI)",
+      "url": "https://www.pmi.org/pmbok-guide-standards",
+      "status": "verified",
+      "scope": [
+        "Quản trị kinh doanh",
+        "Kỹ thuật phần mềm",
+        "Hệ thống thông tin",
+        "Kỹ thuật xây dựng"
+      ],
+      "notes": "Khung phương pháp luận quản trị dự án, quản trị rủi ro và điều phối nguồn lực."
+    },
+    {
+      "source_id": "SRC-MDN-WEB",
+      "name": "MDN Web Docs — Frontend & Backend Web Development Standards",
+      "publisher": "Mozilla Developer Network",
+      "url": "https://developer.mozilla.org/",
+      "status": "verified",
+      "scope": [
+        "Công nghệ thông tin",
+        "Kỹ thuật phần mềm",
+        "Thương mại điện tử"
+      ],
+      "notes": "Tài liệu kỹ thuật chuẩn mực cho HTML5, CSS3, JavaScript (ES6+), Web APIs và HTTP protocols."
+    },
+    {
+      "source_id": "SRC-PYTHON-PEP",
+      "name": "Python PEP Standards & Official Documentation",
+      "publisher": "Python Software Foundation",
+      "url": "https://peps.python.org/",
+      "status": "verified",
+      "scope": [
+        "Công nghệ thông tin",
+        "Khoa học dữ liệu",
+        "Trí tuệ nhân tạo",
+        "Toán ứng dụng"
+      ],
+      "notes": "Quy chuẩn mã nguồn Python sạch (PEP 8), cấu trúc module và thư viện khoa học dữ liệu."
+    },
+    {
+      "source_id": "SRC-POSTGRES-DOCS",
+      "name": "PostgreSQL Official Documentation — Relational Database Architecture",
+      "publisher": "The PostgreSQL Global Development Group",
+      "url": "https://www.postgresql.org/docs/",
+      "status": "verified",
+      "scope": [
+        "Công nghệ thông tin",
+        "Khoa học máy tính",
+        "Hệ thống thông tin",
+        "Kỹ thuật phần mềm"
+      ],
+      "notes": "Nguyên lý thiết kế quan hệ, chỉ mục B-tree, tối ưu câu lệnh SQL và ACID transactions."
+    },
+    {
+      "source_id": "SRC-ISO-9001",
+      "name": "ISO 9001:2015 Quality Management Systems",
+      "publisher": "International Organization for Standardization (ISO)",
+      "url": "https://www.iso.org/standard/62085.html",
+      "status": "verified",
+      "scope": [
+        "Quản trị kinh doanh",
+        "Logistics và Quản lý chuỗi cung ứng",
+        "cluster-hr-office",
+        "cluster-chem-materials"
+      ],
+      "notes": "Quy trình kiểm soát chất lượng, quản trị rủi ro quy trình và tối ưu hóa vận hành tổ chức."
+    },
+    {
+      "source_id": "SRC-NEU-LAW",
+      "name": "Khung chương trình Luật Kinh tế & Quản trị Nhà nước",
+      "publisher": "Đại học Kinh tế Quốc dân (NEU) & Trường Đại học Luật Hà Nội",
+      "url": "https://neu.edu.vn",
+      "status": "verified",
+      "scope": ["Luật kinh tế", "cluster-law-governance"],
+      "notes": "Hệ thống pháp luật doanh nghiệp, hợp đồng thương mại, sở hữu trí tuệ và giải quyết tranh chấp."
+    }
+  ]
+}

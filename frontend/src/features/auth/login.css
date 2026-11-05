@@ -1,4 +1,4 @@
-﻿/* Login-only rules. Shared Public/Student/Admin shells retain their own styling. */
+/* Login-only rules. Shared Public/Student/Admin shells retain their own styling. */
 body.unihub-login {
   min-width: 0;
 }
@@ -269,7 +269,6 @@ body.unihub-login {
   width: 128px;
   text-align: center;
   margin-top: 4px;
-  color: #1e3a8a;
 }
 .login-shell > footer > div > div:first-child > p {
   font-size: 14px;
