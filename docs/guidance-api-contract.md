@@ -1,6 +1,6 @@
 # Hợp đồng API lộ trình kỹ năng và bài định hướng
 
-> **Contract: leader đã duyệt các quyết định và endpoint dưới đây. Implementation: chưa có trên main.** Nguồn nghiệp vụ là Chương 3 UC-03/BR-03.1–03.3; dùng opportunities hiện có, không tạo stage model/bảng mới.
+> **Contract: leader đã duyệt các quyết định và endpoint dưới đây. Implementation: API `/api/guidance` và frontend `/roadmaps`, `/roadmaps/:id` đã có trên `main` và nhánh tài liệu hiện tại**, qua `guidance.routes.ts`, `GuidanceRoadmapPage` và `GuidanceDetailPage`. Nguồn nghiệp vụ là Chương 3 UC-03/BR-03.1–03.3; dùng opportunities hiện có, không tạo stage model/bảng mới.
 
 ## Quyền và chọn Major
 
@@ -67,4 +67,4 @@ Description fields are nullable plain text, never HTML. Major/Skill labels inclu
 
 Path `:id` sai định dạng/ngoài giới hạn → 400 `INVALID_ID`; list query lạ/lặp/ID sai định dạng → 400 `INVALID_QUERY`; `majorId` hợp lệ nhưng không trỏ tới Major Active → 400 `INVALID_FILTER`; nonpublic detail → 404 NOT_FOUND; DB unavailable → 503 SERVICE_UNAVAILABLE; unexpected → 500 INTERNAL_ERROR. Error envelope is shared. No writes; list reads categories, opportunities, opportunity_majors, opportunity_years, opportunity_skills and optionally users.major_id for valid Student; detail reads public item and relations. Database/service errors never become Guest fallback or an empty successful response.
 
-Tests: Guest/default; valid Student profile Major; missing/Closed Student Major fallback; Admin public fallback; invalid/Closed explicit major; no active Major exact empty response; no-year article omitted from stages but direct detail public; no approved article empty stage; invalid token behaves Guest only on public route; DB error 503/500; approved/type filter, stable stage/item order, closed linked names, plain text and no reviewer fields. **Contract đã duyệt; API chưa triển khai trên main.**
+Tests: Guest/default; valid Student profile Major; missing/Closed Student Major fallback; Admin public fallback; invalid/Closed explicit major; no active Major exact empty response; no-year article omitted from stages but direct detail public; no approved article empty stage; invalid token behaves Guest only on public route; DB error 503/500; approved/type filter, stable stage/item order, closed linked names, plain text and no reviewer fields. **Contract đã duyệt; API đã được mount trong `backend/src/app.ts`. Ma trận trên không phải kết quả chạy test của lượt đối chiếu tài liệu.**

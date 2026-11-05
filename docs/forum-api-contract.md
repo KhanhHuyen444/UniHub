@@ -1,6 +1,6 @@
 # Hợp đồng API diễn đàn và kiểm duyệt
 
-> **Contract: leader đã duyệt. Implementation: chưa có forum/moderation routes trên main.** Phạm vi Chương 3 UC-08–UC-11: đọc public, Student đăng bài/bình luận, Admin xóa mềm nội dung vi phạm. Không có edit post, student-delete, rich HTML hoặc account lock.
+> **Contract: leader đã duyệt. Implementation: forum/moderation routes và frontend đã có trên `main` và nhánh tài liệu hiện tại.** Backend mount `/api/forum` và `/api/admin/moderation/forum`; frontend có Hub/detail và tab Giám sát cộng đồng tại `/admin/moderation`. Phạm vi Chương 3 UC-08–UC-11: đọc public, Student đăng bài/bình luận, Admin xóa mềm nội dung vi phạm. Không có edit post, student-delete, rich HTML hoặc account lock.
 
 ## Chuẩn hóa và pagination
 
@@ -66,4 +66,4 @@ Public read touches forum_posts/comments/users and is read-only. Create writes t
 
 Database PK/FK/NOT NULL/TEXT length do not enforce role, allowed topic, visibility, reason, author privacy, or transaction; backend enforces them.
 
-Test matrix: Guest/Student/Admin per route; query/body/length boundaries; topic enum; empty list vs DB error; ordering/page ties; public author fields exactly fullName/avatarUrl; plain text rendering; missing/deleted parent; comment under removed post hidden publicly; Admin queue fields and ordering; reason trim and 1/500 boundaries; concurrent removal; audit payload ≤500; Violation content/reason and destination; transaction rollback if either audit or notification write fails; no hard delete or account lock. **Contract đã duyệt; API chưa triển khai trên main.**
+Test matrix: Guest/Student/Admin per route; query/body/length boundaries; topic enum; empty list vs DB error; ordering/page ties; public author fields exactly fullName/avatarUrl; plain text rendering; missing/deleted parent; comment under removed post hidden publicly; Admin queue fields and ordering; reason trim and 1/500 boundaries; concurrent removal; audit payload ≤500; Violation content/reason and destination; transaction rollback if either audit or notification write fails; no hard delete or account lock. **Contract đã duyệt; API đã được mount trong `backend/src/app.ts`. Ma trận trên không phải kết quả chạy test của lượt đối chiếu tài liệu.**

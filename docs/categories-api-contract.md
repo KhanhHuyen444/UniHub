@@ -1,6 +1,6 @@
 # Hợp đồng API đọc danh mục dùng chung
 
-> **Major phục vụ Hub do TV1 triển khai và merge vào `main` qua PR #13; TV3 tiếp quản và tái sử dụng module/API này.** Consumer frontend có trên `main` sau PR #12. Skill Options và API Admin Categories đã có implementation trong checkout hiện tại; frontend Admin tích hợp Auth và ngày tạo đang có thay đổi chưa commit. Trạng thái này không xác nhận đã merge. Hồ sơ Closed theo contract riêng của TV2. Quyết định về liên kết Major/Skill Closed trong cơ hội không tự áp dụng cho hồ sơ.
+> **Major phục vụ Hub do TV1 triển khai và merge vào `main` qua PR #13; TV3 tiếp quản và tái sử dụng module/API này.** Consumer frontend có trên `main` sau PR #12. Skill Options, API Admin Categories và frontend Admin tích hợp Auth/ngày tạo đã có trên `main` và nhánh tài liệu hiện tại; ghi chú thay đổi chưa commit thuộc giai đoạn review trước. Hồ sơ Closed theo contract riêng của TV2. Quyết định về liên kết Major/Skill Closed trong cơ hội không tự áp dụng cho hồ sơ.
 
 ## 1. Mục tiêu, phạm vi và nguồn
 

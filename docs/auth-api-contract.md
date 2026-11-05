@@ -1,6 +1,6 @@
 # Hợp đồng xác thực và phân quyền UniHub
 
-> **Contract đã được duyệt.** Schema, migration và mẫu GRANT cho `google_sub`/`auth_sessions` đã có trên `main`; leader xác nhận đã áp dụng lên database phát triển của mình. Google login, access JWT/middleware, refresh, `/me` và logout backend đã có trên `main`. Frontend auth đang được leader triển khai trên `feat/auth-frontend`; implementation này chưa có trên `main` cho tới khi merge PR. Nhánh `feat/admin-bootstrap` bổ sung command operator khởi tạo Admin đầu tiên.
+> **Contract đã được duyệt.** Schema, migration và mẫu GRANT cho `google_sub`/`auth_sessions` đã có trên `main`; leader xác nhận đã áp dụng lên database phát triển của mình. Google login, access JWT/middleware, refresh, `/me`, logout, frontend auth và command operator `admin:bootstrap` đã có trên `main` và nhánh tài liệu hiện tại. Các nhánh `feat/auth-frontend` và `feat/admin-bootstrap` là mốc phát triển lịch sử, không còn là phụ thuộc chờ merge.
 
 ## 1. Căn cứ và mức độ quyết định
 
@@ -33,7 +33,7 @@
 
 ## 3. Danh tính, role và session
 
-Commit nền lịch sử `origin/main` (`14dfda6`) có `users.email` UNIQUE nhưng chưa có Google `sub` hoặc bảng session. Auth schema/migration/GRANT sau đó đã được merge vào `main`; từng database đích vẫn cần xác nhận migration/GRANT đã áp dụng. Nhánh `feat/auth-google-login` chứa implementation auth hiện tại; thay đổi schema không sửa initial/deadline migration, không đổi user_id hay dữ liệu legacy.
+Commit nền lịch sử `origin/main` (`14dfda6`) có `users.email` UNIQUE nhưng chưa có Google `sub` hoặc bảng session. Auth schema/migration/GRANT sau đó đã được merge vào `main`; từng database đích vẫn cần xác nhận migration/GRANT đã áp dụng. Implementation auth từ nhánh `feat/auth-google-login` đã tích hợp vào `main`; thay đổi schema không sửa initial/deadline migration, không đổi user_id hay dữ liệu legacy.
 
 | Nội dung         | Thiết kế tối thiểu đã leader duyệt                                                                                                                                                                                                                                                                                                                                    | Tác động                                                                                                                 |
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -172,7 +172,9 @@ Access TTL cố định tối đa 900 giây và refresh TTL tối đa 604800 gi�
 
 Schema hiện có CHECK `users.role` chỉ nhận Student/Admin. CHECK không xác minh Google, `sub`, chữ ký hoặc session. Backend kiểm tra JWT, quyền và transaction; không thêm nghiệp vụ account status/lock ngoài Chương 3.
 
-## 9. Bàn giao leader → TV2 và phụ thuộc Admin cơ hội
+## 9. Bàn giao leader → TV2 và phụ thuộc Admin cơ hội — kế hoạch lịch sử
+
+Phần dưới giữ trình tự phân công trước triển khai. Source hiện tại đã tích hợp auth backend/frontend, Admin review và các module dùng chung; middleware thực tế nằm tại `backend/src/middleware/auth.ts`, không phải hai tên file dự kiến bên dưới. Các giới hạn không tạo cơ chế auth thứ hai và xác minh migration/GRANT từng môi trường vẫn áp dụng.
 
 - Sau khi leader duyệt contract, leader làm trước nền backend dùng chung: module `backend/src/modules/auth/`, middleware `backend/src/middleware/require-auth.ts` và `require-role.ts` (tên file có thể theo quy ước code sau này), cấu hình/kiểm tra JWT và Google verifier, API login/refresh/me/logout, test auth và audit/transaction cần thiết.
 - Leader triển khai frontend auth dùng chung trong `frontend/src/features/auth/` trên cùng contract/backend; TV2 tiếp quản cơ chế này cho hồ sơ Student và chức năng tài khoản. Không tạo JWT client-side hoặc auth API thứ hai; dùng `frontend/src/lib/api.ts`, provider và access-token-in-memory strategy dùng chung.
@@ -219,7 +221,7 @@ Unit test dùng clock và Google verifier test double; integration test trên My
 
 ## 12. Tài liệu kỹ thuật đã kiểm tra
 
-Ngày đối chiếu: **27/10/2026**. Không nâng Node/Express/Prisma đã chốt. Các phiên bản sau là ứng viên kỹ thuật, chưa cài vào repository. Khi mở PR auth, xác minh lại phiên bản tương thích và security advisory hiện hành; không nâng major hoặc đổi stack:
+Ngày đối chiếu lịch sử: **27/10/2026**. Không nâng Node/Express/Prisma đã chốt. Các phiên bản sau được khảo sát cho PR auth khi đó; package auth hiện đã được khai báo trong `backend/package.json` và khóa tại `package-lock.json`. Giữ danh sách khảo sát bên dưới làm lịch sử; khi đổi dependency phải xác minh lại phiên bản tương thích và security advisory hiện hành, không tự nâng major hoặc đổi stack:
 
 - Google Identity Services: [Verify the Google ID token on your server](https://developers.google.com/identity/gsi/web/guides/verify-google-id-token). URL tài liệu chính thức trả 403 từ proxy môi trường trong phiên này; vì vậy không khẳng định đã đọc được trang web. Đã đối chiếu gói phát hành chính thức [`google-auth-library@11.3.1`](https://github.com/googleapis/google-auth-library-nodejs): `verifyIdToken` nhận `idToken`/`audience`, source kiểm tra chứng thư/audience và token payload ghi `sub` là định danh unique không đổi theo email. npm registry metadata cho gói này có `engines.node >=22`, tương thích Node 24 đã chốt. Cần review lại exact version khi triển khai.
 - JWT library đã chọn trong hợp đồng: [`jose`](https://github.com/panva/jose), phiên bản registry `6.2.13` (ESM; package README liệt kê Node.js). Tài liệu API [`jwtVerify` ở đúng tag](https://github.com/panva/jose/blob/v6.2.13/docs/jwt/verify/functions/jwtVerify.md) mô tả xác minh chữ ký và JWT claims, gồm issuer/audience. Đã chạy smoke test độc lập với tarball đúng phiên bản trên Node 24.19.0 (HS256 sign/verify thành công); không thêm dependency vào repository. HS256 vẫn phải được khóa bởi verifier allowlist, không suy ra chỉ từ việc thư viện hỗ trợ thuật toán.
@@ -228,5 +230,5 @@ Ngày đối chiếu: **27/10/2026**. Không nâng Node/Express/Prisma đã ch�
 
 ### Nguồn cần review trước triển khai
 
-- Các điểm nghiệp vụ về domain email, account lock, role timing, Google ID token, `google_sub`/`auth_sessions` và refresh TTL đã được giữ theo quyết định/nguồn đã đọc. Contract auth đã được leader duyệt; schema/migration/GRANT và login/access middleware/refresh/`/me`/logout đã có trên `main`. Nhánh `feat/admin-bootstrap` bổ sung command operator cho Admin đầu tiên; frontend auth đang được leader triển khai trên `feat/auth-frontend`.
+- Các điểm nghiệp vụ về domain email, account lock, role timing, Google ID token, `google_sub`/`auth_sessions` và refresh TTL đã được giữ theo quyết định/nguồn đã đọc. Contract auth đã được leader duyệt; schema/migration/GRANT, login/access middleware/refresh/`/me`/logout, command operator Admin đầu tiên và frontend auth đã có trên `main` và nhánh tài liệu hiện tại. Source đối chiếu: `backend/src/modules/auth`, `backend/src/scripts/admin-bootstrap.ts`, `frontend/src/features/auth` và hai app router; không thay thế kiểm chứng Google/session/MySQL thật.
 - Trước triển khai trên schema thật, review migration và quyền runtime/migration; kiểm thử trên MySQL cô lập. Với user legacy chưa có `google_sub`, cần quy trình operator đối soát riêng trước khi cho tài khoản đó dùng Google login; không tự liên kết theo email.

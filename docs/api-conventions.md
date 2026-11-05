@@ -47,13 +47,13 @@ Frontend gọi `/api/health` qua `frontend/src/lib/api.ts`, kiểm tra HTTP stat
 
 Đã triển khai `apiRequest` trong `frontend/src/lib/api.ts`. Client nhận path cùng tiền tố `/api`, hỗ trợ `GET`, `POST`, `PATCH`, `DELETE`, query qua `URLSearchParams`, JSON body, `AbortSignal` và các tùy chọn `fetch` cần thiết. Client không tự chuyển tên field, gắn JWT, lưu token, ghi log hoặc tạo thông báo UI; từng feature phải dùng đúng contract đã review. Không truyền URL tuyệt đối để tránh bỏ qua Vite proxy và gọi nhầm origin.
 
-Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi hiện đọc `error.code`/`error.message` theo envelope hiện tại; body lỗi không phải JSON chỉ trả thông báo HTTP tổng quát, không đưa HTML hoặc nội dung upstream ra UI. Lỗi mạng được chuẩn hóa thành `ApiError`; lỗi hủy `AbortError` được giữ nguyên để caller xử lý riêng. Phản hồi thành công rỗng (204 hoặc body rỗng) trả `undefined`; phản hồi thành công có body không phải JSON tạo `INVALID_RESPONSE`. Client không kiểm tra schema nghiệp vụ: caller vẫn cần xác thực shape dữ liệu khi sử dụng. Contract `fieldErrors` đã được duyệt nhưng chưa triển khai; API client hiện chưa giữ trường này. Parser/client và error middleware/server sẽ được mở rộng trong PR code riêng, không đổi `code`, `kind`, `status` hoặc cách xử lý lỗi tổng quát hiện tại.
+Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi hiện đọc `error.code`/`error.message` theo envelope hiện tại; body lỗi không phải JSON chỉ trả thông báo HTTP tổng quát, không đưa HTML hoặc nội dung upstream ra UI. Lỗi mạng được chuẩn hóa thành `ApiError`; lỗi hủy `AbortError` được giữ nguyên để caller xử lý riêng. Phản hồi thành công rỗng (204 hoặc body rỗng) trả `undefined`; phản hồi thành công có body không phải JSON tạo `INVALID_RESPONSE`. Client không kiểm tra schema nghiệp vụ: caller vẫn cần xác thực shape dữ liệu khi sử dụng. `fieldErrors` đã có trong `frontend/src/lib/api.ts` và backend error middleware trên `main` và nhánh tài liệu hiện tại; parser giữ các field details hợp lệ mà không đổi `code`, `kind`, `status` hoặc cách xử lý lỗi tổng quát hiện tại.
 
 ## Hợp đồng theo chức năng
 
 - [Hub cơ hội → Chi tiết cơ hội](opportunities-api-contract.md) đã thống nhất; `GET /api/opportunities` và `GET /api/opportunities/:id` cùng frontend list/detail đã có trên `main` sau PR #12. Consumer Major của Hub cũng có trên `main`; API cơ hội vẫn tự kiểm tra Major Active trong database.
-- [API đọc danh mục dùng chung](categories-api-contract.md): TV1 triển khai và merge contract/`GET /api/categories?type=Major` qua PR #13; TV3 tiếp quản provider dùng chung. Endpoint chỉ trả Major Active, ví dụ `{"items":[{"id":12,"name":"Kỹ thuật phần mềm","type":"Major"}]}`. Luồng Major consumer/API cùng Public Hub đã được kiểm thử tích hợp; xem [báo cáo](opportunities-integration-test.md). Contract Skill Student-only, Admin category routes và profile Closed policy đã được leader duyệt, nhưng chưa triển khai.
-- [Admin duyệt cơ hội](admin-opportunities-api-contract.md): implementation có trên nhánh `feat/admin-opportunities`, chưa merge vào `main`. `GET /api/admin/opportunities`, `GET /api/admin/opportunities/:id`, `POST /api/admin/opportunities/:id/approve` và `POST /api/admin/opportunities/:id/reject` dùng `requireAuth`/`requireRole(Admin)` và writer activity log trong transaction.
+- [API đọc danh mục dùng chung](categories-api-contract.md): TV1 triển khai và merge contract/`GET /api/categories?type=Major` qua PR #13; TV3 tiếp quản provider dùng chung. Endpoint chỉ trả Major Active, ví dụ `{"items":[{"id":12,"name":"Kỹ thuật phần mềm","type":"Major"}]}`. Luồng Major consumer/API cùng Public Hub đã được kiểm thử tích hợp; xem [báo cáo](opportunities-integration-test.md). Contract Skill Student-only, Admin category routes và profile Closed policy đã được leader duyệt và có implementation trên `main` và nhánh tài liệu hiện tại.
+- [Admin duyệt cơ hội](admin-opportunities-api-contract.md): backend và frontend đã tích hợp trên `main` và nhánh tài liệu hiện tại; nhánh `feat/admin-opportunities` là mốc phát triển lịch sử. `GET /api/admin/opportunities`, `GET /api/admin/opportunities/:id`, `POST /api/admin/opportunities/:id/approve` và `POST /api/admin/opportunities/:id/reject` dùng `requireAuth`/`requireRole(Admin)` và writer activity log trong transaction.
 - Không tự áp dụng một baseline pagination cho mọi route. Từng contract ghi cụ thể page/pageSize, giới hạn, trang ngoài phạm vi và thứ tự ổn định.
 - Thời gian lưu/trao đổi đã thống nhất UTC; giao diện dùng `Asia/Ho_Chi_Minh`. Chính sách date-only theo từng nghiệp vụ và biểu diễn trong `DATETIME(0)` được ghi ở hợp đồng tương ứng.
 
@@ -67,7 +67,7 @@ Guest không phải giá trị `users.role`. Backend kiểm tra role và ownersh
 
 Với path parameter ánh xạ tới cột ID MySQL `INT` có dấu, chỉ chấp nhận chuỗi thập phân biểu diễn số nguyên dương trong đoạn 1–2,147,483,647; không nhận dấu cộng/trừ, số thập phân, khoảng trắng hoặc giá trị ngoài miền. Trả 400 `INVALID_ID` trước truy vấn. Contract module có thể nêu giới hạn hẹp hơn nếu schema/nghiệp vụ yêu cầu.
 
-## Quy ước đề xuất cho API chưa triển khai
+## Quy ước chung cho API
 
 Các quy ước dưới đây là baseline; hợp đồng module đã leader duyệt quyết định field, role, status, pagination và thứ tự cụ thể. Không dùng baseline để ghi đè contract. Endpoint/API đã triển khai và contract approved được ghi riêng ở trên.
 
@@ -82,7 +82,7 @@ Các quy ước dưới đây là baseline; hợp đồng module đã leader duy
 | Ngày giờ     | JSON API dùng ISO 8601 có `Z` cho instant; DB và session MySQL theo UTC; giao diện hiển thị `Asia/Ho_Chi_Minh`. MySQL `DATETIME` không tự lưu timezone. Schema/migration cơ hội có metadata ngày nguồn/timezone; dữ liệu cũ thiếu metadata trả unknown, không suy đoán. API lịch cần contract riêng |
 | Lỗi          | Giữ `error.code`/`error.message`; contract đã duyệt cho phép `error.fieldErrors` tùy chọn với `source`, `field`, `code`, `message` ổn định như ví dụ dưới. Không trả stack, SQL, mật khẩu hoặc token. `message` chỉ để hiển thị; client không phân tích nội dung tiếng Việt.                        |
 
-### Lỗi validation theo field — contract đã duyệt, dùng trong Admin opportunities trên nhánh tính năng
+### Lỗi validation theo field — contract đã duyệt, đã có trong backend và frontend
 
 Giữ HTTP status, `error.code` và `error.message` hiện có. Với validation trả `400` và `error.code: "VALIDATION_ERROR"`, server có thể trả thêm mảng tùy chọn:
 
@@ -105,7 +105,7 @@ Giữ HTTP status, `error.code` và `error.message` hiện có. Với validation
 
 `source` thuộc `body`, `query` hoặc `path`; `field` là tên field API/path ổn định, không phải tên cột SQL; `code` là mã máy ổn định do endpoint quy định. Có thể có nhiều lỗi cho cùng field. Frontend ánh xạ bằng cặp `source` + `field` và quyết định UI bằng `code`; chỉ hiển thị `message`, không suy luận lỗi bằng cách phân tích message tiếng Việt. Không hợp thức hóa bằng cách nhét field name vào message.
 
-Đây là phần mở rộng cộng thêm, không bỏ/đổi field cũ. Backend `ApiError`/error middleware giữ `fieldErrors` tùy chọn và Admin opportunities dùng nó cho validation body. Frontend `ApiError`/parser chưa giữ trường này; consumer hiện tại tiếp tục nhận `code`, `kind`, `status` và message như trước nhưng chưa thể hiển thị lỗi cạnh field. Parser/client vẫn cần được mở rộng trong PR riêng. Parser phải xác thực shape; thiếu hoặc sai shape thì bỏ qua phần field details nhưng vẫn xử lý lỗi tổng quát cũ.
+Đây là phần mở rộng cộng thêm, không bỏ/đổi field cũ. Backend `ApiError`/error middleware giữ `fieldErrors` tùy chọn và Admin opportunities dùng nó cho validation body. Frontend `ApiError`/parser đã giữ các field details hợp lệ; consumer có thể sử dụng chúng khi hiển thị lỗi. Parser xác thực shape; thiếu hoặc sai shape thì bỏ qua phần field details nhưng vẫn xử lý lỗi tổng quát cũ. Việc parser hỗ trợ không khẳng định mọi biểu mẫu đều đã hiển thị lỗi cạnh field.
 
 **Ma trận kiểm thử:** lỗi cũ chỉ có `code/message` vẫn parse như trước; `fieldErrors` hợp lệ được giữ nguyên theo từng `source/field/code`; field có nhiều lỗi ánh xạ đúng; message tiếng Việt không bị dùng để phân nhánh; `fieldErrors` thiếu, sai kiểu hoặc sai shape không làm hỏng `ApiError` tổng quát; HTTP status và `code/kind` cũ không đổi.
 

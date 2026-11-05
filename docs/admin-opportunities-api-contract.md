@@ -1,6 +1,6 @@
 # Hợp đồng Admin duyệt cơ hội
 
-> **Contract: leader đã duyệt theo Chương 3 UC-10. Backend implementation đã merge vào `main` qua PR #24; frontend nằm trên `feat/admin-opportunities-frontend`.** Public GET opportunities giữ nguyên. Không thêm API tạo/sửa/xóa cơ hội, Admin source fetch, hoặc seed dữ liệu.
+> **Contract: leader đã duyệt theo Chương 3 UC-10. Backend implementation đã merge vào `main` qua PR #24; frontend và auth UI cũng đã có trên `main` và nhánh tài liệu hiện tại.** Tab Tin chờ thẩm định nằm tại `/admin/moderation`; route `/admin/opportunities` được giữ để chuyển hướng tương thích. Public GET opportunities giữ nguyên. Không thêm API tạo/sửa/xóa cơ hội, Admin source fetch, hoặc seed dữ liệu.
 
 ## Quyền và response item
 
@@ -70,4 +70,4 @@ node --test backend/test/admin-opportunities-mysql.test.mjs
 Remove-Item Env:TEST_ADMIN_OPPORTUNITIES_DATABASE_URL
 ```
 
-The backend implementation is on `main` via PR #24. The Admin frontend is being completed on `feat/admin-opportunities-frontend`; it depends on the auth UI from `feat/auth-frontend`, which is not yet on `main`.
+The backend implementation is on `main` via PR #24. The Admin frontend and shared auth UI are also integrated on `main` and the current documentation branch. `AdminModerationPage` hosts opportunity review; the former `feat/admin-opportunities-frontend` and `feat/auth-frontend` references describe development history, not pending dependencies. Source integration does not establish a new live UI/MySQL test result.
