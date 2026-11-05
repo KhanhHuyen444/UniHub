@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { useAuth } from '../auth/AuthProvider';
 import { getOpportunityList } from '../opportunities/api';
+import { getGuidanceList } from '../guidance/api';
 import { hubDeadlineLabel } from '../opportunities/hub-deadline';
 import type { PublicOpportunityListItem } from '../opportunities/contracts';
+import type { GuidanceStage } from '../guidance/contracts';
 import googleGLogo from '../../assets/google-g-logo.svg';
 import './home.css';
 
@@ -17,6 +19,7 @@ export function HomePage() {
   const [evaluatedAt, setEvaluatedAt] = useState<string>('');
   const [isLoadingOpps, setIsLoadingOpps] = useState(true);
   const [hasErrorOpps, setHasErrorOpps] = useState(false);
+  const [guidanceStages, setGuidanceStages] = useState<GuidanceStage[]>([]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -38,10 +41,41 @@ export function HomePage() {
         setHasErrorOpps(true);
       });
 
+    getGuidanceList({ signal: controller.signal })
+      .then((data) => {
+        setGuidanceStages(data.stages);
+      })
+      .catch(() => {
+        // Safe fallback; default seed IDs and titles will be used
+      });
+
     return () => {
       controller.abort();
     };
   }, []);
+
+  const year1Item = guidanceStages.find((s) => s.academicYear === 1)?.items[0];
+  const year2Item = guidanceStages.find((s) => s.academicYear === 2)?.items[0];
+  const year3Item = guidanceStages.find((s) => s.academicYear === 3)?.items[0];
+  const year4Item = guidanceStages.find((s) => s.academicYear === 4)?.items[0];
+
+  const year1Id = year1Item?.id ?? 119;
+  const year2Id = year2Item?.id ?? 120;
+  const year3Id = year3Item?.id ?? 121;
+  const year4Id = year4Item?.id ?? 122;
+
+  const year1Desc =
+    year1Item?.title ||
+    'Nền tảng tư duy thuật toán, cấu trúc máy tính và kỹ năng lập trình cơ bản';
+  const year2Desc =
+    year2Item?.title ||
+    'Thiết kế cơ sở dữ liệu quan hệ, phát triển Web Backend và kiến trúc mạng';
+  const year3Desc =
+    year3Item?.title ||
+    'Hệ thống phân tán, tối ưu hóa hiệu năng và triển khai CI/CD ứng dụng';
+  const year4Desc =
+    year4Item?.title ||
+    'Hoàn thiện đồ án tốt nghiệp, chuẩn bị portfolio kỹ thuật và phỏng vấn chuyên môn';
 
   return (
     <div className="w-full space-y-12 pb-12">
@@ -626,7 +660,7 @@ export function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {/* Năm 1 */}
             <Link
-              to="/roadmaps"
+              to={`/roadmaps/${year1Id}`}
               className="group/year rounded-control border border-line bg-page p-3.5 flex flex-col justify-between hover:border-[#0077B6]/60 hover:bg-white hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 ease-out"
             >
               <div>
@@ -641,12 +675,15 @@ export function HomePage() {
                 <h4 className="mt-2.5 text-xs font-bold text-ink group-hover/year:text-brand transition-colors">
                   Nhập môn & Nền tảng
                 </h4>
-                <p className="mt-1 text-[11px] leading-relaxed text-muted">
-                  Tin học đại cương, Tư duy lập trình, Tiếng Anh giao tiếp.
+                <p
+                  className="mt-1 text-[11px] leading-relaxed text-muted line-clamp-2"
+                  title={year1Desc}
+                >
+                  {year1Desc}
                 </p>
               </div>
               <div className="mt-3 pt-2 border-t border-line/40 flex items-center justify-between text-[11px] font-medium text-brand">
-                <span className="opacity-0 group-hover/year:opacity-100 -translate-x-1 group-hover/year:translate-x-0 transition-all duration-200">
+                <span className="text-muted group-hover/year:text-brand transition-colors duration-200">
                   Xem chi tiết
                 </span>
                 <span className="transform group-hover/year:translate-x-1 transition-transform duration-200 ml-auto">
@@ -657,7 +694,7 @@ export function HomePage() {
 
             {/* Năm 2 */}
             <Link
-              to="/roadmaps"
+              to={`/roadmaps/${year2Id}`}
               className="group/year rounded-control border border-line bg-page p-3.5 flex flex-col justify-between hover:border-[#0D9488]/60 hover:bg-white hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 ease-out"
             >
               <div>
@@ -672,12 +709,15 @@ export function HomePage() {
                 <h4 className="mt-2.5 text-xs font-bold text-ink group-hover/year:text-brand transition-colors">
                   Kỹ năng chuyên sâu
                 </h4>
-                <p className="mt-1 text-[11px] leading-relaxed text-muted">
-                  Cấu trúc dữ liệu, Dự án nhóm, Quy trình Git/GitHub.
+                <p
+                  className="mt-1 text-[11px] leading-relaxed text-muted line-clamp-2"
+                  title={year2Desc}
+                >
+                  {year2Desc}
                 </p>
               </div>
               <div className="mt-3 pt-2 border-t border-line/40 flex items-center justify-between text-[11px] font-medium text-brand">
-                <span className="opacity-0 group-hover/year:opacity-100 -translate-x-1 group-hover/year:translate-x-0 transition-all duration-200">
+                <span className="text-muted group-hover/year:text-brand transition-colors duration-200">
                   Xem chi tiết
                 </span>
                 <span className="transform group-hover/year:translate-x-1 transition-transform duration-200 ml-auto">
@@ -688,7 +728,7 @@ export function HomePage() {
 
             {/* Năm 3 */}
             <Link
-              to="/roadmaps"
+              to={`/roadmaps/${year3Id}`}
               className="group/year rounded-control border border-line bg-page p-3.5 flex flex-col justify-between hover:border-[#0284C7]/60 hover:bg-white hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 ease-out"
             >
               <div>
@@ -703,12 +743,15 @@ export function HomePage() {
                 <h4 className="mt-2.5 text-xs font-bold text-ink group-hover/year:text-brand transition-colors">
                   Thực tập & Dự án
                 </h4>
-                <p className="mt-1 text-[11px] leading-relaxed text-muted">
-                  Framework nâng cao, CV chuyên nghiệp, Phỏng vấn thử.
+                <p
+                  className="mt-1 text-[11px] leading-relaxed text-muted line-clamp-2"
+                  title={year3Desc}
+                >
+                  {year3Desc}
                 </p>
               </div>
               <div className="mt-3 pt-2 border-t border-line/40 flex items-center justify-between text-[11px] font-medium text-brand">
-                <span className="opacity-0 group-hover/year:opacity-100 -translate-x-1 group-hover/year:translate-x-0 transition-all duration-200">
+                <span className="text-muted group-hover/year:text-brand transition-colors duration-200">
                   Xem chi tiết
                 </span>
                 <span className="transform group-hover/year:translate-x-1 transition-transform duration-200 ml-auto">
@@ -719,7 +762,7 @@ export function HomePage() {
 
             {/* Năm 4 */}
             <Link
-              to="/roadmaps"
+              to={`/roadmaps/${year4Id}`}
               className="group/year rounded-control border border-line bg-page p-3.5 flex flex-col justify-between hover:border-[#1E3A8A]/60 hover:bg-white hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 ease-out"
             >
               <div>
@@ -734,12 +777,15 @@ export function HomePage() {
                 <h4 className="mt-2.5 text-xs font-bold text-ink group-hover/year:text-brand transition-colors">
                   Tốt nghiệp & Đi làm
                 </h4>
-                <p className="mt-1 text-[11px] leading-relaxed text-muted">
-                  Đồ án tốt nghiệp, Cơ hội việc làm chính thức, Portfolio.
+                <p
+                  className="mt-1 text-[11px] leading-relaxed text-muted line-clamp-2"
+                  title={year4Desc}
+                >
+                  {year4Desc}
                 </p>
               </div>
               <div className="mt-3 pt-2 border-t border-line/40 flex items-center justify-between text-[11px] font-medium text-brand">
-                <span className="opacity-0 group-hover/year:opacity-100 -translate-x-1 group-hover/year:translate-x-0 transition-all duration-200">
+                <span className="text-muted group-hover/year:text-brand transition-colors duration-200">
                   Xem chi tiết
                 </span>
                 <span className="transform group-hover/year:translate-x-1 transition-transform duration-200 ml-auto">

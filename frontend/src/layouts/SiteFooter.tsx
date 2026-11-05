@@ -33,8 +33,9 @@ export function SiteFooter({
             height={180}
             className="h-32 w-32 object-contain"
           />
-          <span className="mt-2 text-2xl font-bold leading-8 text-navy">
-            UniHub
+          <span className="mt-2 text-2xl font-bold leading-8">
+            <span className="text-[#1E3A8A]">Uni</span>
+            <span className="text-[#2563EB]">Hub</span>
           </span>
           <p className="type-caption font-semibold text-secondary">
             Kết nối cơ hội, định hướng tương lai.
