@@ -5,9 +5,38 @@ import { getOpportunityList } from '../opportunities/api';
 import { getGuidanceList } from '../guidance/api';
 import { hubDeadlineLabel } from '../opportunities/hub-deadline';
 import type { PublicOpportunityListItem } from '../opportunities/contracts';
+import { getForumPosts, getPostComments } from '../forum/api';
+import type { ForumPost } from '../forum/contracts';
 import type { GuidanceStage } from '../guidance/contracts';
 import googleGLogo from '../../assets/google-g-logo.svg';
 import './home.css';
+
+interface HomeForumPostItem extends ForumPost {
+  commentsCount: number;
+}
+
+function formatRelativeTime(instant: string): string {
+  try {
+    const date = new Date(instant);
+    const now = new Date();
+    const diffSec = Math.max(
+      0,
+      Math.floor((now.getTime() - date.getTime()) / 1000),
+    );
+    if (diffSec < 60) return 'Vừa xong';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `${diffMin} phút trước`;
+    const diffHour = Math.floor(diffMin / 60);
+    if (diffHour < 24) return `${diffHour} giờ trước`;
+    const diffDay = Math.floor(diffHour / 24);
+    if (diffDay < 30) return `${diffDay} ngày trước`;
+    const diffMonth = Math.floor(diffDay / 30);
+    if (diffMonth < 12) return `${diffMonth} tháng trước`;
+    return `${Math.floor(diffMonth / 12)} năm trước`;
+  } catch {
+    return '';
+  }
+}
 
 export function HomePage() {
   const { user, status } = useAuth();
@@ -21,14 +50,18 @@ export function HomePage() {
   const [hasErrorOpps, setHasErrorOpps] = useState(false);
   const [guidanceStages, setGuidanceStages] = useState<GuidanceStage[]>([]);
 
+  const [forumPosts, setForumPosts] = useState<HomeForumPostItem[]>([]);
+  const [isLoadingForum, setIsLoadingForum] = useState(true);
+  const [hasErrorForum, setHasErrorForum] = useState(false);
+
   useEffect(() => {
-    const controller = new AbortController();
+    const oppController = new AbortController();
     setIsLoadingOpps(true);
     setHasErrorOpps(false);
 
     getOpportunityList(
       new URLSearchParams({ pageSize: '3' }),
-      controller.signal,
+      oppController.signal,
     )
       .then((data) => {
         setOpportunities(data.items);
@@ -36,13 +69,49 @@ export function HomePage() {
         setIsLoadingOpps(false);
       })
       .catch(() => {
-        if (controller.signal.aborted) return;
+        if (oppController.signal.aborted) return;
         setIsLoadingOpps(false);
         setHasErrorOpps(true);
       });
 
-    getGuidanceList({ signal: controller.signal })
+    const forumController = new AbortController();
+    setIsLoadingForum(true);
+    setHasErrorForum(false);
+
+    getForumPosts(
+      new URLSearchParams({ pageSize: '3' }),
+      forumController.signal,
+    )
+      .then(async (data) => {
+        if (forumController.signal.aborted) return;
+        const postsWithComments = await Promise.all(
+          data.items.map(async (post) => {
+            try {
+              const commentsRes = await getPostComments(
+                String(post.id),
+                new URLSearchParams({ pageSize: '1' }),
+                forumController.signal,
+              );
+              return { ...post, commentsCount: commentsRes.meta.total };
+            } catch {
+              return { ...post, commentsCount: 0 };
+            }
+          }),
+        );
+        if (forumController.signal.aborted) return;
+        setForumPosts(postsWithComments);
+        setIsLoadingForum(false);
+      })
+      .catch(() => {
+        if (forumController.signal.aborted) return;
+        setIsLoadingForum(false);
+        setHasErrorForum(true);
+      });
+
+    const guidanceController = new AbortController();
+    getGuidanceList({ signal: guidanceController.signal })
       .then((data) => {
+        if (guidanceController.signal.aborted) return;
         setGuidanceStages(data.stages);
       })
       .catch(() => {
@@ -50,7 +119,9 @@ export function HomePage() {
       });
 
     return () => {
-      controller.abort();
+      oppController.abort();
+      forumController.abort();
+      guidanceController.abort();
     };
   }, []);
 
@@ -962,72 +1033,68 @@ export function HomePage() {
           </Link>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Post 1 */}
-          <Link
-            to="/forum"
-            className="group flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-lg hover:border-brand/40 hover:-translate-y-1.5 transition-all duration-300 ease-out"
-          >
-            <div>
-              <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
-                Kinh nghiệm phỏng vấn
-              </span>
-              <h3 className="mt-3 text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2 group-hover:text-brand transition-colors">
-                Chia sẻ kinh nghiệm phỏng vấn vị trí Software Intern cho sinh
-                viên năm 3
-              </h3>
-            </div>
-            <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-subtle">
-              <span>Nguyễn H. · 2 giờ trước</span>
-              <span className="flex items-center gap-1 font-medium group-hover:text-brand transition-colors">
-                💬 18
-              </span>
-            </div>
-          </Link>
-
-          {/* Post 2 */}
-          <Link
-            to="/forum"
-            className="group flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-lg hover:border-brand/40 hover:-translate-y-1.5 transition-all duration-300 ease-out"
-          >
-            <div>
-              <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
-                Học tập
-              </span>
-              <h3 className="mt-3 text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2 group-hover:text-brand transition-colors">
-                Cách phân bổ thời gian ôn thi chứng chỉ TOEIC và đồ án chuyên
-                ngành hiệu quả
-              </h3>
-            </div>
-            <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-subtle">
-              <span>Trần M. · 1 ngày trước</span>
-              <span className="flex items-center gap-1 font-medium group-hover:text-brand transition-colors">
-                💬 32
-              </span>
-            </div>
-          </Link>
-
-          {/* Post 3 */}
-          <Link
-            to="/forum"
-            className="group flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-lg hover:border-brand/40 hover:-translate-y-1.5 transition-all duration-300 ease-out"
-          >
-            <div>
-              <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
-                Thực tập
-              </span>
-              <h3 className="mt-3 text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2 group-hover:text-brand transition-colors">
-                Nên chuẩn bị gì trước kỳ thực tập doanh nghiệp đầu tiên?
-              </h3>
-            </div>
-            <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-subtle">
-              <span>Lê T. · 2 ngày trước</span>
-              <span className="flex items-center gap-1 font-medium group-hover:text-brand transition-colors">
-                💬 14
-              </span>
-            </div>
-          </Link>
-        </div>
+        {isLoadingForum ? (
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((idx) => (
+              <div
+                key={idx}
+                className="animate-pulse rounded-card border border-line bg-white p-5 shadow-soft flex flex-col justify-between min-h-[160px]"
+              >
+                <div>
+                  <div className="h-5 w-28 rounded-full bg-slate-200" />
+                  <div className="mt-3 h-5 w-5/6 rounded bg-slate-200" />
+                  <div className="mt-2 h-4 w-2/3 rounded bg-slate-200" />
+                </div>
+                <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-3">
+                  <div className="h-4 w-32 rounded bg-slate-200" />
+                  <div className="h-4 w-12 rounded bg-slate-200" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : hasErrorForum || forumPosts.length === 0 ? (
+          <div className="mt-6 rounded-card border border-line bg-white p-8 text-center shadow-soft">
+            <p className="text-sm text-secondary">
+              {hasErrorForum
+                ? 'Không thể tải danh sách bài viết diễn đàn lúc này.'
+                : 'Chưa có bài viết thảo luận nào.'}
+            </p>
+            <Link
+              to="/forum"
+              className="mt-4 inline-flex items-center justify-center rounded-control bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-button hover:brightness-95 transition-all"
+            >
+              Khám phá diễn đàn
+            </Link>
+          </div>
+        ) : (
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {forumPosts.map((post) => (
+              <Link
+                key={post.id}
+                to={`/forum/${post.id}`}
+                className="group flex flex-col justify-between rounded-card border border-line bg-white p-5 shadow-soft hover:shadow-lg hover:border-brand/40 hover:-translate-y-1.5 transition-all duration-300 ease-out"
+              >
+                <div>
+                  <span className="rounded-full bg-info-surface px-2.5 py-0.5 text-xs font-semibold text-info">
+                    {post.topic}
+                  </span>
+                  <h3 className="mt-3 text-sm sm:text-base font-bold text-ink leading-snug line-clamp-2 group-hover:text-brand transition-colors">
+                    {post.title}
+                  </h3>
+                </div>
+                <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-subtle">
+                  <span>
+                    {post.author.fullName} ·{' '}
+                    {formatRelativeTime(post.createdAt)}
+                  </span>
+                  <span className="flex items-center gap-1 font-medium group-hover:text-brand transition-colors">
+                    💬 {post.commentsCount}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

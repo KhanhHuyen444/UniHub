@@ -1,0 +1,194 @@
+[
+  {
+    "id_key": "post-interview-01",
+    "topic": "Kinh nghiệm phỏng vấn",
+    "title": "Chia sẻ kinh nghiệm phỏng vấn vị trí Software Intern cho sinh viên năm 3",
+    "author_email": "nguyen.hoang.demo@student.unihub.invalid",
+    "relative_hours": 2,
+    "content": "Chào mọi người, mình vừa hoàn thành đợt phỏng vấn vị trí Software Engineering Intern tại một công ty công nghệ ở TP.HCM và nhận được offer. Mình viết bài này để chia sẻ lại toàn bộ quy trình và một số lưu ý quan trọng cho các bạn sinh viên năm 3 đang chuẩn bị rải CV:\n\n1. Vòng hồ sơ (CV Screening):\n- Tập trung vào các dự án cá nhân hoặc đồ án môn học có deploy thật, có link GitHub chỉn chu và README mô tả rõ tech stack, kiến trúc và vai trò của bản thân.\n- Không liệt kê quá nhiều công nghệ mà bản thân chỉ mới biết sơ sơ. Nhà tuyển dụng sẽ hỏi rất sâu vào bất kỳ keyword nào bạn ghi trong CV.\n\n2. Vòng Technical Online Test:\n- Làm trong 60-90 phút trên HackerRank/Coderbyte. Đa phần là 2-3 bài LeetCode ở mức Easy và Medium cơ bản (Array, String, Hash Map, Two Pointers).\n- Lời khuyên là nên luyện khoảng 75 bài LeetCode kinh điển (Blind 75 hoặc NeetCode 150) là đủ tự tin vượt qua vòng này.\n\n3. Vòng Phỏng vấn kỹ thuật (Live Coding & Core Knowledge):\n- Không chỉ gõ code mà quan trọng nhất là \"Think Out Loud\" – vừa suy nghĩ vừa giải thích hướng tiếp cận cho anh interviewer nghe. Hỏi kỹ về edge cases trước khi bắt đầu code.\n- Kiến thức nền tảng hay bị hỏi sâu: OOP (4 tính chất và ứng dụng thực tế), cơ chế Index trong MySQL, Transaction isolation level, vòng đời HTTP Request, và RESTful API design.\n\n4. Vòng Culture Fit & HR:\n- Sử dụng mô hình STAR (Situation, Task, Action, Result) khi trả lời các câu hỏi tình huống: xung đột nhóm khi làm đồ án, cách xử lý khi trễ deadline, động lực học hỏi công nghệ mới.\n- Chuẩn bị sẵn 2-3 câu hỏi chất lượng để hỏi ngược lại công ty ở cuối buổi.\n\nChúc các bạn năm 3 ôn luyện thật tốt và sớm có kết quả như ý nhé!"
+  },
+  {
+    "id_key": "post-interview-02",
+    "topic": "Kinh nghiệm phỏng vấn",
+    "title": "Tổng hợp các câu hỏi phỏng vấn vị trí Business Analyst (BA) Intern thường gặp nhất",
+    "author_email": "doan.khanh.linh.demo@student.unihub.invalid",
+    "relative_hours": 75,
+    "content": "Mình vừa trải qua 3 vòng phỏng vấn vị trí Business Analyst Intern tại một ngân hàng thương mại cổ phần và công ty Fintech. Mình tổng hợp lại các nhóm câu hỏi trọng tâm để các bạn ngành Hệ thống thông tin, Kinh doanh số cùng tham khảo:\n\n1. Kiến thức phân tích nghiệp vụ cơ bản:\n- Phân biệt sự khác nhau giữa Functional Requirement (Yêu cầu chức năng) và Non-functional Requirement (Yêu cầu phi chức năng). Cho ví dụ thực tế.\n- Khác biệt giữa User Story và Use Case Specification? Khi nào nên áp dụng tiêu chuẩn INVEST?\n- Cách bạn vẽ BPMN hoặc Flowchart mô tả quy trình đặt hàng và thanh toán trực tuyến.\n\n2. Kỹ năng xử lý tình huống nghiệp vụ:\n- Nếu Product Owner và Tech Lead có mâu thuẫn về một tính năng gấp, bạn sẽ đứng ở giữa thu thập dữ liệu và thuyết phục các bên như thế nào?\n- Khi tiếp nhận một yêu cầu rất mơ hồ từ khách hàng: \"Tôi muốn hệ thống chạy mượt hơn và giao diện hiện đại hơn\", bạn sẽ đặt những câu hỏi làm rõ (clarification questions) gì?\n\n3. Bài test Case Study tại chỗ:\n- Thường cho một bài toán nhỏ: \"Đề xuất tính năng giữ chân người dùng cho ứng dụng tích điểm\". Bạn có 15 phút chuẩn bị slide ngắn và trình bày hướng giải quyết.\n\nCác bạn nhớ ôn kỹ cả SQL cơ bản nhé, vì nhiều nơi BA cũng cần tự viết SELECT JOIN để kiểm tra dữ liệu đối soát!"
+  },
+  {
+    "id_key": "post-interview-03",
+    "topic": "Kinh nghiệm phỏng vấn",
+    "title": "Kinh nghiệm vượt qua vòng Live Coding và System Design cơ bản cho Fresher",
+    "author_email": "vu.hoang.long.demo@student.unihub.invalid",
+    "relative_hours": 98,
+    "content": "Nhiều bạn sinh viên năm cuối chuẩn bị tốt nghiệp thường rất sợ vòng Live Coding vì tâm lý áp lực khi có người quan sát từng dòng gõ code. Mình xin đúc kết vài kinh nghiệm thực chiến giúp các bạn giữ bình tĩnh:\n\n1. Quy tắc 5 phút đầu tiên: Tuyệt đối không gõ code ngay khi đọc xong đề bài! Hãy lặp lại đề bài theo cách hiểu của bạn với interviewer, xác nhận các trường hợp biên (input null, mảng rỗng, số âm, trùng lặp).\n2. Trình bày phương án Brute Force trước: Đừng ngại nói về cách giải đơn giản nhất O(N^2), sau đó phân tích điểm nghẽn và đưa ra phương án tối ưu O(N) hoặc O(N log N) dùng Hash Map / Two Pointers.\n3. Về System Design mức Fresher: Người ta không đòi hỏi bạn thiết kế hệ thống phân tán cỡ triệu RPS như Senior, nhưng bạn cần nắm vững:\n- Thiết kế Schema database hợp lý (chuẩn hóa 3NF, đặt Foreign Key, chọn DataType).\n- Khi nào dùng Cache (Redis) và chiến lược vô hiệu hóa cache.\n- Cơ chế Stateless Session với JWT.\n- Đánh giá khả năng mở rộng (Scale vertically vs Horizontally).\n\nQuan trọng nhất là thái độ cầu thị, biết lắng nghe gợi ý (hints) của interviewer khi bị tắc đường đi."
+  },
+  {
+    "id_key": "post-interview-04",
+    "topic": "Kinh nghiệm phỏng vấn",
+    "title": "Cách trả lời câu hỏi \"Hãy giới thiệu về bản thân\" và \"Điểm yếu của bạn là gì\" một cách tự nhiên",
+    "author_email": "pham.quynh.anh.demo@student.unihub.invalid",
+    "relative_hours": 122,
+    "content": "Hai câu hỏi mở đầu kinh điển trong hầu hết mọi buổi phỏng vấn tưởng chừng đơn giản nhưng lại là yếu tố quyết định 50% ấn tượng đầu tiên của nhà tuyển dụng.\n\n1. \"Hãy giới thiệu về bản thân bạn trong 1-2 phút\":\n- Đừng đọc lại CV! Nhà tuyển dụng đã có CV trước mặt rồi.\n- Hãy dùng công thức Hiện tại - Quá khứ - Tương lai (Present - Past - Future):\n  + Hiện tại: Sinh viên năm mấy, chuyên ngành gì tại trường, đam mê theo đuổi lĩnh vực cụ thể nào.\n  + Quá khứ: Điểm sáng về 1-2 dự án tiêu biểu hoặc kinh nghiệm thực chiến đã làm được.\n  + Tương lai: Vì sao bạn chọn ứng tuyển vào công ty này và kỳ vọng đóng góp gì trong giai đoạn tới.\n\n2. \"Điểm yếu lớn nhất của bạn là gì?\":\n- Tránh câu trả lời sáo rỗng: \"Em là người quá cầu toàn\" hoặc \"Em quá đam mê công việc\".\n- Công thức an toàn và chân thành: Chọn một kỹ năng thật mà bạn còn thiếu kinh nghiệm nhưng KHÔNG PHẢI là kỹ năng sống còn bắt buộc của vị trí, đồng thời nêu rõ GIẢI PHÁP bạn đang thực hiện để khắc phục nó.\n- Ví dụ: \"Trước đây em thường khá lúng túng khi thuyết trình trước đám đông. Để cải thiện, em đã chủ động nhận làm trưởng nhóm trong 2 đồ án gần nhất và tham gia câu lạc bộ học thuật để rèn luyện kỹ năng trình bày\"."
+  },
+  {
+    "id_key": "post-interview-05",
+    "topic": "Kinh nghiệm phỏng vấn",
+    "title": "Trải nghiệm phỏng vấn chương trình Quản trị viên tập sự (Management Trainee) mùa 2026",
+    "author_email": "hoang.thu.thao.demo@student.unihub.invalid",
+    "relative_hours": 145,
+    "content": "Mùa tuyển dụng MT năm nay đang bắt đầu sôi động. Vừa qua mình có cơ hội tiến vào vòng Assessment Center của một tập đoàn tiêu dùng đa quốc gia (FMCG). Mình chia sẻ lại trải nghiệm để các bạn khối ngành kinh tế có thêm góc nhìn:\n\nQuy trình thi tuyển gồm 4 vòng chính:\n1. Online Test: Gồm 3 phần: Numerical Reasoning (tính toán nhanh bảng biểu số liệu), Logical Reasoning (hình khối, quy luật), và English Test (đọc hiểu văn bản thương mại).\n2. Video Interview: Trả lời câu hỏi tự động qua màn hình trong 60 giây, kiểm tra phản xạ tiếng Anh và phong thái tự tin.\n3. Assessment Center / Group Discussion: 6-8 ứng viên cùng giải quyết một Business Case thực tế trong 45 phút, sau đó thuyết trình và trả lời chất vấn từ Ban Giám khảo.\n- Lưu ý: Giám khảo không chỉ tìm người nói nhiều nhất, mà tìm người biết lắng nghe, tóm tắt ý kiến nhóm, định hướng thời gian và đưa ra giải pháp có số liệu chứng minh khả thi.\n4. Final Interview với General Manager / Functional Director: Hỏi rất sâu về định hướng nghề nghiệp, giá trị cá nhân và độ phù hợp với văn hóa doanh nghiệp.\n\nLời khuyên: Hãy trau dồi tiếng Anh giao tiếp lưu loát và đọc nhiều case study kinh doanh từ các nguồn uy tín như McKinsey, HBR nhé!"
+  },
+  {
+    "id_key": "post-interview-06",
+    "topic": "Kinh nghiệm phỏng vấn",
+    "title": "Nên đặt những câu hỏi nào cho nhà tuyển dụng ở cuối buổi phỏng vấn để ghi điểm?",
+    "author_email": "tran.quoc.bao.demo@student.unihub.invalid",
+    "relative_hours": 170,
+    "content": "Cuối mỗi buổi phỏng vấn, khi người phỏng vấn hỏi: \"Em có câu hỏi nào dành cho anh/chị không?\", việc bạn trả lời \"Dạ em không có câu hỏi nào ạ\" là một sự lãng phí rất lớn!\n\nĐặt câu hỏi thông minh giúp bạn:\n1. Thể hiện sự hứng thú và tìm hiểu nghiêm túc về công ty.\n2. Đánh giá xem môi trường và người quản lý trực tiếp có phù hợp với định hướng của bản thân hay không.\n\nMột số câu hỏi được đánh giá rất cao:\n- Về công việc thực tế: \"Trong 3 tháng thực tập đầu tiên, mục tiêu hoặc tiêu chí thành công cụ thể nhất dành cho vị trí này là gì ạ?\"\n- Về văn hóa và đào tạo: \"Team mình hiện tại có quy trình review code và chia sẻ kiến thức (knowledge sharing) định kỳ như thế nào ạ?\"\n- Về người phỏng vấn: \"Điều gì khiến anh/chị gắn bó nhất với công ty trong suốt thời gian qua?\"\n- Về bước tiếp theo: \"Sau buổi phỏng vấn hôm nay, quy trình đánh giá tiếp theo sẽ diễn ra trong khoảng bao lâu để em có thể chủ động theo dõi ạ?\"\n\nNên tránh hỏi ngay về mức trợ cấp hay giờ giấc làm việc ở những câu đầu tiên nếu chưa được nhà tuyển dụng đề cập nhé!"
+  },
+  {
+    "id_key": "post-interview-07",
+    "topic": "Kinh nghiệm phỏng vấn",
+    "title": "Kinh nghiệm phỏng vấn vị trí Data Analyst Intern: Những case study thực tế cần chuẩn bị",
+    "author_email": "bui.van.dat.demo@student.unihub.invalid",
+    "relative_hours": 195,
+    "content": "Các bạn sinh viên hướng tới vị trí Data Analyst (DA) thường băn khoăn nhà tuyển dụng sẽ hỏi gì ngoài việc gõ SQL. Mình xin chia sẻ từ đợt phỏng vấn gần đây tại một công ty thương mại điện tử:\n\n1. Kỹ năng SQL thực chiến:\n- Đừng chỉ dừng lại ở GROUP BY hay HAVING. Hãy luyện rất kỹ Window Functions (ROW_NUMBER, RANK, DENSE_RANK, LEAD, LAG) và CTE (Common Table Expressions).\n- Bài toán kinh điển: \"Tìm top 3 khách hàng chi tiêu nhiều nhất mỗi tháng\", \"Tính tỷ lệ giữ chân người dùng (Retention Rate) sau 7 ngày\".\n\n2. Tư duy phân tích số liệu (Business Sense & Case Study):\n- Câu hỏi thường gặp: \"Nếu tuần vừa rồi doanh thu của sàn giảm 15% so với tuần trước, bạn sẽ phân rã vấn đề và tìm nguyên nhân gốc rễ (root cause) như thế nào?\"\n- Hướng giải quyết: Phân rã công thức Doanh thu = Traffic * Conversion Rate * AOV (Giá trị đơn hàng trung bình). Sau đó kiểm tra xem tỷ lệ nào sụt giảm, phân tích theo phân khúc: thiết bị (iOS/Android/Web), khu vực địa lý, kênh marketing, hay do lỗi kỹ thuật cổng thanh toán.\n\n3. Kỹ năng Dashboard & Data Visualization:\n- Nắm vững khi nào dùng Bar Chart, Line Chart, Heatmap, Scatter Plot. Tránh lạm dụng Pie Chart khi có quá nhiều danh mục.\n\nChuẩn bị sẵn 1 project phân tích dữ liệu thực tế trên GitHub có báo cáo trực quan sẽ là điểm cộng cực lớn!"
+  },
+  {
+    "id_key": "post-interview-08",
+    "topic": "Kinh nghiệm phỏng vấn",
+    "title": "Làm gì sau khi nhận được lời từ chối (Rejection Letter) từ nhà tuyển dụng mà mình rất mong muốn?",
+    "author_email": "dang.tuan.kiet.demo@student.unihub.invalid",
+    "relative_hours": 220,
+    "content": "Nhận email cảm ơn kèm lời từ chối (\"Rất tiếc hồ sơ của bạn chưa phù hợp...\") là trải nghiệm mà bất kỳ ai khi đi xin việc cũng phải trải qua vài lần. Bản thân mình từng trượt 4 công ty trước khi nhận được lời mời thực tập ưng ý.\n\nDưới đây là cách mình biến những lần bị từ chối thành cơ hội học hỏi:\n\n1. Cho phép bản thân nghỉ ngơi 1 ngày: Đừng quá tự ti hay nghi ngờ năng lực bản thân. Việc chưa được chọn đôi khi đơn giản là do thời điểm, ngân sách tuyển dụng thay đổi, hoặc công ty tìm kiếm một ứng viên có kỹ năng ngách khác.\n\n2. Gửi một bức thư cảm ơn phản hồi (Thank-you Follow-up):\n- Thể hiện sự chuyên nghiệp và cảm ơn anh/chị đã dành thời gian phỏng vấn.\n- Khéo léo xin góp ý: \"Nếu có thể, em rất mong nhận được 1-2 lời khuyên từ anh/chị về điểm em cần cải thiện để hoàn thiện hơn trong tương lai\".\n- Giữ kết nối trên LinkedIn với người phỏng vấn và HR.\n\n3. Tự làm Review chi tiết:\n- Ghi lại ngay những câu hỏi phỏng vấn mà mình trả lời chưa tốt, các câu hỏi kỹ thuật bị lúng túng.\n- Dành thời gian nghiên cứu và tìm hiểu câu trả lời chuẩn xác cho từng câu đó ngay trong tuần.\n\nMỗi buổi phỏng vấn, dù đỗ hay trượt, đều là một buổi luyện tập miễn phí với các chuyên gia có kinh nghiệm trong ngành!"
+  },
+  {
+    "id_key": "post-study-01",
+    "topic": "Học tập",
+    "title": "Cách phân bổ thời gian ôn thi chứng chỉ TOEIC và đồ án chuyên ngành hiệu quả",
+    "author_email": "tran.mai.demo@student.unihub.invalid",
+    "relative_hours": 24,
+    "content": "Xin chào mọi người! Kỳ này mình vừa hoàn thành mục tiêu TOEIC 850 vừa bảo vệ xong đồ án môn học Chuyên ngành đạt điểm A. Trước đây mình từng rất stress vì dồn cả hai việc vào cùng một lúc, nên muốn chia sẻ phương pháp quản lý thời gian mà mình đã áp dụng thành công:\n\n1. Nguyên tắc chia khối thời gian (Time-blocking):\n- Buổi sáng sớm (6h30 - 8h00): Não bộ tỉnh táo nhất, mình dành 90 phút này cho việc luyện nghe Listening TOEIC (Part 2, Part 3) và học 30 từ vựng chuyên đề qua Flashcard Anki.\n- Buổi chiều/tối (14h00 - 17h30 & 19h30 - 22h00): Tập trung toàn bộ sức lực cho đồ án chuyên ngành: đọc tài liệu nghiên cứu, thiết kế cơ sở dữ liệu và triển khai code tính năng.\n\n2. Lộ trình ôn TOEIC cấp tốc trong 8 tuần:\n- 4 tuần đầu: Củng cố chắc ngữ pháp trọng tâm (mệnh đề quan hệ, câu điều kiện, giới từ, thì) và luyện phương pháp nghe bắt từ khóa (Keywords & Paraphrasing).\n- 4 tuần sau: Giải đề bấm giờ nghiêm túc theo format đề ETS (mỗi tuần 2 đề full). Sau mỗi đề dành ít nhất 2 tiếng để chữa thật kỹ từng câu sai và nghe lại Transcript.\n\n3. Quản lý tiến độ đồ án theo tuần (Milestone Planning):\n- Chia nhỏ đồ án thành các Sprint nhỏ 1 tuần trên Trello/Notion. Không bao giờ để dồn code vào 2 tuần cuối trước ngày nộp báo cáo.\n- Họp nhanh nhóm (Daily Standup 10 phút) vào đầu tuần để chốt việc của từng bạn, tránh tình trạng ỷ lại hoặc chồng chéo công việc.\n\nCác bạn có đang gặp khó khăn gì trong việc cân bằng giữa học chứng chỉ và bài tập trên lớp thì bình luận bên dưới nhé, mình sẽ hỗ trợ giải đáp!"
+  },
+  {
+    "id_key": "post-study-02",
+    "topic": "Học tập",
+    "title": "Kinh nghiệm tự học SQL và Database Design từ con số 0 cho người mới bắt đầu",
+    "author_email": "le.tri.demo@student.unihub.invalid",
+    "relative_hours": 245,
+    "content": "Cơ sở dữ liệu (Database) là nền tảng cốt lõi của mọi ứng dụng phần mềm cũng như phân tích dữ liệu. Mình thấy nhiều bạn năm nhất, năm hai rất ngại môn này vì vướng phần Chuẩn hóa dữ liệu (Normal Forms) và viết truy vấn phức tạp.\n\nLộ trình tự học mình thấy hiệu quả nhất:\n1. Giai đoạn 1: Nắm chắc cú pháp SQL căn bản (1-2 tuần):\n- Học qua trang tương tác SQLBolt và W3Schools: SELECT, WHERE, ORDER BY, GROUP BY, HAVING, INNER/LEFT/RIGHT JOIN.\n- Thực hành ngay trên LeetCode SQL 50 (bắt đầu từ các bài Easy).\n\n2. Giai đoạn 2: Thiết kế lược đồ thực thể quan hệ (ERD) và Chuẩn hóa (2 tuần):\n- Học cách xác định Thực thể (Entity), Thuộc tính (Attribute) và Mối quan hệ (1-1, 1-N, N-N).\n- Hiểu bản chất của 1NF, 2NF, 3NF: Tại sao phải tách bảng? Tách bảng để tránh dư thừa dữ liệu (redundancy) và dị thường cập nhật (update anomalies) như thế nào.\n\n3. Giai đoạn 3: Tối ưu hóa và Hiệu năng (Index & Transaction):\n- Tìm hiểu cơ chế B-Tree Index: Khi nào nên đánh index, khi nào không nên?\n- Khái niệm ACID trong Transaction.\n\nCông cụ thực hành khuyên dùng: DBeaver kết nối MySQL/PostgreSQL cục bộ qua Docker hoặc XAMPP."
+  },
+  {
+    "id_key": "post-study-03",
+    "topic": "Học tập",
+    "title": "Phương pháp đọc tài liệu kỹ thuật tiếng Anh chuyên ngành hiệu quả cho sinh viên năm nhất, năm hai",
+    "author_email": "phan.thanh.ha.demo@student.unihub.invalid",
+    "relative_hours": 270,
+    "content": "Nhiều bạn sinh viên năm đầu thường có thói quen tìm kiếm tài liệu lập trình hoặc sách chuyên ngành bằng tiếng Việt. Tuy nhiên, công nghệ cập nhật liên tục và tài liệu tiếng Việt thường cũ hơn hoặc dịch thiếu chính xác.\n\nCách mình rèn luyện thói quen đọc tài liệu tiếng Anh mỗi ngày:\n\n1. Đừng dịch từng từ một:\n- Đọc lướt qua một lượt toàn bộ đoạn văn (Skimming) để nắm ý chính (Overview).\n- Các thuật ngữ chuyên ngành (như Thread-safe, Asynchronous, Encapsulation, Overhead, Deprecated...) không nên dịch thô ra tiếng Việt mà hãy hiểu ngữ cảnh kỹ thuật của nó.\n\n2. Cài đặt tiện ích tra từ thông minh:\n- Dùng tiện ích mở rộng như eJOY English hoặc Google Translate dạng Popup để click đúp vào từ vựng mới xem nghĩa nhanh mà không làm đứt mạch đọc.\n- Lưu lại những cụm từ hay gặp vào sổ tay cá nhân.\n\n3. Bắt đầu từ Official Documentation chính thức:\n- Khi học một framework/ngôn ngữ mới, hãy bắt đầu từ trang hướng dẫn \"Getting Started\" của trang chủ (như react.dev, docs.nestjs.com, python.org). Tài liệu chính thống luôn chuẩn mực và có code mẫu cập nhật nhất."
+  },
+  {
+    "id_key": "post-study-04",
+    "topic": "Học tập",
+    "title": "Nên chọn đề tài nghiên cứu khoa học sinh viên hay tập trung làm đồ án ứng dụng thực tế?",
+    "author_email": "vu.hoang.long.demo@student.unihub.invalid",
+    "relative_hours": 295,
+    "content": "Đây là băn khoăn của rất nhiều bạn sinh viên năm 2 và năm 3 khi đứng trước ngưỡng cửa chọn hướng đi học thuật. Mình xin đưa ra một số so sánh khách quan từ trải nghiệm bản thân:\n\n1. Hướng Nghiên cứu khoa học (NCKH):\n- Đặc điểm: Đọc nhiều bài báo khoa học (Papers trên IEEE, ACM, Springer), tập trung vào thuật toán mới, cải tiến mô hình, phân tích toán học và viết bài báo bằng tiếng Anh.\n- Phù hợp với: Các bạn có định hướng học lên Thạc sĩ/Tiến sĩ, săn học bổng du học, hoặc muốn ứng tuyển vào các Lab R&D chuyên sâu về AI, An ninh mạng, Xử lý tín hiệu.\n- Đòi hỏi: Sự kiên trì đọc tài liệu học thuật rất lớn và người thầy hướng dẫn tận tâm.\n\n2. Hướng Đồ án ứng dụng thực tế (Product/Engineering):\n- Đặc điểm: Xây dựng một sản phẩm hoàn chỉnh giải quyết nhu cầu đời sống (web app, mobile app, hệ thống quản lý), áp dụng các công nghệ phổ biến trên thị trường.\n- Phù hợp với: Các bạn muốn đi làm kỹ sư phần mềm, lập trình viên tại doanh nghiệp ngay sau khi tốt nghiệp. Sản phẩm có thể đem đi thi các cuộc thi Hackathon và đưa thẳng vào CV xin việc.\n\nMỗi hướng đi đều có giá trị riêng, quan trọng là bạn xác định rõ mục tiêu nghề nghiệp sau khi tốt nghiệp của mình là gì!"
+  },
+  {
+    "id_key": "post-study-05",
+    "topic": "Học tập",
+    "title": "Lộ trình ôn thi chứng chỉ AWS Cloud Practitioner / Solutions Architect Associate trong 3 tháng",
+    "author_email": "nguyen.hoang.demo@student.unihub.invalid",
+    "relative_hours": 320,
+    "content": "Điện toán đám mây (Cloud Computing) đang là kỹ năng cực kỳ sáng giá trên CV của sinh viên ngành CNTT và Phần mềm. Mình vừa pass kỳ thi AWS Certified Solutions Architect - Associate (SAA-C03) với điểm số 840/1000 sau 3 tháng ôn luyện.\n\nTài nguyên và lộ trình mình đã dùng:\n\n1. Khóa học lý thuyết:\n- Khóa học \"Ultimate AWS Certified Solutions Architect Associate\" của Stephane Maarek trên Udemy. Thầy giảng rất dễ hiểu, có bài tập thực hành theo từng bài.\n- Sử dụng tài khoản AWS Free Tier để tự tay tạo máy ảo EC2, cấu hình VPC, tạo S3 bucket, cài đặt RDS và cấu hình Application Load Balancer. Không gì dễ nhớ bằng việc tự làm!\n\n2. Giai đoạn luyện đề (1 tháng cuối):\n- Mua bộ đề Mock Exam của Jon Bonso (Tutorials Dojo). Đây là bộ đề sát với format thi thật nhất hiện nay.\n- Làm đề lần 1 ghi chú lại toàn bộ các câu hỏi sai. Đọc kỹ phần giải thích chi tiết vì sao đáp án A đúng, vì sao đáp án B/C/D sai.\n- Đạt điểm đều đặn trên 80% ở các đề thi thử là có thể tự tin đặt lịch thi thật tại trung tâm khảo thí hoặc thi online tại nhà."
+  },
+  {
+    "id_key": "post-study-06",
+    "topic": "Học tập",
+    "title": "Cách ghi chú bài giảng bằng Notion và Obsidian để ôn thi cuối kỳ không bị quá tải",
+    "author_email": "nguyen.ngoc.anh.demo@student.unihub.invalid",
+    "relative_hours": 345,
+    "content": "Trước đây mỗi mùa thi cuối kỳ đến là mình ngập trong đống vở viết tay lộn xộn hoặc hàng chục file Word lưu rải rác trên máy tính. Từ khi chuyển sang xây dựng hệ thống ghi chú cá nhân bằng Notion và Obsidian, việc ôn tập trở nên nhẹ nhàng hơn rất nhiều.\n\nMột số kinh nghiệm mình áp dụng:\n\n1. Sử dụng Notion cho quản lý lịch trình môn học:\n- Tạo một Database tổng hợp tất cả các môn trong học kỳ: thời khóa biểu, tiêu chí đánh giá điểm (% chuyên cần, % giữa kỳ, % cuối kỳ), link tài liệu bài giảng và hạn nộp bài tập lớn.\n- Sử dụng Kanban Board để theo dõi bài tập theo trạng thái: Cần làm -> Đang làm -> Đã nộp.\n\n2. Sử dụng Obsidian cho ghi chú kiến thức liên kết:\n- Áp dụng phương pháp Zettelkasten: Viết các mẩu ghi chú ngắn gọn (Atomic Notes) về từng định nghĩa hoặc công thức.\n- Tận dụng tính năng Backlink [[Tên khái niệm]] để liên kết các bài học lại với nhau. Khi xem đồ thị liên kết (Graph View), bạn sẽ thấy các môn học bổ trợ cho nhau rất rõ ràng.\n\nNhờ hệ thống này mà trước kỳ thi mình chỉ cần mở các trang tổng hợp ra ôn lại là nắm chắc 80% kiến thức trọng tâm!"
+  },
+  {
+    "id_key": "post-study-07",
+    "topic": "Học tập",
+    "title": "Sinh viên ngành kinh tế/kinh doanh số cần trang bị những kỹ năng phân tích dữ liệu nào?",
+    "author_email": "phan.thanh.ha.demo@student.unihub.invalid",
+    "relative_hours": 370,
+    "content": "Trong thời đại kinh tế số, nhà tuyển dụng các ngành Marketing, Tài chính, Chuỗi cung ứng ngày càng ưu tiên những ứng viên có tư duy dựa trên dữ liệu (Data-driven mindset) thay vì chỉ dựa vào cảm tính.\n\nCác bạn sinh viên kinh tế nên ưu tiên học những công cụ sau:\n\n1. Microsoft Excel mức độ nâng cao:\n- Không chỉ dừng lại ở SUM, AVERAGE. Hãy làm chủ VLOOKUP/XLOOKUP, INDEX-MATCH, Pivot Table và đặc biệt là công cụ Power Query để tự động hóa việc dọn dẹp số liệu.\n\n2. SQL căn bản:\n- Biết viết các câu lệnh SELECT lọc dữ liệu, JOIN nhiều bảng để tự trích xuất dữ liệu bán hàng hoặc thông tin khách hàng từ hệ thống mà không cần phụ thuộc vào IT.\n\n3. Công cụ trực quan hóa (PowerBI / Tableau):\n- Biết cách kết nối nguồn dữ liệu, xây dựng các biểu đồ KPI tương tác và tạo báo cáo kinh doanh trực quan giúp ban lãnh đạo dễ dàng đưa ra quyết định.\n\nChỉ cần trang bị tốt 3 kỹ năng này, cơ hội nhận offer thực tập của bạn sẽ cao hơn rất nhiều so với mặt bằng chung!"
+  },
+  {
+    "id_key": "post-study-08",
+    "topic": "Học tập",
+    "title": "Kinh nghiệm xin học bổng khuyến khích học tập kỳ vừa rồi và chiến lược duy trì GPA trên 3.6",
+    "author_email": "doan.khanh.linh.demo@student.unihub.invalid",
+    "relative_hours": 395,
+    "content": "Kỳ vừa rồi mình may mắn nhận được Học bổng Khuyến khích học tập loại Xuất sắc của trường. Mình xin chia sẻ một số bí quyết giúp giữ vững phong độ điểm số trong suốt các học kỳ:\n\n1. Chiến lược đăng ký tín chỉ:\n- Không nên đăng ký quá nhiều môn nặng trong cùng một kỳ. Cân đối giữa các môn đại cương/lý thuyết với các môn thực hành/đồ án.\n- Tìm hiểu trước giảng viên bộ môn và format đề thi của các khóa trước để có sự chuẩn bị tâm lý phù hợp.\n\n2. Tối đa hóa điểm thành phần (Điểm quá trình):\n- Điểm chuyên cần, bài tập trên lớp và điểm giữa kỳ thường chiếm từ 40% đến 50% tổng điểm môn học. Đây là phần điểm bạn hoàn toàn có thể kiểm soát và đạt điểm 9-10 nếu đi học đầy đủ và nộp bài đúng hạn.\n- Đạt điểm quá trình cao sẽ giúp bạn giảm bớt áp lực rất nhiều khi bước vào kỳ thi cuối kỳ.\n\n3. Điểm rèn luyện (ĐRL):\n- Để xét học bổng, ĐRL tối thiểu phải từ loại Tốt trở lên (≥ 80 điểm).\n- Hãy tích cực tham gia các buổi hội thảo học thuật, ngày hội việc làm, hoạt động tình nguyện do Đoàn - Hội sinh viên tổ chức để tích lũy đủ minh chứng ngay từ đầu kỳ!"
+  },
+  {
+    "id_key": "post-intern-01",
+    "topic": "Thực tập",
+    "title": "Nên chuẩn bị gì trước kỳ thực tập doanh nghiệp đầu tiên?",
+    "author_email": "le.tri.demo@student.unihub.invalid",
+    "relative_hours": 48,
+    "content": "Chào mọi người! Tuần sau nhiều bạn sinh viên năm 3 bắt đầu bước vào kỳ thực tập doanh nghiệp đầu tiên. Lần đầu đi làm trong môi trường công sở chắc chắn ai cũng có cảm giác bỡ ngỡ và lo lắng. Dưới đây là 5 điều cốt lõi mình đúc kết được sau kỳ thực tập vừa rồi:\n\n1. Kỹ năng giao tiếp và tác phong làm việc:\n- Đi làm đúng giờ (tốt nhất nên đến trước 10-15 phút trong tuần đầu).\n- Luôn kiểm tra kỹ email và tin nhắn công việc trên Slack/Teams/Zalo. Tập thói quen phản hồi tin nhắn (dù chỉ là thả icon xác nhận đã đọc) để đồng đội biết bạn đã nắm thông tin.\n\n2. Quy chuẩn kỹ thuật (Git Workflow):\n- Đọc kỹ quy định commit message của dự án (Conventional Commits: feat, fix, docs, refactor...).\n- Luôn tạo branch riêng khi làm task, tuyệt đối không commit thẳng lên main/develop. Kéo code mới nhất về trước khi tạo Pull Request để giải quyết xung đột (conflict) từ sớm.\n\n3. Văn hóa đặt câu hỏi thông minh:\n- Áp dụng quy tắc 15-30 phút: Khi gặp lỗi hoặc vướng mắc, hãy tự tra cứu tài liệu, Google và debug trong 15-30 phút trước.\n- Nếu vẫn bế tắc, hãy hỏi mentor với cấu trúc rõ ràng: \"Em đang làm tính năng A, gặp lỗi B, em đã thử cách C và D nhưng kết quả ra E. Anh/chị gợi ý giúp em hướng xử lý tiếp theo với ạ\".\n\n4. Luôn mang theo sổ tay hoặc mở sẵn app ghi chú:\n- Mỗi khi mentor hoặc sếp hướng dẫn công việc, hãy ghi chép cẩn thận. Tránh để người khác phải nhắc lại một hướng dẫn giống nhau đến lần thứ ba.\n\n5. Tinh thần chủ động và trung thực:\n- Nếu làm xong task sớm, hãy chủ động báo với mentor để nhận thêm việc hoặc hỗ trợ đồng nghiệp. Nếu cảm thấy task quá khó hoặc có nguy cơ trễ hạn, hãy thông báo sớm nhất có thể chứ đừng giấu giếm đến sát giờ nộp.\n\nChúc tất cả các bạn có một kỳ thực tập bổ ích và học hỏi được thật nhiều kinh nghiệm thực tế nhé!"
+  },
+  {
+    "id_key": "post-intern-02",
+    "topic": "Thực tập",
+    "title": "Làm thế nào để viết CV ứng tuyển thực tập khi chưa có kinh nghiệm làm việc thực tế?",
+    "author_email": "pham.quynh.anh.demo@student.unihub.invalid",
+    "relative_hours": 420,
+    "content": "Một trong những rào cản lớn nhất của sinh viên khi tìm kỳ thực tập đầu đời là: \"Nhà tuyển dụng đòi kinh nghiệm, nhưng không ai nhận thực tập thì lấy đâu ra kinh nghiệm?\".\n\nThực tế, với vị trí Intern, các nhà tuyển dụng không kỳ vọng bạn đã từng đi làm full-time ở đâu cả. Họ đánh giá tiềm năng qua các yếu tố sau:\n\n1. Làm nổi bật các Đồ án môn học & Dự án cá nhân (Projects):\n- Mô tả dự án theo cấu trúc: Bài toán cần giải quyết -> Công nghệ sử dụng -> Kết quả đạt được (nếu có số liệu đo lường cụ thể thì càng tốt).\n- Kèm link demo chạy thử hoặc link GitHub sạch đẹp.\n\n2. Hoạt động ngoại khóa và Câu lạc bộ:\n- Tham gia ban tổ chức sự kiện, ban truyền thông, hay làm trưởng nhóm bài tập lớn đều chứng minh bạn có kỹ năng làm việc nhóm, kỹ năng giao tiếp và khả năng quản lý thời gian.\n\n3. Kỹ năng phù hợp với bản mô tả công việc (Job Description):\n- Đọc kỹ các yêu cầu trong JD của công ty và điều chỉnh từ khóa trong CV sao cho tương thích.\n\n4. Hình thức trình bày CV:\n- Giữ CV trong đúng 1 trang A4 duy nhất. Sử dụng font chữ chuyên nghiệp, căn lề thẳng hàng, không có lỗi chính tả tiếng Việt hoặc ngữ pháp tiếng Anh!"
+  },
+  {
+    "id_key": "post-intern-03",
+    "topic": "Thực tập",
+    "title": "Sự khác biệt giữa thực tập tại Startup và Tập đoàn lớn: Sinh viên nên chọn môi trường nào?",
+    "author_email": "hoang.thu.thao.demo@student.unihub.invalid",
+    "relative_hours": 445,
+    "content": "Khi nhận được lời mời thực tập từ cả một công ty Startup quy mô nhỏ và một Tập đoàn đa quốc gia lớn, bạn nên cân nhắc những yếu tố nào?\n\n1. Môi trường Startup (Quy mô 10 - 50 người):\n- Ưu điểm: Tốc độ phát triển cực nhanh, bạn được tham gia trực tiếp vào sản phẩm thật ngay từ tuần đầu, được tiếp xúc thường xuyên với Founder/CTO, công việc đa dạng không bị gò bó.\n- Nhược điểm: Quy trình làm việc chưa chuẩn hóa, ít tài liệu hướng dẫn bài bản, mentor có thể rất bận rộn nên bạn phải có tính tự học và thích nghi cực cao.\n- Phù hợp với: Các bạn năng động, thích thử thách, chịu được áp lực cao và muốn trải nghiệm toàn diện quy trình làm ra sản phẩm.\n\n2. Môi trường Tập đoàn lớn (Corporation):\n- Ưu điểm: Tên tuổi thương hiệu uy tín làm đẹp CV, quy trình làm việc chuyên nghiệp chuẩn quốc tế, có lộ trình đào tạo bài bản cho thực tập sinh, chế độ phúc lợi rõ ràng.\n- Nhược điểm: Phạm vi công việc thường chuyên biệt hóa sâu, quy trình phê duyệt nhiều cấp bậc nên đôi khi tốc độ ra mắt tính năng chậm hơn.\n- Phù hợp với: Các bạn muốn học hỏi quy trình chuẩn mực, xây dựng mạng lưới quan hệ rộng và hướng tới sự ổn định lâu dài.\n\nTùy vào tính cách và mục tiêu nghề nghiệp ở từng giai đoạn mà các bạn hãy đưa ra quyết định phù hợp nhất nhé!"
+  },
+  {
+    "id_key": "post-intern-04",
+    "topic": "Thực tập",
+    "title": "Kinh nghiệm xin dấu thực tập tốt nghiệp và cách hoàn thiện báo cáo thực tập đạt điểm cao",
+    "author_email": "nguyen.ngoc.anh.demo@student.unihub.invalid",
+    "relative_hours": 470,
+    "content": "Cuối kỳ thực tập tốt nghiệp, hai nỗi lo lớn nhất của sinh viên là: xin dấu mộc xác nhận của công ty và viết cuốn Báo cáo thực tập nộp cho khoa.\n\nMột số lưu ý quan trọng để không bị trừ điểm oan:\n\n1. Quy tắc bảo mật thông tin doanh nghiệp (NDA):\n- Tuyệt đối không đưa số liệu tài chính nhạy cảm, mã nguồn mật, thông tin khách hàng hoặc mật khẩu hệ thống vào báo cáo thực tập.\n- Hãy chủ động gửi bản thảo báo cáo cho mentor hoặc phòng Nhân sự duyệt qua trước khi in ấn nộp cho trường.\n\n2. Cấu trúc báo cáo chuẩn mực:\n- Chương 1: Giới thiệu tổng quan về đơn vị thực tập (lịch sử, cơ cấu tổ chức, lĩnh vực hoạt động).\n- Chương 2: Nội dung công việc thực tế được phân công và quy trình thực hiện.\n- Chương 3: Kết quả đạt được, bài học kinh nghiệm và đề xuất giải pháp cải tiến cho doanh nghiệp.\n\n3. Giữ mối quan hệ tốt với người hướng dẫn tại cơ sở:\n- Khi gửi phiếu đánh giá thực tập để mentor chấm điểm và ký tên, hãy chuẩn bị trước các thông tin cần thiết, gửi kèm lời cảm ơn chân thành vì sự giúp đỡ của anh/chị trong suốt thời gian qua."
+  },
+  {
+    "id_key": "post-intern-05",
+    "topic": "Thực tập",
+    "title": "Có nên nhận offer thực tập không lương hoặc hỗ trợ thấp để đổi lấy kinh nghiệm không?",
+    "author_email": "bui.van.dat.demo@student.unihub.invalid",
+    "relative_hours": 495,
+    "content": "Vấn đề thực tập không lương (Unpaid Internship) luôn là chủ đề gây nhiều tranh luận trong cộng đồng sinh viên. Mình xin chia sẻ góc nhìn cá nhân để các bạn cân nhắc khi đứng trước quyết định này:\n\nKhi nào có thể tạm chấp nhận hỗ trợ thấp/không lương:\n- Công ty có chương trình đào tạo cực kỳ bài bản, cam kết mentor kèm 1:1 hàng ngày và nội dung học tập tương đương một khóa đào tạo chuyên nghiệp.\n- Bạn chưa có bất kỳ dự án thực tế nào và đang cần một bước đệm đầu tiên để tích lũy kinh nghiệm trong thời gian ngắn (1-2 tháng).\n\nDấu hiệu cảnh báo (Red Flags) cần tránh xa:\n- Giao khối lượng công việc tương đương một nhân viên chính thức nhưng không có bất kỳ khoản phụ cấp nào (kể cả tiền gửi xe, ăn trưa).\n- Không có ai hướng dẫn chuyên môn, bị giao những việc vặt không liên quan đến ngành học (pha trà, in tài liệu, chạy việc vặt cá nhân).\n- Kéo dài thời gian thực tập không lương quá 3 tháng mà không có cam kết đánh giá lên chính thức.\n\nHãy luôn nhớ rằng chất xám và thời gian của sinh viên cũng xứng đáng được tôn trọng và đền đáp công bằng!"
+  },
+  {
+    "id_key": "post-intern-06",
+    "topic": "Thực tập",
+    "title": "Cách tạo ấn tượng tốt trong tuần đầu tiên Onboarding tại doanh nghiệp công nghệ",
+    "author_email": "dang.tuan.kiet.demo@student.unihub.invalid",
+    "relative_hours": 520,
+    "content": "Tuần đầu tiên đi làm (Onboarding) là thời điểm vàng để bạn định hình hình ảnh chuyên nghiệp trong mắt đồng nghiệp và quản lý.\n\nChecklist những việc nên làm trong 5 ngày đầu:\n\n1. Ngày 1 & 2: Thiết lập môi trường làm việc:\n- Hoàn tất cài đặt các công cụ, phần mềm cần thiết theo tài liệu hướng dẫn Onboarding của team.\n- Đọc kỹ tài liệu kiến trúc hệ thống (Architecture documentation) và các quy chuẩn code (Coding guidelines).\n- Nếu tài liệu có chỗ nào bị out-of-date (cũ, chạy lỗi), hãy ghi chú lại và chủ động đề xuất cập nhật tài liệu. Đây là điểm cộng rất lớn!\n\n2. Ngày 3 & 4: Chủ động kết nối:\n- Đi ăn trưa cùng mọi người trong team để hiểu thêm về văn hóa công ty ngoài công việc.\n- Lên danh sách những câu hỏi thắc mắc về luồng nghiệp vụ của sản phẩm để xin một buổi trao đổi 30 phút với mentor.\n\n3. Ngày 5: Tổng kết tuần đầu tiên:\n- Gửi một email hoặc tin nhắn ngắn cho mentor tóm tắt những việc bạn đã hoàn thành trong tuần và kế hoạch công việc cho tuần tiếp theo."
+  },
+  {
+    "id_key": "post-intern-07",
+    "topic": "Thực tập",
+    "title": "Xử lý thế nào khi mentor quá bận và không có thời gian hướng dẫn công việc cho thực tập sinh?",
+    "author_email": "tran.quoc.bao.demo@student.unihub.invalid",
+    "relative_hours": 545,
+    "content": "Thực tế tại các công ty là các anh chị Senior/Lead vừa phải gánh deadline dự án căng thẳng, vừa phải tham gia nhiều cuộc họp nên đôi khi không thể ngồi kèm bạn từng chút một. Nếu rơi vào hoàn cảnh này, bạn nên xử lý thế nào để không bị \"bỏ rơi\"?\n\n1. Tôn trọng thời gian của mentor:\n- Thay vì cứ 15 phút lại quay sang hỏi một câu lắt nhắt làm đứt mạch làm việc của anh/chị, hãy gom các câu hỏi lại vào một file ghi chú và hẹn một khung giờ cố định (ví dụ 16h30 mỗi ngày) để hỏi một lượt.\n\n2. Luôn mang theo phương án khi hỏi:\n- Đừng hỏi câu hỏi mở: \"Anh ơi em phải làm thế nào?\". Hãy hỏi: \"Em thấy bài toán này có 2 hướng giải quyết A và B. Em thấy hướng A tối ưu hơn về mặt tốc độ nhưng hướng B dễ bảo trì hơn, theo anh em nên triển khai theo hướng nào ạ?\".\n\n3. Tìm kiếm sự trợ giúp từ các đồng nghiệp khác:\n- Trong team thường có các anh chị Junior hoặc bạn thực tập sinh vào trước, họ có thể giải đáp rất nhanh những thắc mắc cơ bản về môi trường hoặc quy trình nộp task."
+  },
+  {
+    "id_key": "post-intern-08",
+    "topic": "Thực tập",
+    "title": "Bí quyết chuyển từ vị trí Intern lên Chính thức (Full-time) sau kỳ thực tập 3 tháng",
+    "author_email": "nguyen.hoang.demo@student.unihub.invalid",
+    "relative_hours": 570,
+    "content": "Mục tiêu lớn nhất của hầu hết các bạn sinh viên khi đi thực tập là được giữ lại làm nhân viên chính thức (hoặc Fresher). Sau 3 tháng thực tập và vừa nhận được offer Full-time, mình xin rút ra 4 bài học quan trọng:\n\n1. Thể hiện quyền sở hữu công việc (Ownership):\n- Đừng làm việc như một người được bảo gì làm nấy. Hãy chủ động theo dõi tính năng mình làm từ lúc bắt đầu code, kiểm thử, deploy lên môi trường staging, cho đến khi chạy ổn định trên production.\n- Nếu phát hiện bug tiềm ẩn, hãy chủ động báo cáo và đề xuất giải pháp xử lý.\n\n2. Chủ động xin Feedback định kỳ:\n- Đừng đợi đến ngày cuối cùng của kỳ thực tập mới hỏi xem mình làm việc thế nào. Sau mỗi tháng, hãy chủ động xin 15 phút trao đổi với mentor: \"Anh thấy trong tháng vừa qua em làm tốt điểm nào và có điểm nào cần cải thiện thêm không ạ?\". Việc này giúp bạn sửa sai kịp thời.\n\n3. Đóng góp tích cực cho văn hóa team:\n- Tham gia đầy đủ các buổi họp retro, chia sẻ kiến thức (Tech Talk) và không ngại nhận những công việc khó mà người khác còn e ngại.\n\n4. Đề xuất nguyện vọng rõ ràng:\n- Trước khi kết thúc thực tập 3-4 tuần, hãy chủ động trao đổi với quản lý về mong muốn gắn bó lâu dài cùng công ty để họ kịp thời chuẩn bị ngân sách và thủ tục tuyển dụng!"
+  }
+]
