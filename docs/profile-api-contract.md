@@ -1,6 +1,6 @@
 # Hợp đồng API hồ sơ Student
 
-> **Contract: leader đã duyệt. Implementation: chưa có trên `main`.** TV2 triển khai sau khi nền auth/RBAC dùng chung được bàn giao. Tài liệu này không thay schema, migration hay dữ liệu.
+> **Contract: leader đã duyệt. Implementation: GET/PUT `/api/users/me/profile` và frontend `/profile` đã có trên `main` và nhánh tài liệu hiện tại.** TV2 dùng nền auth/RBAC chung; source nằm trong `backend/src/modules/users/profile.routes.ts` và `frontend/src/features/profile/ProfilePage.tsx`. Tài liệu này không thay schema, migration hay dữ liệu.
 
 ## Căn cứ và quy tắc
 
@@ -54,4 +54,4 @@ Ví dụ dữ liệu giả. Chưa thiết lập/đã bỏ qua: `{"profile":{"maj
 
 Database FK, year CHECK 1–4, unique `(user_id,skill_id)` là ràng buộc cấu trúc; không tự kiểm tra category type/status, completeness hoặc ownership. Backend phải enforce các quy tắc trên trong transaction.
 
-Ma trận test: Guest/Student/Admin; không thể đọc/sửa user khác; profile rỗng và đủ; year 0/1/4/5; Major/Skill sai type hoặc không tồn tại; Active ID mới; giữ Closed đang liên kết; từ chối Closed mới; giữ liên kết Closed khi replace; bỏ liên kết theo request; duplicate Skill IDs; rollback nếu bất kỳ write nào lỗi; response không lộ `google_sub`/session; DB error khác với hồ sơ rỗng. **Contract đã duyệt; API chưa triển khai.**
+Ma trận test: Guest/Student/Admin; không thể đọc/sửa user khác; profile rỗng và đủ; year 0/1/4/5; Major/Skill sai type hoặc không tồn tại; Active ID mới; giữ Closed đang liên kết; từ chối Closed mới; giữ liên kết Closed khi replace; bỏ liên kết theo request; duplicate Skill IDs; rollback nếu bất kỳ write nào lỗi; response không lộ `google_sub`/session; DB error khác với hồ sơ rỗng. **Contract đã duyệt; API đã được mount trong `backend/src/app.ts`. Ma trận trên không phải kết quả chạy test của lượt đối chiếu tài liệu.**

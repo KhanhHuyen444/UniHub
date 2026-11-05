@@ -1,6 +1,6 @@
 # Hợp đồng API Admin Dashboard
 
-> **Contract: leader đã duyệt. Implementation: chưa có trên main.** Chỉ trả đúng số liệu Chương 3 UC-12; không thêm KPI/biểu đồ.
+> **Contract: leader đã duyệt. Implementation: ba API metrics và frontend `/admin/dashboard` đã có trên `main` và nhánh tài liệu hiện tại**, qua `backend/src/modules/dashboard/dashboard.routes.ts` và `AdminDashboardPage`. Chỉ trả đúng số liệu Chương 3 UC-12; không thêm KPI/biểu đồ trong hợp đồng API này.
 
 ## Quyền và endpoints
 

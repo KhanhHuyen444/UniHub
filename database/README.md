@@ -1,5 +1,7 @@
 # Quản lý dữ liệu UniHub
 
+> **Cài mới local:** Bắt đầu từ [README gốc](../README.md) và [hướng dẫn unihub_demo](../docs/LOCAL-SETUP-UNIHUB-DEMO.md). Schema/migrations duy nhất nằm trong backend/prisma/; không áp dụng lại ví dụ phát triển cũ trên unihub_dev.
+
 Đã có [schema Prisma](../backend/prisma/schema.prisma), [cấu hình CLI](../backend/prisma.config.ts) và Prisma runtime dùng chung. `GET /api/health` không cần MySQL; `GET /api/ready` yêu cầu `DATABASE_URL` và truy vấn MySQL. Không có database của thành viên được quản lý từ repository này.
 
 **Nguồn chính duy nhất** là:

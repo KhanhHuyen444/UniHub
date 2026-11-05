@@ -1,4 +1,4 @@
-﻿> Báo cáo lịch sử trước khi sửa mapping. Kết quả cập nhật: [mapping-fix-review.md](mapping-fix-review.md). Hash và số liệu bên dưới thuộc phiên bản cũ.
+> Báo cáo lịch sử trước khi sửa mapping. Kết quả cập nhật: [mapping-fix-review.md](mapping-fix-review.md). Hash và số liệu bên dưới thuộc phiên bản cũ.
 
 # Final review — 100 DEMO Opportunities — 02/11/2026
 
@@ -29,12 +29,12 @@ Không truy vấn hồ sơ cá nhân hoặc in mật khẩu/connection string.
 
 ## Nguồn gốc mapping sai
 
-[build-demo.mjs:39](build-demo.mjs:39) lấy 100 Major đầu làm vị trí chính rồi thêm
+[build-demo.mjs:39](build-demo.mjs#L39) lấy 100 Major đầu làm vị trí chính rồi thêm
 17 Major còn lại vào tin có cùng nhóm ngành bằng `target.majors.push` ở dòng 44.
 Đây là bằng chứng trực tiếp việc tối ưu coverage thay vì kiểm tra phù hợp nghề.
 Cùng nhóm rộng không đủ chứng minh một Major phù hợp vị trí cụ thể.
 
-Sau đó [build-demo.mjs:63](build-demo.mjs:63) lấy 2–3 coreSkills theo `i % 2` và một
+Sau đó [build-demo.mjs:63](build-demo.mjs#L63) lấy 2–3 coreSkills theo `i % 2` và một
 advantageSkill tùy `i % 3`, rồi hợp các kỹ năng của cả hai nghề. Điều này có thể
 vừa bỏ Skill cốt lõi của nghề chính vừa bắt ứng viên có Skill thuộc nghề phụ.
 Việc copy các tên Major/Skill này vào requirements không phải bằng chứng độc lập.
@@ -84,7 +84,7 @@ Không coi việc không có finding là xác minh JD thực tế. Toàn bộ v�
 
 ## Scenarios và database
 
-[scenarios.json:43](scenarios.json:43) là case nhiều Major DEMO-003: expectedScore=1
+[scenarios.json:43](scenarios.json#L43) là case nhiều Major DEMO-003: expectedScore=1
 đúng vì profile giả lập được gán toàn bộ Skill đã ghép. Đây là tính toán vòng khép
 kín, không xác nhận sinh viên ngành phụ thật sự phù hợp nghề.
 

@@ -1,5 +1,7 @@
 # Lộ trình sau scaffold
 
+> **Đối chiếu bản bàn giao 06/11/2026:** Cài mới theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md), dùng schema `unihub_demo`. Các mốc scaffold, trạng thái PR/triển khai và kiểm thử cũ bên dưới được giữ làm lịch sử; không dùng để kết luận trạng thái main hiện tại. Ví dụ `unihub_dev` không thuộc quy trình cài mới; không chạy SQL lịch sử trên database cũ. Source hiện tại là căn cứ xác định chức năng; các kết quả kiểm thử cũ không thay thế lần kiểm tra mới.
+
 Đây là kế hoạch phát triển, không phải danh sách chức năng đã hoàn thành. Main có Prisma models, migrations, Prisma runtime/readiness, Public opportunities list/detail, Major API/consumer và shared UI. Public Hub đã có báo cáo test tích hợp MySQL tạm/trình duyệt ở opportunities-integration-test.md. Hợp đồng leader đã duyệt được liệt kê tại api-contracts.md; phần lớn chưa có implementation.
 
 | Mốc                                    | Điều kiện                                                                                                                                                                                                       | Công việc và phối hợp                                                                                                                                                                                      | Tiêu chí                                                                                                                 |

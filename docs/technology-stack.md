@@ -1,5 +1,7 @@
 # Công nghệ UniHub
 
+> **Đối chiếu bản bàn giao 06/11/2026:** Cài mới theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md), dùng schema `unihub_demo`. Các mốc scaffold, trạng thái PR/triển khai và kiểm thử cũ bên dưới được giữ làm lịch sử; không dùng để kết luận trạng thái main hiện tại. Ví dụ `unihub_dev` không thuộc quy trình cài mới; không chạy SQL lịch sử trên database cũ. Source hiện tại là căn cứ xác định chức năng; các kết quả kiểm thử cũ không thay thế lần kiểm tra mới.
+
 Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI/Hub cơ hội/auth schema **28/10/2026**. `main` có bộ khung React/Express, API client, router, shell preview, Public Hub list/detail, API đọc cơ hội, Major API, auth schema/backend endpoints và middleware dùng chung. Luồng Hub được kiểm tra tích hợp trên MySQL thử nghiệm; xem [báo cáo](opportunities-integration-test.md). Frontend auth đang được leader triển khai trên `feat/auth-frontend`, chưa có trên `main` trước khi PR được merge.
 
 ## 1. Phạm vi và căn cứ

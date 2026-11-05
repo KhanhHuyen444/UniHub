@@ -1,4 +1,6 @@
-﻿# 100 Opportunities DEMO/SYNTHETIC
+# 100 Opportunities DEMO/SYNTHETIC
+
+> **Cập nhật bàn giao 06/11/2026:** Batch JSON hiện có metadata `leader_approved`; mô tả Pending/needs_review, dry-run và NOT READY bên dưới phản ánh giai đoạn review trước, không chứng minh trạng thái database hiện tại. Cài mới theo [hướng dẫn canonical](../../../docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt), dùng `unihub_demo`, validation/dry-run lại ở thời điểm nhập. Không chạy generator để ghi đè batch đã duyệt hoặc tự gia hạn deadline. Import tạo Pending; Admin duyệt riêng để xuất bản.
 
 Chỉ dùng demo/kiểm thử. Không phải tin tuyển dụng hay học bổng thật; publisher là
 đơn vị giả lập và tất cả URL thuộc `unihub-demo.invalid`, cố ý không hoạt động.

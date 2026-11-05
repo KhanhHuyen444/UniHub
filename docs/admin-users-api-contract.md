@@ -1,6 +1,6 @@
 # Hợp đồng API Admin tài khoản và phân quyền
 
-> **Contract: leader đã duyệt theo UC-14. Implementation: chưa có trên `main`.** TV2 triển khai sau khi auth/RBAC dùng chung sẵn sàng. Không thêm nghiệp vụ khóa/vô hiệu hóa tài khoản, password login hoặc trường schema mới.
+> **Contract: leader đã duyệt theo UC-14. Implementation: API list/role và frontend `/admin/users` đã có trên `main` và nhánh tài liệu hiện tại.** Backend dùng auth/RBAC chung trong `backend/src/modules/users/admin-users.routes.ts`; frontend dùng `AdminUsersPage`. Không thêm nghiệp vụ khóa/vô hiệu hóa tài khoản, password login hoặc trường schema mới.
 
 ## Nguồn và quyền
 
@@ -43,4 +43,4 @@ Ví dụ hư cấu. `major` có thể null. Không trả `google_sub`, session, 
 
 ## Dữ liệu, kiểm thử và trạng thái
 
-Các cột được đọc là `users.user_id`, `full_name`, `email`, `major_id`, `academic_year`, `role` cùng `categories.category_id/name`; write chỉ `users.role` và audit row. Không có API lock/status hay account delete. Test: role matrix, pagination/query boundary, q escaping/collation, tie ordering, empty/out-of-range page, ID/body/role sai, missing user, no-op không audit, self-demotion, audit payload, rollback, token role snapshot cũ so với token kế tiếp, DB lỗi không lộ chi tiết. **Contract đã duyệt; API chưa triển khai.**
+Các cột được đọc là `users.user_id`, `full_name`, `email`, `major_id`, `academic_year`, `role` cùng `categories.category_id/name`; write chỉ `users.role` và audit row. Không có API lock/status hay account delete. Test: role matrix, pagination/query boundary, q escaping/collation, tie ordering, empty/out-of-range page, ID/body/role sai, missing user, no-op không audit, self-demotion, audit payload, rollback, token role snapshot cũ so với token kế tiếp, DB lỗi không lộ chi tiết. **Contract đã duyệt; API đã được mount trong `backend/src/app.ts`. Ma trận trên không phải kết quả chạy test của lượt đối chiếu tài liệu.**
