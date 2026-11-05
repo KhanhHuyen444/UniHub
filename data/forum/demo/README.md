@@ -4,7 +4,7 @@ Thư mục này chứa bộ dữ liệu Forum demo chất lượng cao và kịc
 
 ## 1. Cấu trúc dữ liệu
 
-- `authors-fixture.json`: 12 tài khoản sinh viên tác giả demo thuộc các ngành học Active trong hệ thống (`@student.unihub.invalid`, `role = Student`).
+- `authors-fixture.json`: 12 tài khoản sinh viên tác giả thuộc các ngành học Active trong hệ thống (`@gmail.com`, `role = Student`).
 - `posts-fixture.json`: 24 bài viết diễn đàn chia đều 3 chủ đề (8 `Học tập`, 8 `Thực tập`, 8 `Kinh nghiệm phỏng vấn`).
 - `comments-fixture.json`: 136 bình luận thảo luận ngữ cảnh chất lượng cao.
 - `generate-forum-demo.mjs`: Script tạo lại fixtures và kiểm tra tính toàn vẹn.

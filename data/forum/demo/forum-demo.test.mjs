@@ -26,8 +26,12 @@ test('forum demo: authors fixture validation', async () => {
   for (const author of authors) {
     assert.match(
       author.email,
-      /^[a-z0-9.]+@student\.unihub\.invalid$/,
-      'Email must use @student.unihub.invalid domain',
+      /^[a-z0-9.]+@gmail\.com$/,
+      'Email must use @gmail.com domain',
+    );
+    assert.ok(
+      !author.email.includes('demo'),
+      'Email must not contain the word demo',
     );
     assert.equal(
       author.role,
@@ -100,8 +104,9 @@ test('forum demo: posts fixture validation', async () => {
     );
     assert.ok(
       post.author_email &&
-        post.author_email.endsWith('@student.unihub.invalid'),
-      'Author must be a demo student',
+        post.author_email.endsWith('@gmail.com') &&
+        !post.author_email.includes('demo'),
+      'Author must be a valid student with @gmail.com and without demo in email',
     );
     assert.ok(
       typeof post.relative_hours === 'number' && post.relative_hours > 0,
@@ -156,8 +161,10 @@ test('forum demo: comments fixture validation', async () => {
   for (const c of comments) {
     assert.ok(c.post_key, 'Comment must reference post_key');
     assert.ok(
-      c.author_email && c.author_email.endsWith('@student.unihub.invalid'),
-      'Comment author must be demo student',
+      c.author_email &&
+        c.author_email.endsWith('@gmail.com') &&
+        !c.author_email.includes('demo'),
+      'Comment author must be valid student with @gmail.com and without demo in email',
     );
     assert.ok(
       c.content && c.content.trim().length > 0,

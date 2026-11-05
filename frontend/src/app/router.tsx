@@ -1,4 +1,12 @@
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router';
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router';
 import { HealthCheckPage } from './App';
 import { NotFoundPage } from './NotFoundPage';
 import { SharedUiPreviewPage } from './SharedUiPreviewPage';
@@ -14,7 +22,7 @@ import { LoginLayout } from '../features/auth/LoginLayout';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { StudentLayout } from '../layouts/StudentLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
-import { AdminOpportunitiesPage } from '../features/admin/opportunities/AdminOpportunitiesPage';
+import { AdminModerationPage } from '../features/admin/moderation/AdminModerationPage';
 import { AdminCategoriesRoute } from '../features/admin/categories/AdminCategoriesRoute';
 import { AdminUsersPage } from '../features/admin/users/AdminUsersPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
@@ -26,7 +34,6 @@ import { CalendarPage } from '../features/calendar/CalendarPage';
 import { HomePage } from '../features/home/HomePage';
 import { ForumHubPage } from '../features/forum/ForumHubPage';
 import { ForumPostDetailPage } from '../features/forum/ForumPostDetailPage';
-import { AdminForumModerationPage } from '../features/admin/forum/ForumModerationPage';
 
 function RecommendationsRoute() {
   const { user } = useAuth();
@@ -41,6 +48,14 @@ function RecommendationsRoute() {
   );
 }
 
+function OpportunityLegacyRedirect() {
+  const { id } = useParams();
+  const location = useLocation();
+  return (
+    <Navigate to={`/admin/moderation/${id ?? ''}${location.search}`} replace />
+  );
+}
+
 export const appPaths = {
   home: '/',
   developmentHealth: '/_dev/health',
@@ -48,6 +63,7 @@ export const appPaths = {
   opportunities: '/opportunities',
   roadmaps: '/roadmaps',
   forum: '/forum',
+  adminModeration: '/admin/moderation',
   adminForumModeration: '/admin/moderation',
   profile: '/profile',
   recommendations: '/recommendations',
@@ -100,10 +116,22 @@ export function AppRouter() {
             element={<ForumPostDetailPage />}
           />
           <Route
-            path={appPaths.adminForumModeration}
+            path={appPaths.adminModeration}
             element={
               <RequireRole role="Admin">
-                <AdminForumModerationPage />
+                <AdminLayout activeKey="moderation">
+                  <AdminModerationPage />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path={`${appPaths.adminModeration}/:id`}
+            element={
+              <RequireRole role="Admin">
+                <AdminLayout activeKey="moderation">
+                  <AdminModerationPage />
+                </AdminLayout>
               </RequireRole>
             }
           />
@@ -152,12 +180,12 @@ export function AppRouter() {
           <Route
             path={appPaths.adminOpportunities}
             element={
-              <RequireRole role="Admin">
-                <AdminLayout activeKey="opportunity-moderation">
-                  <AdminOpportunitiesPage />
-                </AdminLayout>
-              </RequireRole>
+              <Navigate to="/admin/moderation?tab=opportunities" replace />
             }
+          />
+          <Route
+            path={`${appPaths.adminOpportunities}/:id`}
+            element={<OpportunityLegacyRedirect />}
           />
           <Route
             path={appPaths.adminUsers}
@@ -165,16 +193,6 @@ export function AppRouter() {
               <RequireRole role="Admin">
                 <AdminLayout activeKey="users">
                   <AdminUsersPage />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path={`${appPaths.adminOpportunities}/:id`}
-            element={
-              <RequireRole role="Admin">
-                <AdminLayout activeKey="opportunity-moderation">
-                  <AdminOpportunitiesPage />
                 </AdminLayout>
               </RequireRole>
             }

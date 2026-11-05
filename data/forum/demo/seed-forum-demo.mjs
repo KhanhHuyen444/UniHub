@@ -396,7 +396,7 @@ export async function runForumDemoSeed({
     where: {
       title:
         'Chia sẻ kinh nghiệm phỏng vấn vị trí Software Intern cho sinh viên năm 3',
-      author: { email: 'nguyen.hoang.demo@student.unihub.invalid' },
+      author: { email: 'nguyenhoang2004@gmail.com' },
       is_deleted: false,
     },
     include: {
@@ -419,7 +419,7 @@ export async function runForumDemoSeed({
     where: {
       title:
         'Cách phân bổ thời gian ôn thi chứng chỉ TOEIC và đồ án chuyên ngành hiệu quả',
-      author: { email: 'tran.mai.demo@student.unihub.invalid' },
+      author: { email: 'maitran.2004@gmail.com' },
       is_deleted: false,
     },
     include: {
@@ -441,7 +441,7 @@ export async function runForumDemoSeed({
   const post03 = await prisma.forumPost.findFirst({
     where: {
       title: 'Nên chuẩn bị gì trước kỳ thực tập doanh nghiệp đầu tiên?',
-      author: { email: 'le.tri.demo@student.unihub.invalid' },
+      author: { email: 'letri.2004@gmail.com' },
       is_deleted: false,
     },
     include: {

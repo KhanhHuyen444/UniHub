@@ -45,6 +45,81 @@ function AlertTriangleIcon({ className = 'h-6 w-6' }: { className?: string }) {
   );
 }
 
+function UsersIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+function ClockIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}
+
+function CheckCircleIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
+    </svg>
+  );
+}
+
+function XCircleIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="15" y1="9" x2="9" y2="15" />
+      <line x1="9" y1="9" x2="15" y2="15" />
+    </svg>
+  );
+}
+
 /* ─── Utilities ─── */
 
 function formatNumber(value: number): string {
@@ -172,22 +247,57 @@ function KpiCard({
   onRetry?: () => void;
   ariaLabel?: string;
 }) {
+  const isAccounts = title.includes('tài khoản');
+  const isPending = title.includes('Pending');
+  const isApproved = title.includes('Approved');
+  const isRejected = title.includes('Rejected');
+
+  const accentBorder = isAccounts
+    ? 'border-t-4 border-t-sky-500'
+    : isPending
+      ? 'border-t-4 border-t-amber-500'
+      : isApproved
+        ? 'border-t-4 border-t-emerald-500'
+        : isRejected
+          ? 'border-t-4 border-t-rose-500'
+          : 'border-t-4 border-t-brand';
+
+  const iconBg = isAccounts
+    ? 'bg-sky-50 text-sky-600'
+    : isPending
+      ? 'bg-amber-50 text-amber-600'
+      : isApproved
+        ? 'bg-emerald-50 text-emerald-600'
+        : isRejected
+          ? 'bg-rose-50 text-rose-600'
+          : 'bg-brand/10 text-brand';
+
   return (
     <Card
-      className="group flex min-h-[118px] flex-col justify-between rounded-xl border border-line bg-white p-5 shadow-soft transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-brand/30"
+      className={`group flex min-h-[128px] flex-col justify-between rounded-xl border border-line bg-white p-5 shadow-soft transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg ${accentBorder}`}
       aria-label={ariaLabel}
     >
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-medium text-secondary group-hover:text-brand transition-colors duration-200">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm font-semibold text-secondary group-hover:text-navy transition-colors duration-200">
           {title}
         </span>
-        {dotColor && (
-          <span
-            className="h-2.5 w-2.5 shrink-0 rounded-full transition-transform duration-200 group-hover:scale-125"
-            style={{ backgroundColor: dotColor }}
-            aria-hidden="true"
-          />
-        )}
+        <div className="flex items-center gap-2">
+          {dotColor && (
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-full transition-transform duration-200 group-hover:scale-125"
+              style={{ backgroundColor: dotColor }}
+              aria-hidden="true"
+            />
+          )}
+          <div
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${iconBg} transition-transform duration-200 group-hover:scale-110`}
+          >
+            {isAccounts && <UsersIcon className="h-4 w-4" />}
+            {isPending && <ClockIcon className="h-4 w-4" />}
+            {isApproved && <CheckCircleIcon className="h-4 w-4" />}
+            {isRejected && <XCircleIcon className="h-4 w-4" />}
+          </div>
+        </div>
       </div>
       <div className="mt-3">
         {loading ? (
@@ -208,7 +318,7 @@ function KpiCard({
             )}
           </div>
         ) : (
-          <span className="text-3xl font-bold tracking-tight text-navy transition-transform duration-200 group-hover:scale-[1.02]">
+          <span className="text-3xl font-extrabold tracking-tight text-navy transition-transform duration-200 group-hover:scale-[1.02]">
             {value !== undefined ? formatNumber(value) : '0'}
           </span>
         )}

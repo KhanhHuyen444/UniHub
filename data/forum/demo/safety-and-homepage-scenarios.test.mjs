@@ -1,10 +1,21 @@
 import assert from 'node:assert/strict';
 import { after, test } from 'node:test';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import {
   getPrismaClient,
   disconnectPrismaClient,
 } from '../../../backend/dist/lib/prisma.js';
 import { runForumDemoSeed } from './seed-forum-demo.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const authorsFixture = JSON.parse(
+  await readFile(join(__dirname, 'authors-fixture.json'), 'utf-8'),
+);
+const fixtureAuthorEmails = authorsFixture.map((a) => a.email);
 
 after(async () => {
   await disconnectPrismaClient();
@@ -42,19 +53,19 @@ test('seed safety: dry-run on seeded database predicts zero creates', async () =
 test('seed safety: non-synthetic student accounts remain untouched', async () => {
   const prisma = getPrismaClient();
   const nonSyntheticUsers = await prisma.user.findMany({
-    where: { NOT: { email: { endsWith: '@student.unihub.invalid' } } },
+    where: { NOT: { email: { in: fixtureAuthorEmails } } },
     select: { user_id: true, email: true, role: true, full_name: true },
   });
 
   const emails = nonSyntheticUsers.map((u) => u.email);
-  assert.ok(emails.includes('admin.demo@unihub.local'));
-  assert.ok(emails.includes('student.demo@unihub.local'));
+  assert.ok(emails.includes('unihub.quantri@gmail.com'));
+  assert.ok(emails.includes('nguyenvanan.2004@gmail.com'));
   assert.ok(emails.includes('huyenvnkk24416@st.uel.edu.vn'));
 
   for (const u of nonSyntheticUsers) {
     assert.ok(
-      !u.email.endsWith('@student.unihub.invalid'),
-      'Non-synthetic user must not use invalid demo domain',
+      !u.email.includes('demo'),
+      'Student user email must not contain demo',
     );
   }
 });
@@ -62,7 +73,7 @@ test('seed safety: non-synthetic student accounts remain untouched', async () =>
 test('seed safety: no synthetic auth sessions, activity logs or notifications exist', async () => {
   const prisma = getPrismaClient();
   const syntheticUsers = await prisma.user.findMany({
-    where: { email: { endsWith: '@student.unihub.invalid' } },
+    where: { email: { in: fixtureAuthorEmails } },
     select: { user_id: true },
   });
   const syntheticUserIds = syntheticUsers.map((u) => u.user_id);
@@ -96,7 +107,7 @@ test('seed safety: transaction rollback on error', async () => {
         // Step 1: create a temporary test user
         const temp = await tx.user.create({
           data: {
-            email: 'rollback.test@student.unihub.invalid',
+            email: 'rollback.test@gmail.com',
             google_sub: 'rollback-test-sub',
             full_name: 'Rollback Test User',
             role: 'Student',
@@ -142,7 +153,7 @@ test('seed safety: soft-deleted posts are not resurrected by seed', async () => 
     .$transaction(async (tx) => {
       // 1. Create a dummy post marked as deleted
       const author = await tx.user.findFirst({
-        where: { email: { endsWith: '@student.unihub.invalid' } },
+        where: { email: { in: fixtureAuthorEmails } },
       });
       assert.ok(author);
 
@@ -188,7 +199,7 @@ test('homepage scenario: student creates a new post -> homepage displays it at t
   await prisma
     .$transaction(async (tx) => {
       const author = await tx.user.findFirst({
-        where: { email: { endsWith: '@student.unihub.invalid' } },
+        where: { email: { in: fixtureAuthorEmails } },
       });
       assert.ok(author);
 
@@ -318,7 +329,7 @@ test('seed resilience: student creates new post & comment outside fixture -> dry
 
       // 1. A real student exists (e.g. user_id = 2)
       const student = await tx.user.findFirst({
-        where: { email: 'student.demo@unihub.local' },
+        where: { email: 'nguyenvanan.2004@gmail.com' },
       });
       assert.ok(student, 'Student user must exist');
 

@@ -61,6 +61,66 @@ function removeErrorMessage(error: unknown): string {
   return 'Không thể lưu thao tác gỡ nội dung. Bản ghi vẫn được giữ trong hàng đợi; vui lòng thử lại.';
 }
 
+function FileTextIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" x2="8" y1="13" y2="13" />
+      <line x1="16" x2="8" y1="17" y2="17" />
+      <line x1="10" x2="8" y1="9" y2="9" />
+    </svg>
+  );
+}
+
+function MessageCircleIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+    </svg>
+  );
+}
+
+function TrashIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M3 6h18" />
+      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+    </svg>
+  );
+}
+
 function AuthorAvatar({ item }: { item: ModerationQueueItem }) {
   const { fullName, avatarUrl } = item.author;
   if (avatarUrl) {
@@ -69,7 +129,7 @@ function AuthorAvatar({ item }: { item: ModerationQueueItem }) {
         src={avatarUrl}
         alt=""
         aria-hidden="true"
-        className="h-10 w-10 rounded-full object-cover"
+        className="h-10 w-10 rounded-full object-cover ring-2 ring-slate-100"
       />
     );
   }
@@ -77,7 +137,7 @@ function AuthorAvatar({ item }: { item: ModerationQueueItem }) {
   return (
     <span
       aria-hidden="true"
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan font-bold text-navy"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 font-bold text-white shadow-xs"
     >
       {initial}
     </span>
@@ -93,16 +153,35 @@ function QueueItemCard({
 }) {
   const isPost = item.targetType === 'Post';
   return (
-    <Card className="p-5 md:p-6">
+    <Card className="rounded-xl border border-line/90 p-5 md:p-6 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300">
       <article className="grid gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant={isPost ? 'info' : 'warning'}>
-              {isPost ? 'BÀI VIẾT' : 'BÌNH LUẬN'}
-            </Badge>
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-bold ${
+                isPost
+                  ? 'border-sky-200 bg-sky-50 text-sky-700'
+                  : 'border-amber-200 bg-amber-50 text-amber-700'
+              }`}
+            >
+              {isPost ? (
+                <>
+                  <FileTextIcon className="h-3.5 w-3.5" />
+                  BÀI VIẾT
+                </>
+              ) : (
+                <>
+                  <MessageCircleIcon className="h-3.5 w-3.5" />
+                  BÌNH LUẬN
+                </>
+              )}
+            </span>
             {isPost && <Badge variant="success">{item.topic}</Badge>}
           </div>
-          <time dateTime={item.createdAt} className="type-caption text-subtle">
+          <time
+            dateTime={item.createdAt}
+            className="type-caption text-secondary"
+          >
             {formatForumDate(item.createdAt)}
           </time>
         </div>
@@ -115,18 +194,22 @@ function QueueItemCard({
             </p>
           </div>
         ) : (
-          <div>
-            <p className="type-caption text-muted">Bình luận trong bài viết</p>
-            <h2 className="mt-1 type-label font-semibold text-navy">
-              {item.post.title}
-            </h2>
+          <div className="space-y-2">
+            <div className="rounded-lg border-l-4 border-amber-400 bg-amber-50/50 p-3">
+              <p className="type-caption font-semibold uppercase text-amber-800">
+                Bình luận trong bài viết
+              </p>
+              <h2 className="mt-0.5 type-label font-semibold text-navy">
+                {item.post.title}
+              </h2>
+            </div>
             <p className="mt-2 whitespace-pre-wrap type-body text-secondary">
               {item.content}
             </p>
           </div>
         )}
 
-        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line/80 pt-4">
           <div className="flex min-w-0 items-center gap-3">
             <AuthorAvatar item={item} />
             <div className="min-w-0">
@@ -143,7 +226,10 @@ function QueueItemCard({
             onClick={() => onRemove(item)}
             aria-label={`${isPost ? 'Gỡ bài viết' : 'Gỡ bình luận'}: ${isPost ? item.title : item.post.title}`}
           >
-            Gỡ {isPost ? 'bài viết' : 'bình luận'}
+            <span className="inline-flex items-center gap-1.5">
+              <TrashIcon className="h-3.5 w-3.5" />
+              Gỡ {isPost ? 'bài viết' : 'bình luận'}
+            </span>
           </Button>
         </div>
       </article>
@@ -151,7 +237,13 @@ function QueueItemCard({
   );
 }
 
-function ModerationQueue() {
+export interface ModerationQueueProps {
+  showHeader?: boolean;
+}
+
+export function ModerationQueue({
+  showHeader = true,
+}: ModerationQueueProps = {}) {
   const [page, setPage] = useState(1);
   const [revision, setRevision] = useState(0);
   const [queue, setQueue] = useState<QueueState>({ status: 'loading' });
@@ -264,24 +356,41 @@ function ModerationQueue() {
 
   return (
     <div className="space-y-6">
-      <header className="border-b border-line pb-5">
-        <p className="type-caption font-semibold uppercase tracking-wide text-brand">
-          Kiểm duyệt nội dung
-        </p>
-        <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="type-display text-navy">Giám sát cộng đồng</h1>
-            <p className="mt-2 max-w-3xl type-body text-secondary">
-              Rà soát bài viết và bình luận trong diễn đàn sinh viên.
-            </p>
+      {showHeader && (
+        <header className="border-b border-line pb-5">
+          <p className="type-caption font-semibold uppercase tracking-wide text-brand">
+            Kiểm duyệt nội dung
+          </p>
+          <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h1 className="type-display text-navy">Giám sát cộng đồng</h1>
+              <p className="mt-2 max-w-3xl type-body text-secondary">
+                Rà soát bài viết và bình luận trong diễn đàn sinh viên.
+              </p>
+            </div>
+            {queue.status === 'success' && (
+              <p className="type-label text-secondary">
+                {queue.data.meta.total} nội dung cần xử lý
+              </p>
+            )}
           </div>
-          {queue.status === 'success' && (
-            <p className="type-label text-secondary">
-              {queue.data.meta.total} nội dung cần xử lý
-            </p>
-          )}
+        </header>
+      )}
+
+      {!showHeader && queue.status === 'success' && (
+        <div className="flex items-center justify-between pb-1">
+          <div className="flex items-center gap-2">
+            <h2 className="type-title font-bold text-navy">Hàng đợi vi phạm</h2>
+            <span className="rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-bold text-rose-800">
+              {queue.data.meta.total}
+            </span>
+          </div>
+          <p className="type-caption text-secondary">
+            Hiển thị {queue.data.items.length} / {queue.data.meta.total} nội
+            dung
+          </p>
         </div>
-      </header>
+      )}
 
       {successMessage && (
         <div
@@ -476,3 +585,5 @@ export function AdminForumModerationPage() {
     </AdminLayout>
   );
 }
+
+export const CommunityModerationView = ModerationQueue;
