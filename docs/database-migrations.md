@@ -119,6 +119,14 @@ npm.cmd run db:migrate:status
 
 ### Áp dụng migration hiện có trên Windows sau khi PR auth được review và merge
 
+## Migration loại bỏ email reminder (20261105000000_remove_event_reminder_emails)
+
+Theo quyết định chính thức của Leader, chức năng Email Reminder đã bị loại bỏ hoàn toàn khỏi UniHub.
+
+- Migration trước đó `20261031000000_add_event_reminder_emails` được bảo toàn nguyên vẹn trong lịch sử migration nhằm đảm bảo tính toàn vẹn checksum cho các cơ sở dữ liệu đã áp dụng.
+- Migration mới `20261105000000_remove_event_reminder_emails` thực hiện `DROP TABLE IF EXISTS \`event_reminder_emails\`;`để loại bỏ bảng outbox email, đưa schema đích về đúng 13 bảng nghiệp vụ (+`\_prisma_migrations`).
+- Không làm thay đổi 13 bảng nghiệp vụ còn lại; bảng `notifications` và `events` hoàn toàn nguyên vẹn.
+
 Chỉ chạy bước deploy sau khi PR đã merge. Mở PowerShell tại gốc repository, giữ an toàn mọi thay đổi cục bộ và dùng **database phát triển riêng của bạn**, không dùng database dùng chung của nhóm:
 
 ```powershell

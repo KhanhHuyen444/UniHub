@@ -1,4 +1,4 @@
-﻿# Chuẩn bị database demo cô lập — 02/11/2026
+# Chuẩn bị database demo cô lập — 02/11/2026
 
 **READY để leader/DBA review kế hoạch; NOT READY để chạy migration/seed/import.**
 Tất cả SQL/lệnh ghi bên dưới là đề xuất sau phê duyệt, chưa được chạy.
@@ -87,13 +87,12 @@ Copy-Item -LiteralPath backend/.env.demo.migration.example -Destination backend/
 ```
 
 Node ưu tiên biến môi trường của shell hơn --env-file. Trước mọi nhóm lệnh, dùng
-terminal riêng, xác nhận không có DATABASE_URL/MIGRATION_DATABASE_URL hoặc biến
-email đang được đặt sẵn; chỉ kiểm tra sự tồn tại, không in giá trị:
+terminal riêng, xác nhận không có DATABASE_URL/MIGRATION_DATABASE_URL
+đang được đặt sẵn; chỉ kiểm tra sự tồn tại, không in giá trị:
 
 ```powershell
 if (Test-Path Env:DATABASE_URL) { throw 'Inherited DATABASE_URL; use a clean demo terminal.' }
 if (Test-Path Env:MIGRATION_DATABASE_URL) { throw 'Inherited MIGRATION_DATABASE_URL; use a clean demo terminal.' }
-if (Test-Path Env:EVENT_REMINDER_EMAIL_ENABLED) { throw 'Inherited email flag; use a clean demo terminal.' }
 ```
 
 Bảo vệ đích trước migration (chạy từ gốc repo):
@@ -109,7 +108,7 @@ Bảo vệ đích trước catalog/import/runtime:
 
 ```powershell
 @'
-const u=new URL(process.env.DATABASE_URL); if(u.protocol!=="mysql:" || u.pathname!=="/unihub_demo" || u.username!=="unihub_demo_app" || !["localhost","127.0.0.1"].includes(u.hostname) || process.env.EVENT_REMINDER_EMAIL_ENABLED!=="false") throw Error("Wrong demo runtime target or email flag"); console.log("Demo runtime URL target checked; no secret printed");
+const u=new URL(process.env.DATABASE_URL); if(u.protocol!=="mysql:" || u.pathname!=="/unihub_demo" || u.username!=="unihub_demo_app" || !["localhost","127.0.0.1"].includes(u.hostname)) throw Error("Wrong demo runtime target"); console.log("Demo runtime URL target checked; no secret printed");
 '@ | node --env-file=backend/.env.demo --input-type=module
 if ($LASTEXITCODE -ne 0) { throw 'Stop: wrong runtime target.' }
 ```
@@ -120,14 +119,15 @@ khi cho phép bất kỳ lệnh ghi nào.
 
 ## 4. Migrations — sau phê duyệt tạo DB và chạy migration
 
-Bốn migration được dùng nguyên trạng, theo thứ tự:
+Năm migration được dùng theo thứ tự:
 
 1. 20261025000000_initial_schema
 2. 20261026150000_add_opportunity_deadline_metadata
 3. 20261028170000_add_auth_identity_sessions
 4. 20261031000000_add_event_reminder_emails
+5. 20261105000000_remove_event_reminder_emails
 
-Kết quả mong đợi: 14 bảng nghiệp vụ cùng \_prisma_migrations. Không dùng migrate dev,
+Kết quả mong đợi: 13 bảng nghiệp vụ cùng \_prisma_migrations. Không dùng migrate dev,
 db push, reset, schema diff để apply hoặc tạo migration mới. DDL MySQL có implicit
 commit; nếu lỗi giữa chừng, dừng và kiểm tra, không tự xóa/tạo lại database.
 
@@ -163,7 +163,6 @@ GRANT SELECT, INSERT, UPDATE ON unihub_demo.forum_posts TO 'unihub_demo_app'@'lo
 GRANT SELECT, INSERT, UPDATE ON unihub_demo.comments TO 'unihub_demo_app'@'localhost';
 GRANT SELECT, INSERT ON unihub_demo.activity_logs TO 'unihub_demo_app'@'localhost';
 GRANT SELECT, INSERT, UPDATE, DELETE ON unihub_demo.notifications TO 'unihub_demo_app'@'localhost';
-GRANT SELECT, INSERT, UPDATE, DELETE ON unihub_demo.event_reminder_emails TO 'unihub_demo_app'@'localhost';
 GRANT SELECT, INSERT, DELETE ON unihub_demo.user_skills TO 'unihub_demo_app'@'localhost';
 GRANT SELECT, INSERT, DELETE ON unihub_demo.opportunity_majors TO 'unihub_demo_app'@'localhost';
 GRANT SELECT, INSERT, DELETE ON unihub_demo.opportunity_skills TO 'unihub_demo_app'@'localhost';
