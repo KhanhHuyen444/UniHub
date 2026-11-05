@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 // 1. 12 Synthetic Student Authors
 const authors = [
   {
-    email: 'nguyen.hoang.demo@student.unihub.invalid',
+    email: 'nguyenhoang2004@gmail.com',
     google_sub: 'demo-forum-student-01',
     full_name: 'Nguyễn Hoàng',
     avatar_url: null,
@@ -19,7 +19,7 @@ const authors = [
     career_goal: 'Kỹ sư phát triển phần mềm Backend / Fullstack',
   },
   {
-    email: 'tran.mai.demo@student.unihub.invalid',
+    email: 'maitran.2004@gmail.com',
     google_sub: 'demo-forum-student-02',
     full_name: 'Trần Mai',
     avatar_url: null,
@@ -29,7 +29,7 @@ const authors = [
     career_goal: 'Kỹ sư giải pháp đám mây và hệ thống thông tin',
   },
   {
-    email: 'le.tri.demo@student.unihub.invalid',
+    email: 'letri.2004@gmail.com',
     google_sub: 'demo-forum-student-03',
     full_name: 'Lê Trí',
     avatar_url: null,
@@ -39,7 +39,7 @@ const authors = [
     career_goal: 'Chuyên viên phân tích dữ liệu và thiết kế cơ sở dữ liệu',
   },
   {
-    email: 'pham.quynh.anh.demo@student.unihub.invalid',
+    email: 'quynhanh.pham2005@gmail.com',
     google_sub: 'demo-forum-student-04',
     full_name: 'Phạm Quỳnh Anh',
     avatar_url: null,
@@ -49,7 +49,7 @@ const authors = [
     career_goal: 'Chuyên viên Digital Marketing và Growth Communications',
   },
   {
-    email: 'vu.hoang.long.demo@student.unihub.invalid',
+    email: 'vuhoanglong2003@gmail.com',
     google_sub: 'demo-forum-student-05',
     full_name: 'Vũ Hoàng Long',
     avatar_url: null,
@@ -59,7 +59,7 @@ const authors = [
     career_goal: 'Kỹ sư Trí tuệ nhân tạo và xử lý ngôn ngữ tự nhiên',
   },
   {
-    email: 'doan.khanh.linh.demo@student.unihub.invalid',
+    email: 'khanhlinh.doan2004@gmail.com',
     google_sub: 'demo-forum-student-06',
     full_name: 'Đoàn Khánh Linh',
     avatar_url: null,
@@ -69,7 +69,7 @@ const authors = [
     career_goal: 'Chuyên viên phân tích tài chính doanh nghiệp và đầu tư',
   },
   {
-    email: 'bui.van.dat.demo@student.unihub.invalid',
+    email: 'buivandat2005@gmail.com',
     google_sub: 'demo-forum-student-07',
     full_name: 'Bùi Văn Đạt',
     avatar_url: null,
@@ -79,7 +79,7 @@ const authors = [
     career_goal: 'Data Scientist / Machine Learning Engineer',
   },
   {
-    email: 'hoang.thu.thao.demo@student.unihub.invalid',
+    email: 'thuthao.hoang2003@gmail.com',
     google_sub: 'demo-forum-student-08',
     full_name: 'Hoàng Thu Thảo',
     avatar_url: null,
@@ -89,7 +89,7 @@ const authors = [
     career_goal: 'Quản trị viên tập sự và phát triển sản phẩm công nghệ',
   },
   {
-    email: 'dang.tuan.kiet.demo@student.unihub.invalid',
+    email: 'tuankiet.dang2004@gmail.com',
     google_sub: 'demo-forum-student-09',
     full_name: 'Đặng Tuấn Kiệt',
     avatar_url: null,
@@ -99,7 +99,7 @@ const authors = [
     career_goal: 'Chuyên viên bảo mật ứng dụng và kiểm thử an ninh mạng',
   },
   {
-    email: 'nguyen.ngoc.anh.demo@student.unihub.invalid',
+    email: 'ngocanh.nguyen2005@gmail.com',
     google_sub: 'demo-forum-student-10',
     full_name: 'Nguyễn Ngọc Ánh',
     avatar_url: null,
@@ -109,7 +109,7 @@ const authors = [
     career_goal: 'Kiểm toán viên và tư vấn quản trị tài chính nội bộ',
   },
   {
-    email: 'tran.quoc.bao.demo@student.unihub.invalid',
+    email: 'tranquocbao2004@gmail.com',
     google_sub: 'demo-forum-student-11',
     full_name: 'Trần Quốc Bảo',
     avatar_url: null,
@@ -119,7 +119,7 @@ const authors = [
     career_goal: 'Nghiên cứu viên AI và kỹ sư thị giác máy tính',
   },
   {
-    email: 'phan.thanh.ha.demo@student.unihub.invalid',
+    email: 'thanhha.phan2003@gmail.com',
     google_sub: 'demo-forum-student-12',
     full_name: 'Phan Thanh Hà',
     avatar_url: null,
@@ -132,18 +132,18 @@ const authors = [
 
 // Helper to select author email by index or name
 const authorMap = {
-  hoang: 'nguyen.hoang.demo@student.unihub.invalid',
-  mai: 'tran.mai.demo@student.unihub.invalid',
-  tri: 'le.tri.demo@student.unihub.invalid',
-  quynhanh: 'pham.quynh.anh.demo@student.unihub.invalid',
-  long: 'vu.hoang.long.demo@student.unihub.invalid',
-  linh: 'doan.khanh.linh.demo@student.unihub.invalid',
-  dat: 'bui.van.dat.demo@student.unihub.invalid',
-  thao: 'hoang.thu.thao.demo@student.unihub.invalid',
-  kiet: 'dang.tuan.kiet.demo@student.unihub.invalid',
-  ngocanh: 'nguyen.ngoc.anh.demo@student.unihub.invalid',
-  bao: 'tran.quoc.bao.demo@student.unihub.invalid',
-  ha: 'phan.thanh.ha.demo@student.unihub.invalid',
+  hoang: 'nguyenhoang2004@gmail.com',
+  mai: 'maitran.2004@gmail.com',
+  tri: 'letri.2004@gmail.com',
+  quynhanh: 'quynhanh.pham2005@gmail.com',
+  long: 'vuhoanglong2003@gmail.com',
+  linh: 'khanhlinh.doan2004@gmail.com',
+  dat: 'buivandat2005@gmail.com',
+  thao: 'thuthao.hoang2003@gmail.com',
+  kiet: 'tuankiet.dang2004@gmail.com',
+  ngocanh: 'ngocanh.nguyen2005@gmail.com',
+  bao: 'tranquocbao2004@gmail.com',
+  ha: 'thanhha.phan2003@gmail.com',
 };
 
 // 2. 24 Forum Posts (8 per topic)

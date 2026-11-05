@@ -41,6 +41,165 @@ function CloseIcon({ className = 'h-4 w-4' }: { className?: string }) {
   );
 }
 
+function CalendarIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+      <line x1="16" x2="16" y1="2" y2="6" />
+      <line x1="8" x2="8" y1="2" y2="6" />
+      <line x1="3" x2="21" y1="10" y2="10" />
+    </svg>
+  );
+}
+
+function MapPinIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
+function BuildingIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect width="16" height="20" x="4" y="2" rx="2" ry="2" />
+      <path d="M9 22v-4h6v4" />
+      <path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01" />
+    </svg>
+  );
+}
+
+function ShieldCheckIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M20 13c0 5-8 9-8 9s-8-4-8-9V5l8-3 8 3Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  );
+}
+
+function ExternalLinkIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+    </svg>
+  );
+}
+
+function BriefcaseIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+    </svg>
+  );
+}
+
+function getTypeBadgeStyle(type: string): {
+  bg: string;
+  text: string;
+  border: string;
+} {
+  const lower = type.toLowerCase();
+  if (lower.includes('thực tập') || lower.includes('intern')) {
+    return { bg: 'bg-sky-50', text: 'text-sky-700', border: 'border-sky-200' };
+  }
+  if (lower.includes('việc làm') || lower.includes('job')) {
+    return {
+      bg: 'bg-indigo-50',
+      text: 'text-indigo-700',
+      border: 'border-indigo-200',
+    };
+  }
+  if (lower.includes('học bổng') || lower.includes('scholarship')) {
+    return {
+      bg: 'bg-emerald-50',
+      text: 'text-emerald-700',
+      border: 'border-emerald-200',
+    };
+  }
+  if (
+    lower.includes('cuộc thi') ||
+    lower.includes('contest') ||
+    lower.includes('sự kiện')
+  ) {
+    return {
+      bg: 'bg-amber-50',
+      text: 'text-amber-700',
+      border: 'border-amber-200',
+    };
+  }
+  return {
+    bg: 'bg-slate-50',
+    text: 'text-slate-700',
+    border: 'border-slate-200',
+  };
+}
+
 type QueueState =
   | { status: 'loading' }
   | { status: 'error'; error: unknown }
@@ -176,19 +335,28 @@ function ReviewQueue({
   page,
   onPageChange,
   onRetry,
+  baseRoute = '/admin/moderation',
 }: {
   state: QueueState;
   selectedId: string | undefined;
   page: number;
   onPageChange: (next: number) => void;
   onRetry: () => void;
+  baseRoute?: string;
 }) {
   return (
     <section aria-labelledby="queue-heading" className="min-w-0">
       <div className="mb-4">
-        <h2 id="queue-heading" className="type-title text-navy">
-          Hàng đợi chờ thẩm định
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 id="queue-heading" className="type-title font-bold text-navy">
+            Hàng đợi chờ thẩm định
+          </h2>
+          {state.status === 'success' && (
+            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800">
+              {state.data.meta.total}
+            </span>
+          )}
+        </div>
         {state.status === 'success' && (
           <p className="mt-1 type-caption text-secondary">
             Hiển thị {state.data.items.length} / {state.data.meta.total} tin
@@ -217,28 +385,51 @@ function ReviewQueue({
           <ul className="grid gap-3">
             {state.data.items.map((item) => {
               const selected = selectedId === String(item.id);
+              const typeStyle = getTypeBadgeStyle(item.type);
               return (
                 <li key={item.id}>
                   <Link
-                    to={`/admin/opportunities/${item.id}${window.location.search}`}
+                    to={`${baseRoute}/${item.id}${window.location.search}`}
                     aria-current={selected ? 'page' : undefined}
-                    className={`block rounded-card border bg-white p-4 shadow-soft transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${selected ? 'border-2 border-brand shadow-md' : 'border-line hover:border-brand/50'}`}
+                    className={`group relative block rounded-xl border bg-white p-4 shadow-xs transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+                      selected
+                        ? 'border-brand bg-gradient-to-r from-sky-50/50 via-white to-white shadow-md ring-2 ring-brand/20'
+                        : 'border-line/80 hover:border-brand/40'
+                    }`}
                   >
-                    <p className="type-caption font-semibold uppercase text-secondary">
-                      {item.type}
-                    </p>
-                    <h3 className="mt-1 line-clamp-2 type-title text-ink">
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider ${typeStyle.bg} ${typeStyle.text} ${typeStyle.border}`}
+                      >
+                        {item.type}
+                      </span>
+                      <span className="text-[11px] font-mono text-slate-400">
+                        #{item.id}
+                      </span>
+                    </div>
+                    <h3 className="mt-2 line-clamp-2 text-sm font-bold text-navy transition-colors group-hover:text-brand">
                       {item.title}
                     </h3>
-                    <p className="mt-1 line-clamp-1 type-label text-secondary">
-                      {item.publisher ?? 'Chưa có đơn vị đăng'}
+                    <p className="mt-1.5 flex items-center gap-1.5 line-clamp-1 text-xs text-secondary">
+                      <BuildingIcon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                      <span className="truncate">
+                        {item.publisher ?? 'Chưa có đơn vị đăng'}
+                      </span>
                     </p>
-                    <div className="mt-3 border-t border-line pt-2 type-caption text-secondary">
-                      <p>Hạn nộp: {deadlineLabel(item)}</p>
-                      <p className="mt-1">
-                        {item.workFormat ?? 'Chưa có hình thức'}
-                        {item.location ? ` · ${item.location}` : ''}
-                      </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-line/60 pt-2.5 text-xs text-secondary">
+                      <span className="inline-flex items-center gap-1">
+                        <CalendarIcon className="h-3.5 w-3.5 text-slate-400" />
+                        <span>Hạn nộp: {deadlineLabel(item)}</span>
+                      </span>
+                      {(item.workFormat || item.location) && (
+                        <span className="inline-flex items-center gap-1">
+                          <MapPinIcon className="h-3.5 w-3.5 text-slate-400" />
+                          <span>
+                            {item.workFormat ?? 'Chưa có hình thức'}
+                            {item.location ? ` · ${item.location}` : ''}
+                          </span>
+                        </span>
+                      )}
                     </div>
                   </Link>
                 </li>
@@ -464,43 +655,54 @@ function AdminOpportunityDetail({
           </button>
         </p>
       )}
-      <Card className="p-6 md:p-8 transition-all duration-300 hover:shadow-md hover:border-brand/20">
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge
-            variant={
-              item.status === 'Pending'
-                ? 'warning'
-                : item.status === 'Approved'
-                  ? 'success'
-                  : 'error'
-            }
-          >
-            {statusLabel(item.status)}
-          </Badge>
-          {item.isVerified && <Badge variant="success">Verified</Badge>}
+      <Card className="p-6 md:p-8 transition-all duration-300 hover:shadow-md border-line/90">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line/70 pb-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge
+              variant={
+                item.status === 'Pending'
+                  ? 'warning'
+                  : item.status === 'Approved'
+                    ? 'success'
+                    : 'error'
+              }
+            >
+              {statusLabel(item.status)}
+            </Badge>
+            {item.isVerified && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-300 px-2.5 py-0.5 text-xs font-bold text-emerald-700">
+                <ShieldCheckIcon className="h-3.5 w-3.5 text-emerald-600" />
+                Verified
+              </span>
+            )}
+          </div>
+          <span className="text-xs font-mono text-slate-400">
+            ID: #{item.id}
+          </span>
         </div>
         <h2
           id="opportunity-title"
-          className="mt-4 break-words text-2xl font-semibold leading-8 text-navy"
+          className="mt-4 break-words text-2xl font-bold leading-8 text-navy"
         >
           {item.title}
         </h2>
-        <p className="mt-2 type-label text-secondary">
-          {item.publisher ?? 'Chưa có đơn vị đăng'}
-        </p>
-        {item.sourceUrl && !item.sourceUrl.includes('.invalid') && (
-          <a
-            href={item.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-flex break-all type-label font-medium text-brand hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-          >
-            Xem nguồn tin gốc{' '}
-            <span aria-hidden="true" className="ml-1">
-              ↗
-            </span>
-          </a>
-        )}
+        <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-secondary">
+          <span className="inline-flex items-center gap-1.5 font-medium text-slate-700">
+            <BuildingIcon className="h-4 w-4 text-slate-400" />
+            {item.publisher ?? 'Chưa có đơn vị đăng'}
+          </span>
+          {item.sourceUrl && !item.sourceUrl.includes('.invalid') && (
+            <a
+              href={item.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 font-medium text-brand hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            >
+              <span>Xem nguồn tin gốc</span>
+              <ExternalLinkIcon className="h-3.5 w-3.5" />
+            </a>
+          )}
+        </div>
 
         <dl className="mt-6 grid grid-cols-2 gap-4 rounded-control border border-line/60 bg-surface p-4 transition-all duration-200 hover:shadow-xs sm:grid-cols-4">
           <InfoItem label="Loại cơ hội" value={item.type} />
@@ -555,30 +757,45 @@ function AdminOpportunityDetail({
         )}
 
         {reviewable && (
-          <div className="mt-6 border-t border-line pt-5">
-            <div className="flex flex-wrap justify-end gap-3">
-              <Button
-                variant="danger"
-                disabled={busy}
-                onClick={() => {
-                  setLocalError(null);
-                  onClearErrors();
-                  setReason('');
-                  onOpenReject(item.id);
-                }}
-              >
-                Từ chối
-              </Button>
-              <Button
-                variant="outline"
-                disabled={busy}
-                onClick={() => onApprove(item.id, false)}
-              >
-                Duyệt (không cấp nhãn)
-              </Button>
-              <Button loading={busy} onClick={() => onApprove(item.id, true)}>
-                Duyệt và cấp nhãn Verified
-              </Button>
+          <div className="mt-8 border-t border-line/80 pt-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                Thao tác thẩm định
+              </span>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button
+                  variant="danger"
+                  disabled={busy}
+                  onClick={() => {
+                    setLocalError(null);
+                    onClearErrors();
+                    setReason('');
+                    onOpenReject(item.id);
+                  }}
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <CloseIcon className="h-3.5 w-3.5" />
+                    Từ chối
+                  </span>
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => onApprove(item.id, false)}
+                >
+                  Duyệt (không cấp nhãn)
+                </Button>
+                <Button
+                  loading={busy}
+                  onClick={() => onApprove(item.id, true)}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <ShieldCheckIcon className="h-4 w-4" />
+                    Duyệt và cấp nhãn Verified
+                  </span>
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -698,7 +915,17 @@ function TagGroup({ label, values }: { label: string; values: string[] }) {
   );
 }
 
-export function AdminOpportunitiesPage() {
+export interface AdminOpportunitiesPageProps {
+  showHeader?: boolean;
+  showNav?: boolean;
+  baseRoute?: string;
+}
+
+export function AdminOpportunitiesPage({
+  showHeader = true,
+  showNav = true,
+  baseRoute = '/admin/moderation',
+}: AdminOpportunitiesPageProps = {}) {
   const { id } = useParams();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -840,35 +1067,41 @@ export function AdminOpportunitiesPage() {
     }
   }
 
-  const backToQueue = `/admin/opportunities${location.search}`;
+  const backToQueue = `${baseRoute}${location.search}`;
 
   return (
     <div className="mx-auto w-full max-w-[1600px]">
-      <header className="mb-6 border-b border-line pb-5">
-        <p className="type-label font-medium text-navy">Kiểm duyệt nội dung</p>
-        <h1 className="mt-1 type-title text-navy">Thẩm định cơ hội</h1>
-        <p className="mt-2 type-body text-secondary">
-          Xem thông tin đã gửi và quyết định duyệt hoặc từ chối theo hợp đồng.
-        </p>
-      </header>
+      {showHeader && (
+        <header className="mb-6 border-b border-line pb-5">
+          <p className="type-label font-medium text-navy">
+            Kiểm duyệt nội dung
+          </p>
+          <h1 className="mt-1 type-title text-navy">Thẩm định cơ hội</h1>
+          <p className="mt-2 type-body text-secondary">
+            Xem thông tin đã gửi và quyết định duyệt hoặc từ chối theo hợp đồng.
+          </p>
+        </header>
+      )}
 
-      <nav
-        aria-label="Khu vực kiểm duyệt"
-        className="mb-6 border-b border-line"
-      >
-        <span
-          aria-current="page"
-          className="inline-flex min-h-10 items-center border-b-2 border-brand px-1 type-label font-medium text-brand"
+      {showNav && (
+        <nav
+          aria-label="Khu vực kiểm duyệt"
+          className="mb-6 border-b border-line"
         >
-          Tin chờ thẩm định
-        </span>
-        <span
-          className="ml-6 inline-flex min-h-10 items-center px-1 type-label text-muted"
-          aria-disabled="true"
-        >
-          Giám sát cộng đồng (chưa triển khai)
-        </span>
-      </nav>
+          <span
+            aria-current="page"
+            className="inline-flex min-h-10 items-center border-b-2 border-brand px-1 type-label font-medium text-brand"
+          >
+            Tin chờ thẩm định
+          </span>
+          <Link
+            to="/admin/moderation?tab=community"
+            className="ml-6 inline-flex min-h-10 items-center px-1 type-label text-secondary hover:text-brand"
+          >
+            Giám sát cộng đồng
+          </Link>
+        </nav>
+      )}
 
       <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(280px,0.48fr)_minmax(0,1fr)]">
         <ReviewQueue
@@ -877,13 +1110,21 @@ export function AdminOpportunitiesPage() {
           page={page}
           onPageChange={changePage}
           onRetry={() => setRevision((value) => value + 1)}
+          baseRoute={baseRoute}
         />
         <section className="min-w-0" aria-label="Chi tiết đang chọn">
           {!hasDetail && (
-            <EmptyState
-              title="Chọn một cơ hội để thẩm định"
-              description="Chi tiết và các thao tác duyệt sẽ hiển thị tại đây."
-            />
+            <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-gradient-to-b from-slate-50/50 via-white to-slate-50/30 p-12 text-center shadow-xs">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-50 text-brand ring-1 ring-sky-100">
+                <BriefcaseIcon className="h-7 w-7 text-brand" />
+              </div>
+              <h3 className="mt-4 text-base font-bold text-navy">
+                Chọn một cơ hội để thẩm định
+              </h3>
+              <p className="mt-1.5 max-w-sm text-sm text-secondary">
+                Chi tiết và các thao tác duyệt sẽ hiển thị tại đây.
+              </p>
+            </div>
           )}
           {hasDetail && (
             <>
@@ -955,3 +1196,5 @@ export function AdminOpportunitiesPage() {
     </div>
   );
 }
+
+export const OpportunityModerationView = AdminOpportunitiesPage;
