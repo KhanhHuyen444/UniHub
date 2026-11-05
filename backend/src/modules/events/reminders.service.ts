@@ -1,8 +1,4 @@
 import { Prisma, type PrismaClient } from '../../generated/prisma/client.js';
-import {
-  freezeReminderEmail,
-  type ReminderEmailConfig,
-} from './reminder-email.js';
 
 export type ReminderClient = Pick<PrismaClient, '$queryRaw' | '$transaction'>;
 export const REMINDER_BATCH_SIZE = 100;
@@ -14,7 +10,6 @@ export interface ReminderScanState {
 }
 
 export interface ReminderRunOptions {
-  email?: ReminderEmailConfig;
   now?: () => Date;
   shouldStop?: () => boolean;
   onEventError?: (eventId: number) => void;
@@ -27,7 +22,6 @@ export async function processReminderEvent(
   eventId: number,
   now: () => Date = () => new Date(),
   shouldStop: () => boolean = () => false,
-  email: ReminderEmailConfig = { enabled: false },
 ): Promise<'reminded' | 'overdue' | 'skipped'> {
   for (let attempt = 0; ; attempt++) {
     if (shouldStop()) return 'skipped';
@@ -67,7 +61,7 @@ export async function processReminderEvent(
           if (claimed.count !== 1) return 'skipped';
           if (expired) return 'overdue';
 
-          const notification = await tx.notification.create({
+          await tx.notification.create({
             data: {
               user_id: event.user_id,
               event_id: event.event_id,
@@ -76,32 +70,6 @@ export async function processReminderEvent(
               is_read: false,
             },
           });
-          if (email.enabled) {
-            const owner = await tx.user.findUnique({
-              where: { user_id: event.user_id },
-              select: { user_id: true, role: true, email: true },
-            });
-            if (
-              !owner ||
-              owner.user_id !== event.user_id ||
-              owner.role !== 'Student'
-            ) {
-              throw new Error('REMINDER_EMAIL_OWNER_INVALID');
-            }
-            const frozen = freezeReminderEmail(
-              email,
-              event,
-              owner.email,
-              notification.notification_id,
-            );
-            // Do not catch: any failure must roll back the bell and reminded_at.
-            await tx.eventReminderEmail.create({
-              data: {
-                notification_id: notification.notification_id,
-                ...frozen,
-              },
-            });
-          }
           return 'reminded';
         },
         { isolationLevel: 'Serializable', maxWait: 5_000, timeout: 5_000 },
@@ -167,7 +135,6 @@ export async function runDeadlineReminders(
         candidate.event_id,
         options.now,
         options.shouldStop,
-        options.email,
       );
       consecutiveErrors = 0;
     } catch {
