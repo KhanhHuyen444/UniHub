@@ -1,6 +1,10 @@
 # events
 
-## Review Reminders 31/10/2026 — PR #26
+## Trạng thái tích hợp 06/11/2026
+
+Calendar, Notifications API/Bell và Reminder scheduler đã được mount trong source hiện tại. Reminder tạo thông báo trong ứng dụng; Email Reminder đã được loại bỏ. Phần review và số test ngày 31/10 bên dưới là bằng chứng lịch sử, không phải kết quả kiểm thử mới. Cài đặt theo [README gốc](../../../../README.md).
+
+## Review lịch sử Reminders 31/10/2026 — PR #26
 
 Đã cập nhật nhánh bằng `origin/main=df6a277` (merge sạch, không conflict thực tế); không đưa Calendar, Notifications hoặc Dashboard đang mở vào PR này. Không phát hiện regression cần sửa trong Reminder service tại head `006f810`; giữ nguyên logic production.
 
@@ -30,7 +34,7 @@ Phụ trách: **TV4**.
 - Admin nhận 403 `FORBIDDEN`.
 - Quyền sở hữu được kiểm tra chặt chẽ trên backend; không để lộ thông tin của người dùng khác.
 
-## Phần chưa triển khai trong module này
+## Notifications được triển khai ở module riêng
 
 - `GET /api/notifications` và `PATCH /api/notifications/:id/read` (FR-04.2 / Notification routes).
 

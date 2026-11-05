@@ -1,52 +1,35 @@
 # UniHub
 
-## TV4 Dashboard — kết quả review 31/10/2026 trên nhánh PR #35
+UniHub là ứng dụng web hỗ trợ sinh viên tìm kiếm cơ hội học tập, thực tập, việc làm và học bổng; tham khảo lộ trình kỹ năng, nhận gợi ý theo hồ sơ, quản lý lịch/deadline và tham gia diễn đàn. Hệ thống có cổng quản trị để thống kê, thẩm định cơ hội, kiểm duyệt nội dung cộng đồng, quản lý danh mục và phân quyền.
 
-Đã sửa phép đếm opportunity theo ba loại chính xác, không phụ thuộc collation mặc định. Regression chạy MySQL 8.4.13 cô lập với migrations hiện có đã đạt; không dùng database cá nhân/nhóm. Xem [biên bản và conflict/phụ thuộc](docs/tv4-dashboard-review.md). Chức năng vẫn ở PR, không coi là đã merge main hoặc đã kiểm tra UI Google thật. Runner: `node backend/test/run-dashboard-mysql.mjs --run-isolated` sau build. Không sửa schema/grants.
+> **Hướng dẫn này dành cho cách chạy cục bộ bằng Node.js + MySQL, không dùng Docker hoặc dịch vụ hosting.** Source code, Prisma migrations và dữ liệu fixture không thay thế MySQL Server. Trong bản bàn giao local, database chuẩn là `unihub_demo`. Khi cài trên máy khác, người nhận tự tạo `unihub_demo` mới theo migration và hướng dẫn seed/import bên dưới; quy trình cài mới vẫn cần kiểm chứng trên MySQL đích, không cần dữ liệu từ `unihub_dev` của nhóm.
 
-## TV4 Reminders — review 31/10/2026 trên PR #26
+## 1. Công nghệ và điều kiện chạy
 
-Reminders, Calendar và Notifications đã có trên main `c310a4c` và được giữ lại khi cập nhật nhánh Dashboard PR #35. Reminders đã chạy lại **19/19 test MySQL 8.4.13 cô lập** theo báo cáo trên PR #26. Xem [module Events/Reminders](backend/src/modules/events/README.md); chạy lại bằng `node backend/test/run-reminders-mysql.mjs --run-isolated` sau build. Không dùng database cá nhân/nhóm, không sửa migration/grants hoặc thêm endpoint scheduler. Việc tích hợp mã nguồn không thay thế kiểm thử toàn luồng giao diện với MySQL thật.
+| Thành phần            | Phiên bản/giải pháp trong source                                          |
+| --------------------- | ------------------------------------------------------------------------- |
+| Frontend              | React 19, React Router 8, Vite 8, TypeScript 5, Tailwind CSS 3            |
+| Backend               | Node.js 24, Express 5, TypeScript                                         |
+| Database              | MySQL 8.4; Prisma ORM 7 với `@prisma/adapter-mariadb`                     |
+| Dependency management | npm workspaces (`frontend`, `backend`), một `package-lock.json` tại gốc   |
+| Kiểm thử              | Node.js Test Runner; một số bài browser test dùng Playwright có điều kiện |
+| Kiểm tra code         | TypeScript typecheck, Prettier                                            |
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. `main` có bộ khung chung, Public Hub cơ hội, Guidance, Events, danh mục Major/Skill và API xác thực; `GET /api/opportunities` cùng `GET /api/opportunities/:id` là API đọc công khai. `GET /api/health` kiểm tra liveness HTTP; `GET /api/ready` kiểm tra khả năng chạy truy vấn MySQL.
+**Phiên bản máy chạy bắt buộc theo `package.json`:** Node.js `>=24.19.0 <25` và npm `>=11.9.0 <12`. Cần Git, MySQL 8.4 đang chạy, một terminal (PowerShell trên Windows), và trình duyệt hiện đại. Sử dụng `npm.cmd` trong PowerShell để tránh lỗi chính sách thực thi `npm.ps1`.
 
-Health chỉ xác nhận HTTP server; readiness dùng Prisma Client dùng chung và adapter MySQL để chạy `SELECT 1`. Server khởi động được khi thiếu `DATABASE_URL`, khi đó health trả 200 còn readiness trả 503. Initial migration và Prisma runtime đã merge. Auth schema/backend bốn API, frontend Google login/session và backend Admin review đã có trên `main`. Xem [hướng dẫn runtime database](docs/database-runtime.md) và [database-migrations.md](docs/database-migrations.md). Không có tài khoản mẫu; shared UI preview vẫn chỉ là preview, không xác thực. Health/preview không cần MySQL hoặc Docker. Giao diện Admin review ở nhánh `feat/admin-opportunities-frontend` này, chưa merge.
+## 2. Lấy source và cài dependency
 
-TV1 điều phối mục lục và trạng thái các hợp đồng API tại [docs/api-contracts.md](docs/api-contracts.md); leader duyệt toàn bộ contract trước khi thành viên triển khai. Hợp đồng không đồng nghĩa endpoint đã có code. Auth schema/migration/GRANT đã có trên `main`; mỗi database đích phải xác nhận migration và quyền đã áp dụng trước khi chạy auth.
-
-## 1. Công nghệ và điều kiện môi trường
-
-| Thành phần        | Phiên bản / vai trò                                                      |
-| ----------------- | ------------------------------------------------------------------------ |
-| Node.js           | 24.19.0 thuộc dòng 24 LTS; chạy JavaScript và công cụ phát triển         |
-| npm               | Khuyến nghị 11.9.0; dùng npm 11 từ 11.9.0, một lockfile ở gốc            |
-| Git               | Cài Git for Windows; quản lý commit, nhánh và đồng bộ GitHub             |
-| Frontend          | React 19.3.1, TypeScript 5.9.3, Vite 8.3.5, Tailwind CSS 3.4.19          |
-| Backend           | Express 5.3.0 + TypeScript; Prisma 7.10.1 + adapter MySQL, ES modules    |
-| Database / schema | MySQL 8.4 LTS; Prisma runtime dùng `DATABASE_URL`, pool tối đa 5 kết nối |
-
-Antigravity là IDE (trình soạn thảo và chạy terminal), không thay thế Node.js/Git. Những công cụ có sẵn ở Codex **không có nghĩa máy Windows của bạn đã cài**. Cài Git từ [git-scm.com](https://git-scm.com/downloads/win) và Node.js từ [nodejs.org](https://nodejs.org/en/download), chọn đúng dòng/phiên bản trên, rồi mở lại terminal/IDE. `.nvmrc` chỉ ghi phiên bản, không tự cài Node.
-
-Giới hạn phần mềm của môn học vẫn cần đối chiếu; chưa có bằng chứng máy phòng học hỗ trợ phiên bản đã chọn. Không tự đổi major nếu gặp xung đột. Tailwind 3.4 giữ yêu cầu trình duyệt cũ trong Chương 3; chưa kiểm thử đủ mọi trình duyệt tối thiểu.
-
-## 2. Lấy bộ khung về máy Windows
-
-Scaffold, schema, initial migration và Prisma runtime đã vào `main` qua PR #2–#5. Bắt đầu từ `main` mới nhất để nhận bộ khung chung. Nếu database đã được migration, làm theo [hướng dẫn runtime](docs/database-runtime.md); không áp dụng lại migration.
-
-Mở PowerShell trong Antigravity hoặc Windows. Ví dụ dưới đây dùng thư mục Documents; có thể chọn nơi khác nhưng phải điều chỉnh đường dẫn ở các lệnh sau.
-
-**Thư mục chạy: thư mục cha nơi muốn lưu dự án, ví dụ Documents.**
+Chạy trong PowerShell tại thư mục muốn lưu source:
 
 ```powershell
-Set-Location "$HOME\Documents"
-git clone --branch main --single-branch https://github.com/KhanhHuyen444/UniHub.git
+git clone --branch main https://github.com/KhanhHuyen444/UniHub.git
 Set-Location .\UniHub
-git status
+node --version
+npm.cmd --version
+npm.cmd ci
 ```
 
-`clone` tải một bản repository về máy; `--branch main` chọn nhánh tích hợp. Sau đó mở **cả thư mục UniHub** trong Antigravity, không chỉ frontend hoặc backend.
-
-Nếu đã clone trước đó, không clone đè lên thư mục có sẵn. **Tại gốc repository hiện có**, chạy `git status`; nếu có thay đổi của bạn thì commit hoặc lưu chúng an toàn trước khi chuyển nhánh. Khi working tree sạch:
+Nếu đã clone, kiểm tra `git status` rồi đồng bộ `main` khi không có thay đổi cục bộ cần bảo toàn:
 
 ```powershell
 git fetch origin
@@ -54,157 +37,159 @@ git switch main
 git pull --ff-only origin main
 ```
 
-Nếu nhánh local chưa tồn tại và Git không tự tạo tracking branch, dùng `git switch --track origin/main`. Không dùng reset/clean để xử lý thay đổi chưa commit.
+Không dùng `git reset --hard` hoặc `git clean` để xử lý file của thành viên. `npm ci` sử dụng dependency trong lockfile; không cần cài riêng từng workspace.
 
-## 3. Cài dependency tại gốc repository
+## 3. Chuẩn bị MySQL `unihub_demo` và Prisma migrations
 
-**Thư mục chạy: `Documents\UniHub`, nơi có package.json gốc.**
+Ứng dụng cần **database được tạo trước** và **hai tài khoản MySQL riêng**: tài khoản migration có quyền DDL trên schema được chỉ định và tài khoản runtime có quyền truy cập bảng theo nghiệp vụ. **Thống nhất tên database `unihub_demo`** cho bản chạy thử và nghiệm thu. `unihub_dev` chỉ là database phát triển cũ, không tham gia quy trình cài đặt này. Mọi thao tác tạo schema/user phải được thực hiện trên MySQL mà bạn có quyền quản trị.
 
-```powershell
-node --version
-npm.cmd --version
-git --version
-npm.cmd ci
-```
-
-Dependency là các thư viện dự án sử dụng. `npm ci` cài đúng phiên bản trong `package-lock.json`; không chạy npm install riêng từng ứng dụng. Lệnh này có thể thay thế thư mục node_modules cũ, nhưng không xóa mã nguồn.
-
-Dùng `npm.cmd` trong hướng dẫn PowerShell để tránh lỗi chính sách chạy file `npm.ps1`; không cần nới ExecutionPolicy. Trên Linux/macOS dùng `npm` với các tham số tương tự. Nếu npm quá cũ hoặc ngoài dòng 11, cài bản đã chọn bằng `npm.cmd install --global npm@11.9.0`, rồi kiểm tra lại. Nếu không có quyền cài phần mềm trên máy môn học, trao đổi với nhóm/giảng viên thay vì bỏ qua yêu cầu phiên bản.
-
-Hai file cấu hình mẫu không chứa bí mật. Bộ khung chạy được với mặc định; nếu muốn tạo cấu hình cục bộ, chạy **từ gốc UniHub**:
+1. Theo **[Hướng dẫn setup MySQL `unihub_demo`](docs/LOCAL-SETUP-UNIHUB-DEMO.md)**, tạo schema `unihub_demo` với charset `utf8mb4` và collation `utf8mb4_0900_as_ci`.
+2. Tạo hai tài khoản MySQL **riêng** cho migration và runtime; cấp quyền đúng trên `unihub_demo` theo hướng dẫn mới. Không cấp quyền nhầm vào `unihub_dev`, không dùng mật khẩu minh họa.
+3. Tại gốc UniHub, chỉ tạo các file cấu hình nếu chúng chưa tồn tại:
 
 ```powershell
 if (-not (Test-Path .\backend\.env)) { Copy-Item .\backend\.env.example .\backend\.env }
+if (-not (Test-Path .\backend\.env.migration)) { Copy-Item .\backend\.env.migration.example .\backend\.env.migration }
 if (-not (Test-Path .\frontend\.env)) { Copy-Item .\frontend\.env.example .\frontend\.env }
 ```
 
-Không ghi đè `.env` đã có. `backend/.env` dùng `PORT=3001` và `DATABASE_URL` tài khoản runtime; `frontend/.env` dùng `API_PROXY_TARGET=http://127.0.0.1:3001`. Nếu đổi cổng backend, đổi cả đích proxy rồi khởi động lại hai tiến trình. `API_PROXY_TARGET` do Vite dev server đọc, không phải bí mật; biến `VITE_` không được chứa mật khẩu hoặc khóa backend. Hiện không cần `.env` ở gốc. Runtime chỉ đọc `DATABASE_URL`, không dùng `MIGRATION_DATABASE_URL` làm dự phòng.
+Sửa **cục bộ** (không commit):
 
-## 4. Chạy bằng hai terminal
+- `backend/.env`: `DATABASE_URL` trỏ `unihub_demo` cho **runtime**; `PORT=3001`; `JWT_SIGNING_SECRET` ngẫu nhiên, tối thiểu 32 byte; `JWT_ISSUER`, `JWT_AUDIENCE`, `GOOGLE_CLIENT_ID`, `AUTH_ALLOWED_ORIGINS` theo môi trường.
+- `backend/.env.migration`: `MIGRATION_DATABASE_URL` cho **migration account**, cũng trỏ `unihub_demo`.
+- `frontend/.env`: `API_PROXY_TARGET=http://127.0.0.1:3001` và `VITE_GOOGLE_CLIENT_ID` trùng với Google Client ID backend.
 
-**Terminal 1 — tại gốc UniHub, chạy backend:**
+`DATABASE_URL` và `MIGRATION_DATABASE_URL` đều dùng định dạng `mysql://user:encoded-password@127.0.0.1:3306/unihub_demo`; URL-encode ký tự đặc biệt trong mật khẩu. Ứng dụng không tự dùng URL migration thay cho URL runtime. **Không in hoặc chia sẻ file `.env`**.
+
+Sau khi bảo đảm cả hai URL đều trỏ đến `unihub_demo`, kiểm tra và chạy migration (chỉ trên database mới mà bạn có quyền thao tác):
 
 ```powershell
-Set-Location "$HOME\Documents\UniHub"
+npm.cmd run prisma:validate
+npm.cmd run db:migrate:status
+npm.cmd run db:migrate:deploy
+npm.cmd run prisma:generate
+```
+
+`db:migrate:deploy` thay đổi schema đích: chỉ chạy sau khi kiểm tra cấu hình đúng database và có quyền sử dụng database đó. Không sử dụng `prisma migrate reset`, không xóa/sửa lịch sử migration. Cấu trúc Prisma hiện có **13 bảng nghiệp vụ**; `_prisma_migrations` là bảng kỹ thuật của Prisma.
+
+Xem thêm [Prisma runtime và readiness](docs/database-runtime.md) và [migration & quyền MySQL](docs/database-migrations.md).
+
+## 4. Khởi động frontend/backend local
+
+Mở **hai terminal PowerShell**, đều tại thư mục gốc UniHub.
+
+**Terminal 1 — Backend**
+
+```powershell
 npm.cmd run dev:backend
 ```
 
-Giữ terminal mở. Trước khi chạy dev, npm sinh Prisma Client; backend mặc định nghe tại `http://127.0.0.1:3001` và tự khởi động lại khi sửa mã nguồn. Node nạp `.env` trong workspace backend nếu tệp tồn tại. Không có `DATABASE_URL` vẫn chạy HTTP và health; readiness báo 503.
+Backend mặc định: `http://127.0.0.1:3001`.
 
-**Terminal 2 — cũng tại gốc UniHub, chạy frontend:**
+**Terminal 2 — Frontend**
 
 ```powershell
-Set-Location "$HOME\Documents\UniHub"
 npm.cmd run dev:frontend
 ```
 
-Mở trình duyệt tại **`http://127.0.0.1:5173`**. `/` chuyển tới `/_dev/health`; trang hiển thị "Đang kiểm tra kết nối…", sau đó "Backend hoạt động" nếu nhận đúng health JSON. Nếu backend chưa chạy, trang báo "Không kết nối được backend"; chạy backend rồi bấm **Thử lại**. Mỗi lần kiểm tra có timeout 5 giây. Yêu cầu bị hủy/bỏ qua khi component được tháo khỏi trang hoặc lần kiểm tra đã hết hiệu lực. Đường dẫn chưa triển khai hiển thị trang 404 tối giản, không có menu giả.
+Frontend: **http://127.0.0.1:5173/**. Vite chuyển tiếp đường dẫn `/api` tới backend qua `API_PROXY_TARGET`. Đây là dev proxy, không phải cấu hình deploy production.
 
-Component/layout preview không cần backend: chỉ cần Terminal 2 chạy frontend. Mở một URL sau để xem shell tương ứng:
-
-```text
-http://127.0.0.1:5173/_dev/ui?area=public
-http://127.0.0.1:5173/_dev/ui?area=student
-http://127.0.0.1:5173/_dev/ui?area=admin
-```
-
-Thanh chọn shell và các mục nav trong preview chỉ đổi trạng thái xem trước. Student/Admin preview không xác thực; nút đăng nhập, chuông, đăng xuất không hoạt động. Footer giữ cột Hỗ trợ với hai mục đã chốt “Điều khoản sử dụng” (`/terms`) và “Chính sách bảo mật” (`/privacy`). Preview tiếp tục hiển thị chữ tĩnh cho đến khi nhóm cung cấp nội dung trang; chưa tạo trang rỗng hoặc tự soạn chính sách.
-
-Frontend gọi đường dẫn tương đối `/api/health`; Vite **dev proxy** chuyển `/api` tới backend. Proxy là cơ chế chuyển tiếp yêu cầu khi phát triển, **chưa phải cấu hình production**. Build frontend không tự tạo proxy hoặc hosting. Cả hai server hiện chỉ nghe loopback trên máy đang chạy, không mở ra Internet.
-
-**Terminal thứ ba, ở bất kỳ thư mục nào**, kiểm tra trực tiếp API:
+Kiểm tra từ PowerShell khác:
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:3001/api/health
-```
-
-Kết quả tương ứng JSON `{"status":"ok","service":"unihub-api"}`. Không có kiểm tra MySQL trong endpoint này. Nếu đã cấu hình `backend/.env`, kiểm tra readiness:
-
-```powershell
 Invoke-RestMethod http://127.0.0.1:3001/api/ready
 ```
 
-HTTP 200 nghĩa là truy vấn `SELECT 1` thành công; HTTP 503 nghĩa là cần kiểm tra `DATABASE_URL`, MySQL và quyền tài khoản theo [database-runtime.md](docs/database-runtime.md). Không gửi file `.env` hoặc mật khẩu vào chat. Nhấn **Ctrl+C** ở mỗi terminal để dừng server.
+`/api/health` chỉ kiểm tra HTTP server; `/api/ready` phải phản hồi thành công nếu Prisma truy vấn được MySQL. Nếu `/ready` trả 503, kiểm tra MySQL, cấu hình URL, quyền tài khoản runtime và migrations. Dừng mỗi server bằng `Ctrl+C`.
 
-## 5. Kiểm tra trước khi gửi thay đổi
+## 5. Các chức năng và đường dẫn chính
 
-**Tất cả lệnh sau chạy tại gốc UniHub:**
+| Vai trò | Chức năng/route                                                                                                      |
+| ------- | -------------------------------------------------------------------------------------------------------------------- |
+| Guest   | Trang chủ `/`; Hub cơ hội `/opportunities`; lộ trình `/roadmaps`; diễn đàn `/forum`; trang đăng nhập `/login`        |
+| Student | Hồ sơ `/profile`; gợi ý `/recommendations`; lịch/deadline `/calendar`; tham gia diễn đàn sau khi xác thực            |
+| Admin   | Dashboard `/admin/dashboard`; kiểm duyệt `/admin/moderation`; danh mục `/admin/categories`; tài khoản `/admin/users` |
+
+Trang `/admin/moderation` có **hai tab**: thẩm định cơ hội (UC-10) và giám sát cộng đồng/kiểm duyệt diễn đàn (UC-11). Route `/admin/opportunities` được giữ để chuyển hướng tương thích. Trang kiểm tra kỹ thuật riêng ở `/_dev/health`; **trang `/` là trang chủ thực tế**, không còn chuyển thẳng đến health check.
+
+### Google Sign-In và quyền Admin
+
+UniHub sử dụng Google Identity Services. Tạo hoặc sử dụng OAuth **Web Client ID** do nhóm sở hữu và thêm origin local thực tế (`http://127.0.0.1:5173`) vào **Authorized JavaScript origins** trong Google Cloud Console. Điền cùng Client ID vào `frontend/.env` và `backend/.env`; đặt `AUTH_ALLOWED_ORIGINS` khớp origin. Cần Internet và cấu hình OAuth đúng mới đăng nhập Google thành công. Không dùng ID token giả hoặc tự cho phép đăng nhập bằng email seed.
+
+Người dùng mới từ Google có vai trò Student. Để tạo Admin đầu tiên trên database mới: đăng nhập Google hợp lệ trước, xác định đúng `google_sub` đã được backend xác minh, rồi chạy **lệnh có xác nhận tương tác**:
 
 ```powershell
+npm.cmd run admin:bootstrap
+```
+
+Lệnh chỉ cấp Admin đầu tiên cho người dùng Student đã tồn tại khi đáp ứng điều kiện kiểm tra; không tạo Admin dựa trên email seed chưa xác minh. Sau đó Admin có thể quản lý vai trò theo UC-14. Không commit credential hoặc mã định danh cá nhân vào tài liệu nộp.
+
+Operator có quyền đọc database có thể tra `google_sub` của đúng tài khoản vừa đăng nhập trong bảng `users` bằng công cụ MySQL cục bộ; không chia sẻ kết quả hoặc ID token. Sau bootstrap, đăng xuất/đăng nhập lại để nhận quyền mới. Thực hiện bootstrap **trước khi nạp fixture có tài khoản Admin**; lệnh từ chối nếu đã tồn tại Admin.
+
+Cookie refresh hiện cố định `HttpOnly; Secure; SameSite=Strict`. Cần kiểm tra trình duyệt lưu/gửi cookie trên origin HTTP loopback đã chọn, refresh trang, hết hạn access token và logout. Nếu trình duyệt chặn cookie Secure trên HTTP, phiên có thể mất sau reload; không hạ thuộc tính cookie hoặc coi Google login một lần là đã kiểm thử session đầy đủ. Dùng cùng hostname xuyên suốt; không trộn `localhost` và `127.0.0.1`.
+
+## 6. Dữ liệu mẫu và demo
+
+Repository có các bộ fixture/import riêng trong `data/catalog`, `data/opportunities`, `data/guidance/demo` và `data/forum/demo`. **Chưa có script gốc `npm run prisma:seed` để nạp toàn bộ UniHub.** Các bộ dữ liệu có tiền điều kiện, chế độ dry-run và ràng buộc an toàn khác nhau:
+
+- Danh mục cơ bản: [data/catalog/README.md](data/catalog/README.md).
+- Guidance: [data/guidance/demo/README.md](data/guidance/demo/README.md).
+- Forum: [data/forum/demo/README.md](data/forum/demo/README.md).
+- Bộ 100 cơ hội synthetic: [data/opportunities/demo/README.md](data/opportunities/demo/README.md). Batch hiện có metadata leader_approved; ghi chú needs_review trong README dữ liệu là lịch sử. Vẫn phải chạy validation/dry-run tại thời điểm nhập, vì deadline có thể hết hạn. Không suy ra dữ liệu đã được nạp.
+
+**Quy trình bàn giao:** chỉ nhắm `unihub_demo`. Seeder Guidance/Forum có guard tên schema; importer tổng quát và một số script seed cũ không có guard hoặc ghi ngay khi chạy. Chỉ dùng các lệnh được chỉ rõ trong hướng dẫn cài mới; giữ nguyên guard của Guidance/Forum. Trước khi chạy `--apply`, phải xem README từng bộ, xác nhận catalog prerequisite, trạng thái phê duyệt, dry-run, quyền MySQL và database đích. File fixture không có nghĩa là dữ liệu đã được seed trong MySQL.
+
+Nếu cần trình diễn đầy đủ cho giảng viên, nhóm phải kiểm chứng quy trình khởi tạo database mới, migrations, nạp dữ liệu đã được duyệt và Google Sign-In/Student/Admin trên máy sạch. Không dùng dump database có dữ liệu cá nhân khi chưa rà soát.
+
+Thứ tự và lệnh import cụ thể nằm ở [hướng dẫn cài mới, mục 7](docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt). Migration chỉ tạo cấu trúc; database mới chưa có nội dung. Email Reminder đã được loại bỏ; nhắc lịch hiện dùng thông báo trong ứng dụng, không cấu hình Gmail/SMTP/Resend.
+
+## 7. Kiểm tra chất lượng source
+
+Tại gốc repository:
+
+```powershell
+npm.cmd run prisma:validate
 npm.cmd run typecheck
 npm.cmd run build
 npm.cmd test
 npm.cmd run format:check
-git status
+git diff --check
+git status --short
 ```
 
-- `typecheck`: kiểm tra kiểu TypeScript của cả frontend/backend.
-- `build`: tạo `frontend/dist` và `backend/dist`. Thư mục dist là kết quả sinh tự động, không commit.
-- `test`: chạy kiểm thử API client và tương thích Tailwind/CSS ở frontend, build backend rồi chạy kiểm thử HTTP/config bằng `node:test` có sẵn trong Node.js. Chưa có kiểm thử E2E xuyên frontend-backend-MySQL hoặc toàn bộ UI. Lý do kiểm tra CSS và phạm vi override dependency ở [dependency-security.md](docs/dependency-security.md).
-- `format:check`: kiểm tra định dạng mã và tài liệu mới bằng Prettier. Nếu cần sửa định dạng, chạy `npm.cmd run format`, xem diff rồi kiểm tra lại. Hai tài liệu kiến trúc cũ được giữ định dạng riêng để tránh sửa hàng loạt phần đã review.
+`npm test` có thể báo `SKIP` với một số bài kiểm thử cần Playwright/Chromium hoặc MySQL test database cô lập. Ghi rõ số PASS/SKIP/FAIL của **lần chạy thực tế**; không coi SKIP là PASS. Build thành công không thay thế kiểm thử tích hợp với MySQL thật hoặc xác thực Google thật.
 
-Chưa cấu hình ESLint; TypeScript dùng strict và Prettier lo định dạng. Không có thêm framework kiểm thử hoặc công cụ chạy song song chỉ để dự phòng.
-
-Để thử **backend từ bản build**, dừng backend dev đang chiếm cổng 3001; sau khi đã chạy build, **tại gốc UniHub**:
-
-```powershell
-npm.cmd run start --workspace @unihub/backend
-```
-
-Frontend dev ở terminal 2 vẫn gọi được backend này. Đây là kiểm tra bản build cục bộ, không phải deploy production.
-
-## 6. Cấu trúc và cách 5 người bắt đầu
+## 8. Cấu trúc mã nguồn
 
 ```text
 UniHub/
-├── frontend/src/
-│   ├── app/                 # router, health, 404, shared UI preview
-│   ├── components/ui/       # Button, Input, Select, FormField, Badge, Card, states
-│   ├── layouts/             # PublicLayout, StudentLayout, AdminLayout
-│   ├── assets/              # logo và icon Figma đang được shell sử dụng
-│   ├── features/            # module theo chức năng; Hub cơ hội list/detail đã có trên main
-│   ├── lib/                 # API client và kiểm tra health
-│   └── styles/              # Tailwind CSS và tokens
+├── frontend/                 # React/Vite, giao diện, routing, test
 ├── backend/
-│   ├── src/
-│   │   ├── app.ts           # cấu hình Express, không mở cổng
-│   │   ├── server.ts        # mở cổng và dừng server
-│   │   ├── config/          # kiểm tra PORT
-│   │   ├── middleware/      # lỗi JSON và 404
-│   │   ├── lib/             # README cho hạ tầng dùng chung
-│   │   └── modules/         # health và API cơ hội đã chạy; module khác theo phạm vi README
-│   ├── test/                # Node.js built-in test runner
-│   └── prisma/              # schema, migration SQL và Prisma config
-├── database/README.md       # lối vào tài liệu dữ liệu
-├── docs/                    # kiến trúc, workflow, roadmap, quy ước API
-│   └── shared-ui-design/    # handoff Figma, screenshot/evidence không vào build
-├── AGENTS.md
-├── package.json             # npm workspaces
-└── package-lock.json        # lockfile duy nhất
+│   ├── src/                  # Express API, auth, middleware, nghiệp vụ
+│   └── prisma/               # Schema và migrations MySQL
+├── data/                     # Catalog, guidance, opportunities, forum fixtures
+├── database/                 # Tài liệu CSDL
+├── docs/                     # Tài liệu thiết kế, API, migration và kiểm thử
+├── package.json              # npm workspaces và scripts tổng
+└── package-lock.json         # Lockfile dùng chung
 ```
 
-Mỗi người tải bộ khung và tự chạy kiểm tra trên máy mình. Phân công theo yêu cầu mới nhất, chưa gán tên/deadline:
+## 9. Xử lý sự cố thường gặp
 
-| Thành viên | Phần frontend và backend                                                                                        |
-| ---------- | --------------------------------------------------------------------------------------------------------------- |
-| TV1        | Nền tảng auth backend/frontend dùng chung; Hub cơ hội/tìm kiếm/chi tiết; Admin duyệt cơ hội; điều phối tích hợp |
-| TV2        | Hồ sơ và chức năng tài khoản; Admin quản lý tài khoản                                                           |
-| TV3        | Lộ trình kỹ năng, gợi ý/cơ hội dành cho bạn; Admin danh mục                                                     |
-| TV4        | Lịch, thông báo; Dashboard Admin, phối hợp thống kê với các TV khác                                             |
-| TV5        | Diễn đàn, bình luận; Admin kiểm duyệt, xóa mềm/log/thông báo theo transaction                                   |
+| Triệu chứng                                       | Kiểm tra                                                                                   |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `node` hoặc `npm.cmd` không chạy                  | Kiểm tra Node 24, npm 11 và PATH                                                           |
+| `npm ci` lỗi                                      | Đọc thông báo, kiểm tra phiên bản Node/npm và mạng; không tự ý thay lockfile               |
+| `/api/health` thành công nhưng `/api/ready` = 503 | Kiểm tra MySQL, `DATABASE_URL`, quyền runtime và migration                                 |
+| Frontend gọi API thất bại                         | Kiểm tra backend cổng 3001 và `API_PROXY_TARGET`, sau đó restart Vite                      |
+| Google Sign-In không hoạt động                    | Đối chiếu Client ID, JavaScript origin, backend origin và trạng thái cấu hình Google OAuth |
+| Không có dữ liệu ở Hub/Guidance/Forum             | Xác minh database mới đã được nạp dữ liệu được phép, không suy ra từ fixture Git           |
+| Không vào được trang Admin                        | Kiểm tra đã Google login thành công và tài khoản có `role=Admin` hợp lệ                    |
 
-Đọc [quy trình cộng tác](docs/team-workflow.md), [lộ trình](docs/development-roadmap.md) và [ghi nhận thiết kế shared UI](docs/shared-ui-design/implementation.md). Trang Public Hub, Guidance, Events, API Major/Skill, auth backend/frontend và backend Admin review đã có trên `main`; nhánh này bổ sung giao diện Admin review. Font Inter được tự lưu trong frontend theo SIL Open Font License 1.1. Đường dẫn Footer `/terms` và `/privacy` đã chốt; nội dung trang còn chờ nhóm, nên preview giữ label dạng chữ tĩnh. Không chia toàn bộ Admin cho một người; TV1 điều phối shell và route.
+## 10. Phạm vi và nguyên tắc bàn giao
 
-## 7. Lỗi thường gặp và giới hạn
-
-- `node`/`git` không được nhận diện: cài công cụ và mở lại terminal. IDE không tự bảo đảm chúng tồn tại.
-- Cổng 5173 đang dùng: Vite báo lỗi thay vì tự chuyển cổng. Dừng phiên frontend cũ bằng Ctrl+C. Nếu 3001 đang dùng, dừng đúng tiến trình của mình hoặc đổi PORT và API_PROXY_TARGET; không tắt tùy tiện tiến trình khác.
-- Frontend báo lỗi kết nối: xem terminal backend, kiểm tra health trực tiếp, hai giá trị cổng và khởi động lại sau khi đổi `.env`.
-- Lệnh không có script/workspace: kiểm tra terminal đang ở gốc UniHub và đã lấy đúng nhánh.
-- Không commit `.env`, node_modules, dist, coverage, khóa hoặc dữ liệu cục bộ. `.env.example` chỉ chứa cấu hình mẫu an toàn.
-
-Migration và Prisma runtime được kiểm tra trên MySQL 8.4 dùng một lần ở Codex/Linux; không kết nối database máy thành viên. Điều đó không chứng minh cấu hình Windows, mọi trình duyệt, NFR hiệu năng hoặc tải 100 người đã đạt. Shared UI/list/detail được kiểm tra trực quan theo ảnh handoff và fixture mock; bố cục ở 1920 px là lựa chọn triển khai, không phải số đo trực tiếp Figma, và mock không xác nhận API/MySQL thật. Auth API và Admin review API đã có trên `main`; giao diện Admin review đang được hoàn thiện trên nhánh riêng và phụ thuộc frontend auth chưa merge.
-
-## Danh mục chuẩn dùng chung
-
-Bộ đã duyệt **11 Major + 19 Skill** ở [data/catalog/initial-categories.json](data/catalog/initial-categories.json). Git chỉ chia sẻ tên/loại và importer; mỗi thành viên tự nhập vào database riêng. Xem [hướng dẫn PowerShell tại gốc repo](data/catalog/README.md) để chuẩn bị migration, dry-run mặc định, apply rõ ràng và kiểm tra chạy lại. Không cần nhập 8 cơ hội; không chia sẻ ID local, `.env` hoặc database dump. [Kết quả kiểm thử](docs/catalog-import-validation.md).
+- Đây là bản **cài đặt trực tiếp để trình diễn/nghiệm thu local**, không phải website đã deploy. Máy chạy cần tự cài Node/npm/MySQL; sử dụng schema `unihub_demo`.
+- Không commit `.env`, mật khẩu, dữ liệu thật, `node_modules`, `dist` hoặc kết quả test tự sinh.
+- Không chạy thao tác destructive như `DROP DATABASE`, `prisma migrate reset`, `git clean -fd` hoặc `git reset --hard` trong quy trình cài đặt.
+- Dự án không yêu cầu Docker để chạy local; hướng dẫn này là nguồn bắt đầu cho người nhận source. Khi thay đổi cách cài đặt hay schema, cập nhật README và tài liệu liên quan đồng thời.

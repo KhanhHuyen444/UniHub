@@ -1,22 +1,24 @@
 # Frontend Admin
 
-Admin dùng `RequireRole` cùng auth dùng chung, `AdminLayout` (tên/email và logout thật), và API client tại `features/admin/opportunities/api.ts`. Hiện nhánh `feat/admin-opportunities-frontend` có hàng chờ Pending, chi tiết, approve/reject theo [hợp đồng](../../../../docs/admin-opportunities-api-contract.md). Không có dashboard, CRUD cơ hội, kiểm duyệt diễn đàn hoặc API Skill trong phạm vi này.
+Admin dùng auth/RBAC và `AdminLayout` chung. `RequireRole` hỗ trợ điều hướng; backend vẫn kiểm tra quyền thực sự. Guest đi tới login với returnTo an toàn; Student bị chặn khỏi trang Admin.
 
-## Kiểm duyệt cơ hội
+## Bốn trang quản trị
 
-- Route: `/admin/opportunities` và `/admin/opportunities/:id`.
-- Bốn request dùng `protectedApiRequest`: GET hàng chờ, GET chi tiết, POST approve, POST reject.
-- `AdminLayout` mở mục Kiểm duyệt nội dung; người dùng chưa đăng nhập đi qua `/login?returnTo=...`, Student tới `/403`; kiểm tra quyền thực sự vẫn do backend.
-- Reject yêu cầu lý do đã trim, 1–500 ký tự; approve xác nhận lựa chọn Verified. Mutation đang gửi sẽ khóa các nút để tránh gửi lặp.
-- Queue/detail có trạng thái loading, empty, error/retry; 401/403/404/409/422/validation có thông báo riêng. 409 tải lại cả hàng chờ lẫn chi tiết.
-- Ngày deadline lấy ngày nguồn từ API; unknown được ghi “Chưa xác định hạn”. Nội dung hiển thị dạng text, URL nguồn chỉ mở khi parser xác nhận HTTP(S).
+- `/admin/dashboard`: KPI, phân bố trạng thái cơ hội, tương tác thảo luận; refresh và lỗi theo từng API.
+- `/admin/moderation`: **Kiểm duyệt nội dung**, gồm tab **Tin chờ thẩm định** (`?tab=opportunities`, UC-10) và **Giám sát cộng đồng** (`?tab=community`, UC-11). Tab được giữ theo URL khi reload/back/forward.
+- `/admin/categories`: quản lý danh mục Major/Skill.
+- `/admin/users`: quản lý tài khoản và phân quyền theo API hiện có.
 
-## Căn cứ giao diện
+Route `/admin/opportunities` và chi tiết cũ được giữ để chuyển hướng tương thích; không còn là mục sidebar riêng. Chi tiết moderation dùng `/admin/moderation/:id`.
 
-Handoff chung xác nhận sidebar Admin rộng 260 px, vùng nội dung padding 32 px, màu, typography Inter và các icon shell từ frame `166:940` (Dashboard). Ảnh “Tin chờ thẩm định” do nhóm đính kèm là căn cứ bố cục trang duyệt. Tỷ lệ cột queue/detail, khoảng cách, padding card, kích thước nội dung và cách co giãn ở 1920 px được ước lượng từ ảnh; đây không phải số đo trực tiếp Figma. Email liên hệ nội bộ, dashboard, tab/route Giám sát cộng đồng không có trong API/phạm vi và không được dựng từ nội dung mẫu trong ảnh.
+## Kiểm duyệt
 
-Backend API đã có trên `main` qua PR #24. Auth frontend được kế thừa từ `feat/auth-frontend` và vẫn cần merge trước khi luồng UI này có thể chạy trên `main`.
+Tab cơ hội tải hàng chờ Pending và chi tiết, duyệt có/không Verified, từ chối với lý do bắt buộc và xác nhận thao tác. DTO giữ publisher nullable và loại Bài viết định hướng khi API trả về; không tự lọc làm sai total/phân trang.
 
-DTO giữ `publisher` nullable như backend. Khi thiếu, queue/detail hiển thị “Chưa có đơn vị đăng” để Admin vẫn xem và từ chối; điều kiện backend yêu cầu publisher khi duyệt không thay đổi.
+Tab cộng đồng tải bài đăng/bình luận, cho xem ngữ cảnh và gỡ nội dung vi phạm với lý do. Backend điều phối soft delete, Activity Log và Violation Notification trong transaction. Chuyển tab không tự ghi dữ liệu.
 
-DTO Admin giữ cả loại `Bài viết định hướng` khi API trả về trong hàng Pending; không lọc ở frontend để bảo toàn `total` và phân trang. Điều này không mở rộng ba loại được API Public công khai.
+Các trang có loading/error/empty và xử lý lỗi API. Implementation không đồng nghĩa đã kiểm chứng Google login, responsive hoặc MySQL trên mọi máy. Xem [hướng dẫn local](../../../../README.md), [contract cơ hội](../../../../docs/admin-opportunities-api-contract.md) và [contract diễn đàn](../../../../docs/forum-api-contract.md).
+
+## Phối hợp review
+
+TV1 sở hữu thẩm định cơ hội và phối hợp route/moderation shell; TV5 sở hữu giám sát cộng đồng; TV2 quản lý tài khoản; TV3 danh mục; TV4 dashboard. Thay đổi mô tả này cập nhật trạng thái tích hợp, không sửa route, API, layout hay quyền.

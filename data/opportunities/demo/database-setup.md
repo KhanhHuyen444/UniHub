@@ -1,5 +1,7 @@
 # Chuẩn bị database demo cô lập — 02/11/2026
 
+> **Kế hoạch lịch sử 02/11/2026:** Dùng [hướng dẫn cài mới hiện hành](../../../docs/LOCAL-SETUP-UNIHUB-DEMO.md) thay cho SQL/lệnh dưới đây. Danh sách migration đã thay đổi (có migration loại bỏ Email Reminder); tập quyền đề xuất cũ chưa đủ để kết luận chạy được toàn bộ chuỗi hiện tại. Không thao tác unihub_dev.
+
 **READY để leader/DBA review kế hoạch; NOT READY để chạy migration/seed/import.**
 Tất cả SQL/lệnh ghi bên dưới là đề xuất sau phê duyệt, chưa được chạy.
 

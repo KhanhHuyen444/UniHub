@@ -1,6 +1,6 @@
 # auth
 
-**Backend auth hiện có trên `main`:** `POST /api/auth/google`, `POST /api/auth/refresh`, `GET /api/auth/me`, `POST /api/auth/logout`, helper JWT HS256, `requireAuth` kiểm tra `auth_sessions` và `requireRole` dùng role snapshot đã ký. Nhánh `feat/admin-bootstrap` bổ sung lệnh operator cấp Admin đầu tiên; đây không phải endpoint public. Frontend auth chưa triển khai. Hợp đồng chung nằm tại [auth-api-contract.md](../../../../docs/auth-api-contract.md); schema Prisma và migration `google_sub`/`auth_sessions` có trên `main`.
+**Backend auth hiện có trên `main`:** `POST /api/auth/google`, `POST /api/auth/refresh`, `GET /api/auth/me`, `POST /api/auth/logout`, helper JWT HS256, `requireAuth` kiểm tra `auth_sessions` và `requireRole` dùng role snapshot đã ký. Lệnh operator `admin:bootstrap` cấp Admin đầu tiên đã có trong source; đây không phải endpoint public. Frontend Google login/session đã tích hợp. Hợp đồng chung nằm tại [auth-api-contract.md](../../../../docs/auth-api-contract.md); schema Prisma và migration `google_sub`/`auth_sessions` có trên `main`.
 
 TV1 làm nền backend auth/RBAC trước; **TV2 tiếp quản cùng module và cơ chế**, hoàn thiện UI/session. Không tạo cơ chế xác thực thứ hai. Chưa gán tên người hoặc deadline.
 

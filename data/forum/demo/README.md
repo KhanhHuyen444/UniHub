@@ -1,5 +1,7 @@
 # UniHub Forum Demo Seed
 
+> **Cài mới:** Theo [hướng dẫn local](../../../docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt), dùng catalog và backend/.env tự cấu hình unihub_demo. Các ví dụ backend/.env.demo bên dưới là cấu hình riêng tùy chọn. Tác giả fixture có Google sub giả lập, không phải tài khoản Google đăng nhập được. Test safety có ghi dữ liệu, không dùng database cần bảo toàn.
+
 Thư mục này chứa bộ dữ liệu Forum demo chất lượng cao và kịch bản nạp dữ liệu (seed) vào cơ sở dữ liệu `unihub_demo` (MySQL), phục vụ môi trường demo và tích hợp trực tiếp lên HomePage.
 
 ## 1. Cấu trúc dữ liệu

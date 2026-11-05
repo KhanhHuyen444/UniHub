@@ -1,5 +1,7 @@
 # Mục lục và điều phối hợp đồng API UniHub
 
+> **Đối chiếu bản bàn giao 06/11/2026:** Cài mới theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md), dùng schema `unihub_demo`. Các mốc scaffold, trạng thái PR/triển khai và kiểm thử cũ bên dưới được giữ làm lịch sử; không dùng để kết luận trạng thái main hiện tại. Ví dụ `unihub_dev` không thuộc quy trình cài mới; không chạy SQL lịch sử trên database cũ. Source hiện tại là căn cứ xác định chức năng; các kết quả kiểm thử cũ không thay thế lần kiểm tra mới.
+
 > Leader duyệt hợp đồng. Contract approval và implementation status là hai trạng thái riêng. Các hợp đồng được ghi Approved bên dưới đã được hoàn thiện theo quyết định leader; điều đó không khẳng định endpoint/module có code trên main. Auth schema/API/middleware đã có trên `main`; operator command khởi tạo Admin đầu tiên đang được bổ sung trên `feat/admin-bootstrap`.
 
 ## 1. Nguồn đã kiểm tra

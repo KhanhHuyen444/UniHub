@@ -1,5 +1,7 @@
 # Prisma runtime và kết nối MySQL
 
+> **Đối chiếu bản bàn giao 06/11/2026:** Cài mới theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md), dùng schema `unihub_demo`. Các mốc scaffold, trạng thái PR/triển khai và kiểm thử cũ bên dưới được giữ làm lịch sử; không dùng để kết luận trạng thái main hiện tại. Ví dụ `unihub_dev` không thuộc quy trình cài mới; không chạy SQL lịch sử trên database cũ. Source hiện tại là căn cứ xác định chức năng; các kết quả kiểm thử cũ không thay thế lần kiểm tra mới.
+
 Tài liệu này mô tả Prisma runtime của backend, cấu hình MySQL cục bộ trên Windows và kết quả kiểm tra. Initial migration đã được merge vào `main` qua PR #4; nhánh runtime dùng migration đã có, không tạo lại hoặc sửa migration đó. Mọi lần chạy MySQL trong Codex dùng container thử nghiệm tạm và credentials ngẫu nhiên; database của thành viên không được truy cập.
 
 ## Phạm vi hiện tại

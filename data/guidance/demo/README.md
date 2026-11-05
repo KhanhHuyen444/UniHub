@@ -1,5 +1,7 @@
 # UniHub Skill Roadmap Demo Seed
 
+> **Cài mới:** Theo [hướng dẫn local](../../../docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt), nạp catalog đầy đủ trước. Có thể thay `--env-file=backend/.env.demo` trong ví dụ dưới bằng `--env-file=backend/.env` đã tự cấu hình unihub_demo; không phụ thuộc file riêng của nhóm. Không chạy các bài test safety/live trên database có dữ liệu cần giữ.
+
 Bộ dữ liệu định hướng kỹ năng và nghề nghiệp (Skill Roadmap & Career Guidance) phục vụ môi trường demo UniHub (`unihub_demo`), tuân thủ chặt chẽ Chương 3 UC-03 / FR-03.1 / BR-03.1–03.3 và `docs/guidance-api-contract.md`.
 
 > **Lưu ý nghiệp vụ:** Đây là dữ liệu **system-preloaded Guidance Articles** được nạp sẵn với `status = "Approved"` và `opportunity_type = "Bài viết định hướng"`, **KHÔNG** phải dữ liệu lộ trình cá nhân hóa lưu theo từng sinh viên.
@@ -53,7 +55,7 @@ Chủ động để trống lộ trình để kiểm chứng giao diện Empty S
 
 ## 2. Tiêu chuẩn nội dung & Kỹ thuật
 
-- **Trường văn bản:** `description` và `requirements` được định dạng thuần văn bản (plain text với `whitespace-pre-wrap`), tuyệt đối không có thẻ HTML hoặc ký tự Markdown heading gây lỗi giao diện.
+- **Trường văn bản:** `description` và `requirements` là chuỗi văn bản; fixture hiện có heading Markdown. Frontend xử lý qua contentParser và render nội dung, không coi chuỗi là HTML tin cậy. Không dùng mô tả plain-text của phiên bản cũ để kết luận fixture hiện tại không hợp lệ.
 - **Kỹ năng liên kết:** 100% kỹ năng (154 kỹ năng duy nhất) đều thuộc danh mục Active trong bảng `categories` và đúng với mapping ngành học.
 - **Metadata Synthetic:**
   - `opportunity_type`: `"Bài viết định hướng"`
