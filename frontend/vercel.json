@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "https://unihub-i02l.onrender.com/api/:match*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+
