@@ -1,25 +1,27 @@
 # UniHub
 
-UniHub là ứng dụng web hỗ trợ sinh viên tìm kiếm cơ hội học tập, thực tập, việc làm và học bổng; tham khảo lộ trình kỹ năng, nhận gợi ý theo hồ sơ, quản lý lịch/deadline và tham gia diễn đàn. Hệ thống có cổng quản trị để thống kê, thẩm định cơ hội, kiểm duyệt nội dung cộng đồng, quản lý danh mục và phân quyền.
+UniHub hỗ trợ sinh viên tìm cơ hội thực tập, việc làm, học bổng; tham khảo lộ trình kỹ năng, quản lý lịch/deadline và tham gia diễn đàn. Admin có dashboard, thẩm định cơ hội, kiểm duyệt diễn đàn, quản lý danh mục và tài khoản.
 
-> **Hướng dẫn này dành cho cách chạy cục bộ bằng Node.js + MySQL, không dùng Docker hoặc dịch vụ hosting.** Source code, Prisma migrations và dữ liệu fixture không thay thế MySQL Server. Trong bản bàn giao local, database chuẩn là `unihub_demo`. Khi cài trên máy khác, người nhận tự tạo `unihub_demo` mới theo migration và hướng dẫn seed/import bên dưới; quy trình cài mới vẫn cần kiểm chứng trên MySQL đích, không cần dữ liệu từ `unihub_dev` của nhóm.
+Đây là hướng dẫn **cài mới local trên Windows/PowerShell**, không cần Docker hoặc hosting. Người nhận tự tạo database `unihub_demo` trên MySQL của mình. GitHub chứa source/migration/fixture, không mang theo dữ liệu MySQL của nhóm. Không dùng hoặc thao tác `unihub_dev` trong quy trình bàn giao.
 
-## 1. Công nghệ và điều kiện chạy
+## 1. Yêu cầu hệ thống
 
-| Thành phần            | Phiên bản/giải pháp trong source                                          |
-| --------------------- | ------------------------------------------------------------------------- |
-| Frontend              | React 19, React Router 8, Vite 8, TypeScript 5, Tailwind CSS 3            |
-| Backend               | Node.js 24, Express 5, TypeScript                                         |
-| Database              | MySQL 8.4; Prisma ORM 7 với `@prisma/adapter-mariadb`                     |
-| Dependency management | npm workspaces (`frontend`, `backend`), một `package-lock.json` tại gốc   |
-| Kiểm thử              | Node.js Test Runner; một số bài browser test dùng Playwright có điều kiện |
-| Kiểm tra code         | TypeScript typecheck, Prettier                                            |
+| Thành phần    | Yêu cầu theo source                                                                 |
+| ------------- | ----------------------------------------------------------------------------------- |
+| Windows       | PowerShell, Git, trình duyệt hiện đại                                               |
+| Node.js / npm | Node `>=24.19.0 <25`, npm `>=11.9.0 <12`                                            |
+| Database      | MySQL Server 8.4 và MySQL CLI hoặc Workbench; có quyền DBA tạo schema/user và GRANT |
+| Frontend      | React 19 / TypeScript / Vite 8 / Tailwind 3.4                                       |
+| Backend       | Express 5 / TypeScript ES modules / Prisma 7 với adapter MariaDB cho MySQL          |
+| Đăng nhập     | Internet, tài khoản Google thật và Google OAuth **Web Client ID** hợp lệ            |
 
-**Phiên bản máy chạy bắt buộc theo `package.json`:** Node.js `>=24.19.0 <25` và npm `>=11.9.0 <12`. Cần Git, MySQL 8.4 đang chạy, một terminal (PowerShell trên Windows), và trình duyệt hiện đại. Sử dụng `npm.cmd` trong PowerShell để tránh lỗi chính sách thực thi `npm.ps1`.
+Chỉ cài Workbench chưa đủ: cần MySQL Server đang chạy. Dự án dùng npm workspaces và một `package-lock.json` ở gốc; không tự nâng major dependency. Dùng `npm.cmd` để tránh Execution Policy của `npm.ps1`.
 
-## 2. Lấy source và cài dependency
+## 2. Quick Start từ máy mới
 
-Chạy trong PowerShell tại thư mục muốn lưu source:
+Thực hiện lần lượt, dừng khi một bước lỗi. Các lệnh npm/Node dưới đây chạy **tại gốc UniHub**.
+
+### Bước 1 — Clone và cài dependency
 
 ```powershell
 git clone --branch main https://github.com/KhanhHuyen444/UniHub.git
@@ -29,23 +31,15 @@ npm.cmd --version
 npm.cmd ci
 ```
 
-Nếu đã clone, kiểm tra `git status` rồi đồng bộ `main` khi không có thay đổi cục bộ cần bảo toàn:
+Nếu đã có checkout, kiểm tra `git status` và bảo toàn thay đổi trước khi cập nhật; không clone đè hoặc reset để xử lý lỗi.
 
-```powershell
-git fetch origin
-git switch main
-git pull --ff-only origin main
-```
+### Bước 2 — Tạo database và tài khoản MySQL
 
-Không dùng `git reset --hard` hoặc `git clean` để xử lý file của thành viên. `npm ci` sử dụng dependency trong lockfile; không cần cài riêng từng workspace.
+Mở MySQL CLI/Workbench bằng DBA. Theo [setup §2](docs/LOCAL-SETUP-UNIHUB-DEMO.md#2-tạo-schema-và-hai-tài-khoản), kiểm tra tên chưa tồn tại, tạo `unihub_demo` với `utf8mb4_0900_as_ci`, tạo riêng `unihub_demo_migrator` và `unihub_demo_app`, rồi cấp migrator quyền trên đúng schema. Chưa cấp quyền bảng cho runtime vì bảng chưa được tạo.
 
-## 3. Chuẩn bị MySQL `unihub_demo` và Prisma migrations
+Nếu database/user đã tồn tại, xác minh chủ sở hữu trước; không DROP/RESET hoặc chạy lại CREATE tùy tiện.
 
-Ứng dụng cần **database được tạo trước** và **hai tài khoản MySQL riêng**: tài khoản migration có quyền DDL trên schema được chỉ định và tài khoản runtime có quyền truy cập bảng theo nghiệp vụ. **Thống nhất tên database `unihub_demo`** cho bản chạy thử và nghiệm thu. `unihub_dev` chỉ là database phát triển cũ, không tham gia quy trình cài đặt này. Mọi thao tác tạo schema/user phải được thực hiện trên MySQL mà bạn có quyền quản trị.
-
-1. Theo **[Hướng dẫn setup MySQL `unihub_demo`](docs/LOCAL-SETUP-UNIHUB-DEMO.md)**, tạo schema `unihub_demo` với charset `utf8mb4` và collation `utf8mb4_0900_as_ci`.
-2. Tạo hai tài khoản MySQL **riêng** cho migration và runtime; cấp quyền đúng trên `unihub_demo` theo hướng dẫn mới. Không cấp quyền nhầm vào `unihub_dev`, không dùng mật khẩu minh họa.
-3. Tại gốc UniHub, chỉ tạo các file cấu hình nếu chúng chưa tồn tại:
+### Bước 3 — Tạo và cấu hình môi trường
 
 ```powershell
 if (-not (Test-Path .\backend\.env)) { Copy-Item .\backend\.env.example .\backend\.env }
@@ -53,100 +47,102 @@ if (-not (Test-Path .\backend\.env.migration)) { Copy-Item .\backend\.env.migrat
 if (-not (Test-Path .\frontend\.env)) { Copy-Item .\frontend\.env.example .\frontend\.env }
 ```
 
-Sửa **cục bộ** (không commit):
+Điền giá trị cục bộ theo [setup §3](docs/LOCAL-SETUP-UNIHUB-DEMO.md#3-cấu-hình-hai-url) và [bảng biến môi trường](docs/fresh-install-operations.md#1-biến-môi-trường):
 
-- `backend/.env`: `DATABASE_URL` trỏ `unihub_demo` cho **runtime**; `PORT=3001`; `JWT_SIGNING_SECRET` ngẫu nhiên, tối thiểu 32 byte; `JWT_ISSUER`, `JWT_AUDIENCE`, `GOOGLE_CLIENT_ID`, `AUTH_ALLOWED_ORIGINS` theo môi trường.
-- `backend/.env.migration`: `MIGRATION_DATABASE_URL` cho **migration account**, cũng trỏ `unihub_demo`.
-- `frontend/.env`: `API_PROXY_TARGET=http://127.0.0.1:3001` và `VITE_GOOGLE_CLIENT_ID` trùng với Google Client ID backend.
+- `backend/.env`: `DATABASE_URL` runtime trỏ `unihub_demo`, `PORT=3001`, `JWT_SIGNING_SECRET` ngẫu nhiên ít nhất 32 byte, `JWT_ISSUER`, `JWT_AUDIENCE`, `GOOGLE_CLIENT_ID`, `AUTH_ALLOWED_ORIGINS`.
+- `backend/.env.migration`: `MIGRATION_DATABASE_URL` của migrator, cũng trỏ `unihub_demo`.
+- `frontend/.env`: `API_PROXY_TARGET=http://127.0.0.1:3001`, `VITE_GOOGLE_CLIENT_ID` giống backend.
 
-`DATABASE_URL` và `MIGRATION_DATABASE_URL` đều dùng định dạng `mysql://user:encoded-password@127.0.0.1:3306/unihub_demo`; URL-encode ký tự đặc biệt trong mật khẩu. Ứng dụng không tự dùng URL migration thay cho URL runtime. **Không in hoặc chia sẻ file `.env`**.
+Không dùng nguyên placeholder; URL-encode user/password, không thêm query/fragment vào URL MySQL. Lệnh npm mặc định **không nạp `backend/.env.demo`**. Biến shell có thể ghi đè file. Không đưa `.env`, token hay mật khẩu vào Git/chat/log; biến `VITE_` có thể công khai.
 
-Sau khi bảo đảm cả hai URL đều trỏ đến `unihub_demo`, kiểm tra và chạy migration (chỉ trên database mới mà bạn có quyền thao tác):
+### Bước 4 — Migration, GRANT runtime và build
 
 ```powershell
 npm.cmd run prisma:validate
 npm.cmd run db:migrate:status
+```
+
+Database mới có thể báo pending và mã thoát khác 0. Chỉ khi đã xác minh đúng đích và đây không phải lỗi kết nối/quyền, tiếp tục:
+
+```powershell
 npm.cmd run db:migrate:deploy
+npm.cmd run db:migrate:status
 npm.cmd run prisma:generate
 ```
 
-`db:migrate:deploy` thay đổi schema đích: chỉ chạy sau khi kiểm tra cấu hình đúng database và có quyền sử dụng database đó. Không sử dụng `prisma migrate reset`, không xóa/sửa lịch sử migration. Cấu trúc Prisma hiện có **13 bảng nghiệp vụ**; `_prisma_migrations` là bảng kỹ thuật của Prisma.
-
-Xem thêm [Prisma runtime và readiness](docs/database-runtime.md) và [migration & quyền MySQL](docs/database-migrations.md).
-
-## 4. Khởi động frontend/backend local
-
-Mở **hai terminal PowerShell**, đều tại thư mục gốc UniHub.
-
-**Terminal 1 — Backend**
+Kỳ vọng status **up to date**, 13 bảng nghiệp vụ và `_prisma_migrations`. DBA thực hiện [GRANT từng bảng ở setup §4](docs/LOCAL-SETUP-UNIHUB-DEMO.md#4-chạy-migrations-rồi-cấp-quyền-runtime-theo-từng-bảng), sau đó:
 
 ```powershell
+npm.cmd run build
+```
+
+Generate/build không tự migration/seed. Không dùng `prisma migrate reset`, `db push` hoặc sửa migration đã áp dụng.
+
+### Bước 5 — Khởi động và kiểm tra kết nối
+
+Mở hai terminal PowerShell tại gốc repo, giữ chúng chạy:
+
+```powershell
+# Terminal 1
 npm.cmd run dev:backend
 ```
 
-Backend mặc định: `http://127.0.0.1:3001`.
-
-**Terminal 2 — Frontend**
-
 ```powershell
+# Terminal 2
 npm.cmd run dev:frontend
 ```
 
-Frontend: **http://127.0.0.1:5173/**. Vite chuyển tiếp đường dẫn `/api` tới backend qua `API_PROXY_TARGET`. Đây là dev proxy, không phải cấu hình deploy production.
-
-Kiểm tra từ PowerShell khác:
+Mở **http://127.0.0.1:5173/**. Tại terminal thứ ba:
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:3001/api/health
 Invoke-RestMethod http://127.0.0.1:3001/api/ready
+Invoke-RestMethod http://127.0.0.1:5173/api/ready
 ```
 
-`/api/health` chỉ kiểm tra HTTP server; `/api/ready` phải phản hồi thành công nếu Prisma truy vấn được MySQL. Nếu `/ready` trả 503, kiểm tra MySQL, cấu hình URL, quyền tài khoản runtime và migrations. Dừng mỗi server bằng `Ctrl+C`.
+Kỳ vọng health `ok`, ready `ready`/`database: available`; lệnh cuối kiểm tra Vite proxy. Readiness chỉ chạy `SELECT 1`, chưa chứng minh đủ bảng/quyền/dữ liệu. Nếu cổng khác, dùng URL server in ra và [đồng bộ proxy](docs/fresh-install-operations.md#2-cổng-và-tiến-trình). Dừng server bằng `Ctrl+C` trong đúng terminal.
 
-## 5. Các chức năng và đường dẫn chính
+### Bước 6 — Google Login và Admin đầu tiên
 
-| Vai trò | Chức năng/route                                                                                                      |
-| ------- | -------------------------------------------------------------------------------------------------------------------- |
-| Guest   | Trang chủ `/`; Hub cơ hội `/opportunities`; lộ trình `/roadmaps`; diễn đàn `/forum`; trang đăng nhập `/login`        |
-| Student | Hồ sơ `/profile`; gợi ý `/recommendations`; lịch/deadline `/calendar`; tham gia diễn đàn sau khi xác thực            |
-| Admin   | Dashboard `/admin/dashboard`; kiểm duyệt `/admin/moderation`; danh mục `/admin/categories`; tài khoản `/admin/users` |
+Theo [hướng dẫn Google/Admin](docs/fresh-install-operations.md#3-google-sign-in-và-admin-đầu-tiên), tạo OAuth Web Client ID, đăng ký origin `http://127.0.0.1:5173`, điền cùng Client ID ở hai workspace rồi restart cả hai server. Đăng nhập Google thật tại `/login` để backend tạo Student.
 
-Trang `/admin/moderation` có **hai tab**: thẩm định cơ hội (UC-10) và giám sát cộng đồng/kiểm duyệt diễn đàn (UC-11). Route `/admin/opportunities` được giữ để chuyển hướng tương thích. Trang kiểm tra kỹ thuật riêng ở `/_dev/health`; **trang `/` là trang chủ thực tế**, không còn chuyển thẳng đến health check.
-
-### Google Sign-In và quyền Admin
-
-UniHub sử dụng Google Identity Services. Tạo hoặc sử dụng OAuth **Web Client ID** do nhóm sở hữu và thêm origin local thực tế (`http://127.0.0.1:5173`) vào **Authorized JavaScript origins** trong Google Cloud Console. Điền cùng Client ID vào `frontend/.env` và `backend/.env`; đặt `AUTH_ALLOWED_ORIGINS` khớp origin. Cần Internet và cấu hình OAuth đúng mới đăng nhập Google thành công. Không dùng ID token giả hoặc tự cho phép đăng nhập bằng email seed.
-
-Người dùng mới từ Google có vai trò Student. Để tạo Admin đầu tiên trên database mới: đăng nhập Google hợp lệ trước, xác định đúng `google_sub` đã được backend xác minh, rồi chạy **lệnh có xác nhận tương tác**:
+Operator đọc đúng `google_sub` của tài khoản vừa đăng nhập bằng MySQL, rồi chạy:
 
 ```powershell
 npm.cmd run admin:bootstrap
 ```
 
-Lệnh chỉ cấp Admin đầu tiên cho người dùng Student đã tồn tại khi đáp ứng điều kiện kiểm tra; không tạo Admin dựa trên email seed chưa xác minh. Sau đó Admin có thể quản lý vai trò theo UC-14. Không commit credential hoặc mã định danh cá nhân vào tài liệu nộp.
+Kiểm tra danh tính script hiển thị, nhập `PROMOTE` nếu đúng người. Đăng xuất/đăng nhập lại và mở `/admin/dashboard`. Nếu đã có Admin, script từ chối; dùng Admin hiện có quản lý quyền tại `/admin/users`. Không sửa trực tiếp `users.role` bằng SQL hoặc dùng email fixture để đăng nhập.
 
-Operator có quyền đọc database có thể tra `google_sub` của đúng tài khoản vừa đăng nhập trong bảng `users` bằng công cụ MySQL cục bộ; không chia sẻ kết quả hoặc ID token. Sau bootstrap, đăng xuất/đăng nhập lại để nhận quyền mới. Thực hiện bootstrap **trước khi nạp fixture có tài khoản Admin**; lệnh từ chối nếu đã tồn tại Admin.
+### Bước 7 — Nạp demo
 
-Cookie refresh hiện cố định `HttpOnly; Secure; SameSite=Strict`. Cần kiểm tra trình duyệt lưu/gửi cookie trên origin HTTP loopback đã chọn, refresh trang, hết hạn access token và logout. Nếu trình duyệt chặn cookie Secure trên HTTP, phiên có thể mất sau reload; không hạ thuộc tính cookie hoặc coi Google login một lần là đã kiểm thử session đầy đủ. Dùng cùng hostname xuyên suốt; không trộn `localhost` và `127.0.0.1`.
+Theo [quy trình seed đầy đủ](docs/demo-seed-workflow.md): **Catalog → Cơ hội → Guidance → Forum**. Mỗi bộ có lệnh dry-run, điểm kiểm tra trước apply và kết quả kỳ vọng. Không có `npm run prisma:seed` tổng; không chạy script seed/sync lịch sử ngoài danh sách.
 
-## 6. Dữ liệu mẫu và demo
+Catalog đầy đủ có 117 Major + 328 Skill. Cơ hội synthetic gồm 100 tin (40 thực tập / 35 việc làm / 25 học bổng), phải validation deadline tại thời điểm nhập và được import **Pending**. Admin duyệt riêng trong tab cơ hội ở `/admin/moderation` để xuất hiện Public Hub. Guidance có 146 bài định hướng Approved; Forum có 12 tác giả mẫu, 24 bài, 136 bình luận. Không tự gia hạn deadline hay đổi phê duyệt để vượt kiểm tra.
 
-Repository có các bộ fixture/import riêng trong `data/catalog`, `data/opportunities`, `data/guidance/demo` và `data/forum/demo`. **Chưa có script gốc `npm run prisma:seed` để nạp toàn bộ UniHub.** Các bộ dữ liệu có tiền điều kiện, chế độ dry-run và ràng buộc an toàn khác nhau:
+### Bước 8 — Nghiệm thu vai trò
 
-- Danh mục cơ bản: [data/catalog/README.md](data/catalog/README.md).
-- Guidance: [data/guidance/demo/README.md](data/guidance/demo/README.md).
-- Forum: [data/forum/demo/README.md](data/forum/demo/README.md).
-- Bộ 100 cơ hội synthetic: [data/opportunities/demo/README.md](data/opportunities/demo/README.md). Batch hiện có metadata leader_approved; ghi chú needs_review trong README dữ liệu là lịch sử. Vẫn phải chạy validation/dry-run tại thời điểm nhập, vì deadline có thể hết hạn. Không suy ra dữ liệu đã được nạp.
+Dùng [checklist máy sạch](docs/fresh-install-acceptance.md), ghi `PASS`, `FAIL`, `SKIP`, `NOT RUN` riêng từng mục. Cần Student thật riêng với Admin để kiểm tra đủ quyền. Bao gồm Guest, hồ sơ/gợi ý/lịch/diễn đàn Student, các chức năng Admin và Activity Log bằng SQL đọc; không yêu cầu trang xem log.
 
-**Quy trình bàn giao:** chỉ nhắm `unihub_demo`. Seeder Guidance/Forum có guard tên schema; importer tổng quát và một số script seed cũ không có guard hoặc ghi ngay khi chạy. Chỉ dùng các lệnh được chỉ rõ trong hướng dẫn cài mới; giữ nguyên guard của Guidance/Forum. Trước khi chạy `--apply`, phải xem README từng bộ, xác nhận catalog prerequisite, trạng thái phê duyệt, dry-run, quyền MySQL và database đích. File fixture không có nghĩa là dữ liệu đã được seed trong MySQL.
+## 3. Xử lý sự cố
 
-Nếu cần trình diễn đầy đủ cho giảng viên, nhóm phải kiểm chứng quy trình khởi tạo database mới, migrations, nạp dữ liệu đã được duyệt và Google Sign-In/Student/Admin trên máy sạch. Không dùng dump database có dữ liệu cá nhân khi chưa rà soát.
+| Triệu chứng                               | Xử lý                                                                                                                        |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Node/npm sai phiên bản; `npm.ps1` bị chặn | Đối chiếu §1, mở lại terminal sau cài, dùng `npm.cmd`; không đổi lockfile để né lỗi                                          |
+| MySQL chưa chạy/sai tài khoản             | Kiểm tra service, host/port, schema và quyền theo setup                                                                      |
+| Migration thất bại                        | Phân biệt pending với lỗi kết nối/quyền/DDL; kiểm tra lịch sử, không reset hay sửa checksum                                  |
+| `Unable to connect to the remote server`  | Chưa gọi được HTTP backend: xem terminal server và cổng thực tế trước khi chẩn đoán DB                                       |
+| Health 200, ready 503                     | Đọc mã `DATABASE_NOT_CONFIGURED`, `DATABASE_CONFIGURATION_INVALID`, `DATABASE_UNAVAILABLE`; kiểm tra URL runtime/MySQL/quyền |
+| `EADDRINUSE` trên 3001 hoặc 5173          | [Xác định tiến trình và đổi cổng](docs/fresh-install-operations.md#2-cổng-và-tiến-trình); không dừng toàn bộ Node/MySQL      |
+| Backend chạy cổng khác, frontend gọi lỗi  | Đồng bộ `API_PROXY_TARGET`, restart Vite, kiểm tra ready qua frontend                                                        |
+| Google lỗi origin/Client ID               | Cùng OAuth Web Client ID ở hai workspace, đúng origin frontend; xem hướng dẫn Google/Admin                                   |
+| Mất phiên sau reload                      | Kiểm tra cookie Secure/refresh/logout; giữ cùng hostname, không hạ bảo mật cookie                                            |
+| Bootstrap báo đã có Admin                 | Dùng Admin hiện có; bootstrap chỉ dành cho Admin đầu tiên                                                                    |
+| Dry-run thành công nhưng chưa có dữ liệu  | Dry-run không ghi; review rồi apply từng bộ đúng đích                                                                        |
+| Import cơ hội xong nhưng Hub rỗng         | Tin mới Pending; Admin duyệt riêng, kiểm tra deadline/bộ lọc                                                                 |
+| Clone source nhưng không có dữ liệu nhóm  | MySQL mỗi máy độc lập; migration và seed trên database mới của người nhận                                                    |
 
-Thứ tự và lệnh import cụ thể nằm ở [hướng dẫn cài mới, mục 7](docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt). Migration chỉ tạo cấu trúc; database mới chưa có nội dung. Email Reminder đã được loại bỏ; nhắc lịch hiện dùng thông báo trong ứng dụng, không cấu hình Gmail/SMTP/Resend.
-
-## 7. Kiểm tra chất lượng source
-
-Tại gốc repository:
+## 4. Kiểm tra source và tài liệu kỹ thuật
 
 ```powershell
 npm.cmd run prisma:validate
@@ -155,41 +151,10 @@ npm.cmd run build
 npm.cmd test
 npm.cmd run format:check
 git diff --check
-git status --short
 ```
 
-`npm test` có thể báo `SKIP` với một số bài kiểm thử cần Playwright/Chromium hoặc MySQL test database cô lập. Ghi rõ số PASS/SKIP/FAIL của **lần chạy thực tế**; không coi SKIP là PASS. Build thành công không thay thế kiểm thử tích hợp với MySQL thật hoặc xác thực Google thật.
+Test MySQL/browser có điều kiện có thể SKIP. Build/unit test không thay thế cài mới MySQL, Google OAuth thật hoặc nghiệm thu UI. Kết quả rà soát và giới hạn: [báo cáo](docs/fresh-install-review.md).
 
-## 8. Cấu trúc mã nguồn
+Source ở `frontend/src`, `backend/src`; schema/migrations chỉ ở `backend/prisma`, fixture ở `data`. Xem [công nghệ](docs/technology-stack.md), [kiến trúc](docs/architecture.md), [workflow](docs/team-workflow.md), [API](docs/api-contracts.md), [runtime](docs/database-runtime.md), [migration](docs/database-migrations.md), [auth](docs/auth-api-contract.md). Ghi chú scaffold/PR cũ là lịch sử; xác định chức năng bằng source và kiểm thử hiện tại.
 
-```text
-UniHub/
-├── frontend/                 # React/Vite, giao diện, routing, test
-├── backend/
-│   ├── src/                  # Express API, auth, middleware, nghiệp vụ
-│   └── prisma/               # Schema và migrations MySQL
-├── data/                     # Catalog, guidance, opportunities, forum fixtures
-├── database/                 # Tài liệu CSDL
-├── docs/                     # Tài liệu thiết kế, API, migration và kiểm thử
-├── package.json              # npm workspaces và scripts tổng
-└── package-lock.json         # Lockfile dùng chung
-```
-
-## 9. Xử lý sự cố thường gặp
-
-| Triệu chứng                                       | Kiểm tra                                                                                   |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `node` hoặc `npm.cmd` không chạy                  | Kiểm tra Node 24, npm 11 và PATH                                                           |
-| `npm ci` lỗi                                      | Đọc thông báo, kiểm tra phiên bản Node/npm và mạng; không tự ý thay lockfile               |
-| `/api/health` thành công nhưng `/api/ready` = 503 | Kiểm tra MySQL, `DATABASE_URL`, quyền runtime và migration                                 |
-| Frontend gọi API thất bại                         | Kiểm tra backend cổng 3001 và `API_PROXY_TARGET`, sau đó restart Vite                      |
-| Google Sign-In không hoạt động                    | Đối chiếu Client ID, JavaScript origin, backend origin và trạng thái cấu hình Google OAuth |
-| Không có dữ liệu ở Hub/Guidance/Forum             | Xác minh database mới đã được nạp dữ liệu được phép, không suy ra từ fixture Git           |
-| Không vào được trang Admin                        | Kiểm tra đã Google login thành công và tài khoản có `role=Admin` hợp lệ                    |
-
-## 10. Phạm vi và nguyên tắc bàn giao
-
-- Đây là bản **cài đặt trực tiếp để trình diễn/nghiệm thu local**, không phải website đã deploy. Máy chạy cần tự cài Node/npm/MySQL; sử dụng schema `unihub_demo`.
-- Không commit `.env`, mật khẩu, dữ liệu thật, `node_modules`, `dist` hoặc kết quả test tự sinh.
-- Không chạy thao tác destructive như `DROP DATABASE`, `prisma migrate reset`, `git clean -fd` hoặc `git reset --hard` trong quy trình cài đặt.
-- Dự án không yêu cầu Docker để chạy local; hướng dẫn này là nguồn bắt đầu cho người nhận source. Khi thay đổi cách cài đặt hay schema, cập nhật README và tài liệu liên quan đồng thời.
+Không commit `.env`, mật khẩu, token, dump riêng tư, `node_modules`, `dist`, `coverage`; không reset/xóa database hiện có.

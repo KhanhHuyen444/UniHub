@@ -11,6 +11,24 @@ Tài liệu này là **hướng dẫn bàn giao cài đặt mới**. `unihub_dem
 
 ## 2. Tạo schema và hai tài khoản
 
+Mở MySQL Workbench bằng kết nối DBA, hoặc PowerShell nếu MySQL CLI có trong PATH (thay `DBA_USER` bằng tài khoản quản trị được cấp, nhập mật khẩu tương tác):
+
+```powershell
+mysql.exe --host=127.0.0.1 --port=3306 --user=DBA_USER --password
+```
+
+Nếu không có trong PATH, dùng đường dẫn `mysql.exe` thuộc bản MySQL Server 8.4 đã cài trên máy; không suy ra đã cài Server chỉ từ Workbench. Trong MySQL, kiểm tra chỉ đọc trước khi tạo:
+
+```sql
+SELECT VERSION();
+SELECT SCHEMA_NAME FROM information_schema.SCHEMATA
+WHERE SCHEMA_NAME = 'unihub_demo';
+SELECT user, host FROM mysql.user
+WHERE user IN ('unihub_demo_migrator', 'unihub_demo_app');
+```
+
+Hai truy vấn tên schema/user phải không có bản ghi cho một máy mới hoàn toàn. Nếu có kết quả hoặc bị từ chối quyền, dừng để DBA xác minh chủ sở hữu; không đổi sang database cá nhân khác hoặc DROP user/schema.
+
 Đăng nhập MySQL CLI/Workbench bằng DBA. Chọn **hai mật khẩu mới, khác nhau**, lưu ngoài Git. SQL bên dưới là ví dụ cho một máy mới hoàn toàn; thay các chuỗi `<...>` trước khi thực thi. **Không lưu SQL đã điền mật khẩu vào Git**.
 
 ```sql
@@ -115,7 +133,7 @@ Invoke-RestMethod http://127.0.0.1:3001/api/health
 Invoke-RestMethod http://127.0.0.1:3001/api/ready
 ```
 
-`health` chỉ xác nhận HTTP; `ready` kiểm tra kết nối thật đến MySQL. Để seed demo, xem từng `data/*/README.md`, dry-run và xác nhận phê duyệt trước khi `--apply`. **Không có một script `npm run prisma:seed` chung trong source hiện tại**. Google Sign-In và Admin bootstrap được trình bày trong README gốc.
+`health` chỉ xác nhận HTTP; `ready` kiểm tra kết nối thật đến MySQL. Để seed demo, xem từng `data/*/README.md`, dry-run và xác nhận phê duyệt trước khi `--apply`. **Không có một script `npm run prisma:seed` chung trong source hiện tại**. Google Sign-In, tra google_sub và Admin bootstrap: [hướng dẫn vận hành](fresh-install-operations.md#3-google-sign-in-và-admin-đầu-tiên). Đổi cổng phải đồng bộ PORT/proxy và restart cả hai server theo [hướng dẫn cổng](fresh-install-operations.md#2-cổng-và-tiến-trình).
 
 ## 6. An toàn và bàn giao
 
@@ -126,55 +144,11 @@ Invoke-RestMethod http://127.0.0.1:3001/api/ready
 
 ## 7. Nạp dữ liệu đã được duyệt
 
-Các lệnh sau là **hướng dẫn cho operator**, chưa được thực thi trong đợt cleanup. Chỉ apply sau khi xác nhận database đích và được phép ghi. Không có lệnh seed tổng. Chạy tại gốc repo, sau migration/grants, Google login và bootstrap Admin; build backend trước:
+Quy trình canonical có đầy đủ lệnh dry-run/apply cho từng file, guard thực tế, khả năng chạy lại, kết quả kỳ vọng và danh sách script không dùng: [demo-seed-workflow.md](demo-seed-workflow.md).
 
-```powershell
-npm.cmd run build --workspace @unihub/backend
-```
+Thứ tự sau migration/GRANT/build và Google Login/bootstrap: Catalog cơ bản → ngành mở rộng → kỹ năng mở rộng → snapshot catalog demo → Cơ hội → Guidance → Forum. Catalog đủ có 117 Major + 328 Skill; importer Cơ hội tạo Pending, Admin duyệt riêng để hiển thị công khai. Không có lệnh seed tổng. Không chạy seed cũ hoặc generator để tự gia hạn deadline/đổi trạng thái.
 
-### Catalog trước, nội dung sau
-
-Importer nhận mảng `type/name` từ các file catalog. Với **từng file**, dry-run, xem `plan.blocked: false` và action `create/reuse`, sau đó mới chạy apply. Không chạy liền apply nếu dry-run lỗi. Thứ tự:
-
-1. `data/catalog/initial-categories.json` (bộ cơ bản).
-2. `data/catalog/expanded-majors.json` (ngành mở rộng).
-3. `data/catalog/expanded-skills.json` (kỹ năng mở rộng).
-4. `data/opportunities/demo/catalog.json` (snapshot demo đầy đủ, bổ sung Major **Kinh doanh số và trí tuệ nhân tạo** còn thiếu trong ba file trên; các tên đã có được reuse).
-
-Ví dụ bộ cơ bản; thay đúng đường dẫn `--file` cho ba bộ tiếp theo:
-
-```powershell
-node --env-file=backend/.env backend/dist/scripts/opportunities-import.js --catalog-only --file data/catalog/initial-categories.json --dry-run
-# Chỉ sau khi review kết quả và được phép ghi:
-node --env-file=backend/.env backend/dist/scripts/opportunities-import.js --catalog-only --file data/catalog/initial-categories.json --apply
-```
-
-Importer giữ danh mục đã có, từ chối danh mục Closed/không rõ ràng; không sửa ID hoặc bật lại trạng thái để vượt kiểm tra. Dùng truy vấn chỉ đọc để đối chiếu từng tên mà fixture tham chiếu, không chỉ tổng số. Các file mapping nghề nghiệp là dữ liệu tham khảo của ứng dụng, không phải script ghi database.
-
-### Cơ hội
-
-`data/opportunities/demo/batch-proposal.json` có metadata phê duyệt `leader_approved`; báo cáo needs_review trong README cùng thư mục là lịch sử. Không sửa metadata/deadline để vượt validation. Batch và thời hạn cần kiểm tra lại ở thời điểm cài:
-
-```powershell
-node --env-file=backend/.env backend/dist/scripts/opportunities-import.js --file data/opportunities/demo/batch-proposal.json --dry-run
-# Chỉ khi dry-run hợp lệ, không blocked và được phép ghi:
-node --env-file=backend/.env backend/dist/scripts/opportunities-import.js --file data/opportunities/demo/batch-proposal.json --apply
-```
-
-Importer tạo **Pending**, không tự xuất bản. Admin dùng tab Tin chờ thẩm định tại `/admin/moderation` để duyệt các tin được chọn; chỉ Approved mới xuất hiện công khai. JSON trong Git không chứng minh bản MySQL nào đã import. Không dùng generator để tự gia hạn dữ liệu hết hạn.
-
-### Guidance và Forum
-
-Sau catalog, đọc tiền điều kiện trong [Guidance](../data/guidance/demo/README.md) và [Forum](../data/forum/demo/README.md). Các ví dụ dưới dùng `backend/.env` vừa cấu hình `unihub_demo`, thay vì phụ thuộc file `.env.demo` riêng của nhóm:
-
-```powershell
-node --env-file=backend/.env data/guidance/demo/seed-guidance-demo.mjs
-node --env-file=backend/.env data/forum/demo/seed-forum-demo.mjs
-```
-
-Hai lệnh mặc định dry-run, kiểm tra catalog/đích. Chỉ thêm `--apply` cho từng lệnh khi đã review và có phép ghi; Guidance hỗ trợ `--verify` sau import. Fixture Forum tạo tác giả mẫu, không tạo danh tính Google được xác minh; email fixture không cấp quyền đăng nhập. Không chạy test safety/live từ README dữ liệu trên database có dữ liệu cần giữ: một số test ghi/rollback hoặc tạo nội dung kiểm thử.
-
-**Không dùng trong quy trình cài mới:** `seed-dev-opportunities.mjs` và `seed-major-coverage.mjs`. Hai script cũ ghi/update ngay khi chạy và không có guard schema/dry-run như Guidance/Forum. Đây là phát hiện cần review riêng nếu nhóm còn sử dụng, không được sửa runtime trong nhiệm vụ tài liệu này.
+Mỗi bộ phải dry-run trước, kiểm tra đúng `unihub_demo` thuộc người nhận, review kế hoạch rồi xác nhận quyền ghi trước khi apply. Tên database giống máy nhóm không chứng minh đó là database mới. Hướng dẫn không cấp phép seed lên database hiện có cần bảo toàn.
 
 ## 8. Checklist xác minh trên máy mới
 
@@ -183,3 +157,5 @@ Hai lệnh mặc định dry-run, kiểm tra catalog/đích. Chỉ thêm `--appl
 - Sau apply được phép: đối chiếu số bản ghi/tên catalog và nội dung; duyệt Pending rồi kiểm tra Hub và gợi ý theo hồ sơ.
 - Kiểm tra Guidance, Forum, Calendar và Notification Bell; tạo sự kiện thử riêng và kiểm tra scheduler nhắc trong ứng dụng, không gửi email.
 - Ghi riêng kết quả thực tế, test skip và các bước chưa chạy. Đợt cleanup source không chứng minh cài mới MySQL hoặc Google OAuth đã thành công.
+
+Checklist có từng ca Guest/Student/Admin và SQL Activity Log: [fresh-install-acceptance.md](fresh-install-acceptance.md). Kết quả lần rà soát hiện tại: [fresh-install-review.md](fresh-install-review.md).
