@@ -1,6 +1,8 @@
 # UniHub Forum Demo Seed
 
-> **Cài mới:** Theo [hướng dẫn local](../../../docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt), dùng catalog và backend/.env tự cấu hình unihub_demo. Các ví dụ backend/.env.demo bên dưới là cấu hình riêng tùy chọn. Tác giả fixture có Google sub giả lập, không phải tài khoản Google đăng nhập được. Test safety có ghi dữ liệu, không dùng database cần bảo toàn.
+Luồng cài mới và các giới hạn collision danh tính/soft-delete/verify sau commit: [seed workflow](../../../docs/demo-seed-workflow.md#6-forum). Lệnh dùng `backend/.env` theo Quick Start. Không chạy test safety/live trên database đang có dữ liệu cần giữ.
+
+> **Cài mới:** Theo [hướng dẫn local](../../../docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt), dùng catalog và `backend/.env` tự cấu hình `unihub_demo`. Tác giả fixture có Google sub giả lập, không phải tài khoản Google đăng nhập được. Test safety có ghi dữ liệu, không dùng database cần bảo toàn.
 
 Thư mục này chứa bộ dữ liệu Forum demo chất lượng cao và kịch bản nạp dữ liệu (seed) vào cơ sở dữ liệu `unihub_demo` (MySQL), phục vụ môi trường demo và tích hợp trực tiếp lên HomePage.
 
@@ -33,26 +35,26 @@ Thư mục này chứa bộ dữ liệu Forum demo chất lượng cao và kịc
 
 ### Chạy kiểm tra dữ liệu mẫu (Unit Tests)
 
-```bash
+```powershell
 node --test data/forum/demo/forum-demo.test.mjs
 ```
 
 ### Chạy kiểm tra an toàn và các kịch bản Homepage
 
-```bash
-node --env-file=backend/.env.demo --test data/forum/demo/safety-and-homepage-scenarios.test.mjs
+```powershell
+node --env-file=backend/.env --test data/forum/demo/safety-and-homepage-scenarios.test.mjs
 ```
 
 ### Chạy thử nghiệm an toàn (Dry Run - không ghi database)
 
-```bash
-node --env-file=backend/.env.demo data/forum/demo/seed-forum-demo.mjs
+```powershell
+node --env-file=backend/.env data/forum/demo/seed-forum-demo.mjs
 ```
 
 ### Nạp dữ liệu vào database demo (`unihub_demo`)
 
-```bash
-node --env-file=backend/.env.demo data/forum/demo/seed-forum-demo.mjs --apply
+```powershell
+node --env-file=backend/.env data/forum/demo/seed-forum-demo.mjs --apply
 ```
 
 > **Lưu ý an toàn:** Kịch bản kiểm tra nghiêm ngặt `targetDb === 'unihub_demo'`. Nếu kết nối đến database khác (như `unihub_dev`), script sẽ từ chối thực thi để bảo vệ dữ liệu phát triển.
