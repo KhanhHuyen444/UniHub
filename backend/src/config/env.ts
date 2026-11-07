@@ -9,3 +9,26 @@ export function readPort(value: string | undefined = process.env.PORT): number {
   }
   return port;
 }
+
+export function isRailway(env: NodeJS.ProcessEnv = process.env): boolean {
+  return Boolean(
+    env.RAILWAY_ENVIRONMENT ||
+      env.RAILWAY_ENVIRONMENT_NAME ||
+      env.RAILWAY_SERVICE_ID ||
+      env.RAILWAY_PROJECT_ID ||
+      env.RAILWAY_DEPLOYMENT_ID ||
+      env.RAILWAY_STATIC_URL ||
+      env.RAILWAY_PUBLIC_DOMAIN,
+  );
+}
+
+export function readHost(env: NodeJS.ProcessEnv = process.env): string {
+  const customHost = env.HOST?.trim();
+  if (customHost) {
+    return customHost;
+  }
+  if (isRailway(env)) {
+    return '0.0.0.0';
+  }
+  return '127.0.0.1';
+}
