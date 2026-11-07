@@ -333,8 +333,9 @@ test('PORT chỉ chấp nhận số nguyên trong khoảng hợp lệ', () => {
   }
 });
 
-test('readHost trả về 0.0.0.0 trên Railway và 127.0.0.1 khi chạy local', () => {
+test('readHost trả về 0.0.0.0 trên Railway và Render và 127.0.0.1 khi chạy local', () => {
   assert.equal(readHost({}), '127.0.0.1');
+  assert.equal(readHost({ RENDER: 'true' }), '0.0.0.0');
   assert.equal(readHost({ RAILWAY_ENVIRONMENT: 'production' }), '0.0.0.0');
   assert.equal(readHost({ RAILWAY_PROJECT_ID: 'project-uuid' }), '0.0.0.0');
   assert.equal(readHost({ RAILWAY_SERVICE_ID: 'service-uuid' }), '0.0.0.0');
