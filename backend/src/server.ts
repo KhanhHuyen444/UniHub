@@ -1,11 +1,11 @@
 import { app } from './app.js';
-import { readPort } from './config/env.js';
+import { readHost, readPort } from './config/env.js';
 import { disconnectPrismaClient } from './lib/prisma.js';
 import { createReminderScheduler } from './modules/events/reminders.scheduler.js';
 import { shutdownServer } from './shutdown.js';
 
 const port = readPort();
-const host = '127.0.0.1';
+const host = readHost();
 const reminderScheduler = createReminderScheduler();
 
 const server = app.listen(port, host, () => {

@@ -138,67 +138,70 @@ export async function seedGuidanceDemo({
 
   // Thực hiện ghi dữ liệu trong transaction
   let appliedCount = 0;
-  await prisma.$transaction(async (tx) => {
-    for (const step of plan) {
-      if (step.action === 'CREATE') {
-        const { item } = step;
+  await prisma.$transaction(
+    async (tx) => {
+      for (const step of plan) {
+        if (step.action === 'CREATE') {
+          const { item } = step;
 
-        const created = await tx.opportunity.create({
-          data: {
-            opportunity_type: item.opportunity_type,
-            title: item.title,
-            publisher: item.publisher,
-            description: item.description,
-            requirements: item.requirements,
-            status: item.status,
-            is_verified: false,
-            reviewed_by: null,
-            reviewed_at: null,
-            source_url: null,
-            location: null,
-            work_format: null,
-            deadline: null,
-            deadline_source_date: null,
-            deadline_source_timezone: null,
-          },
-        });
-
-        // Tạo liên kết opportunity_majors
-        for (const majorName of item.majors) {
-          const majorId = catMap.get(`Major:${majorName}`);
-          await tx.opportunityMajor.create({
+          const created = await tx.opportunity.create({
             data: {
-              item_id: created.item_id,
-              major_id: majorId,
+              opportunity_type: item.opportunity_type,
+              title: item.title,
+              publisher: item.publisher,
+              description: item.description,
+              requirements: item.requirements,
+              status: item.status,
+              is_verified: false,
+              reviewed_by: null,
+              reviewed_at: null,
+              source_url: null,
+              location: null,
+              work_format: null,
+              deadline: null,
+              deadline_source_date: null,
+              deadline_source_timezone: null,
             },
           });
-        }
 
-        // Tạo liên kết opportunity_skills
-        for (const skillName of item.skills) {
-          const skillId = catMap.get(`Skill:${skillName}`);
-          await tx.opportunitySkill.create({
-            data: {
-              item_id: created.item_id,
-              skill_id: skillId,
-            },
-          });
-        }
+          // Tạo liên kết opportunity_majors
+          for (const majorName of item.majors) {
+            const majorId = catMap.get(`Major:${majorName}`);
+            await tx.opportunityMajor.create({
+              data: {
+                item_id: created.item_id,
+                major_id: majorId,
+              },
+            });
+          }
 
-        // Tạo liên kết opportunity_years
-        for (const year of item.academic_years) {
-          await tx.opportunityYear.create({
-            data: {
-              item_id: created.item_id,
-              academic_year: year,
-            },
-          });
-        }
+          // Tạo liên kết opportunity_skills
+          for (const skillName of item.skills) {
+            const skillId = catMap.get(`Skill:${skillName}`);
+            await tx.opportunitySkill.create({
+              data: {
+                item_id: created.item_id,
+                skill_id: skillId,
+              },
+            });
+          }
 
-        appliedCount++;
+          // Tạo liên kết opportunity_years
+          for (const year of item.academic_years) {
+            await tx.opportunityYear.create({
+              data: {
+                item_id: created.item_id,
+                academic_year: year,
+              },
+            });
+          }
+
+          appliedCount++;
+        }
       }
-    }
-  });
+    },
+    { timeout: 120000, maxWait: 20000 },
+  );
 
   console.log(
     `[Guidance Seed] Successfully applied ${appliedCount} new articles into "${actualDb}".`,

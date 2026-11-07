@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { after, before, test } from 'node:test';
 import express from 'express';
 import { app, createApp } from '../dist/app.js';
-import { readPort } from '../dist/config/env.js';
+import { readHost, readPort } from '../dist/config/env.js';
 import {
   DatabaseNotConfiguredError,
   InvalidDatabaseConfigurationError,
@@ -331,4 +331,22 @@ test('PORT chỉ chấp nhận số nguyên trong khoảng hợp lệ', () => {
   for (const value of ['', '0', '-1', '65536', '3001x', '3.5', 'NaN']) {
     assert.throws(() => readPort(value), /PORT/);
   }
+});
+
+test('readHost trả về 0.0.0.0 trên Railway và Render và 127.0.0.1 khi chạy local', () => {
+  assert.equal(readHost({}), '127.0.0.1');
+  assert.equal(readHost({ RENDER: 'true' }), '0.0.0.0');
+  assert.equal(readHost({ RAILWAY_ENVIRONMENT: 'production' }), '0.0.0.0');
+  assert.equal(readHost({ RAILWAY_PROJECT_ID: 'project-uuid' }), '0.0.0.0');
+  assert.equal(readHost({ RAILWAY_SERVICE_ID: 'service-uuid' }), '0.0.0.0');
+  assert.equal(
+    readHost({ RAILWAY_STATIC_URL: 'unihub.up.railway.app' }),
+    '0.0.0.0',
+  );
+  assert.equal(
+    readHost({ RAILWAY_PUBLIC_DOMAIN: 'unihub.up.railway.app' }),
+    '0.0.0.0',
+  );
+  assert.equal(readHost({ HOST: '0.0.0.0' }), '0.0.0.0');
+  assert.equal(readHost({ HOST: '127.0.0.1' }), '127.0.0.1');
 });

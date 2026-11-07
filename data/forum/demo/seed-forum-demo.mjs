@@ -293,7 +293,10 @@ export async function runForumDemoSeed({
 
   const summary =
     typeof prisma.$transaction === 'function'
-      ? await prisma.$transaction(runWrites)
+      ? await prisma.$transaction(runWrites, {
+          timeout: 120000,
+          maxWait: 20000,
+        })
       : await runWrites(prisma);
 
   console.log(`[seed-forum-demo] Applied changes:`);
