@@ -7,7 +7,7 @@
 
 Hợp đồng, trường trả về, deadline, query và mã lỗi được ghi trong [opportunities-api-contract.md](../../../../docs/opportunities-api-contract.md). API đọc tự kiểm tra `majorId` qua bảng `categories`; endpoint Major thuộc module TV3 `backend/src/modules/categories` và có trên `main` sau PR #13. Module không gọi endpoint categories để xác thực filter và không tạo Prisma Client/pool mới theo request; nó dùng client dùng chung trong `backend/src/lib/prisma.ts`. Luồng Hub, Major, Express và MySQL thử nghiệm đã được kiểm tra end-to-end; xem [báo cáo tích hợp](../../../../docs/opportunities-integration-test.md).
 
-Admin tạo/duyệt/từ chối, xác thực, Skill API, gợi ý và giao diện chưa triển khai. Database development cần có các migration hiện hành; nếu chưa có cơ hội Approved thuộc ba loại được công khai, danh sách rỗng HTTP 200 là kết quả đúng. Không cần sửa dữ liệu thật để demo.
+Các chức năng thẩm định duyệt/từ chối của Admin được triển khai độc lập trong module `admin-opportunities`, gợi ý cơ hội cá nhân hóa trong module `recommendations`, và giao diện người dùng tương ứng tại `frontend/src/features/opportunities`. Database development cần có các migration hiện hành; nếu chưa có cơ hội Approved thuộc ba loại được công khai, danh sách rỗng HTTP 200 là kết quả đúng. Không cần sửa dữ liệu thật để demo.
 
 Để chạy trên Windows PowerShell tại gốc repository, cần cấu hình `backend/.env` bằng database phát triển riêng đã áp dụng migrations, sau đó chạy:
 

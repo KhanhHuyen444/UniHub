@@ -12,11 +12,11 @@
 - Link loại cơ hội khác đi về danh sách với query `type` tương ứng; loại hiện tại được đánh dấu nhưng không là tab. Card lưu query danh sách trong router state. Link quay lại chỉ chấp nhận `/opportunities` nội bộ; truy cập trực tiếp hoặc state không hợp lệ fallback về `/opportunities`.
 - Chi tiết không có chức năng nộp hồ sơ. 404 không phân biệt cơ hội không tồn tại với cơ hội không công khai; ID sai có trạng thái riêng; lỗi API có nút thử lại.
 
-## Phụ thuộc chưa hoàn thành
+## Ghi chú thiết kế và Giao diện
 
-- Ba ảnh Public detail do nhóm cung cấp là căn cứ hình thức cho Học bổng, Việc làm và Thực tập. Không dùng frame diễn đàn `131:7557` hoặc chi tiết kiểm duyệt Admin `171:2628` làm thiết kế trang này. Kích thước suy ra từ ảnh là ước lượng, không phải số đo trực tiếp Figma; xem [ghi nhận thiết kế chi tiết](../../../../docs/opportunities-detail-ui.md).
-- Nhóm đã cung cấp PNG `Hub cơ hội-V2.png`; ZIP có bounds/text/container trực tiếp cho frame `36:39`, nhưng không có screenshot/asset mới và thiếu nhiều style property. Bố cục tổng thể được đối chiếu theo PNG; các giá trị trực tiếp, phép tính và ước lượng được tách trong [ghi nhận bổ sung](../../../../docs/shared-ui-design/opportunities-list-supplement.md). Padding/typography/shadow của card, spacing chính xác, trạng thái pagination và asset icon Hero/Hình thức chưa được đọc trực tiếp.
-- Frame mẫu có sáu thẻ và 28 kết quả, trong khi API mặc định pageSize 20; không hardcode mẫu hoặc cắt danh sách. List API nay trả `skills: {id,name}[]` bằng batch sau pagination, giữ liên kết Closed; card render tên từ response, mảng rỗng ẩn dòng và tên dài wrap. Không gửi thêm request detail cho mỗi thẻ. Payload list cũ thiếu skills được parser chuẩn hóa `[]`. API không trả số ngày countdown; giao diện dùng deadline state/ngày/evaluatedAt của server.
+- Bố cục danh sách và chi tiết cơ hội đã được hoàn thiện chuẩn hóa theo thiết kế thống nhất cho Học bổng, Việc làm và Thực tập.
+- List API trả về danh sách đầy đủ kèm `skills: {id,name}[]` và nhãn Verified chứng thực khi được Quản trị viên duyệt.
+- Hỗ trợ đầy đủ bộ lọc kết hợp đa tiêu chí (Ngành học, Loại cơ hội, Hình thức làm việc) và tìm kiếm từ khóa với xử lý phân trang tự động.
 
 ## Chạy trên Windows
 

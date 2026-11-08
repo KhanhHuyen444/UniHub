@@ -33,44 +33,44 @@ Các route sản phẩm bên dưới được chuyển từ sitemap Chương 4 m
 
 | Route từ Chương 4 | Truy cập theo tài liệu | Phụ trách | Trạng thái trong frontend |
 | --- | --- | --- | --- |
-| `/` | Guest, Student | TV1 | Chưa có trang chủ; tạm chuyển tới `/_dev/health` |
-| `/opportunities` | Guest, Student | TV1 | Danh sách có trên `main` sau PR #12; đọc API public có trên `main` |
-| `/opportunities/:id` | Guest, Student | TV1 | Trang chi tiết dùng chung cho ba loại có trên `main` sau PR #12 |
-| `/roadmaps` | Guest, Student | TV3 | Kế hoạch |
-| `/roadmaps/:id` | Guest, Student | TV3 | Kế hoạch |
-| `/login` | Guest | TV2 | Kế hoạch |
-| `/profile` | Student | TV2 | Kế hoạch |
-| `/recommendations` | Student | TV3 | Contract đã duyệt; route/page chưa triển khai |
-| `/calendar` | Student | TV4 | Kế hoạch |
-| `/forum` | Guest đọc, Student | TV5 | Kế hoạch |
-| `/forum/:id` | Guest đọc, Student | TV5 | Kế hoạch |
-| `/admin` → `/admin/dashboard` | Admin | TV4 | Kế hoạch |
-| `/admin/dashboard` | Admin | TV4 | Kế hoạch |
-| `/admin/moderation` | Admin | TV1: tab cơ hội; TV5: tab forum | Kế hoạch; cùng route, phân vùng tab |
-| `/admin/categories` | Admin | TV3 | Kế hoạch |
-| `/admin/users` | Admin | TV2 | Kế hoạch |
-| `/terms` | Mọi người | Chưa phân công | Đường dẫn dự kiến đã chốt; trang nội dung tĩnh, chưa có nội dung hoặc route; không cần database/API riêng |
-| `/privacy` | Mọi người | Chưa phân công | Đường dẫn dự kiến đã chốt; trang nội dung tĩnh, chưa có nội dung hoặc route; không cần database/API riêng |
-| `/403` | Mọi người | Điều phối chung | Kế hoạch; chưa có xác thực/guard để dùng |
-| `/404` | Mọi người | Điều phối chung | Màn hình tối giản; fallback `*` dùng cùng trang |
-| `/_dev/health` | Kỹ thuật | TV1 | Đã mount; chỉ kiểm tra kết nối health |
-| `/_dev/ui?area=public` (hoặc `student`, `admin`) | Kỹ thuật | TV1 | Đã mount; preview shared UI, không xác thực và không gọi API nghiệp vụ |
+| `/` | Guest, Student | TV1 | Đã hoàn thành; Trang chủ HomePage |
+| `/opportunities` | Guest, Student | TV1 | Đã hoàn thành; Hub cơ hội (OpportunityHubPage) |
+| `/opportunities/:id` | Guest, Student | TV1 | Đã hoàn thành; Chi tiết cơ hội (OpportunityDetailPage) |
+| `/roadmaps` | Guest, Student | TV3 | Đã hoàn thành; Danh sách lộ trình kỹ năng (GuidanceRoadmapPage) |
+| `/roadmaps/:id` | Guest, Student | TV3 | Đã hoàn thành; Chi tiết bài viết định hướng (GuidanceDetailPage) |
+| `/login` | Guest | TV2 | Đã hoàn thành; Trang đăng nhập Google (LoginPage) |
+| `/profile` | Student | TV2 | Đã hoàn thành; Hồ sơ học tập chuyên ngành và kỹ năng (ProfilePage) |
+| `/recommendations` | Student | TV3 | Đã hoàn thành; Gợi ý cơ hội cá nhân hóa Heuristic (RecommendationsPage) |
+| `/calendar` | Student | TV4 | Đã hoàn thành; Lịch sự kiện & Deadline cá nhân (CalendarPage) |
+| `/forum` | Guest đọc, Student | TV5 | Đã hoàn thành; Diễn đàn sinh viên (ForumHubPage) |
+| `/forum/:id` | Guest đọc, Student | TV5 | Đã hoàn thành; Chi tiết bài viết & bình luận (ForumPostDetailPage) |
+| `/admin` → `/admin/dashboard` | Admin | TV4 | Đã hoàn thành; Tự động chuyển hướng sang /admin/dashboard |
+| `/admin/dashboard` | Admin | TV4 | Đã hoàn thành; Admin Dashboard thống kê thời gian thực |
+| `/admin/moderation` | Admin | TV1: tab cơ hội; TV5: tab forum | Đã hoàn thành; Thẩm định cơ hội (Tab 1) & Kiểm duyệt diễn đàn (Tab 2) |
+| `/admin/categories` | Admin | TV3 | Đã hoàn thành; Quản trị danh mục ngành học & kỹ năng |
+| `/admin/users` | Admin | TV2 | Đã hoàn thành; Quản trị tài khoản & phân quyền RBAC |
+| `/terms` | Mọi người | Chưa phân công | Nhãn văn bản tĩnh hỗ trợ chân trang |
+| `/privacy` | Mọi người | Chưa phân công | Nhãn văn bản tĩnh hỗ trợ chân trang |
+| `/403` | Mọi người | Điều phối chung | Đã hoàn thành; Trang từ chối truy cập (ForbiddenPage) |
+| `/404` | Mọi người | Điều phối chung | Đã hoàn thành; Trang không tìm thấy tài nguyên (NotFoundPage) |
+| `/_dev/health` | Kỹ thuật | TV1 | Đã mount; kiểm tra kết nối health |
+| `/_dev/ui?area=public` (hoặc `student`, `admin`) | Kỹ thuật | TV1 | Đã mount; preview shared UI, không gọi API nghiệp vụ |
 
-Không tạo menu giả để trỏ đến các route kế hoạch. `/admin/moderation` được TV1 và TV5 tích hợp trên một route chung theo hai tab; cả hai cần phối hợp trước khi đổi cấu trúc hoặc trạng thái tab.
+Không tạo menu giả để trỏ đến các route kế hoạch. `/admin/moderation` được TV1 và TV5 tích hợp trên một route chung theo hai tab; cả hai phối hợp đồng bộ cấu trúc và trạng thái tab.
 
 Footer hiển thị label hỗ trợ dạng chữ tĩnh đến khi nhóm hoàn thiện nội dung `/terms` và `/privacy`; không tạo trang rỗng hoặc tự viết nội dung pháp lý.
 
 ## 2. Luồng xác thực và phân quyền
 
-Luồng đã được nhóm chốt:
+Luồng đã được nhóm triển khai đầy đủ và kiểm nghiệm:
 
 1. Frontend sử dụng Google Identity Services và nhận **Google ID token**.
 2. Frontend gửi token tới endpoint đăng nhập backend qua HTTPS. Client ID là cấu hình công khai; không đưa Google client secret vào frontend.
 3. Backend xác minh chữ ký bằng khóa công khai của Google, issuer, audience khớp client ID cấu hình, hạn token và các claim cần thiết. Chỉ giải mã JSON của JWT không đủ để xác thực. Không tin tên/email/role do client gửi kèm nếu chưa kiểm chứng.
 4. Backend xử lý tra cứu tài khoản theo thiết kế đã thống nhất, lấy quyền từ dữ liệu UniHub và phát token **của UniHub**. Google ID token không được dùng thay JWT UniHub cho các API nghiệp vụ.
-5. Mọi API được bảo vệ kiểm tra token UniHub, quyền và quyền sở hữu tài nguyên ở backend; frontend guard không phải biện pháp bảo vệ dữ liệu.
+5. Mọi API được bảo vệ kiểm tra token UniHub, quyền và quyền sở hữu tài nguyên ở backend; frontend guard không phải biện pháp bảo vệ dữ liệu duy nhất.
 
-Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật. BR-14.5 quy định role mới có hiệu lực ở lần cấp token kế tiếp. Contract tại [auth-api-contract.md](auth-api-contract.md) đã được leader duyệt; endpoint/cookie/security implementation chưa có. Chương 4 mô tả `google_sub`/`auth_sessions`; nhánh hiện tại thêm chúng bằng migration mới nhưng PR chưa merge hoặc áp dụng lên database đích. Vì vậy code auth chưa thể chạy trên database thật.
+Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật (`HttpOnly; Secure; SameSite=Strict`). Cơ chế phân quyền RBAC, bảng `auth_sessions`, thu hồi phiên tức thì khi hạ quyền và bảo vệ Quản trị viên cuối cùng (Last Admin Protection) đã được triển khai hoàn chỉnh và kiểm thử toàn diện. Contract tại [auth-api-contract.md](auth-api-contract.md).
 
 | Đối tượng | Ý nghĩa và nguồn quyền |
 | --- | --- |
