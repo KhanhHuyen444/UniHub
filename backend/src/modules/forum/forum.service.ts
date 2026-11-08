@@ -195,10 +195,11 @@ interface CommentRow {
 }
 
 function toPostDto(row: PostRow) {
+  const normalizedTopic = ALLOWED_TOPICS.has(row.topic) ? row.topic : 'Học tập';
   return {
     id: row.post_id,
     title: row.title,
-    topic: row.topic,
+    topic: normalizedTopic,
     content: row.content,
     author: {
       fullName: row.author.full_name,
@@ -245,7 +246,7 @@ export async function listPublicPosts(
 
   const where = {
     is_deleted: false,
-    ...(topic ? { topic } : {}),
+    ...(topic ? { topic } : { topic: { in: Array.from(ALLOWED_TOPICS) } }),
   } as const;
 
   const [total, rows] = await (client as PrismaClient).$transaction([

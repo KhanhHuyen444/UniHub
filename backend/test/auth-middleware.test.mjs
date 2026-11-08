@@ -50,6 +50,9 @@ function sessionRecord(overrides = {}) {
     user_id: identity.userId,
     expires_at: new Date(now.getTime() + 60_000),
     revoked_at: null,
+    user: {
+      role: identity.role,
+    },
     ...overrides,
   };
 }
@@ -207,7 +210,7 @@ test('thiếu/malformed token, thiếu/revoked/hết hạn/sai chủ session tr�
   }
 });
 
-test('Student bị chặn bởi quyền Admin; role lấy từ JWT, không query users.role', async () => {
+test('Student bị chặn bởi quyền Admin; role đồng bộ từ DB users.role thời gian thực', async () => {
   const token = await service.sign(identity);
   let query;
   const middleware = createRequireAuth({
@@ -236,15 +239,56 @@ test('Student bị chặn bởi quyền Admin; role lấy từ JWT, không query
       user_id: true,
       expires_at: true,
       revoked_at: true,
+      user: {
+        select: {
+          role: true,
+        },
+      },
     },
   });
 });
 
-test('Admin được requireRole(Admin) theo claim đã ký', async () => {
+test('TC-31: Token cũ mang role Admin nhưng DB đã hạ về Student bị chặn 403 tức thì trên Admin API', async () => {
+  // Token được phát hành khi user còn là Admin
+  const adminToken = await service.sign({ ...identity, role: 'Admin' });
+
+  // Tuy nhiên trong DB (session.user.role), user đã bị hạ xuống Student
+  const demotedSession = sessionRecord({
+    user: {
+      role: 'Student',
+    },
+  });
+
+  const middleware = createRequireAuth({
+    verifyToken: service.verify,
+    getPrismaClient: () => ({
+      authSession: {
+        findUnique: async () => demotedSession,
+      },
+    }),
+    now: () => now,
+  });
+
+  const response = await requestWithToken(
+    adminToken,
+    middleware,
+    createRequireRole('Admin'),
+  );
+  assert.equal(response.status, 403);
+  const body = await response.json();
+  assert.equal(body.error.code, 'FORBIDDEN');
+});
+
+test('Admin được requireRole(Admin) theo vai trò Admin trong DB', async () => {
   const token = await service.sign({ ...identity, role: 'Admin' });
+  const adminSession = sessionRecord({
+    user: {
+      role: 'Admin',
+    },
+  });
   const response = await requestWithToken(
     token,
-    authenticated(),
+    authenticated(adminSession),
     createRequireRole('Admin'),
   );
   assert.equal(response.status, 200);

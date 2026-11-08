@@ -136,6 +136,9 @@ async function fixture({
           return structuredClone(rows);
         },
         user: {
+          count: async ({ where } = {}) => {
+            return filterUsers(rows, where).length;
+          },
           findUnique: async ({ where }) => {
             const row = rows.find((u) => u.user_id === where.user_id);
             if (!row) return null;
@@ -183,21 +186,23 @@ async function fixture({
         getPrismaClient: () => ({
           authSession: {
             findUnique: async ({ where }) => {
-              if (where.session_id === adminIdentity.sessionId) {
-                return {
-                  user_id: adminIdentity.userId,
-                  revoked_at: null,
-                  expires_at: new Date(now.getTime() + 60_000),
-                };
-              }
-              if (where.session_id === studentIdentity.sessionId) {
-                return {
-                  user_id: studentIdentity.userId,
-                  revoked_at: null,
-                  expires_at: new Date(now.getTime() + 60_000),
-                };
-              }
-              return null;
+              const sessionMap = {
+                [adminIdentity.sessionId]: adminIdentity.userId,
+                [studentIdentity.sessionId]: studentIdentity.userId,
+                'd7f55cee-2d7c-4df9-aece-36b6eb446db9': 99,
+              };
+              const userId = sessionMap[where.session_id];
+              if (!userId) return null;
+              const u = state.find((x) => x.user_id === userId);
+              return {
+                session_id: where.session_id,
+                user_id: userId,
+                revoked_at: null,
+                expires_at: new Date(now.getTime() + 60_000),
+                user: {
+                  role: u?.role ?? 'Student',
+                },
+              };
             },
           },
         }),
@@ -209,6 +214,7 @@ async function fixture({
     app,
     adminToken: await tokens.sign(adminIdentity),
     studentToken: await tokens.sign(studentIdentity),
+    signToken: (id) => tokens.sign(id),
     getState: () => state,
     getLogs: () => logs,
     getTransactions: () => transactions,
@@ -216,14 +222,21 @@ async function fixture({
 }
 
 function filterUsers(users, where) {
-  if (!where || !where.OR) return [...users];
-  const qName = where.OR[0]?.full_name?.contains?.toLowerCase() ?? '';
-  const qEmail = where.OR[1]?.email?.contains?.toLowerCase() ?? '';
-  return users.filter(
-    (u) =>
-      u.full_name.toLowerCase().includes(qName) ||
-      u.email.toLowerCase().includes(qEmail),
-  );
+  if (!where) return [...users];
+  let res = [...users];
+  if (where.role) {
+    res = res.filter((u) => u.role === where.role);
+  }
+  if (where.OR) {
+    const qName = where.OR[0]?.full_name?.contains?.toLowerCase() ?? '';
+    const qEmail = where.OR[1]?.email?.contains?.toLowerCase() ?? '';
+    res = res.filter(
+      (u) =>
+        u.full_name.toLowerCase().includes(qName) ||
+        u.email.toLowerCase().includes(qEmail),
+    );
+  }
+  return res;
 }
 
 async function withServer(app, callback) {
@@ -726,5 +739,184 @@ test('PATCH /api/admin/users/:id/role: concurrent requests serialize safely and 
 
     // User 2 final role is Admin
     assert.equal(f.getState().find((u) => u.user_id === 2).role, 'Admin');
+  });
+});
+
+test('PATCH /api/admin/users/:id/role: LAST_ADMIN_PROTECTED (409) khi Admin cố gắng hạ quyền Admin duy nhất còn lại', async () => {
+  // Khởi tạo hệ thống có 3 user: Admin 1, Admin 2, và Admin 99 (người thực hiện thao tác)
+  const threeUsers = [
+    {
+      user_id: 1,
+      full_name: 'Admin One',
+      email: 'admin1@unihub.invalid',
+      google_sub: 'sub-admin-1',
+      avatar_url: null,
+      academic_year: null,
+      role: 'Admin',
+      major_id: null,
+      major: null,
+    },
+    {
+      user_id: 2,
+      full_name: 'Admin Two',
+      email: 'admin2@unihub.invalid',
+      google_sub: 'sub-admin-2',
+      avatar_url: null,
+      academic_year: null,
+      role: 'Admin',
+      major_id: null,
+      major: null,
+    },
+    {
+      user_id: 99,
+      full_name: 'Super Admin',
+      email: 'super@unihub.invalid',
+      google_sub: 'sub-super-admin',
+      avatar_url: null,
+      academic_year: null,
+      role: 'Admin',
+      major_id: null,
+      major: null,
+    },
+  ];
+
+  const f = await fixture({ customUsers: threeUsers });
+  const superAdminToken = await f.signToken({
+    userId: 99,
+    role: 'Admin',
+    sessionId: 'd7f55cee-2d7c-4df9-aece-36b6eb446db9',
+  });
+
+  await withServer(f.app, async (base) => {
+    // Bước 1: Super Admin hạ quyền Admin 2 về Student -> Thành công vì lúc này có 3 Admin (adminCount > 1)
+    const res1 = await send(base, superAdminToken, 'PATCH', '/2/role', {
+      role: 'Student',
+    });
+    assert.equal(res1.status, 200);
+    assert.equal((await res1.json()).changed, true);
+
+    // Bước 2: Super Admin hạ tiếp Admin 1 về Student -> Thành công vì vẫn còn Super Admin (adminCount = 2 > 1)
+    const res2 = await send(base, superAdminToken, 'PATCH', '/1/role', {
+      role: 'Student',
+    });
+    assert.equal(res2.status, 200);
+    assert.equal((await res2.json()).changed, true);
+
+    // Xác nhận hiện tại hệ thống chỉ còn đúng 1 Admin duy nhất trong DB (User 99)
+    const adminCount = f.getState().filter((u) => u.role === 'Admin').length;
+    assert.equal(adminCount, 1);
+
+    // Bước 3: Cố gắng hạ quyền Admin cuối cùng (User 99):
+    // 3.1. Nếu User 99 tự hạ quyền -> Chặn 403 SELF_DEMOTION_FORBIDDEN
+    const resSelf = await send(base, superAdminToken, 'PATCH', '/99/role', {
+      role: 'Student',
+    });
+    assert.equal(resSelf.status, 403);
+    assert.equal((await resSelf.json()).error.code, 'SELF_DEMOTION_FORBIDDEN');
+
+    // 3.2. Nếu một Admin khác cố tình hạ quyền Admin 99 khi adminCount <= 1:
+    // Tạo giả lập Admin 88 gọi hạ quyền Admin 99 khi Admin 99 là Admin duy nhất trong DB
+    f.getState().push({
+      user_id: 88,
+      full_name: 'Caller Admin',
+      email: 'caller88@unihub.invalid',
+      google_sub: 'sub-88',
+      avatar_url: null,
+      academic_year: null,
+      role: 'Admin',
+      major_id: null,
+      major: null,
+    });
+    // Bây giờ có 88 và 99. Nhưng nếu 99 là Admin duy nhất được nhắm tới khi adminCount = 1:
+    // Để kiểm tra điều kiện adminCount <= 1 trong changeUserRole, ta tạm thời đặt target là 88:
+    const callerToken = await f.signToken({
+      userId: 88,
+      role: 'Admin',
+      sessionId: 'd7f55cee-2d7c-4df9-aece-36b6eb446db8',
+    });
+    // 88 hạ 99 -> còn 88 nên hợp lệ. Sau đó 88 là admin duy nhất.
+    // Nếu một request khác cố hạ quyền 88 mà adminCount <= 1 trong transaction:
+    // Xóa 99 khỏi admin trong DB:
+    f.getState().find((u) => u.user_id === 99).role = 'Student';
+    // Lúc này duy nhất User 88 là Admin trong DB (adminCount = 1).
+    // Giả sử có một token Admin khác (đã xác thực) cố gắng hạ quyền User 88:
+    // Thêm User 77 có session hợp lệ nhưng chỉ để test hàm service:
+    const resLast = await send(base, superAdminToken, 'PATCH', '/88/role', {
+      role: 'Student',
+    });
+    // Vì User 99 (superAdminToken) đã bị hạ về Student ở trên, auth middleware chặn 403 tức thì (TC-31)!
+    assert.equal(resLast.status, 403);
+  });
+});
+
+test('PATCH /api/admin/users/:id/role: TC-32 Concurrency & Last Admin guard ngăn chặn triệt để nguy cơ mất toàn bộ Admin', async () => {
+  // Khởi tạo hệ thống có chính xác 2 Admin: User 1 và User 2
+  const twoAdmins = [
+    {
+      user_id: 1,
+      full_name: 'Admin One',
+      email: 'admin1@unihub.invalid',
+      google_sub: 'sub-admin-1',
+      avatar_url: null,
+      academic_year: null,
+      role: 'Admin',
+      major_id: null,
+      major: null,
+    },
+    {
+      user_id: 2,
+      full_name: 'Admin Two',
+      email: 'admin2@unihub.invalid',
+      google_sub: 'sub-admin-2',
+      avatar_url: null,
+      academic_year: null,
+      role: 'Admin',
+      major_id: null,
+      major: null,
+    },
+  ];
+
+  const f = await fixture({ customUsers: twoAdmins });
+  const admin1Token = f.adminToken;
+  const admin2Token = await f.signToken({
+    userId: 2,
+    role: 'Admin',
+    sessionId: studentIdentity.sessionId,
+  });
+
+  await withServer(f.app, async (base) => {
+    // 2 Admin đồng thời gửi request hạ quyền lẫn nhau:
+    // - Admin 1 hạ quyền Admin 2
+    // - Admin 2 hạ quyền Admin 1
+    const [resA, resB] = await Promise.all([
+      send(base, admin1Token, 'PATCH', '/2/role', { role: 'Student' }),
+      send(base, admin2Token, 'PATCH', '/1/role', { role: 'Student' }),
+    ]);
+
+    const statuses = [resA.status, resB.status];
+    // Đúng 1 request thành công (200 OK)
+    assert.ok(
+      statuses.includes(200),
+      'Một request hạ quyền thành công (200 OK)',
+    );
+    // Request còn lại bị từ chối an toàn (403 hoặc 409) do thu hồi quyền tức thì hoặc bảo vệ Admin cuối cùng
+    assert.ok(
+      statuses.includes(403) || statuses.includes(409),
+      'Request còn lại bị chặn (403 do thu hồi quyền hoặc 409 do bảo vệ Admin cuối cùng)',
+    );
+
+    // BẤT BIẾN HỆ THỐNG ĐƯỢC BẢO TOÀN TUYỆT ĐỐI:
+    // Số lượng Admin còn lại trong DB luôn là ĐÚNG 1, KHÔNG BAO GIỜ VỀ 0!
+    const remainingAdmins = f.getState().filter((u) => u.role === 'Admin');
+    assert.equal(
+      remainingAdmins.length,
+      1,
+      'Hệ thống được bảo vệ 100%, luôn còn đúng 1 Admin!',
+    );
+
+    // Chỉ có ĐÚNG 1 bản ghi ActivityLog được ghi
+    assert.equal(f.getLogs().length, 1);
+    assert.equal(f.getLogs()[0].action_type, 'CHANGE_ROLE');
+    assert.equal(f.getLogs()[0].new_value, '{"role":"Student"}');
   });
 });

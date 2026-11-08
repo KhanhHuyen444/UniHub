@@ -1,5 +1,7 @@
 # Danh mục chuẩn ban đầu dùng chung
 
+**Luồng bàn giao hiện hành:** [đủ bốn bộ catalog với lệnh riêng từng file](../../docs/demo-seed-workflow.md#3-catalog--làm-đủ-bốn-file-theo-thứ-tự). Importer không có guard schema; xác minh đúng đích trước cả dry-run. Bộ 30 danh mục dưới đây chưa đủ cho Guidance/Forum và 100 cơ hội.
+
 > **Cài mới 06/11/2026:** Phần dưới mô tả bộ cơ bản 11 Major + 19 Skill và kiểm thử lịch sử. Bản demo đầy đủ cần catalog 117 Major + 328 Skill từ snapshot hiện có; thứ tự dry-run/apply tại [hướng dẫn local](../../docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt). Không suy ra dữ liệu MySQL từ JSON.
 
 Bộ **11 Major + 19 Skill** được xuất từ `initial_catalog_proposal.categories` của batch v2 đã được leader duyệt trên `data/opportunities-initial`. File [initial-categories.json](initial-categories.json) chỉ chứa `type`, `name`; không chứa ID local, tài khoản, email, token, dữ liệu TEST-ADMIN hoặc cơ hội. Tên đã duyệt giữ nguyên: Quản trị nhân lực; không tạo Major rộng Quản trị/Kinh doanh; dùng ứng dụng riêng thay vì cộng thêm Office/Workspace cho cùng yêu cầu. File này không thay thế quy tắc liên kết kỹ năng bắt buộc/ưu tiên của từng tin.

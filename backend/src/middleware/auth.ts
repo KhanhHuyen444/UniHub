@@ -74,6 +74,11 @@ export function createRequireAuth({
           user_id: true,
           expires_at: true,
           revoked_at: true,
+          user: {
+            select: {
+              role: true,
+            },
+          },
         },
       });
 
@@ -87,7 +92,13 @@ export function createRequireAuth({
         return;
       }
 
-      request.authUser = identity;
+      const effectiveRole =
+        (session.user?.role as 'Student' | 'Admin') ?? identity.role;
+
+      request.authUser = {
+        ...identity,
+        role: effectiveRole,
+      };
       next();
     } catch (error) {
       next(asPublicApiError(error));

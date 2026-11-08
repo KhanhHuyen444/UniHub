@@ -1,5 +1,7 @@
 # Prisma runtime và kết nối MySQL
 
+**Cài mới hiện hành:** [biến môi trường, cổng và tiến trình](fresh-install-operations.md), [Google/Admin](fresh-install-operations.md#3-google-sign-in-và-admin-đầu-tiên), [checklist nghiệm thu](fresh-install-acceptance.md). npm dev/start nạp `backend/.env`, không tự nạp `.env.demo`; health/ready phải gọi đúng cổng server in ra. Readiness `SELECT 1` không xác nhận migrations/tables/quyền nghiệp vụ.
+
 > **Đối chiếu bản bàn giao 06/11/2026:** Cài mới theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md), dùng schema `unihub_demo`. Các mốc scaffold, trạng thái PR/triển khai và kiểm thử cũ bên dưới được giữ làm lịch sử; không dùng để kết luận trạng thái main hiện tại. Ví dụ `unihub_dev` không thuộc quy trình cài mới; không chạy SQL lịch sử trên database cũ. Source hiện tại là căn cứ xác định chức năng; các kết quả kiểm thử cũ không thay thế lần kiểm tra mới.
 
 Tài liệu này mô tả Prisma runtime của backend, cấu hình MySQL cục bộ trên Windows và kết quả kiểm tra. Initial migration đã được merge vào `main` qua PR #4; nhánh runtime dùng migration đã có, không tạo lại hoặc sửa migration đó. Mọi lần chạy MySQL trong Codex dùng container thử nghiệm tạm và credentials ngẫu nhiên; database của thành viên không được truy cập.
@@ -41,7 +43,7 @@ if (-not (Test-Path .\backend\.env)) { Copy-Item .\backend\.env.example .\backen
 notepad .\backend\.env
 ```
 
-Trong `backend/.env`, cập nhật `DATABASE_URL` bằng host, port, schema và tài khoản **runtime** `unihub_app` đã được cấp quyền theo [mẫu GRANT](database-migrations.md#tai-khoan-va-quyen). Không dùng tài khoản migration hoặc root cho tiến trình backend. `.env` thật đã bị Git ignore; không gửi file hoặc mật khẩu vào chat. Ví dụ dạng URL:
+Trong `backend/.env`, cập nhật `DATABASE_URL` bằng host, port, schema và tài khoản **runtime** `unihub_app` đã được cấp quyền theo [mẫu GRANT](database-migrations.md#tài-khoản-và-quyền). Không dùng tài khoản migration hoặc root cho tiến trình backend. `.env` thật đã bị Git ignore; không gửi file hoặc mật khẩu vào chat. Ví dụ dạng URL:
 
 ```text
 mysql://unihub_app:<encoded-password>@localhost:3306/unihub_dev
@@ -70,7 +72,7 @@ Invoke-RestMethod http://127.0.0.1:3001/api/ready
 
 Health phải trả HTTP 200 dù MySQL chưa cấu hình. Readiness trả HTTP 200 khi `SELECT 1` đạt; trả HTTP 503 khi thiếu/sai URL hoặc database chưa sẵn sàng. Nếu lệnh PowerShell báo exception cho 503, đó là kết quả kiểm tra không sẵn sàng chứ không phải health server bị dừng. Đọc thông báo, kiểm tra host/port, quyền runtime và database; không in URL hoặc mật khẩu khi chia sẻ log. Nhấn `Ctrl+C` để dừng backend; server ngừng nhận request, chờ tối đa 10 giây để đóng HTTP connection rồi ngắt Prisma pool.
 
-Để tạo/cấp runtime user, quản trị viên MySQL thực hiện các lệnh mẫu đã ghi trong [database-migrations.md](database-migrations.md#tai-khoan-va-quyen). Mẫu cấp `DELETE` trên `notifications` nhưng không cấp `DELETE` trên `users`, `activity_logs` hoặc database-wide. `activity_logs` chỉ có `SELECT, INSERT`. Không có lệnh nào trong tài liệu này đã chạy trên MySQL của nhóm.
+Để tạo/cấp runtime user, quản trị viên MySQL thực hiện các lệnh mẫu đã ghi trong [database-migrations.md](database-migrations.md#tài-khoản-và-quyền). Mẫu cấp `DELETE` trên `notifications` nhưng không cấp `DELETE` trên `users`, `activity_logs` hoặc database-wide. `activity_logs` chỉ có `SELECT, INSERT`. Không có lệnh nào trong tài liệu này đã chạy trên MySQL của nhóm.
 
 ## Kết quả kiểm thử
 

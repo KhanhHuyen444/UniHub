@@ -123,6 +123,8 @@ function topicBadgeVariant(topic: ForumTopic): 'info' | 'success' | 'warning' {
       return 'success';
     case 'Kinh nghiệm phỏng vấn':
       return 'warning';
+    default:
+      return 'info';
   }
 }
 
