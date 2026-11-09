@@ -61,7 +61,7 @@ Hệ thống đã được đóng gói và triển khai trực tuyến trên h�
 >
 > - Website demo trực tuyến sử dụng cụm dịch vụ đám mây (Vercel + Render + CSDL Aiven MySQL 8.4) với bộ dữ liệu demo đầy đủ phục vụ thẩm định trực quan.
 > - Bản bàn giao mã nguồn này hướng dẫn thiết lập **môi trường cục bộ hoàn toàn độc lập** trên máy tính của người chấm thi với cơ sở dữ liệu `unihub_demo`.
-> - **Nguyên tắc bảo mật:** Tài liệu này tuyệt đối không công khai thông tin tài khoản Admin, mật khẩu, JWT secrets, session token hoặc chuỗi kết nối CSDL production.
+> - **Nguyên tắc bảo mật:** Tài liệu này không công khai thông tin tài khoản Admin, mật khẩu, JWT secrets, session token hoặc chuỗi kết nối CSDL production.
 
 ---
 
@@ -137,10 +137,10 @@ flowchart TD
 
 ### Nguyên lý vận hành các tầng:
 
-1. **Frontend Layer (React 19 SPA):** Đảm nhiệm việc kết xuất giao diện, bắt các sự kiện người dùng và bảo vệ route client-side thông qua `<RequireRole>`. Access Token được lưu trữ bảo mật trong bộ nhớ RAM (`auth-state.ts`), không bao giờ lưu trữ ở `localStorage` để triệt tiêu nguy cơ tấn công XSS đánh cắp token.
+1. **Frontend Layer (React 19 SPA):** Đảm nhiệm việc kết xuất giao diện, bắt các sự kiện người dùng và bảo vệ route client-side thông qua `<RequireRole>`. Access Token được lưu trữ trong bộ nhớ RAM (`auth-state.ts`), không lưu trữ ở `localStorage` nhằm phòng ngừa nguy cơ tấn công XSS đánh cắp token.
 2. **Reverse Proxy & Routing:** Giúp đồng nhất origin giữa client và server. Môi trường local sử dụng proxy tích hợp của Vite; môi trường Cloud sử dụng cơ chế rewrite của Vercel nhằm đảm bảo cookie Refresh Token được trao đổi an toàn dưới dạng cùng nguồn gốc (same-origin).
 3. **Backend Layer (Express 5):** Thực thi toàn bộ quy tắc nghiệp vụ. Mọi request cần xác thực đều trải qua Middleware kiểm tra tính hợp lệ của chữ ký số JWT và đối chiếu phiên thực tế trong bảng `auth_sessions` (ngăn chặn tình trạng token cũ bị lạm dụng sau khi bị hạ quyền Admin).
-4. **Data Layer (Prisma ORM & MySQL 8.4):** Áp dụng mô hình CSDL chuẩn hóa 13 bảng quan hệ. Các tác vụ nhạy cảm (như hạ quyền Admin, cập nhật vai trò, xử lý kiểm duyệt) được bọc trong Prisma Transaction với cơ chế khóa dòng (`SELECT ... FOR UPDATE`) để ngăn ngừa triệt để lỗi tương tranh (Race Condition) và bảo vệ an toàn cho Admin cuối cùng.
+4. **Data Layer (Prisma ORM & MySQL 8.4):** Áp dụng mô hình CSDL chuẩn hóa 13 bảng quan hệ. Các tác vụ nhạy cảm (như hạ quyền Admin, cập nhật vai trò, xử lý kiểm duyệt) được bọc trong Prisma Transaction với cơ chế khóa dòng (`SELECT ... FOR UPDATE`) để hạn chế rủi ro tương tranh (Race Condition) và bảo vệ an toàn cho Admin cuối cùng.
 
 ---
 
@@ -325,7 +325,7 @@ npm.cmd run prisma:generate
 ```
 
 > [!IMPORTANT]
-> Lệnh `db:migrate:deploy` sẽ tạo đầy đủ 13 bảng nghiệp vụ và bảng `_prisma_migrations`. **Tuyệt đối không sử dụng `prisma migrate reset` hoặc lệnh `DROP DATABASE`** để tránh phá vỡ tính toàn vẹn của hệ thống.
+> Lệnh `db:migrate:deploy` sẽ tạo đầy đủ 13 bảng nghiệp vụ và bảng `_prisma_migrations`. **Khuyến nghị không sử dụng `prisma migrate reset` hoặc lệnh `DROP DATABASE`** để tránh làm gián đoạn hoặc mất mát dữ liệu đang kiểm thử.
 
 ### Bước 7 — Cấp quyền thao tác bảng chi tiết cho `unihub_demo_app`
 
@@ -514,7 +514,7 @@ git diff --check
    - Các bài test SKIP là các bài kiểm thử phụ thuộc vào trình duyệt Chromium thực tế hoặc CSDL MySQL ngoài môi trường sandbox cục bộ.
 2. **Bộ 28 Test Case Nghiệm thu Chức năng Đồ án (Functional Acceptance Testing):**
    - Bộ 28 kịch bản kiểm thử nghiệm thu chức năng chính thức (5 Guest, 12 Student, 10 Admin, 1 Ngoại lệ & Bảo mật) đối chiếu từ bảng tổng hợp kết quả nghiệm thu của nhóm.
-   - Ghi nhận đầy đủ **28/28 PASS (100%)** kèm ảnh chụp minh chứng từng bước được lưu trữ tại [docs/testing/functional/functional-test-report.md](docs/testing/functional/functional-test-report.md).
+   - Ghi nhận đầy đủ **28/28 PASS** kèm ảnh chụp minh chứng đối chiếu theo tài liệu nghiệm thu được lưu trữ tại [docs/testing/functional/functional-test-report.md](docs/testing/functional/functional-test-report.md).
    - Các kịch bản kiểm thử nâng cao về bảo vệ Admin cuối cùng (Last Admin Protection), chống tấn công tương tranh (Race Condition) và thu hồi quyền tức thì được phân loại thuộc bộ regression/integration automated tests bổ sung trong source code.
 
 ---
