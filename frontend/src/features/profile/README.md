@@ -11,6 +11,6 @@
 
 Phần dùng chung cần Huyền/Quyên review: app/router, API client PUT/fieldErrors, tích hợp Recommendations và test harness. Không sửa schema/migration, dữ liệu, quyền hoặc Activity Log.
 
-Kết quả và giới hạn của lần sửa review: [biên bản PR #36](../../../../docs/pr36-review-fix.md). Unit/fetch doubles/SSR không thay thế browser E2E hoặc MySQL thật.
+Đặc tả chi tiết và quy chuẩn dữ liệu hồ sơ sinh viên: [profile-api-contract.md](../../../../docs/profile-api-contract.md).
 
 Sau Google Login hoặc khôi phục phiên tại `/login`, chỉ Student được kiểm tra completeness qua GET Profile dùng protectedApiRequest. Thiếu hồ sơ → `/profile`; đầy đủ → Trang chủ `/` hoặc safe returnTo đã yêu cầu. Lỗi GET không được coi là đầy đủ: hiển thị lỗi/retry. Không thêm completeness guard toàn cục, nên “Để sau” vẫn cho dùng chức năng công khai. Admin giữ routing riêng và không gọi API Profile.

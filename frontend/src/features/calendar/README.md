@@ -18,7 +18,7 @@ discard old data/dialogs. Normal token refresh for the same Student retains form
 
 ## Design decisions
 
-All five supplied PNGs in `docs/shared-ui-design/calendar-references/` were read.
+Desktop calendar design specifications and layout references were aligned.
 The shared shell and assets are reused without modification. Column ratio, cell
 height, spacing, create/delete dialog widths, decorative glyphs and the fallback
 stacking breakpoint are estimates from screenshots, not Figma measurements.

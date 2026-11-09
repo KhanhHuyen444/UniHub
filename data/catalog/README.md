@@ -72,4 +72,4 @@ node backend/test/run-opportunities-import-mysql.mjs --run-isolated
 
 Runner cần MySQL 8.4 Windows binaries (mặc định `C:\Program Files\MySQL\MySQL Server 8.4\bin`; có thể đặt `IMPORTER_MYSQL_BIN` tới thư mục binary). Runner tạo tiến trình MySQL và 5 schema mới tại thư mục tạm, xác minh port/datadir/UUID/version, áp dụng migration hiện có và dừng tiến trình của nó khi xong. Không dùng DB cá nhân/nhóm, không GRANT/REVOKE. Credential test ngẫu nhiên chỉ ở memory/child environment, không in. Báo cáo JSON nằm trong datadir tạm, không đưa vào Git. Test thường thiếu cấu hình cô lập sẽ skip suite MySQL, không được tính là đã chạy SQL.
 
-Kết quả kiểm thử thực tế và giới hạn: [catalog-import-validation.md](../../docs/catalog-import-validation.md).
+Quy trình kiểm thử và kịch bản thực tế được tổ chức tại `backend/test/catalog-import.test.mjs`.

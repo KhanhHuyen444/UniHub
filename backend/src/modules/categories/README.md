@@ -24,9 +24,8 @@ Implementation:
   shape, safe errors and an opt-in MySQL integration case.
 
 The TV1 Hub consumer sends `type=Major` and parses `{ items: [...] }` with
-`id`, `name` and `type`. The Public Hub consumer and endpoint were exercised
-together with Express and a temporary MySQL 8.4 database; see the
-[integration report](../../../../docs/opportunities-integration-test.md).
+`id`, `name` and `type`. The Public Hub consumer and endpoint are verified
+end-to-end; see [categories-api-contract.md](../../../../docs/categories-api-contract.md).
 
 ## Windows PowerShell
 

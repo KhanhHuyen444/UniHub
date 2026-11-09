@@ -4,7 +4,7 @@
 
 - Route `/opportunities` dùng `PublicLayout`, các primitive dùng chung và API client `frontend/src/lib/api.ts`.
 - Danh sách đọc `GET /api/opportunities`; query đang áp dụng nằm trong URL để tải lại trang và dùng Back/Forward. Gửi tìm kiếm mới sẽ đặt `page=1`; thao tác bấm Tìm kiếm khi chưa có từ khóa/bộ lọc chỉ hiện lời nhắc và không gửi request.
-- `GET /api/categories?type=Major` đã được duyệt và có trên `main` sau PR #13. Consumer gửi đúng path/query, parse đúng shape; kiểm thử tích hợp đã xác nhận chỉ Major Active xuất hiện. Danh sách rỗng thành công và lỗi tải có trạng thái UI riêng, không có Major giả. Nếu API cơ hội trả `INVALID_FILTER` cho `majorId`, giao diện giữ query và cho người dùng xóa bộ lọc. Xem [báo cáo tích hợp](../../../../docs/opportunities-integration-test.md).
+- `GET /api/categories?type=Major` thuộc provider danh mục dùng chung. Consumer gửi đúng path/query, parse đúng shape; kiểm thử tích hợp đã xác nhận chỉ Major Active xuất hiện. Danh sách rỗng thành công và lỗi tải có trạng thái UI riêng, không có Major giả. Nếu API cơ hội trả `INVALID_FILTER` cho `majorId`, giao diện giữ query và cho người dùng xóa bộ lọc. Xem [opportunities-api-contract.md](../../../../docs/opportunities-api-contract.md).
 - Response được kiểm tra shape tại feature. Loading, lỗi/retry, feed rỗng, không có kết quả, trang ngoài phạm vi, `INVALID_QUERY` và `INVALID_FILTER` có trạng thái riêng. Bộ lọc Major chỉ bị xóa sau thao tác rõ ràng của người dùng.
 - Thẻ hiển thị loại, tiêu đề, publisher, hình thức, deadline và Verified nếu API có giá trị. Không render location/skills trong danh sách hiện tại: ảnh Public không có hàng location, còn API summary chưa trả skills. Deadline lấy ngày/trạng thái từ backend; legacy `unknown` không hiện ngày hoặc nhãn, và UI không tự tính số ngày còn lại.
 - Route `/opportunities/:id` đọc `GET /api/opportunities/:id` qua API client/parser hiện có. Một page dùng chung cho Thực tập, Việc làm và Học bổng; tiêu đề và thứ tự mục theo BR-01.8 Chương 3. Text được render an toàn như văn bản thường.
@@ -50,4 +50,4 @@ Các lời gọi danh sách và danh mục dùng API thật qua proxy. `frontend
 
 ## Kiểm tra
 
-Kết quả kiểm tra cập nhật mới nhất (typecheck, build, frontend/backend test, MySQL và trình duyệt) được ghi trong [báo cáo kiểm thử tích hợp](../../../../docs/opportunities-integration-test.md). Báo cáo tách rõ test tự động có mock khỏi các ca tích hợp dùng Express/MySQL thật.
+Kết quả kiểm thử tự động toàn diện được duy trì và thực thi tại gốc repository thông qua lệnh chuẩn: `npm test`.

@@ -117,7 +117,7 @@ WASM outside the checkout. After explicit generation, use
 only the blocked native-generation lifecycle while executing the requested
 checks. No TLS/checksum verification, schema, manifests or lockfiles are changed.
 
-Current review results and limitations: [PR #36 review](../../../../docs/pr36-review-fix.md).
+API specification, score formula and response contract: [recommendations-api-contract.md](../../../../docs/recommendations-api-contract.md).
 Fetch/SSR coverage is distinct from browser routing, real Google login, MySQL
 integration, production grants, NFR/performance, deployment and Figma verification.
 

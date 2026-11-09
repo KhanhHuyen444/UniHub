@@ -33,4 +33,4 @@ import {
 - **TV4:** dùng field/control cho event forms; các state reminder/notification phải gắn API feature thật, không dùng nút preview.
 - **TV5:** dùng cùng FormField/button/state cho forum/moderation; destructive action phải do feature xác nhận, shared component chỉ cung cấp biến thể `danger`.
 
-Khi gọi API, dùng `frontend/src/lib/api.ts`; component UI không được fetch, lưu JWT hoặc quyết định quyền. Route guard cũng không thay kiểm tra backend. Design source, asset trace và phần tạm/chưa xác nhận nằm trong [ghi nhận thiết kế](../../../docs/shared-ui-design/implementation.md); screenshot/evidence chỉ nằm trong `docs/shared-ui-design/`, không đưa vào public hoặc bundle.
+Khi gọi API, dùng `frontend/src/lib/api.ts`; component UI không được fetch, lưu JWT hoặc quyết định quyền. Route guard cũng không thay kiểm tra backend. Hệ thống Design Tokens và quy chuẩn giao diện được định nghĩa tập trung tại `frontend/src/styles/tokens.css` và `tailwind.config.js`.
