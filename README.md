@@ -204,7 +204,7 @@ UniHub/
 │   ├── LOCAL-SETUP-UNIHUB-DEMO.md # Hướng dẫn cài đặt CSDL MySQL cục bộ
 │   ├── demo-seed-workflow.md     # Quy trình nạp dữ liệu demo chuẩn
 │   ├── fresh-install-acceptance.md # Checklist nghiệm thu máy sạch
-│   └── testing/                  # Báo cáo kết quả kiểm thử và ảnh minh chứng 32 test case
+│   └── testing/                  # Báo cáo kết quả kiểm thử và ảnh minh chứng 28 test case nghiệm thu
 ├── package.json                  # Cấu hình npm workspaces gốc và scripts vận hành toàn dự án
 └── package-lock.json             # Khóa phiên bản dependency đồng bộ toàn bộ dự án
 ```
@@ -513,9 +513,9 @@ git diff --check
    - Bao gồm 273 tests phía Frontend (**214 PASS / 0 FAIL / 59 SKIP**) và 278 tests phía Backend (**255 PASS / 0 FAIL / 23 SKIP**).
    - Các bài test SKIP là các bài kiểm thử phụ thuộc vào trình duyệt Chromium thực tế hoặc CSDL MySQL ngoài môi trường sandbox cục bộ.
 2. **Bộ 28 Test Case Nghiệm thu Chức năng Đồ án (Functional Acceptance Testing):**
-   - Bộ 28 kịch bản kiểm thử toàn diện từ TC-01 đến TC-28 (được mở rộng thành bộ 32 test case bao quát cả các tình huống tấn công Race Condition và kiểm toán CSDL).
-   - Đã được nhóm tác giả thực thi kiểm nghiệm trực tiếp và ghi nhận **100% ĐẠT (PASS)**.
-   - Tài liệu chi tiết và toàn bộ ảnh chụp minh chứng từng bước được lưu trữ tại [docs/testing/functional/functional-test-report.md](docs/testing/functional/functional-test-report.md).
+   - Bộ 28 kịch bản kiểm thử nghiệm thu chức năng chính thức (5 Guest, 12 Student, 10 Admin, 1 Ngoại lệ & Bảo mật) đối chiếu từ bảng tổng hợp kết quả nghiệm thu của nhóm.
+   - Ghi nhận đầy đủ **28/28 PASS (100%)** kèm ảnh chụp minh chứng từng bước được lưu trữ tại [docs/testing/functional/functional-test-report.md](docs/testing/functional/functional-test-report.md).
+   - Các kịch bản kiểm thử nâng cao về bảo vệ Admin cuối cùng (Last Admin Protection), chống tấn công tương tranh (Race Condition) và thu hồi quyền tức thì được phân loại thuộc bộ regression/integration automated tests bổ sung trong source code.
 
 ---
 
