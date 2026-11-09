@@ -510,11 +510,11 @@ git diff --check
 
 1. **Automated Test Suite trong mã nguồn (`npm test`):**
    - Chạy thông qua trình test runner chuẩn của Node.js (`node --test`).
-   - Bao gồm 273 tests phía Frontend (**214 PASS / 0 FAIL / 59 SKIP**) và 278 tests phía Backend (**255 PASS / 0 FAIL / 23 SKIP**).
+   - Bao gồm 273 tests phía Frontend (**214 PASS / 0 FAIL / 59 SKIP**) và 282 tests phía Backend (**259 PASS / 0 FAIL / 23 SKIP**).
    - Các bài test SKIP là các bài kiểm thử phụ thuộc vào trình duyệt Chromium thực tế hoặc CSDL MySQL ngoài môi trường sandbox cục bộ.
 2. **Bộ 28 Test Case Nghiệm thu Chức năng Đồ án (Functional Acceptance Testing):**
-   - Bộ 28 kịch bản kiểm thử nghiệm thu chức năng chính thức (5 Guest, 12 Student, 10 Admin, 1 Ngoại lệ & Bảo mật) đối chiếu từ bảng tổng hợp kết quả nghiệm thu của nhóm.
-   - Ghi nhận đầy đủ **28/28 PASS** kèm ảnh chụp minh chứng đối chiếu theo tài liệu nghiệm thu được lưu trữ tại [docs/testing/functional/functional-test-report.md](docs/testing/functional/functional-test-report.md).
+   - Bộ 28 kịch bản kiểm thử nghiệm thu chức năng chính thức (5 Guest, 12 Student, 10 Admin, 1 Ngoại lệ & Bảo mật) đối chiếu từ bảng tổng hợp kết quả nghiệm thu của nhóm trên Google Sheets.
+   - Ghi nhận đầy đủ **28/28 PASS** đối chiếu theo bộ kịch bản kiểm thử nghiệm thu chính thức của đề tài (ảnh chụp minh chứng và bảng chi tiết được quản lý riêng theo hồ sơ nghiệm thu đồ án).
    - Các kịch bản kiểm thử nâng cao về bảo vệ Admin cuối cùng (Last Admin Protection), chống tấn công tương tranh (Race Condition) và thu hồi quyền tức thì được phân loại thuộc bộ regression/integration automated tests bổ sung trong source code.
 
 ---
@@ -575,4 +575,3 @@ Hệ thống tài liệu kỹ thuật chi tiết của dự án UniHub được 
 4. **Nghiệm thu & Kiểm thử chất lượng:**
    - [docs/fresh-install-acceptance.md](docs/fresh-install-acceptance.md) – Bảng kiểm tra nghiệm thu hệ thống trên máy sạch.
    - [docs/fresh-install-review.md](docs/fresh-install-review.md) – Báo cáo rà soát và đánh giá kết quả nghiệm thu máy sạch.
-   - [docs/testing/functional/functional-test-report.md](docs/testing/functional/functional-test-report.md) – Báo cáo kết quả kiểm thử chức năng toàn diện và bộ ảnh minh chứng.
