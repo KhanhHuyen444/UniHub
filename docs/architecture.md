@@ -51,8 +51,8 @@ Các route sản phẩm bên dưới được chuyển từ sitemap Chương 4 m
 | `/privacy` | Mọi người | Chưa phân công | Nhãn văn bản tĩnh hỗ trợ chân trang |
 | `/403` | Mọi người | Điều phối chung | Đã hoàn thành; Trang từ chối truy cập (ForbiddenPage) |
 | `/404` | Mọi người | Điều phối chung | Đã hoàn thành; Trang không tìm thấy tài nguyên (NotFoundPage) |
-| `/_dev/health` | Kỹ thuật | Khánh Huyền | Đã mount; kiểm tra kết nối health |
-| `/_dev/ui?area=public` (hoặc `student`, `admin`) | Kỹ thuật | Khánh Huyền | Đã mount; preview shared UI, không gọi API nghiệp vụ |
+| `/_dev/health` | Phát triển | Khánh Huyền | Chỉ mount trong môi trường development; kiểm tra kết nối health |
+| `/_dev/ui?area=public` (hoặc `student`, `admin`) | Phát triển | Khánh Huyền | Chỉ mount trong môi trường development; preview shared UI, không gọi API nghiệp vụ |
 
 Không tạo menu giả để trỏ đến các route kế hoạch. `/admin/moderation` được Khánh Huyền và Tường Vy tích hợp trên một route chung theo hai tab; cả hai phối hợp đồng bộ cấu trúc và trạng thái tab.
 

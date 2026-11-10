@@ -535,27 +535,27 @@ git diff --check
 
 Danh mục route và phân quyền chi tiết được đối chiếu trực tiếp từ file router chính [`frontend/src/app/router.tsx`](frontend/src/app/router.tsx):
 
-| Vai trò      | Phân hệ chức năng   | Đường dẫn (Route)           | Mô tả chi tiết chức năng                                                                     |
-| :----------- | :------------------ | :-------------------------- | :------------------------------------------------------------------------------------------- |
-| **Guest**    | Trang chủ           | `/`                         | Giới thiệu nền tảng, số liệu tổng quan, bài viết nổi bật và điều hướng nhanh                 |
-| **Guest**    | Hub Cơ hội          | `/opportunities`            | Tra cứu danh sách cơ hội việc làm, thực tập, học bổng đã duyệt; lọc đa chiều                 |
-| **Guest**    | Chi tiết Cơ hội     | `/opportunities/:id`        | Xem chi tiết yêu cầu, kỹ năng bắt buộc, đãi ngộ và link ứng tuyển gốc                        |
-| **Guest**    | Lộ trình Kỹ năng    | `/roadmaps`                 | Tra cứu lộ trình phát triển nghề nghiệp chuẩn hóa theo từng chuyên ngành                     |
-| **Guest**    | Chi tiết Lộ trình   | `/roadmaps/:id`             | Xem nội dung hướng nghiệp chi tiết, kỹ năng cốt lõi và các giai đoạn học                     |
-| **Guest**    | Diễn đàn Sinh viên  | `/forum`                    | Xem danh sách các bài viết thảo luận cộng đồng theo chuyên mục                               |
-| **Guest**    | Chi tiết Thảo luận  | `/forum/:id`                | Đọc nội dung bài thảo luận và toàn bộ cây bình luận của sinh viên                            |
-| **Guest**    | Đăng nhập           | `/login`                    | Nút đăng nhập Google Identity Services tích hợp bảo mật                                      |
-| **Student**  | Hồ sơ Học thuật     | `/profile`                  | Cập nhật Chuyên ngành, Năm học, Mục tiêu nghề nghiệp và Kỹ năng cá nhân                      |
-| **Student**  | Gợi ý Cá nhân hóa   | `/recommendations`          | Danh sách cơ hội được hệ thống tính điểm phù hợp Heuristic (Score ≥ 0.50)                    |
-| **Student**  | Lịch & Deadline     | `/calendar`                 | Lịch cá nhân, thêm/sửa/xóa sự kiện, đánh dấu hoàn thành, hẹn giờ nhắc nhở                    |
-| **Student**  | Thông báo In-App    | Popover Chuông góc phải     | Nhận thông báo tự động từ Scheduler khi sắp đến hạn deadline sự kiện                         |
-| **Student**  | Tương tác Diễn đàn  | `/forum` & `/forum/:id`     | Đăng câu hỏi mới, gửi bình luận trả lời, chia sẻ kinh nghiệm phỏng vấn                       |
-| **Admin**    | Tổng quan Hệ thống  | `/admin/dashboard`          | Bảng điều khiển giám sát số liệu tin tuyển dụng, bài viết, người dùng                        |
-| **Admin**    | Thẩm định Cơ hội    | `/admin/moderation` (Tab 1) | Duyệt tin (Approved), từ chối kèm lý do (Rejected), gán nhãn chứng thực (Verified)           |
-| **Admin**    | Kiểm duyệt Diễn đàn | `/admin/moderation` (Tab 2) | Gỡ bỏ bài viết/bình luận vi phạm chuẩn mực cộng đồng (xóa mềm, không có chức năng khôi phục) |
-| **Admin**    | Quản lý Danh mục    | `/admin/categories`         | Thêm mới ngành học/kỹ năng, chỉnh sửa tên, đóng/mở trạng thái (Active/Closed)                |
-| **Admin**    | Quản lý Tài khoản   | `/admin/users`              | Danh sách tài khoản người dùng, tìm kiếm, nâng quyền Admin, hạ quyền Student                 |
-| **Hệ thống** | Kiểm tra Kỹ thuật   | `/_dev/health`              | Màn hình kiểm tra trạng thái frontend, backend và dev proxy                                  |
+| Vai trò     | Phân hệ chức năng   | Đường dẫn (Route)           | Mô tả chi tiết chức năng                                                                     |
+| :---------- | :------------------ | :-------------------------- | :------------------------------------------------------------------------------------------- |
+| **Guest**   | Trang chủ           | `/`                         | Giới thiệu nền tảng, số liệu tổng quan, bài viết nổi bật và điều hướng nhanh                 |
+| **Guest**   | Hub Cơ hội          | `/opportunities`            | Tra cứu danh sách cơ hội việc làm, thực tập, học bổng đã duyệt; lọc đa chiều                 |
+| **Guest**   | Chi tiết Cơ hội     | `/opportunities/:id`        | Xem chi tiết yêu cầu, kỹ năng bắt buộc, đãi ngộ và link ứng tuyển gốc                        |
+| **Guest**   | Lộ trình Kỹ năng    | `/roadmaps`                 | Tra cứu lộ trình phát triển nghề nghiệp chuẩn hóa theo từng chuyên ngành                     |
+| **Guest**   | Chi tiết Lộ trình   | `/roadmaps/:id`             | Xem nội dung hướng nghiệp chi tiết, kỹ năng cốt lõi và các giai đoạn học                     |
+| **Guest**   | Diễn đàn Sinh viên  | `/forum`                    | Xem danh sách các bài viết thảo luận cộng đồng theo chuyên mục                               |
+| **Guest**   | Chi tiết Thảo luận  | `/forum/:id`                | Đọc nội dung bài thảo luận và toàn bộ cây bình luận của sinh viên                            |
+| **Guest**   | Đăng nhập           | `/login`                    | Nút đăng nhập Google Identity Services tích hợp bảo mật                                      |
+| **Student** | Hồ sơ Học thuật     | `/profile`                  | Cập nhật Chuyên ngành, Năm học, Mục tiêu nghề nghiệp và Kỹ năng cá nhân                      |
+| **Student** | Gợi ý Cá nhân hóa   | `/recommendations`          | Danh sách cơ hội được hệ thống tính điểm phù hợp Heuristic (Score ≥ 0.50)                    |
+| **Student** | Lịch & Deadline     | `/calendar`                 | Lịch cá nhân, thêm/sửa/xóa sự kiện, đánh dấu hoàn thành, hẹn giờ nhắc nhở                    |
+| **Student** | Thông báo In-App    | Popover Chuông góc phải     | Nhận thông báo tự động từ Scheduler khi sắp đến hạn deadline sự kiện                         |
+| **Student** | Tương tác Diễn đàn  | `/forum` & `/forum/:id`     | Đăng câu hỏi mới, gửi bình luận trả lời, chia sẻ kinh nghiệm phỏng vấn                       |
+| **Admin**   | Tổng quan Hệ thống  | `/admin/dashboard`          | Bảng điều khiển giám sát số liệu tin tuyển dụng, bài viết, người dùng                        |
+| **Admin**   | Thẩm định Cơ hội    | `/admin/moderation` (Tab 1) | Duyệt tin (Approved), từ chối kèm lý do (Rejected), gán nhãn chứng thực (Verified)           |
+| **Admin**   | Kiểm duyệt Diễn đàn | `/admin/moderation` (Tab 2) | Gỡ bỏ bài viết/bình luận vi phạm chuẩn mực cộng đồng (xóa mềm, không có chức năng khôi phục) |
+| **Admin**   | Quản lý Danh mục    | `/admin/categories`         | Thêm mới ngành học/kỹ năng, chỉnh sửa tên, đóng/mở trạng thái (Active/Closed)                |
+| **Admin**   | Quản lý Tài khoản   | `/admin/users`              | Danh sách tài khoản người dùng, tìm kiếm, nâng quyền Admin, hạ quyền Student                 |
+| **Dev**     | Kiểm tra Kỹ thuật   | `/_dev/health`              | Chỉ dùng khi phát triển để kiểm tra frontend, backend và proxy                               |
 
 ---
 

@@ -66,7 +66,7 @@ Google Identity Services là SDK web do Google cung cấp, không coi như một
 
 ### 3.1. React Router và cấu trúc route ban đầu
 
-Đã chọn chính xác `react-router@8.5.0`, không cài thêm `react-router-dom`. Tài liệu đi cùng gói npm hướng dẫn render `BrowserRouter` và khai báo `Routes`/`Route` trong declarative mode. `frontend/src/app/router.tsx` giữ route tập trung; hiện mount `/_dev/health`, `/_dev/ui`, `/404` và fallback `*`; `/` chuyển tới trang health. Các màn hình nghiệp vụ trong Chương 4 chỉ được liệt kê trong tài liệu, chưa mount route hoặc trang giả.
+Đã chọn chính xác `react-router@8.5.0`, không cài thêm `react-router-dom`. Tài liệu đi cùng gói npm hướng dẫn render `BrowserRouter` và khai báo `Routes`/`Route` trong declarative mode. `frontend/src/app/router.tsx` giữ route tập trung; `/_dev/health` và `/_dev/ui` chỉ được đăng ký trong môi trường development. Route `/` hiển thị trang chủ, `/404` hiển thị trang không tìm thấy và `*` là fallback. Các màn hình nghiệp vụ trong Chương 4 chỉ được liệt kê trong tài liệu, chưa mount route hoặc trang giả.
 
 Metadata peer/engine được kiểm tra từ npm registry và tài liệu cài đặt/routing trong tarball chính thức `react-router-8.5.0.tgz`. Node 24.19.0 đáp ứng `>=22.22.0`, React/React DOM 19.3.1 đáp ứng `>=19.2.7`, typings 19.3.0 đáp ứng `>=19.2.0`. Website tài liệu chính thức bị proxy chặn trong môi trường này; phần declarative mode được đối chiếu từ tài liệu đóng gói với đúng phiên bản, không suy ra từ tài liệu major khác.
 
