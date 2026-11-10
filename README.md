@@ -291,12 +291,12 @@ if (-not (Test-Path .\frontend\.env)) { Copy-Item .\frontend\.env.example .\fron
 
 ### Bước 5 — Cấu hình biến môi trường
 
-Mở các file vừa tạo và điền thông số kết nối cục bộ:
+Mở các file vừa tạo và điền thông số kết nối cục bộ. Trong URL, percent-encode phần mật khẩu: `!` → `%21`, `@` → `%40`, `#` → `%23`. Mật khẩu nhập trong `CREATE USER` vẫn là chuỗi gốc; chỉ encode khi đặt vào URL. Không encode toàn bộ URL.
 
 - **`backend/.env` (Tài khoản Runtime):**
   ```env
   PORT=3001
-  DATABASE_URL=mysql://unihub_demo_app:MatKhauAppRuntime123!@#@127.0.0.1:3306/unihub_demo
+  DATABASE_URL=mysql://unihub_demo_app:MatKhauAppRuntime123%21%40%23@127.0.0.1:3306/unihub_demo
   JWT_SIGNING_SECRET=unihub_super_secret_jwt_key_at_least_32_bytes_long_2026
   JWT_ISSUER=unihub-backend
   JWT_AUDIENCE=unihub-app
@@ -305,7 +305,7 @@ Mở các file vừa tạo và điền thông số kết nối cục bộ:
   ```
 - **`backend/.env.migration` (Tài khoản Migrator):**
   ```env
-  MIGRATION_DATABASE_URL=mysql://unihub_demo_migrator:MatKhauMigrator123!@#@127.0.0.1:3306/unihub_demo
+  MIGRATION_DATABASE_URL=mysql://unihub_demo_migrator:MatKhauMigrator123%21%40%23@127.0.0.1:3306/unihub_demo
   ```
 - **`frontend/.env`:**
   ```env
@@ -332,11 +332,22 @@ npm.cmd run prisma:generate
 Sau khi các bảng đã được tạo thành công, mở lại MySQL CLI/Workbench bằng quyền DBA và thực thi cấp quyền thao tác dữ liệu (DML) cho user runtime theo nguyên tắc đặc quyền tối thiểu (Least Privilege):
 
 ```sql
-GRANT SELECT, INSERT, UPDATE, DELETE ON `unihub_demo`.* TO 'unihub_demo_app'@'127.0.0.1';
--- Riêng bảng activity_logs chỉ cho phép đọc và ghi thêm, cấm sửa và cấm xóa
-REVOKE UPDATE, DELETE ON `unihub_demo`.`activity_logs` FROM 'unihub_demo_app'@'127.0.0.1';
-FLUSH PRIVILEGES;
+GRANT SELECT, INSERT, UPDATE ON unihub_demo.users TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, UPDATE ON unihub_demo.categories TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, UPDATE ON unihub_demo.opportunities TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, UPDATE, DELETE ON unihub_demo.events TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, UPDATE ON unihub_demo.forum_posts TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, UPDATE ON unihub_demo.comments TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT ON unihub_demo.activity_logs TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, UPDATE, DELETE ON unihub_demo.notifications TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, DELETE ON unihub_demo.user_skills TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, DELETE ON unihub_demo.opportunity_majors TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, DELETE ON unihub_demo.opportunity_skills TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, DELETE ON unihub_demo.opportunity_years TO 'unihub_demo_app'@'127.0.0.1';
+GRANT SELECT, INSERT, UPDATE ON unihub_demo.auth_sessions TO 'unihub_demo_app'@'127.0.0.1';
 ```
+
+Chỉ áp dụng các GRANT trên cho tài khoản runtime mới, chưa có quyền toàn schema hoặc quyền kế thừa qua role. Nếu tài khoản đã tồn tại, DBA phải kiểm tra `SHOW GRANTS` và xử lý quyền rộng theo quy trình riêng; các GRANT hẹp không thu hồi quyền rộng đã có. Runtime không được DDL, đọc bảng `_prisma_migrations`, UPDATE/DELETE `activity_logs` hoặc DELETE `auth_sessions`. Migrator chỉ dùng cho setup/migration, không dùng để chạy ứng dụng.
 
 ### Bước 8 — Biên dịch dự án (Build)
 
@@ -374,7 +385,7 @@ Invoke-RestMethod http://127.0.0.1:3001/api/ready
 ```
 
 - Endpoint `/api/health` trả về `{"status":"ok"}`: Xác nhận HTTP server Express hoạt động.
-- Endpoint `/api/ready` trả về `{"status":"available"}`: Xác nhận Backend đã kết nối thành công và truy vấn được CSDL MySQL `unihub_demo`.
+- Endpoint `/api/ready` trả về `{"status":"ready","database":"available"}`: Xác nhận Backend đã kết nối thành công và truy vấn được CSDL MySQL `unihub_demo`.
 
 ---
 
@@ -411,7 +422,7 @@ Hệ thống UniHub tích hợp script bootstrap độc lập và an toàn nhằ
 3. Nhập giá trị `google_sub` khi được hỏi. Hệ thống sẽ kiểm tra:
    - Xác minh người dùng có tồn tại trong CSDL hay không.
    - Xác minh hệ thống hiện tại **chưa có bất kỳ Quản trị viên (Admin) nào**.
-   - Nếu đủ điều kiện, hệ thống sẽ nâng quyền tài khoản lên **`Admin`** và ghi nhận sự kiện vào `activity_logs`.
+   - Nếu đủ điều kiện, hệ thống sẽ nâng quyền tài khoản lên **`Admin`**; bootstrap đầu tiên không ghi `activity_logs` vì chưa có Admin thực hiện thao tác.
 4. Trên trình duyệt, bấm **Đăng xuất** và thực hiện **Đăng nhập lại với Google** để hệ thống cấp Access Token và Refresh Token mang vai trò Admin mới.
 5. Kiểm tra truy cập vào thanh điều hướng Admin hoặc truy cập trực tiếp `http://127.0.0.1:5173/admin/dashboard`.
 
@@ -510,12 +521,13 @@ git diff --check
 
 1. **Automated Test Suite trong mã nguồn (`npm test`):**
    - Chạy thông qua trình test runner chuẩn của Node.js (`node --test`).
-   - Bao gồm 273 tests phía Frontend (**214 PASS / 0 FAIL / 59 SKIP**) và 282 tests phía Backend (**259 PASS / 0 FAIL / 23 SKIP**).
+   - Lượt kiểm tra Windows ngày 10/11/2026: 273 tests phía Frontend (**214 PASS / 0 FAIL / 59 SKIP**) và 287 tests phía Backend (**264 PASS / 0 FAIL / 23 SKIP**). Các file runner báo inactive không có nghĩa kiểm thử MySQL đã chạy.
    - Các bài test SKIP là các bài kiểm thử phụ thuộc vào trình duyệt Chromium thực tế hoặc CSDL MySQL ngoài môi trường sandbox cục bộ.
+   - Kiểm chứng riêng quyền runtime và Auth trên MySQL 8.4 cô lập: `node backend/test/run-submission-mysql.mjs --run-isolated`. Runner chỉ khởi tạo khi có cờ này, dùng datadir/port tạm và không nạp `.env`; cần bộ binary MySQL 8.4 tại đường dẫn mặc định của runner. Kết quả lượt trên: 55 kiểm tra quyền SQL PASS và 1 test Auth MySQL PASS. Đây không phải kiểm thử khóa cạnh tranh khi hạ quyền Admin.
 2. **Bộ 28 Test Case Nghiệm thu Chức năng Đồ án (Functional Acceptance Testing):**
    - Bộ 28 kịch bản kiểm thử nghiệm thu chức năng chính thức (5 Guest, 12 Student, 10 Admin, 1 Ngoại lệ & Bảo mật) đối chiếu từ bảng tổng hợp kết quả nghiệm thu của nhóm trên Google Sheets.
    - Ghi nhận đầy đủ **28/28 PASS** đối chiếu theo bộ kịch bản kiểm thử nghiệm thu chính thức của đề tài (ảnh chụp minh chứng và bảng chi tiết được quản lý riêng theo hồ sơ nghiệm thu đồ án).
-   - Các kịch bản kiểm thử nâng cao về bảo vệ Admin cuối cùng (Last Admin Protection), chống tấn công tương tranh (Race Condition) và thu hồi quyền tức thì được phân loại thuộc bộ regression/integration automated tests bổ sung trong source code.
+   - Các kịch bản kiểm thử nâng cao về bảo vệ Admin cuối cùng (Last Admin Protection), hạ quyền đồng thời trong fixture JavaScript và hiệu lực role snapshot theo BR-14.5 được phân loại thuộc bộ regression/integration automated tests bổ sung trong source code.
 
 ---
 
@@ -523,27 +535,27 @@ git diff --check
 
 Danh mục route và phân quyền chi tiết được đối chiếu trực tiếp từ file router chính [`frontend/src/app/router.tsx`](frontend/src/app/router.tsx):
 
-| Vai trò      | Phân hệ chức năng   | Đường dẫn (Route)           | Mô tả chi tiết chức năng                                                           |
-| :----------- | :------------------ | :-------------------------- | :--------------------------------------------------------------------------------- |
-| **Guest**    | Trang chủ           | `/`                         | Giới thiệu nền tảng, số liệu tổng quan, bài viết nổi bật và điều hướng nhanh       |
-| **Guest**    | Hub Cơ hội          | `/opportunities`            | Tra cứu danh sách cơ hội việc làm, thực tập, học bổng đã duyệt; lọc đa chiều       |
-| **Guest**    | Chi tiết Cơ hội     | `/opportunities/:id`        | Xem chi tiết yêu cầu, kỹ năng bắt buộc, đãi ngộ và link ứng tuyển gốc              |
-| **Guest**    | Lộ trình Kỹ năng    | `/roadmaps`                 | Tra cứu lộ trình phát triển nghề nghiệp chuẩn hóa theo từng chuyên ngành           |
-| **Guest**    | Chi tiết Lộ trình   | `/roadmaps/:id`             | Xem nội dung hướng nghiệp chi tiết, kỹ năng cốt lõi và các giai đoạn học           |
-| **Guest**    | Diễn đàn Sinh viên  | `/forum`                    | Xem danh sách các bài viết thảo luận cộng đồng theo chuyên mục                     |
-| **Guest**    | Chi tiết Thảo luận  | `/forum/:id`                | Đọc nội dung bài thảo luận và toàn bộ cây bình luận của sinh viên                  |
-| **Guest**    | Đăng nhập           | `/login`                    | Nút đăng nhập Google Identity Services tích hợp bảo mật                            |
-| **Student**  | Hồ sơ Học thuật     | `/profile`                  | Cập nhật Chuyên ngành, Năm học, Mục tiêu nghề nghiệp và Kỹ năng cá nhân            |
-| **Student**  | Gợi ý Cá nhân hóa   | `/recommendations`          | Danh sách cơ hội được hệ thống tính điểm phù hợp Heuristic (Score ≥ 0.50)          |
-| **Student**  | Lịch & Deadline     | `/calendar`                 | Lịch cá nhân, thêm/sửa/xóa sự kiện, đánh dấu hoàn thành, hẹn giờ nhắc nhở          |
-| **Student**  | Thông báo In-App    | Popover Chuông góc phải     | Nhận thông báo tự động từ Scheduler khi sắp đến hạn deadline sự kiện               |
-| **Student**  | Tương tác Diễn đàn  | `/forum` & `/forum/:id`     | Đăng câu hỏi mới, gửi bình luận trả lời, chia sẻ kinh nghiệm phỏng vấn             |
-| **Admin**    | Tổng quan Hệ thống  | `/admin/dashboard`          | Bảng điều khiển giám sát số liệu tin tuyển dụng, bài viết, người dùng              |
-| **Admin**    | Thẩm định Cơ hội    | `/admin/moderation` (Tab 1) | Duyệt tin (Approved), từ chối kèm lý do (Rejected), gán nhãn chứng thực (Verified) |
-| **Admin**    | Kiểm duyệt Diễn đàn | `/admin/moderation` (Tab 2) | Gỡ bỏ bài viết/bình luận vi phạm chuẩn mực cộng đồng, khôi phục nội dung           |
-| **Admin**    | Quản lý Danh mục    | `/admin/categories`         | Thêm mới ngành học/kỹ năng, chỉnh sửa tên, đóng/mở trạng thái (Active/Closed)      |
-| **Admin**    | Quản lý Tài khoản   | `/admin/users`              | Danh sách tài khoản người dùng, tìm kiếm, nâng quyền Admin, hạ quyền Student       |
-| **Hệ thống** | Kiểm tra Kỹ thuật   | `/_dev/health`              | Màn hình kiểm tra trạng thái frontend, backend và dev proxy                        |
+| Vai trò      | Phân hệ chức năng   | Đường dẫn (Route)           | Mô tả chi tiết chức năng                                                                     |
+| :----------- | :------------------ | :-------------------------- | :------------------------------------------------------------------------------------------- |
+| **Guest**    | Trang chủ           | `/`                         | Giới thiệu nền tảng, số liệu tổng quan, bài viết nổi bật và điều hướng nhanh                 |
+| **Guest**    | Hub Cơ hội          | `/opportunities`            | Tra cứu danh sách cơ hội việc làm, thực tập, học bổng đã duyệt; lọc đa chiều                 |
+| **Guest**    | Chi tiết Cơ hội     | `/opportunities/:id`        | Xem chi tiết yêu cầu, kỹ năng bắt buộc, đãi ngộ và link ứng tuyển gốc                        |
+| **Guest**    | Lộ trình Kỹ năng    | `/roadmaps`                 | Tra cứu lộ trình phát triển nghề nghiệp chuẩn hóa theo từng chuyên ngành                     |
+| **Guest**    | Chi tiết Lộ trình   | `/roadmaps/:id`             | Xem nội dung hướng nghiệp chi tiết, kỹ năng cốt lõi và các giai đoạn học                     |
+| **Guest**    | Diễn đàn Sinh viên  | `/forum`                    | Xem danh sách các bài viết thảo luận cộng đồng theo chuyên mục                               |
+| **Guest**    | Chi tiết Thảo luận  | `/forum/:id`                | Đọc nội dung bài thảo luận và toàn bộ cây bình luận của sinh viên                            |
+| **Guest**    | Đăng nhập           | `/login`                    | Nút đăng nhập Google Identity Services tích hợp bảo mật                                      |
+| **Student**  | Hồ sơ Học thuật     | `/profile`                  | Cập nhật Chuyên ngành, Năm học, Mục tiêu nghề nghiệp và Kỹ năng cá nhân                      |
+| **Student**  | Gợi ý Cá nhân hóa   | `/recommendations`          | Danh sách cơ hội được hệ thống tính điểm phù hợp Heuristic (Score ≥ 0.50)                    |
+| **Student**  | Lịch & Deadline     | `/calendar`                 | Lịch cá nhân, thêm/sửa/xóa sự kiện, đánh dấu hoàn thành, hẹn giờ nhắc nhở                    |
+| **Student**  | Thông báo In-App    | Popover Chuông góc phải     | Nhận thông báo tự động từ Scheduler khi sắp đến hạn deadline sự kiện                         |
+| **Student**  | Tương tác Diễn đàn  | `/forum` & `/forum/:id`     | Đăng câu hỏi mới, gửi bình luận trả lời, chia sẻ kinh nghiệm phỏng vấn                       |
+| **Admin**    | Tổng quan Hệ thống  | `/admin/dashboard`          | Bảng điều khiển giám sát số liệu tin tuyển dụng, bài viết, người dùng                        |
+| **Admin**    | Thẩm định Cơ hội    | `/admin/moderation` (Tab 1) | Duyệt tin (Approved), từ chối kèm lý do (Rejected), gán nhãn chứng thực (Verified)           |
+| **Admin**    | Kiểm duyệt Diễn đàn | `/admin/moderation` (Tab 2) | Gỡ bỏ bài viết/bình luận vi phạm chuẩn mực cộng đồng (xóa mềm, không có chức năng khôi phục) |
+| **Admin**    | Quản lý Danh mục    | `/admin/categories`         | Thêm mới ngành học/kỹ năng, chỉnh sửa tên, đóng/mở trạng thái (Active/Closed)                |
+| **Admin**    | Quản lý Tài khoản   | `/admin/users`              | Danh sách tài khoản người dùng, tìm kiếm, nâng quyền Admin, hạ quyền Student                 |
+| **Hệ thống** | Kiểm tra Kỹ thuật   | `/_dev/health`              | Màn hình kiểm tra trạng thái frontend, backend và dev proxy                                  |
 
 ---
 
