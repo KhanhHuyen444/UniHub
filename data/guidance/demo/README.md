@@ -1,6 +1,8 @@
-# UniHub Skill Roadmap Demo Seed
+# Nạp dữ liệu demo lộ trình Skill UniHub
 
-> **Cài mới:** Theo [hướng dẫn local](../../../docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt), nạp catalog đầy đủ trước. Có thể thay `--env-file=backend/.env.demo` trong ví dụ dưới bằng `--env-file=backend/.env` đã tự cấu hình unihub_demo; không phụ thuộc file riêng của nhóm. Không chạy các bài test safety/live trên database có dữ liệu cần giữ.
+Luồng cài mới và các giới hạn reuse/verify sau commit: [seed workflow](../../../docs/demo-seed-workflow.md#5-guidance). Lệnh trong trang này dùng `backend/.env` theo Quick Start. `generate-guidance-demo.mjs` hiện chỉ validate offline; các ví dụ test live bên dưới cần môi trường kiểm thử được phép, không cần chạy để seed fixture đã commit.
+
+> **Cài mới:** Theo [hướng dẫn local](../../../docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt), nạp catalog đầy đủ trước. Dùng `backend/.env` tự cấu hình `unihub_demo`; không phụ thuộc file riêng của nhóm. Không chạy các bài test safety/live trên database có dữ liệu cần giữ.
 
 Bộ dữ liệu định hướng kỹ năng và nghề nghiệp (Skill Roadmap & Career Guidance) phục vụ môi trường demo UniHub (`unihub_demo`), tuân thủ chặt chẽ Chương 3 UC-03 / FR-03.1 / BR-03.1–03.3 và `docs/guidance-api-contract.md`.
 
@@ -71,37 +73,37 @@ Chủ động để trống lộ trình để kiểm chứng giao diện Empty S
 
 ### Kiểm chứng Fixture:
 
-```bash
+```powershell
 node data/guidance/demo/generate-guidance-demo.mjs
 ```
 
 ### Dry-run (mặc định, không thay đổi DB):
 
-```bash
-node --env-file=backend/.env.demo data/guidance/demo/seed-guidance-demo.mjs
+```powershell
+node --env-file=backend/.env data/guidance/demo/seed-guidance-demo.mjs
 ```
 
 ### Nạp dữ liệu vào MySQL unihub_demo:
 
-```bash
-node --env-file=backend/.env.demo data/guidance/demo/seed-guidance-demo.mjs --apply
+```powershell
+node --env-file=backend/.env data/guidance/demo/seed-guidance-demo.mjs --apply
 ```
 
 ### Xác minh dữ liệu đã nạp:
 
-```bash
-node --env-file=backend/.env.demo data/guidance/demo/seed-guidance-demo.mjs --verify
+```powershell
+node --env-file=backend/.env data/guidance/demo/seed-guidance-demo.mjs --verify
 ```
 
 ### Chạy trọn bộ kiểm thử:
 
-```bash
+```powershell
 # Kiểm thử toàn vẹn fixture
 node --test data/guidance/demo/guidance-demo.test.mjs
 
 # Kiểm thử an toàn DB guard & rollback
-node --env-file=backend/.env.demo --test data/guidance/demo/safety-and-api-scenarios.test.mjs
+node --env-file=backend/.env --test data/guidance/demo/safety-and-api-scenarios.test.mjs
 
-# Kiểm thử API integration live
-node --env-file=backend/.env.demo --test data/guidance/demo/guidance-api-integration.test.mjs
+# Kiểm thử tích hợp API trực tiếp
+node --env-file=backend/.env --test data/guidance/demo/guidance-api-integration.test.mjs
 ```

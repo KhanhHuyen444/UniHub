@@ -875,3 +875,69 @@ test('logout thiếu cookie idempotent và cookie cũ không thu hồi phiên m�
   assert.equal(staleCookie.status, 204);
   assert.equal(database.sessions()[0].revoked_at, null);
 });
+
+for (const [oldRole, newRole] of [
+  ['Student', 'Admin'],
+  ['Admin', 'Student'],
+]) {
+  test(`BR-14.5 refresh: ${oldRole} to ${newRole} rotates secret and issues current role while old token retains snapshot`, async () => {
+    const database = makeDatabase({
+      initialUsers: [validExistingGoogleUser({ role: oldRole })],
+      initialSessions: [activeSession()],
+    });
+    const oldToken = await tokenService.sign({
+      userId: 24,
+      role: oldRole,
+      sessionId: SESSION_ID,
+    });
+    await database.client.$transaction((tx) =>
+      tx.user.update({ where: { user_id: 24 }, data: { role: newRole } }),
+    );
+    const app = testApp({
+      getPrismaClient: () => database.client,
+      createRefreshSecret: () => ROTATED_REFRESH_SECRET,
+    });
+    await withServer(app, async (url) => {
+      const me = (token) =>
+        fetch(`${url}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      const oldMe = await me(oldToken);
+      assert.equal(oldMe.status, 200);
+      assert.equal((await oldMe.json()).user.role, oldRole);
+      const refresh = await fetch(`${url}/api/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Origin: origin,
+          'Sec-Fetch-Site': 'same-origin',
+          Cookie: cookieFor(),
+        },
+      });
+      assert.equal(refresh.status, 200);
+      const body = await refresh.json();
+      assert.equal(body.user.role, newRole);
+      assert.equal((await tokenService.verify(body.accessToken)).role, newRole);
+      const newMe = await me(body.accessToken);
+      assert.equal((await newMe.json()).user.role, newRole);
+      const stillOld = await me(oldToken);
+      assert.equal((await stillOld.json()).user.role, oldRole);
+      const replay = await fetch(`${url}/api/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Origin: origin,
+          'Sec-Fetch-Site': 'same-origin',
+          Cookie: cookieFor(),
+        },
+      });
+      assert.equal(replay.status, 401);
+      assert.equal(replay.headers.get('set-cookie'), null);
+    });
+    assert.equal(database.sessions()[0].revoked_at, null);
+    assert.equal(
+      database.sessions()[0].refresh_token_hash,
+      createHash('sha256').update(ROTATED_REFRESH_SECRET).digest('hex'),
+    );
+  });
+}

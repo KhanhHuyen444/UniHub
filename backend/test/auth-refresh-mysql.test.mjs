@@ -5,6 +5,10 @@ import { test } from 'node:test';
 import express from 'express';
 import { createPrismaClient } from '../dist/lib/prisma.js';
 import { errorHandler } from '../dist/middleware/errors.js';
+import {
+  createRequireAuth,
+  createRequireRole,
+} from '../dist/middleware/auth.js';
 import { createAuthRouter } from '../dist/modules/auth/auth.routes.js';
 import { createAccessTokenService } from '../dist/modules/auth/access-token.js';
 
@@ -114,6 +118,16 @@ test(
           now: () => now,
         }),
       );
+      app.get(
+        '/admin-probe',
+        createRequireAuth({
+          getPrismaClient: () => prisma,
+          verifyToken: signingService.verify,
+          now: () => now,
+        }),
+        createRequireRole('Admin'),
+        (_request, response) => response.sendStatus(204),
+      );
       app.use(errorHandler);
 
       server = app.listen(0, '127.0.0.1');
@@ -165,7 +179,7 @@ test(
       const successCookie = successResponse.headers.get('set-cookie');
       const secretMatch = /unihub_refresh=([^.]+)\.([^;]+)/.exec(successCookie);
       assert.ok(secretMatch);
-      const rotatedSecret = secretMatch[2];
+      let rotatedSecret = secretMatch[2];
       const refreshedSession = await prisma.authSession.findUnique({
         where: { session_id: sessionId },
       });
@@ -186,6 +200,38 @@ test(
       });
       assert.equal(snapshot.status, 200);
       assert.equal((await snapshot.json()).user.role, 'Student');
+
+      const adminProbe = (token) =>
+        fetch(`${baseUrl}/admin-probe`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      assert.equal((await adminProbe(oldAccessToken)).status, 403);
+      assert.equal((await adminProbe(successBody.accessToken)).status, 204);
+      await prisma.user.update({
+        where: { user_id: user.user_id },
+        data: { role: 'Student' },
+      });
+      // Demotion does not rewrite an already-issued JWT (BR-14.5).
+      assert.equal((await adminProbe(successBody.accessToken)).status, 204);
+      const demotedRefresh = await fetch(`${baseUrl}/api/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          Origin: origin,
+          'Sec-Fetch-Site': 'same-origin',
+          'Content-Type': 'application/json',
+          Cookie: `unihub_refresh=${sessionId}.${rotatedSecret}`,
+        },
+      });
+      assert.equal(demotedRefresh.status, 200);
+      const demotedBody = await demotedRefresh.json();
+      assert.equal(
+        (await signingService.verify(demotedBody.accessToken)).role,
+        'Student',
+      );
+      assert.equal((await adminProbe(demotedBody.accessToken)).status, 403);
+      rotatedSecret = /unihub_refresh=([^.]+)\.([^;]+)/.exec(
+        demotedRefresh.headers.get('set-cookie'),
+      )[2];
 
       const logout = await fetch(`${baseUrl}/api/auth/logout`, {
         method: 'POST',

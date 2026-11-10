@@ -12,8 +12,9 @@ Review 31/10/2026: MySQL 8.4.13 mới hoàn toàn, migrations hiện có, port/d
 
 Runtime nhánh `e3fbb3a`: Google Student thật do người dùng đăng nhập, Express/MySQL test thật: GET Notifications 200; click Reminder qua panel thực hiện PATCH không body/query, read từ false sang true và unreadCount 1→0, rồi GET Events mở chi tiết trong panel, không đổi route. Guest không token 401; PATCH có body hoặc query 400. Fixture Reminder đã có trong database test; không khẳng định một checkout đã tích hợp scheduler/bell/Calendar. Admin Google UI/API thực chưa chạy; ma trận role hiện có trong test double.
 
-Scheduler, frontend và writer Violation chưa triển khai trong phần này; TV5 cần phối hợp writer trong transaction riêng sau.
+- In-app Scheduler quét deadline và tạo thông báo nhắc nhở tự động đã được triển khai trong module `events/reminders.scheduler.ts`.
+- Giao diện chuông thông báo (NotificationBell popover) và đánh dấu đã đọc đã được tích hợp đầy đủ phía frontend.
 
-Phụ trách: **TV4**. Chưa gán tên người hoặc deadline.
+Phụ trách: **Ngọc Tuyền**. Chưa gán tên người hoặc deadline.
 
 Router/service nằm trong module này. Chỉ backend truy cập MySQL. Theo [quy trình nhóm](../../../../docs/team-workflow.md) và [quy ước API](../../../../docs/api-conventions.md).

@@ -328,6 +328,39 @@ test('GET /api/forum/posts danh sách rỗng trả 200 với meta total 0', asyn
 // GET /api/forum/posts/:id
 // ---------------------------------------------------------------------------
 
+test('legacy invalid topic returns a safe data error in both list and detail without relabeling', async () => {
+  const post = {
+    post_id: 7,
+    topic: 'Legacy unsupported topic',
+    title: 'Legacy post',
+    content: 'Existing content',
+    is_deleted: false,
+    created_at: new Date('2026-10-28T00:00:00.000Z'),
+    author: { full_name: 'Example student', avatar_url: null },
+  };
+  const client = mockForumClient({
+    posts: (args) => {
+      const topicFilter = args?.where?.topic;
+      if (typeof topicFilter === 'string')
+        return topicFilter === post.topic ? [post] : [];
+      if (topicFilter?.in)
+        return topicFilter.in.includes(post.topic) ? [post] : [];
+      return [post];
+    },
+  });
+  const app = createApp({ forum: { getPrismaClient: () => client } });
+  await withServer(app, async (url) => {
+    for (const endpoint of ['/api/forum/posts', '/api/forum/posts/7']) {
+      const response = await fetch(`${url}${endpoint}`);
+      assert.equal(response.status, 500);
+      const body = await response.json();
+      assert.equal(body.error.code, 'INTERNAL_ERROR');
+      assert.equal(JSON.stringify(body).includes(post.topic), false);
+    }
+  });
+  assert.equal(post.topic, 'Legacy unsupported topic');
+});
+
 test('GET /api/forum/posts/:id trả chi tiết bài viết công khai', async () => {
   const samplePost = {
     post_id: 7,

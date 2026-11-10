@@ -83,6 +83,7 @@ async function fixture({
   let state = structuredClone(customUsers ?? initialUsers);
   let logs = [];
   let transactions = 0;
+  // This fixture serializes in JavaScript; it does not verify MySQL locking.
   let queue = Promise.resolve();
 
   const client = {
@@ -136,6 +137,9 @@ async function fixture({
           return structuredClone(rows);
         },
         user: {
+          count: async ({ where } = {}) => {
+            return filterUsers(rows, where).length;
+          },
           findUnique: async ({ where }) => {
             const row = rows.find((u) => u.user_id === where.user_id);
             if (!row) return null;
@@ -183,21 +187,23 @@ async function fixture({
         getPrismaClient: () => ({
           authSession: {
             findUnique: async ({ where }) => {
-              if (where.session_id === adminIdentity.sessionId) {
-                return {
-                  user_id: adminIdentity.userId,
-                  revoked_at: null,
-                  expires_at: new Date(now.getTime() + 60_000),
-                };
-              }
-              if (where.session_id === studentIdentity.sessionId) {
-                return {
-                  user_id: studentIdentity.userId,
-                  revoked_at: null,
-                  expires_at: new Date(now.getTime() + 60_000),
-                };
-              }
-              return null;
+              const sessionMap = {
+                [adminIdentity.sessionId]: adminIdentity.userId,
+                [studentIdentity.sessionId]: studentIdentity.userId,
+                'd7f55cee-2d7c-4df9-aece-36b6eb446db9': 99,
+              };
+              const userId = sessionMap[where.session_id];
+              if (!userId) return null;
+              const u = state.find((x) => x.user_id === userId);
+              return {
+                session_id: where.session_id,
+                user_id: userId,
+                revoked_at: null,
+                expires_at: new Date(now.getTime() + 60_000),
+                user: {
+                  role: u?.role ?? 'Student',
+                },
+              };
             },
           },
         }),
@@ -209,6 +215,7 @@ async function fixture({
     app,
     adminToken: await tokens.sign(adminIdentity),
     studentToken: await tokens.sign(studentIdentity),
+    signToken: (id) => tokens.sign(id),
     getState: () => state,
     getLogs: () => logs,
     getTransactions: () => transactions,
@@ -216,14 +223,21 @@ async function fixture({
 }
 
 function filterUsers(users, where) {
-  if (!where || !where.OR) return [...users];
-  const qName = where.OR[0]?.full_name?.contains?.toLowerCase() ?? '';
-  const qEmail = where.OR[1]?.email?.contains?.toLowerCase() ?? '';
-  return users.filter(
-    (u) =>
-      u.full_name.toLowerCase().includes(qName) ||
-      u.email.toLowerCase().includes(qEmail),
-  );
+  if (!where) return [...users];
+  let res = [...users];
+  if (where.role) {
+    res = res.filter((u) => u.role === where.role);
+  }
+  if (where.OR) {
+    const qName = where.OR[0]?.full_name?.contains?.toLowerCase() ?? '';
+    const qEmail = where.OR[1]?.email?.contains?.toLowerCase() ?? '';
+    res = res.filter(
+      (u) =>
+        u.full_name.toLowerCase().includes(qName) ||
+        u.email.toLowerCase().includes(qEmail),
+    );
+  }
+  return res;
 }
 
 async function withServer(app, callback) {
@@ -698,7 +712,7 @@ test('PATCH /api/admin/users/:id/role: rollback when activity log fails', async 
   });
 });
 
-test('PATCH /api/admin/users/:id/role: concurrent requests serialize safely and avoid duplicate audit log', async () => {
+test('PATCH /api/admin/users/:id/role: serialized transaction fixture avoids duplicate audit log', async () => {
   const f = await fixture();
   await withServer(f.app, async (base) => {
     // Both Admin requests try to promote user 2 (currently Student) to Admin concurrently
@@ -726,5 +740,92 @@ test('PATCH /api/admin/users/:id/role: concurrent requests serialize safely and 
 
     // User 2 final role is Admin
     assert.equal(f.getState().find((u) => u.user_id === 2).role, 'Admin');
+  });
+});
+
+test('PATCH role: stale Admin token reaches LAST_ADMIN_PROTECTED (409) without changing user or audit', async () => {
+  const f = await fixture();
+  // BR-14.5: user 2 was Admin at issuance, but is Student in the current DB.
+  // Their unexpired token still authorizes the request; user 1 is the last Admin.
+  const oldAdminToken = await f.signToken({
+    ...studentIdentity,
+    role: 'Admin',
+  });
+  await withServer(f.app, async (base) => {
+    const response = await send(base, oldAdminToken, 'PATCH', '/1/role', {
+      role: 'Student',
+    });
+    assert.equal(response.status, 409);
+    assert.equal((await response.json()).error.code, 'LAST_ADMIN_PROTECTED');
+    assert.equal(f.getState().find((user) => user.user_id === 1).role, 'Admin');
+    assert.equal(f.getLogs().length, 0);
+  });
+});
+
+test('PATCH /api/admin/users/:id/role: two demotions preserve last Admin in serialized transaction fixture', async () => {
+  // Khởi tạo hệ thống có chính xác 2 Admin: User 1 và User 2
+  const twoAdmins = [
+    {
+      user_id: 1,
+      full_name: 'Admin One',
+      email: 'admin1@unihub.invalid',
+      google_sub: 'sub-admin-1',
+      avatar_url: null,
+      academic_year: null,
+      role: 'Admin',
+      major_id: null,
+      major: null,
+    },
+    {
+      user_id: 2,
+      full_name: 'Admin Two',
+      email: 'admin2@unihub.invalid',
+      google_sub: 'sub-admin-2',
+      avatar_url: null,
+      academic_year: null,
+      role: 'Admin',
+      major_id: null,
+      major: null,
+    },
+  ];
+
+  const f = await fixture({ customUsers: twoAdmins });
+  const admin1Token = f.adminToken;
+  const admin2Token = await f.signToken({
+    userId: 2,
+    role: 'Admin',
+    sessionId: studentIdentity.sessionId,
+  });
+
+  await withServer(f.app, async (base) => {
+    // 2 Admin đồng thời gửi request hạ quyền lẫn nhau:
+    // - Admin 1 hạ quyền Admin 2
+    // - Admin 2 hạ quyền Admin 1
+    const [resA, resB] = await Promise.all([
+      send(base, admin1Token, 'PATCH', '/2/role', { role: 'Student' }),
+      send(base, admin2Token, 'PATCH', '/1/role', { role: 'Student' }),
+    ]);
+
+    const statuses = [resA.status, resB.status];
+    // Đúng 1 request thành công (200 OK)
+    assert.ok(
+      statuses.includes(200),
+      'Một request hạ quyền thành công (200 OK)',
+    );
+    assert.deepEqual(statuses.sort(), [200, 409]);
+
+    // BẤT BIẾN HỆ THỐNG ĐƯỢC BẢO TOÀN TUYỆT ĐỐI:
+    // Số lượng Admin còn lại trong DB luôn là ĐÚNG 1, KHÔNG BAO GIỜ VỀ 0!
+    const remainingAdmins = f.getState().filter((u) => u.role === 'Admin');
+    assert.equal(
+      remainingAdmins.length,
+      1,
+      'Hệ thống được bảo vệ 100%, luôn còn đúng 1 Admin!',
+    );
+
+    // Chỉ có ĐÚNG 1 bản ghi ActivityLog được ghi
+    assert.equal(f.getLogs().length, 1);
+    assert.equal(f.getLogs()[0].action_type, 'CHANGE_ROLE');
+    assert.equal(f.getLogs()[0].new_value, '{"role":"Student"}');
   });
 });

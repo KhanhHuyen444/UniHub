@@ -1,4 +1,4 @@
-﻿# Mapping fix — 02/11/2026
+﻿# Sửa ánh xạ — 02/11/2026
 
 **READY về mapping để leader review; NOT READY để import.** Vẫn cần leader phê duyệt
 và xác minh database demo riêng. Không thay đổi kết nối hoặc dữ liệu MySQL.

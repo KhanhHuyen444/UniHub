@@ -21,4 +21,4 @@ Các trang có loading/error/empty và xử lý lỗi API. Implementation không
 
 ## Phối hợp review
 
-TV1 sở hữu thẩm định cơ hội và phối hợp route/moderation shell; TV5 sở hữu giám sát cộng đồng; TV2 quản lý tài khoản; TV3 danh mục; TV4 dashboard. Thay đổi mô tả này cập nhật trạng thái tích hợp, không sửa route, API, layout hay quyền.
+Khánh Huyền sở hữu thẩm định cơ hội và phối hợp route/moderation shell; Tường Vy sở hữu giám sát cộng đồng; Thái Bình quản lý tài khoản; Bảo Quyên danh mục; Ngọc Tuyền dashboard. Thay đổi mô tả này cập nhật trạng thái tích hợp, không sửa route, API, layout hay quyền.

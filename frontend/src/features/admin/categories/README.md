@@ -1,26 +1,27 @@
-# Admin Categories frontend — TV3
+# Frontend danh mục Admin — Bảo Quyên
 
-`AdminCategoriesPage` is reusable content for the existing Admin Categories API.
-Admin responses include creation dates; no Auth/schema/migration changes are
-part of this module update. This documents the current checkout, including
-uncommitted integration changes, and does not claim they are merged.
+`AdminCategoriesPage` là nội dung có thể tái sử dụng cho Admin Categories API
+hiện có. Response Admin gồm ngày tạo; cập nhật module này không thay đổi
+Auth/schema/migration. Tài liệu mô tả checkout hiện tại, bao gồm các thay đổi
+tích hợp chưa commit, và không khẳng định chúng đã được merge.
 
-## Verified dependencies and handoff
+## Dependency đã xác minh và bàn giao
 
-`AdminCategoriesRoute` connects the page to existing Auth, `RequireRole('Admin')`
-and `AdminLayout` at `/admin/categories`. The user confirmed localhost CRUD,
-validation, authorization, audit and creation dates for Major and Skill.
-Automated page tests use a harness and do not verify the full product router or
-real Google login. Shared Auth/router/layout are not modified by this review.
+`AdminCategoriesRoute` kết nối trang với Auth hiện có, `RequireRole('Admin')`
+và `AdminLayout` tại `/admin/categories`. Người dùng đã xác nhận CRUD,
+validation, authorization, audit và ngày tạo của Major, Skill trên localhost.
+Test trang tự động dùng harness, không xác minh toàn bộ product router hoặc
+Google login thật. Review này không chỉnh sửa Auth/router/layout dùng chung.
 
 ```tsx
 <AdminCategoriesPage accessToken={accessToken} role={role} />
 ```
 
-The page subscribes to existing Auth state. Auth owns refresh/re-login/logout;
-this module adds no independent JWT decoding, login flow or persistent storage.
+Trang đăng ký theo dõi trạng thái Auth hiện có. Auth quản lý refresh/đăng nhập
+lại/đăng xuất; module này không tự giải mã JWT, tạo luồng đăng nhập hoặc dùng bộ
+nhớ bền vững riêng.
 
-## API and behavior
+## API và hành vi
 
 - `getAdminCategories`: GET `/api/admin/categories?type=Major|Skill`; Active and
   Closed items in server order, no pagination/search/body.
@@ -30,49 +31,53 @@ this module adds no independent JWT decoding, login flow or persistent storage.
 - `setAdminCategoryStatus`: PATCH `/api/admin/categories/:id/status` with
   status/reason. No DELETE, type change or reference replacement.
 
-All calls reuse shared `protectedApiRequest` with the current Auth Bearer token
-and refresh lifecycle. The token prop checks availability; it is not an independent
-credential source. Runtime parsers
-check envelopes, exact enums, unique positive INT IDs, names and mutation target/
-result consistency. Requests validate trimmed names (1–100 Unicode code points),
-optional/null reason (at most 500 code points), IDs and enum values. Invalid data
-never becomes an empty success. HTTP code/status, network and abort semantics
-are preserved; Backend remains authoritative for authorization and business rules.
+Mọi lời gọi đều tái sử dụng `protectedApiRequest` dùng chung với Bearer token
+hiện tại của Auth và vòng đời refresh. Prop token chỉ kiểm tra khả năng sử dụng,
+không phải nguồn thông tin xác thực độc lập. Parser runtime kiểm tra envelope,
+enum chính xác, ID INT dương không trùng, tên và tính nhất quán giữa mục tiêu/
+kết quả mutation. Request xác thực tên đã trim (1–100 code point Unicode),
+reason tùy chọn/null (tối đa 500 code point), ID và giá trị enum. Dữ liệu không
+hợp lệ không bao giờ bị coi là thành công với kết quả rỗng. Ngữ nghĩa HTTP
+code/status, network và abort được giữ nguyên; Backend vẫn là nơi có thẩm quyền
+về authorization và quy tắc nghiệp vụ.
 
-Every Admin category has `createdAt`, serialized from `created_at` as canonical
-ISO 8601 UTC, including mutation/no-op responses. The parser normalizes invalid
-or missing date metadata to null; only the date cell falls back to `—`.
-Valid dates display `dd/MM/yyyy` in `Asia/Ho_Chi_Minh`. Public Major/Student Skill
-Options responses do not change.
+Mỗi danh mục Admin có `createdAt`, được serialize từ `created_at` thành ISO 8601
+UTC chuẩn, kể cả response mutation/không thay đổi dữ liệu. Parser chuyển metadata
+ngày sai hoặc thiếu thành null; chỉ ô ngày dùng giá trị dự phòng `—`.
+Ngày hợp lệ hiển thị theo `dd/MM/yyyy` trong `Asia/Ho_Chi_Minh`. Response public
+Major/Student Skill Options không thay đổi.
 
-Skill search filters the full loaded list before eight-row client pagination.
-It trims the query, ignores case and preserves accents. It does not normalize
-Unicode composition or implement fuzzy search. Search/tab changes reset page one;
-successful reloads clamp the stored page when results shrink. Loading preserves
-the page. The summary shows the visible range and total matching items.
-Major displays its full list without search or pagination. No q/page API parameters
-are added.
+Tìm kiếm Skill lọc toàn bộ danh sách đã tải trước khi phân trang phía client,
+mỗi trang tám dòng. Query được trim, không phân biệt chữ hoa/thường và giữ dấu.
+Chức năng không chuẩn hóa dạng kết hợp Unicode hoặc tìm kiếm gần đúng. Thay đổi
+tìm kiếm/tab đưa về trang đầu; khi tải lại thành công, trang hiện tại được giới
+hạn nếu số kết quả giảm. Trong lúc tải vẫn giữ nguyên trang. Phần tóm tắt hiển
+thị khoảng kết quả đang xem và tổng số mục khớp.
+Major hiển thị toàn bộ danh sách, không tìm kiếm hoặc phân trang. Không thêm
+tham số q/page vào API.
 
-The page provides Major/Skill selection, statuses, create/rename forms, status
-confirmation, optional reasons, loading/error/empty/retry/saving and no-op notice.
-Guest/Student props expose no Admin controls and make no API calls. Actual 401/403
-responses remove Admin controls and request re-authorization. Client role props
-never replace Backend Auth/RBAC.
+Trang cung cấp lựa chọn Major/Skill, trạng thái, biểu mẫu tạo/đổi tên, xác nhận
+đổi trạng thái, reason tùy chọn, cùng trạng thái loading/error/empty/retry/
+saving và thông báo khi không có thay đổi. Prop Guest/Student không hiển thị
+điều khiển Admin và không gửi API request. Response 401/403 thực tế sẽ ẩn điều
+khiển Admin và yêu cầu xác thực lại. Prop vai trò phía client không bao giờ thay
+thế Auth/RBAC của Backend.
 
-Mutation locks prevent duplicate submissions and disable forms/actions/filter
-changes. Errors preserve input and explain duplicate name, validation, last Active,
-missing target and service failures. Success reloads the list to retain database
-ordering/current state. Save success and subsequent list-reload failure remain
-distinct. Network failure after a mutation can be ambiguous: reload to inspect
-state before manually resubmitting. Mutations are not automatically retried.
+Khóa mutation ngăn gửi trùng và vô hiệu hóa biểu mẫu/thao tác/thay đổi bộ lọc.
+Khi lỗi, nội dung đã nhập được giữ lại và thông báo nêu rõ tên bị trùng,
+validation, mục Active cuối cùng, không tìm thấy mục tiêu hoặc lỗi dịch vụ. Khi
+thành công, danh sách được tải lại để giữ thứ tự/trạng thái hiện tại từ database.
+Thành công khi lưu và lỗi tải lại danh sách sau đó được phân biệt. Lỗi mạng sau
+mutation có thể chưa rõ kết quả: hãy tải lại để kiểm tra trạng thái trước khi gửi
+lại thủ công. Mutation không tự động được retry.
 
-Reads abort on type/token/reload/unmount and ignore stale results. Token rotation
-preserves modal drafts; switching user or logging out resets the workspace.
-Abort does not guarantee cancellation of an already committed server mutation.
+Request đọc bị hủy khi đổi type/token, tải lại hoặc unmount; kết quả cũ bị bỏ qua.
+Token rotation giữ lại nội dung nháp trong modal; đổi người dùng hoặc đăng xuất
+sẽ đặt lại workspace. Abort không đảm bảo hủy được mutation mà server đã commit.
 
-## Verification
+## Kiểm chứng
 
-From the repository root, after generating Prisma Client and building Backend:
+Tại thư mục gốc repository, sau khi tạo Prisma Client và build Backend:
 
 ```powershell
 node --test frontend/test/admin-categories-api.test.mjs frontend/test/admin-categories-page.test.mjs
@@ -83,40 +88,43 @@ npm.cmd run typecheck
 npm.cmd run build
 ```
 
-API tests use fetch doubles. Browser tests mount the real page with intercepted
-API responses and cover forms, enum/status, pending locks, validation, create/
-rename/close/reopen/no-op, business errors, auth gates and stale cancellation.
-Playwright/Chromium must be available in the test environment, not an app
-dependency; absent runner reports SKIP. The helper is in `frontend/test-support`,
-outside Node's automatic test discovery, and gives each Vite harness a private
-temporary optimizer cache to avoid interfering with concurrent browser tests.
+API test dùng fetch double. Browser test mount trang thực với API response được
+intercept, bao phủ biểu mẫu, enum/status, khóa khi đang chờ, validation, tạo/
+đổi tên/đóng/mở lại/không thay đổi dữ liệu, lỗi nghiệp vụ, auth gate và hủy
+request cũ. Môi trường test cần có Playwright/Chromium; đây không phải dependency
+của ứng dụng. Nếu thiếu runner, kết quả là SKIP. Helper nằm trong
+`frontend/test-support`, ngoài cơ chế tự tìm test của Node, và cấp cho mỗi Vite
+harness một optimizer cache tạm riêng để tránh ảnh hưởng các browser test chạy
+đồng thời.
 
-Backend tests verify existing Auth, mutation/audit payloads and rollback. The
-Backend MySQL test separately checks real transaction concurrency, collation,
-last-Active invariant and preservation of references.
+Backend test xác minh Auth hiện có, mutation/audit payload và rollback. Backend
+MySQL test kiểm tra riêng concurrency transaction thực tế, collation, bất biến
+Active cuối cùng và việc giữ nguyên các tham chiếu.
 
-FR–BK integration uses unmocked Chromium -> Vite proxy -> Express/shared Auth/
-audit -> Prisma/MySQL. `TEST_ADMIN_CATEGORIES_FRONTEND_DATABASE_URL` must target
-only a private loopback `unihub_admin_categories_frontend_test*` database with
-existing migrations and empty categories/users/activity_logs. Real signed test
-JWTs, sessions and fixtures share a test-owned transaction and roll back. It checks
-CRUD, Guest/Student denial, duplicate/final Active errors, audit actions, preserved
-profile reference and invalid-token UI. It does not establish independent request
-transaction isolation; Backend MySQL tests check real transaction boundaries.
-No pre-existing rows are deleted. Never use a group database. Missing database
-configuration reports SKIP, not PASS.
+Tích hợp FR–BK dùng Chromium không mock → Vite proxy → Express/Auth dùng chung/
+audit → Prisma/MySQL. `TEST_ADMIN_CATEGORIES_FRONTEND_DATABASE_URL` chỉ được trỏ
+tới database loopback riêng `unihub_admin_categories_frontend_test*` có migration
+hiện tại và categories/users/activity_logs rỗng. JWT test được ký thật, session
+và fixture cùng dùng transaction do test quản lý rồi rollback. Bộ test kiểm tra
+CRUD, từ chối Guest/Student, lỗi trùng tên/mục Active cuối cùng, audit action,
+giữ tham chiếu profile và UI với token không hợp lệ. Bộ này không xác lập mức độ
+cô lập transaction giữa các request độc lập; Backend MySQL test kiểm tra ranh
+giới transaction thực tế. Không xóa hàng có sẵn. Không dùng database nhóm. Thiếu
+cấu hình database sẽ báo SKIP, không phải PASS.
 
-Cloud native `prisma:generate` has returned HTTP 403 downloading the schema-engine
-checksum from `binaries.prisma.sh`. The actual client can be generated using the
-official same-version `@prisma/internals` and `@prisma/client-generator-ts` 7.10.1
-in-process WASM generator outside the checkout. Then run
-`npm --ignore-scripts run typecheck` and `npm --ignore-scripts run build` separately:
-these execute the checks without the blocked native generation lifecycle. Do not
-disable TLS/checksum verification or change dependency/schema/lockfiles.
+Lệnh `prisma:generate` native trên Cloud từng trả HTTP 403 khi tải checksum của
+schema-engine từ `binaries.prisma.sh`. Có thể tạo client thực bằng generator WASM
+in-process chính thức cùng phiên bản `@prisma/internals` và
+`@prisma/client-generator-ts` 7.10.1 ở ngoài checkout. Sau đó chạy riêng
+`npm --ignore-scripts run typecheck` và `npm --ignore-scripts run build`: các lệnh
+này thực hiện kiểm tra mà không đi qua lifecycle tạo native đang bị chặn. Không
+tắt xác minh TLS/checksum hoặc thay dependency/schema/lockfile.
 
-Verified by automated checks on Windows with Node 24: TypeScript/Vite, API tests
-and Chromium page tests, including date timezone/fallback and Skill pagination.
-User localhost confirmation is separate from automated coverage.
-Not verified by these tests: real Google login, full product routing/layout,
-production data/grants, performance NFRs, deployment or Figma fidelity.
-Profile, Guidance, Recommendations and other Admin modules are outside this update.
+Đã xác minh bằng kiểm tra tự động trên Windows với Node 24: TypeScript/Vite, API
+test và Chromium page test, bao gồm múi giờ/giá trị dự phòng ngày tháng và phân
+trang Skill. Xác nhận localhost của người dùng là minh chứng riêng, không nằm
+trong phạm vi tự động.
+Các nội dung chưa được kiểm chứng bằng những test này: Google login thật, định
+tuyến/bố cục toàn sản phẩm, dữ liệu/grant production, NFR hiệu năng, deployment
+hoặc độ trung thực với Figma. Profile, Guidance, Recommendations và các module
+Admin khác nằm ngoài cập nhật này.

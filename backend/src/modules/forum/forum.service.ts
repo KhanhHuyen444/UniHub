@@ -195,6 +195,9 @@ interface CommentRow {
 }
 
 function toPostDto(row: PostRow) {
+  if (!ALLOWED_TOPICS.has(row.topic)) {
+    throw new Error('Invalid stored forum topic.');
+  }
   return {
     id: row.post_id,
     title: row.title,

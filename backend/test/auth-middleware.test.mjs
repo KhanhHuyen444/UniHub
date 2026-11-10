@@ -50,6 +50,9 @@ function sessionRecord(overrides = {}) {
     user_id: identity.userId,
     expires_at: new Date(now.getTime() + 60_000),
     revoked_at: null,
+    user: {
+      role: identity.role,
+    },
     ...overrides,
   };
 }
@@ -207,7 +210,7 @@ test('thiếu/malformed token, thiếu/revoked/hết hạn/sai chủ session tr�
   }
 });
 
-test('Student bị chặn bởi quyền Admin; role lấy từ JWT, không query users.role', async () => {
+test('Student bị chặn bởi quyền Admin; role lấy từ JWT snapshot theo BR-14.5', async () => {
   const token = await service.sign(identity);
   let query;
   const middleware = createRequireAuth({
@@ -240,11 +243,39 @@ test('Student bị chặn bởi quyền Admin; role lấy từ JWT, không query
   });
 });
 
-test('Admin được requireRole(Admin) theo claim đã ký', async () => {
+for (const [oldRole, currentRole, oldStatus, newStatus] of [
+  ['Student', 'Admin', 403, 200],
+  ['Admin', 'Student', 200, 403],
+]) {
+  test(`BR-14.5: ${oldRole} to ${currentRole} keeps old access role until new token issuance`, async () => {
+    const oldToken = await service.sign({ ...identity, role: oldRole });
+    const session = sessionRecord({ user: { role: currentRole } });
+    const oldResponse = await requestWithToken(
+      oldToken,
+      authenticated(session),
+      createRequireRole('Admin'),
+    );
+    assert.equal(oldResponse.status, oldStatus);
+    const newToken = await service.sign({ ...identity, role: currentRole });
+    const newResponse = await requestWithToken(
+      newToken,
+      authenticated(session),
+      createRequireRole('Admin'),
+    );
+    assert.equal(newResponse.status, newStatus);
+  });
+}
+
+test('Admin được requireRole(Admin) theo claim Admin đã ký', async () => {
   const token = await service.sign({ ...identity, role: 'Admin' });
+  const adminSession = sessionRecord({
+    user: {
+      role: 'Admin',
+    },
+  });
   const response = await requestWithToken(
     token,
-    authenticated(),
+    authenticated(adminSession),
     createRequireRole('Admin'),
   );
   assert.equal(response.status, 200);

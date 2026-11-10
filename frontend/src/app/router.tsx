@@ -89,14 +89,18 @@ export function AppRouter() {
               </PublicLayout>
             }
           />
-          <Route
-            path={appPaths.developmentHealth}
-            element={<HealthCheckPage />}
-          />
-          <Route
-            path={appPaths.sharedUiPreview}
-            element={<SharedUiPreviewPage />}
-          />
+          {import.meta.env.DEV ? (
+            <>
+              <Route
+                path={appPaths.developmentHealth}
+                element={<HealthCheckPage />}
+              />
+              <Route
+                path={appPaths.sharedUiPreview}
+                element={<SharedUiPreviewPage />}
+              />
+            </>
+          ) : null}
           <Route
             path={appPaths.opportunities}
             element={<OpportunityHubPage />}

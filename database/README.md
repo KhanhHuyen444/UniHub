@@ -11,6 +11,6 @@
 - `backend/src/lib/prisma.ts`: Prisma Client singleton; chỉ đọc `DATABASE_URL`, không dùng URL migration dự phòng.
 - `backend/prisma.config.ts`: Prisma CLI 7 đọc URL riêng `MIGRATION_DATABASE_URL`; migration tách khỏi runtime.
 
-Không tạo bộ SQL/schema cạnh tranh trong database/. Thư mục này hiện giữ hướng dẫn, sau có thể bổ sung tài liệu dữ liệu đã review. TV1 điều phối migration; mỗi TV đề xuất và kiểm tra thay đổi của phần mình. Không đưa dump, tài khoản hoặc dữ liệu cá nhân lên Git.
+Không tạo bộ SQL/schema cạnh tranh trong database/. Thư mục này hiện giữ hướng dẫn, sau có thể bổ sung tài liệu dữ liệu đã review. Khánh Huyền điều phối migration; mỗi TV đề xuất và kiểm tra thay đổi của phần mình. Không đưa dump, tài khoản hoặc dữ liệu cá nhân lên Git.
 
 Đọc [database-schema.md](../docs/database-schema.md) để xem kiểm đếm schema, [database-migrations.md](../docs/database-migrations.md) để xem migration/GRANT và [database-runtime.md](../docs/database-runtime.md) để cấu hình tài khoản runtime, UTC, readiness, lệnh Windows và kiểm tra thực tế. Không tạo bộ SQL/schema cạnh tranh trong database/. Google sub/session vẫn là vấn đề cho nhiệm vụ xác thực, không tự thêm bảng/cột vào schema hiện tại.

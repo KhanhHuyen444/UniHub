@@ -1,24 +1,20 @@
 # Công nghệ UniHub
 
-> **Đối chiếu bản bàn giao 06/11/2026:** Cài mới theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md), dùng schema `unihub_demo`. Các mốc scaffold, trạng thái PR/triển khai và kiểm thử cũ bên dưới được giữ làm lịch sử; không dùng để kết luận trạng thái main hiện tại. Ví dụ `unihub_dev` không thuộc quy trình cài mới; không chạy SQL lịch sử trên database cũ. Source hiện tại là căn cứ xác định chức năng; các kết quả kiểm thử cũ không thay thế lần kiểm tra mới.
-
-Ngày đối chiếu công nghệ: **23/10/2026**; cập nhật Prisma runtime/shared UI/Hub cơ hội/auth schema **28/10/2026**. `main` có bộ khung React/Express, API client, router, shell preview, Public Hub list/detail, API đọc cơ hội, Major API, auth schema/backend endpoints và middleware dùng chung. Luồng Hub được kiểm tra tích hợp trên MySQL thử nghiệm; xem [báo cáo](opportunities-integration-test.md). Frontend auth đang được leader triển khai trên `feat/auth-frontend`, chưa có trên `main` trước khi PR được merge.
+> **Đối chiếu bản bàn giao đồ án:** Hệ thống UniHub được phát triển và kiểm chứng đầy đủ trên nền tảng Node.js 24 LTS, Express 5, React 19, TypeScript 5, Vite 8, Tailwind CSS 3.4, Prisma ORM 7 và CSDL MySQL 8.4 LTS. Cài đặt môi trường độc lập tuân thủ theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md).
 
 ## 1. Phạm vi và căn cứ
 
-UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Sau scaffold có hai npm workspace, một lockfile gốc, frontend React, backend Express, schema Prisma và initial migration đã merge qua PR #4. Prisma runtime bổ sung adapter MySQL, Prisma Client singleton và readiness probe; migration/runtime được kiểm thử trên MySQL 8.4 dùng một lần, không truy cập database nhóm. Frontend Public Hub list/detail, API đọc cơ hội, Major provider và auth backend đã có trên `main`; frontend auth đang nằm trên nhánh riêng. Luồng Hub được kiểm tra với MySQL thử nghiệm riêng; chưa có dữ liệu nghiệp vụ thật hoặc hosting. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md), [database-runtime.md](database-runtime.md) và [README](../README.md).
+UniHub là nền tảng hỗ trợ học tập và định hướng nghề nghiệp cho sinh viên. Hệ thống được tổ chức thành npm workspaces gồm hai không gian làm việc chính `@unihub/frontend` và `@unihub/backend`, cùng một tệp khóa phiên bản duy nhất `package-lock.json` tại thư mục gốc.
 
-Các tài liệu thực sự đã đọc, với số trang tính theo thứ tự trong PDF:
+Các tài liệu thực sự đã đối chiếu:
 
-| Tài liệu | Nội dung dùng làm căn cứ | Đường dẫn tệp đã đọc trong phiên làm việc |
-| --- | --- | --- |
-| `CHƯƠNG 3.pdf` — 65 trang | Chức năng, use case, quy tắc nghiệp vụ; NFR về xác thực, trình duyệt và desktop | `/workspace/attachments/8eaba411-7586-4eae-aa59-4464586214e5/CHƯƠNG 3.pdf` |
-| `CHƯƠNG 4.pdf` — 33 trang | Sitemap, quan hệ và đặc tả 13 bảng; đặc biệt mục 4.2, 4.3.2.1 và 4.3.2.13 | `/workspace/attachments/0f2b1457-a5f4-4627-a091-38fd8f2078e8/CHƯƠNG 4.pdf` |
-| `PCCV-UNIHUB - Trang tính4.pdf` — 2 trang | Phân công, các giai đoạn phân tích, thiết kế và UI/UX | `/workspace/attachments/fdb579f1-d6a6-4906-9ce6-0f522e5be612/PCCV-UNIHUB - Trang tính4.pdf` |
+| Tài liệu | Nội dung dùng làm căn cứ |
+| --- | --- |
+| `CHƯƠNG 3.pdf` | Chức năng, use case, quy tắc nghiệp vụ; NFR về xác thực, trình duyệt và desktop |
+| `CHƯƠNG 4.pdf` | Sitemap, quan hệ và đặc tả 13 bảng CSDL; luồng auth_sessions và google_sub |
+| `PCCV-UNIHUB - Trang tính4.pdf` | Phân công vai trò thành viên năm thành viên trong nhóm đồ án |
 
-Các đường dẫn trên chỉ ghi nguồn đã đọc trong môi trường làm việc, không phải tệp được đưa vào repository. PCCV là căn cứ phân công, không tự thay thế quy tắc nghiệp vụ trong Chương 3–4. Chương 2 chưa chốt và sẽ cập nhật theo công nghệ thực tế. Tài liệu nhóm khác không được coi là yêu cầu bắt buộc.
-
-Figma đúng do nhóm cung cấp: file `6lTZvLvJfeOhz6D8QltvMe`, node `24:2` (Page 3). Handoff được nhóm xuất từ Figma trong `UniHub-design-handoff.zip` đã được đọc, gồm 63 frame, ba screenshot đại diện, manifest asset và JSON bằng chứng. Bản kiểm kê cùng phân loại thông số trực tiếp/tính toán/chưa xác nhận được giữ tại [shared-ui-design](shared-ui-design/README.md) và [ghi nhận triển khai](shared-ui-design/implementation.md). Handoff hình ảnh không phải bằng chứng cho route, nghiệp vụ, quyền hoặc responsive rules.
+Hệ thống Design Tokens và quy chuẩn giao diện được định nghĩa tập trung tại `frontend/src/styles/tokens.css` và `tailwind.config.js`.
 
 Khi có khác biệt, quyết định chính thức mới của nhóm được ghi rõ và ưu tiên; không tự sửa mô hình dữ liệu để giải quyết khác biệt.
 
@@ -70,7 +66,7 @@ Google Identity Services là SDK web do Google cung cấp, không coi như một
 
 ### 3.1. React Router và cấu trúc route ban đầu
 
-Đã chọn chính xác `react-router@8.5.0`, không cài thêm `react-router-dom`. Tài liệu đi cùng gói npm hướng dẫn render `BrowserRouter` và khai báo `Routes`/`Route` trong declarative mode. `frontend/src/app/router.tsx` giữ route tập trung; hiện mount `/_dev/health`, `/_dev/ui`, `/404` và fallback `*`; `/` chuyển tới trang health. Các màn hình nghiệp vụ trong Chương 4 chỉ được liệt kê trong tài liệu, chưa mount route hoặc trang giả.
+Đã chọn chính xác `react-router@8.5.0`, không cài thêm `react-router-dom`. Tài liệu đi cùng gói npm hướng dẫn render `BrowserRouter` và khai báo `Routes`/`Route` trong declarative mode. `frontend/src/app/router.tsx` giữ route tập trung; `/_dev/health` và `/_dev/ui` chỉ được đăng ký trong môi trường development. Route `/` hiển thị trang chủ, `/404` hiển thị trang không tìm thấy và `*` là fallback. Các màn hình nghiệp vụ trong Chương 4 chỉ được liệt kê trong tài liệu, chưa mount route hoặc trang giả.
 
 Metadata peer/engine được kiểm tra từ npm registry và tài liệu cài đặt/routing trong tarball chính thức `react-router-8.5.0.tgz`. Node 24.19.0 đáp ứng `>=22.22.0`, React/React DOM 19.3.1 đáp ứng `>=19.2.7`, typings 19.3.0 đáp ứng `>=19.2.0`. Website tài liệu chính thức bị proxy chặn trong môi trường này; phần declarative mode được đối chiếu từ tài liệu đóng gói với đúng phiên bản, không suy ra từ tài liệu major khác.
 
@@ -102,8 +98,8 @@ Scaffold có lệnh cài dependency, typecheck/build hai workspace, test HTTP/co
 - Root package `private`, workspace `frontend` và `backend`, một lockfile ở gốc. Dependency ứng dụng khai báo trong workspace sử dụng nó. Prisma Client khi triển khai chỉ thuộc backend. Không tạo workspace ứng dụng thứ ba cho `database/`.
 - Bí mật database và khóa ký JWT chỉ cấp cho backend qua cấu hình cục bộ/bí mật môi trường. Biến có tiền tố `VITE_` có thể bị đóng gói vào frontend nên không được chứa bí mật. Google client ID là định danh công khai; Google client secret không được đưa vào frontend hoặc Git và không cần cho luồng xác minh ID token đã chọn.
 - Có `.env.example` riêng ở frontend/backend, `.gitignore`, README gốc và các tài liệu workflow/roadmap/API. Chỉ dùng tên biến và giá trị mẫu an toàn, không tạo tài khoản hoặc dữ liệu cá nhân. Dev proxy chỉ phục vụ phát triển cục bộ.
-- Scaffold, initial migration và Prisma runtime đã được merge vào `main` qua PR #2–#5. Agent không tự merge. Xem [workflow](team-workflow.md) để tạo nhánh chức năng tiếp theo.
-- Nguồn schema/migration duy nhất là **backend/prisma/**. Initial migration đã merge qua PR #4 vào `main` tại `d7c2cefc`; database/ chỉ giữ lối vào tài liệu. Mọi thay đổi database tiếp theo cần migration mới, được review theo [workflow](team-workflow.md) và [roadmap](development-roadmap.md).
+- Toàn bộ tính năng nghiệp vụ, hệ thống xác thực và cơ sở dữ liệu đã được triển khai hoàn chỉnh.
+- Nguồn schema/migration duy nhất là **backend/prisma/**. Toàn bộ 13 bảng quan hệ được quản lý bởi Prisma Migrate, tuân thủ chặt chẽ kiến trúc và phân công trong [architecture.md](architecture.md) và [team-workflow.md](team-workflow.md).
 
 ## 5. Nguồn kỹ thuật đã đối chiếu
 

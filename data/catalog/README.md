@@ -1,5 +1,7 @@
 # Danh mục chuẩn ban đầu dùng chung
 
+**Luồng bàn giao hiện hành:** [đủ bốn bộ catalog với lệnh riêng từng file](../../docs/demo-seed-workflow.md#3-catalog--làm-đủ-bốn-file-theo-thứ-tự). Importer không có guard schema; xác minh đúng đích trước cả dry-run. Bộ 30 danh mục dưới đây chưa đủ cho Guidance/Forum và 100 cơ hội.
+
 > **Cài mới 06/11/2026:** Phần dưới mô tả bộ cơ bản 11 Major + 19 Skill và kiểm thử lịch sử. Bản demo đầy đủ cần catalog 117 Major + 328 Skill từ snapshot hiện có; thứ tự dry-run/apply tại [hướng dẫn local](../../docs/LOCAL-SETUP-UNIHUB-DEMO.md#7-nạp-dữ-liệu-đã-được-duyệt). Không suy ra dữ liệu MySQL từ JSON.
 
 Bộ **11 Major + 19 Skill** được xuất từ `initial_catalog_proposal.categories` của batch v2 đã được leader duyệt trên `data/opportunities-initial`. File [initial-categories.json](initial-categories.json) chỉ chứa `type`, `name`; không chứa ID local, tài khoản, email, token, dữ liệu TEST-ADMIN hoặc cơ hội. Tên đã duyệt giữ nguyên: Quản trị nhân lực; không tạo Major rộng Quản trị/Kinh doanh; dùng ứng dụng riêng thay vì cộng thêm Office/Workspace cho cùng yêu cầu. File này không thay thế quy tắc liên kết kỹ năng bắt buộc/ưu tiên của từng tin.
@@ -70,4 +72,4 @@ node backend/test/run-opportunities-import-mysql.mjs --run-isolated
 
 Runner cần MySQL 8.4 Windows binaries (mặc định `C:\Program Files\MySQL\MySQL Server 8.4\bin`; có thể đặt `IMPORTER_MYSQL_BIN` tới thư mục binary). Runner tạo tiến trình MySQL và 5 schema mới tại thư mục tạm, xác minh port/datadir/UUID/version, áp dụng migration hiện có và dừng tiến trình của nó khi xong. Không dùng DB cá nhân/nhóm, không GRANT/REVOKE. Credential test ngẫu nhiên chỉ ở memory/child environment, không in. Báo cáo JSON nằm trong datadir tạm, không đưa vào Git. Test thường thiếu cấu hình cô lập sẽ skip suite MySQL, không được tính là đã chạy SQL.
 
-Kết quả kiểm thử thực tế và giới hạn: [catalog-import-validation.md](../../docs/catalog-import-validation.md).
+Quy trình kiểm thử và kịch bản thực tế được tổ chức tại `backend/test/catalog-import.test.mjs`.

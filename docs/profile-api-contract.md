@@ -1,6 +1,6 @@
 # Hợp đồng API hồ sơ Student
 
-> **Contract: leader đã duyệt. Implementation: GET/PUT `/api/users/me/profile` và frontend `/profile` đã có trên `main` và nhánh tài liệu hiện tại.** TV2 dùng nền auth/RBAC chung; source nằm trong `backend/src/modules/users/profile.routes.ts` và `frontend/src/features/profile/ProfilePage.tsx`. Tài liệu này không thay schema, migration hay dữ liệu.
+> **Contract: leader đã duyệt. Implementation: GET/PUT `/api/users/me/profile` và frontend `/profile` đã có trên `main` và nhánh tài liệu hiện tại.** Thái Bình dùng nền auth/RBAC chung; source nằm trong `backend/src/modules/users/profile.routes.ts` và `frontend/src/features/profile/ProfilePage.tsx`. Tài liệu này không thay schema, migration hay dữ liệu.
 
 ## Căn cứ và quy tắc
 

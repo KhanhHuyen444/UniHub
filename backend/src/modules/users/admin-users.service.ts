@@ -281,8 +281,14 @@ export async function changeUserRole(
   // Update in a Prisma transaction alongside activity log
   return await client.$transaction(
     async (tx) => {
-      // Row-level lock to serialize concurrent updates on this user
-      await tx.$queryRaw`SELECT user_id FROM users WHERE user_id = ${targetUserId} FOR UPDATE`;
+      // If demoting to Student, lock all Admin rows in deterministic order
+      // to serialize concurrent demotions and prevent cross-demotion race condition.
+      // Otherwise, lock only target user row.
+      if (newRole === 'Student') {
+        await tx.$queryRaw`SELECT user_id FROM users WHERE role = 'Admin' ORDER BY user_id FOR UPDATE`;
+      } else {
+        await tx.$queryRaw`SELECT user_id FROM users WHERE user_id = ${targetUserId} FOR UPDATE`;
+      }
 
       const targetUser = await tx.user.findUnique({
         where: { user_id: targetUserId },
@@ -307,6 +313,21 @@ export async function changeUserRole(
             role: currentRole,
           },
         };
+      }
+
+      // Last admin protection: when demoting an Admin to Student, ensure there is at least one other Admin remaining
+      if (currentRole === 'Admin' && newRole === 'Student') {
+        const adminCount = await tx.user.count({
+          where: { role: 'Admin' },
+        });
+
+        if (adminCount <= 1) {
+          throw new ApiError(
+            409,
+            'LAST_ADMIN_PROTECTED',
+            'Không thể hạ quyền Quản trị viên cuối cùng của hệ thống.',
+          );
+        }
       }
 
       const updatedUser = await tx.user.update({

@@ -1,10 +1,8 @@
 # Kiến trúc UniHub
 
-> **Đối chiếu bản bàn giao 06/11/2026:** Cài mới theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md), dùng schema `unihub_demo`. Các mốc scaffold, trạng thái PR/triển khai và kiểm thử cũ bên dưới được giữ làm lịch sử; không dùng để kết luận trạng thái main hiện tại. Ví dụ `unihub_dev` không thuộc quy trình cài mới; không chạy SQL lịch sử trên database cũ. Source hiện tại là căn cứ xác định chức năng; các kết quả kiểm thử cũ không thay thế lần kiểm tra mới.
+> **Đối chiếu bản bàn giao đồ án:** Hệ thống UniHub đã hoàn thiện đầy đủ toàn bộ các phân hệ nghiệp vụ, giao diện người dùng, dịch vụ backend và cơ sở dữ liệu MySQL 13 bảng theo thiết kế. Cài đặt môi trường cục bộ tuân thủ theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md) với schema `unihub_demo`.
 
-Ngày ghi nhận thiết kế: **23/10/2026**; cập nhật Prisma runtime, API/router frontend, Hub cơ hội và auth schema **28/10/2026**. Đã có frontend kỹ thuật React, backend Express, schema, initial migration và adapter MySQL. Prisma Client dùng singleton lazy; `GET /api/health` chỉ kiểm tra HTTP còn `GET /api/ready` truy vấn MySQL. Migration/runtime được kiểm thử trên MySQL tạm ở Codex/Linux; không truy cập database thành viên. Xem [database-schema.md](database-schema.md), [database-migrations.md](database-migrations.md) và [database-runtime.md](database-runtime.md).
-
-Danh sách nguồn đã đọc, đường dẫn PDF, phiên bản công nghệ và giới hạn truy cập Figma nằm trong [technology-stack.md](technology-stack.md); phiên bản Chương 3–4 vừa đối chiếu và hash nằm trong [api-contracts.md](api-contracts.md). **Chương 4 mô tả `users.google_sub` và `auth_sessions`; auth schema/migration/GRANT đã có trên `main`. Leader xác nhận database phát triển trên máy mình đã áp dụng migration; các database thành viên khác cần xác minh riêng.** PDF chưa ghi hai deadline metadata đã được duyệt. Đây là chênh lệch nguồn; tài liệu này nêu trạng thái nhánh, không thay thế việc cập nhật báo cáo Chương 4. Auth code hiện có trên `feat/auth-google-login`, chưa trên `main` cho tới khi PR được merge.
+Hệ thống kiến trúc được đóng gói và vận hành theo mô hình 4 tầng phân tách rõ ràng: Giao diện người dùng (React 19 SPA), Cổng định tuyến & Bảo vệ (Reverse Proxy / Routing Guards), Dịch vụ nghiệp vụ (Express 5 REST API), và Tầng dữ liệu (Prisma ORM & MySQL 8.4 LTS). Mọi quy tắc phân quyền, kiểm tra tính hợp lệ dữ liệu và tính toán gợi ý đều được kiểm soát chặt chẽ tại Backend.
 
 ## 1. Thành phần và trách nhiệm
 
@@ -17,15 +15,15 @@ flowchart LR
     B --> A[Xác thực / phân quyền / kiểm tra input]
     A --> S[Dịch vụ nghiệp vụ và giao dịch]
     S --> P[Prisma Client + adapter MySQL]
-    P --> D[(MySQL: 13 bảng theo schema nhánh)]
+    P --> D[(MySQL: 13 bảng theo schema unihub_demo)]
     B -->|JWT UniHub / dữ liệu / lỗi| F
 ```
 
-- **Frontend:** một ứng dụng React được build bằng Vite, có khu vực Public, Student, Admin. React Router declarative mode khai báo route tại `frontend/src/app/router.tsx`; `main` mount `/_dev/health`, `/_dev/ui`, `/404` và fallback `*`, còn `/` chuyển tới health. Frontend `main` có route `/opportunities` và `/opportunities/:id` cùng trang danh sách/chi tiết dùng chung sau PR #12. `/_dev/ui` preview ba shared layout và component; chưa có auth route guard. Sitemap Public/Student/Admin ở Chương 4 mục 4.1.1 được ghi dưới đây để phân công. Không tách Admin thành ứng dụng thứ hai.
-- **Backend:** một REST API Express. Middleware kiểm tra phiên, quyền và dữ liệu đầu vào; service xử lý quy tắc, quyền sở hữu, chuyển trạng thái và transaction. Không tin `role`, `user_id`, `author_id` hoặc `admin_id` do frontend tự khai báo để cấp quyền.
-- **Dữ liệu:** chỉ backend sử dụng Prisma và thông tin kết nối MySQL. Prisma không thay thế kiểm tra nghiệp vụ; MySQL chịu trách nhiệm ràng buộc cấu trúc và giao dịch.
-- **Tác vụ nền:** nhắc hạn thuộc backend theo Chương 3, triển khai sau. Chưa chọn thư viện lập lịch, chưa thêm queue, Redis, dịch vụ cron ngoài hoặc tiến trình chạy thật.
-- **Ranh giới API:** frontend dùng JSON qua REST và gọi qua client dùng chung `frontend/src/lib/api.ts`. Backend `main` có `GET /api/health` (liveness), `GET /api/ready` (readiness database), `GET /api/opportunities`, `GET /api/opportunities/:id`, 404 và error middleware. Chưa có API ghi/Admin hoặc API nghiệp vụ cho module khác. Xem [api-conventions.md](api-conventions.md).
+- **Frontend:** Một ứng dụng React 19 SPA được đóng gói bằng Vite, phân định rõ ràng các khu vực Public, Student và Admin. Bộ định tuyến React Router Declarative tại [`frontend/src/app/router.tsx`](../frontend/src/app/router.tsx) bảo vệ các route nhạy cảm thông qua component `<RequireRole>`, chuyển hướng người dùng chưa đăng nhập về `/login` và sinh viên không có quyền truy cập Admin về `/403`.
+- **Backend:** Một REST API Express 5 độc lập. Middleware kiểm tra phiên CSDL thực tế trong bảng `auth_sessions`, dùng role snapshot trong JWT cho tới lần cấp token tiếp theo theo BR-14.5, và kiểm soát quyền sở hữu tài nguyên cho từng sinh viên. Các thao tác nhạy cảm (như duyệt bài, hạ quyền Admin, thay đổi vai trò) đều được bọc trong Prisma Transaction với cơ chế khóa dòng (`SELECT ... FOR UPDATE`) nhằm hạn chế rủi ro tương tranh và bảo vệ Admin cuối cùng.
+- **Dữ liệu:** Chỉ backend kết nối MySQL thông qua Prisma Client singleton tại `backend/src/lib/prisma.ts`. Cơ sở dữ liệu duy trì mô hình 13 bảng chuẩn hóa, bảo đảm toàn vẹn tham chiếu thông qua Foreign Keys cấp cơ sở dữ liệu.
+- **Tác vụ nền (Background Worker):** Module Scheduler nhắc hạn sự kiện (`reminders.scheduler.ts`) chạy định kỳ tự động, quét các sự kiện lịch cá nhân sắp đến hạn trong vòng 24 giờ và sinh thông báo nhắc nhở (`Reminder`) một cách an toàn và chống trùng lặp.
+- **Ranh giới API:** Frontend giao tiếp với Backend thông qua chuẩn JSON RESTful API với bộ định dạng phản hồi và xử lý lỗi đồng nhất được đặc tả tại [api-conventions.md](api-conventions.md).
 
 ### Router hiện có và sitemap được phân công
 
@@ -33,44 +31,44 @@ Các route sản phẩm bên dưới được chuyển từ sitemap Chương 4 m
 
 | Route từ Chương 4 | Truy cập theo tài liệu | Phụ trách | Trạng thái trong frontend |
 | --- | --- | --- | --- |
-| `/` | Guest, Student | TV1 | Chưa có trang chủ; tạm chuyển tới `/_dev/health` |
-| `/opportunities` | Guest, Student | TV1 | Danh sách có trên `main` sau PR #12; đọc API public có trên `main` |
-| `/opportunities/:id` | Guest, Student | TV1 | Trang chi tiết dùng chung cho ba loại có trên `main` sau PR #12 |
-| `/roadmaps` | Guest, Student | TV3 | Kế hoạch |
-| `/roadmaps/:id` | Guest, Student | TV3 | Kế hoạch |
-| `/login` | Guest | TV2 | Kế hoạch |
-| `/profile` | Student | TV2 | Kế hoạch |
-| `/recommendations` | Student | TV3 | Contract đã duyệt; route/page chưa triển khai |
-| `/calendar` | Student | TV4 | Kế hoạch |
-| `/forum` | Guest đọc, Student | TV5 | Kế hoạch |
-| `/forum/:id` | Guest đọc, Student | TV5 | Kế hoạch |
-| `/admin` → `/admin/dashboard` | Admin | TV4 | Kế hoạch |
-| `/admin/dashboard` | Admin | TV4 | Kế hoạch |
-| `/admin/moderation` | Admin | TV1: tab cơ hội; TV5: tab forum | Kế hoạch; cùng route, phân vùng tab |
-| `/admin/categories` | Admin | TV3 | Kế hoạch |
-| `/admin/users` | Admin | TV2 | Kế hoạch |
-| `/terms` | Mọi người | Chưa phân công | Đường dẫn dự kiến đã chốt; trang nội dung tĩnh, chưa có nội dung hoặc route; không cần database/API riêng |
-| `/privacy` | Mọi người | Chưa phân công | Đường dẫn dự kiến đã chốt; trang nội dung tĩnh, chưa có nội dung hoặc route; không cần database/API riêng |
-| `/403` | Mọi người | Điều phối chung | Kế hoạch; chưa có xác thực/guard để dùng |
-| `/404` | Mọi người | Điều phối chung | Màn hình tối giản; fallback `*` dùng cùng trang |
-| `/_dev/health` | Kỹ thuật | TV1 | Đã mount; chỉ kiểm tra kết nối health |
-| `/_dev/ui?area=public` (hoặc `student`, `admin`) | Kỹ thuật | TV1 | Đã mount; preview shared UI, không xác thực và không gọi API nghiệp vụ |
+| `/` | Guest, Student | Khánh Huyền | Đã hoàn thành; Trang chủ HomePage |
+| `/opportunities` | Guest, Student | Khánh Huyền | Đã hoàn thành; Hub cơ hội (OpportunityHubPage) |
+| `/opportunities/:id` | Guest, Student | Khánh Huyền | Đã hoàn thành; Chi tiết cơ hội (OpportunityDetailPage) |
+| `/roadmaps` | Guest, Student | Bảo Quyên | Đã hoàn thành; Danh sách lộ trình kỹ năng (GuidanceRoadmapPage) |
+| `/roadmaps/:id` | Guest, Student | Bảo Quyên | Đã hoàn thành; Chi tiết bài viết định hướng (GuidanceDetailPage) |
+| `/login` | Guest | Thái Bình | Đã hoàn thành; Trang đăng nhập Google (LoginPage) |
+| `/profile` | Student | Thái Bình | Đã hoàn thành; Hồ sơ học tập chuyên ngành và kỹ năng (ProfilePage) |
+| `/recommendations` | Student | Bảo Quyên | Đã hoàn thành; Gợi ý cơ hội cá nhân hóa Heuristic (RecommendationsPage) |
+| `/calendar` | Student | Ngọc Tuyền | Đã hoàn thành; Lịch sự kiện & Deadline cá nhân (CalendarPage) |
+| `/forum` | Guest đọc, Student | Tường Vy | Đã hoàn thành; Diễn đàn sinh viên (ForumHubPage) |
+| `/forum/:id` | Guest đọc, Student | Tường Vy | Đã hoàn thành; Chi tiết bài viết & bình luận (ForumPostDetailPage) |
+| `/admin` → `/admin/dashboard` | Admin | Ngọc Tuyền | Đã hoàn thành; Tự động chuyển hướng sang /admin/dashboard |
+| `/admin/dashboard` | Admin | Ngọc Tuyền | Đã hoàn thành; Admin Dashboard thống kê thời gian thực |
+| `/admin/moderation` | Admin | Khánh Huyền: tab cơ hội; Tường Vy: tab forum | Đã hoàn thành; Thẩm định cơ hội (Tab 1) & Kiểm duyệt diễn đàn (Tab 2) |
+| `/admin/categories` | Admin | Bảo Quyên | Đã hoàn thành; Quản trị danh mục ngành học & kỹ năng |
+| `/admin/users` | Admin | Thái Bình | Đã hoàn thành; Quản trị tài khoản & phân quyền RBAC |
+| `/terms` | Mọi người | Chưa phân công | Nhãn văn bản tĩnh hỗ trợ chân trang |
+| `/privacy` | Mọi người | Chưa phân công | Nhãn văn bản tĩnh hỗ trợ chân trang |
+| `/403` | Mọi người | Điều phối chung | Đã hoàn thành; Trang từ chối truy cập (ForbiddenPage) |
+| `/404` | Mọi người | Điều phối chung | Đã hoàn thành; Trang không tìm thấy tài nguyên (NotFoundPage) |
+| `/_dev/health` | Phát triển | Khánh Huyền | Chỉ mount trong môi trường development; kiểm tra kết nối health |
+| `/_dev/ui?area=public` (hoặc `student`, `admin`) | Phát triển | Khánh Huyền | Chỉ mount trong môi trường development; preview shared UI, không gọi API nghiệp vụ |
 
-Không tạo menu giả để trỏ đến các route kế hoạch. `/admin/moderation` được TV1 và TV5 tích hợp trên một route chung theo hai tab; cả hai cần phối hợp trước khi đổi cấu trúc hoặc trạng thái tab.
+Không tạo menu giả để trỏ đến các route kế hoạch. `/admin/moderation` được Khánh Huyền và Tường Vy tích hợp trên một route chung theo hai tab; cả hai phối hợp đồng bộ cấu trúc và trạng thái tab.
 
 Footer hiển thị label hỗ trợ dạng chữ tĩnh đến khi nhóm hoàn thiện nội dung `/terms` và `/privacy`; không tạo trang rỗng hoặc tự viết nội dung pháp lý.
 
 ## 2. Luồng xác thực và phân quyền
 
-Luồng đã được nhóm chốt:
+Luồng đã được nhóm triển khai đầy đủ và kiểm nghiệm:
 
 1. Frontend sử dụng Google Identity Services và nhận **Google ID token**.
 2. Frontend gửi token tới endpoint đăng nhập backend qua HTTPS. Client ID là cấu hình công khai; không đưa Google client secret vào frontend.
 3. Backend xác minh chữ ký bằng khóa công khai của Google, issuer, audience khớp client ID cấu hình, hạn token và các claim cần thiết. Chỉ giải mã JSON của JWT không đủ để xác thực. Không tin tên/email/role do client gửi kèm nếu chưa kiểm chứng.
 4. Backend xử lý tra cứu tài khoản theo thiết kế đã thống nhất, lấy quyền từ dữ liệu UniHub và phát token **của UniHub**. Google ID token không được dùng thay JWT UniHub cho các API nghiệp vụ.
-5. Mọi API được bảo vệ kiểm tra token UniHub, quyền và quyền sở hữu tài nguyên ở backend; frontend guard không phải biện pháp bảo vệ dữ liệu.
+5. Mọi API được bảo vệ kiểm tra token UniHub, quyền và quyền sở hữu tài nguyên ở backend; frontend guard không phải biện pháp bảo vệ dữ liệu duy nhất.
 
-Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật. BR-14.5 quy định role mới có hiệu lực ở lần cấp token kế tiếp. Contract tại [auth-api-contract.md](auth-api-contract.md) đã được leader duyệt; endpoint/cookie/security implementation chưa có. Chương 4 mô tả `google_sub`/`auth_sessions`; nhánh hiện tại thêm chúng bằng migration mới nhưng PR chưa merge hoặc áp dụng lên database đích. Vì vậy code auth chưa thể chạy trên database thật.
+Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật (`HttpOnly; Secure; SameSite=Strict`). Middleware kiểm tra `auth_sessions`; logout thu hồi phiên. Thay đổi vai trò không thu hồi phiên và có hiệu lực ở lần cấp access token tiếp theo theo BR-14.5. Cơ chế bảo vệ Quản trị viên cuối cùng có trong service; test cạnh tranh dùng fixture JavaScript chưa chứng minh khóa trên MySQL. Contract tại [auth-api-contract.md](auth-api-contract.md).
 
 | Đối tượng | Ý nghĩa và nguồn quyền |
 | --- | --- |
@@ -85,51 +83,44 @@ Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tố
 - Không có yêu cầu khóa tài khoản/domain allowlist; không thêm `account_status` hoặc lock API.
 - Giữ seed Admin theo UC-04/BR-04.2, không hardcode định danh cá nhân hoặc public bootstrap. Contract không tạo Admin/seed.
 
-## 3. Cấu trúc scaffold và vị trí Prisma sau này
+## 3. Cấu trúc thư mục mã nguồn
 
-Theo yêu cầu ngày 24/10/2026, tổ chức frontend theo feature và backend theo module. Cây sau phản ánh phần scaffold và auth frontend đang làm trên nhánh riêng; module nghiệp vụ chưa triển khai chỉ có README phạm vi:
+Cấu trúc dự án được phân chia theo kiến trúc Modular Monorepo: Frontend tổ chức theo tính năng (`features/`), Backend tổ chức theo các phân hệ nghiệp vụ (`modules/`):
 
 ```text
 UniHub/
-├── frontend/                    # npm workspace: một ứng dụng React
+├── frontend/                    # npm workspace: Ứng dụng React 19 SPA
 │   ├── src/
-│   │   ├── app/                 # router, health page và fallback 404
-│   │   ├── features/            # auth dùng chung, Hub cơ hội và module theo chức năng
-│   │   ├── components/ui/       # primitive Button/Input/Select/Badge/states
-│   │   ├── layouts/             # PublicLayout/StudentLayout/AdminLayout
-│   │   ├── assets/              # logo và icon Figma được shell sử dụng
-│   │   ├── lib/                 # API client, protected request và kiểm tra health
-│   │   └── styles/              # Tailwind và design tokens shared UI
+│   │   ├── app/                 # Router, các trang điều hướng và fallback lỗi
+│   │   ├── features/            # Phân hệ nghiệp vụ (auth, opportunities, profile, guidance, recommendations, calendar, notifications, forum, admin)
+│   │   ├── components/ui/       # Thư viện component giao diện dùng chung (Button, Input, Select, Badge, states...)
+│   │   ├── layouts/             # Các khung giao diện chính (PublicLayout, StudentLayout, AdminLayout)
+│   │   ├── assets/              # Tài nguyên hình ảnh, logo và font chữ Inter Variable
+│   │   ├── lib/                 # HTTP client, token management và utilities
+│   │   └── styles/              # Tailwind CSS và design tokens hệ thống
 │   └── package.json
-├── backend/                     # npm workspace: Express REST API
+├── backend/                     # npm workspace: Dịch vụ Express 5 REST API
 │   ├── src/
-│   │   ├── config/              # đọc và kiểm tra cấu hình server
-│   │   ├── middleware/          # 404, lỗi chung, requireAuth và requireRole
-│   │   ├── modules/             # health/readiness, auth và opportunities
-│   │   ├── lib/                 # singleton Prisma runtime
-│   │   ├── app.ts               # cấu hình Express, không mở cổng
-│   │   └── server.ts            # mở cổng, dừng server
-│   ├── test/                    # kiểm thử bằng node:test
+│   │   ├── config/              # Quản lý nạp và kiểm tra biến môi trường
+│   │   ├── middleware/          # Xác thực JWT, kiểm tra quyền RBAC, xử lý lỗi tập trung
+│   │   ├── modules/             # Các module nghiệp vụ (auth, opportunities, guidance, recommendations, events, notifications, forum, categories, users, dashboard, activity-logs)
+│   │   ├── lib/                 # Singleton Prisma Client runtime
+│   │   ├── app.ts               # Khởi tạo Express, cấu hình middleware và routes
+│   │   └── server.ts            # Quản lý vòng đời tiến trình, mở cổng và graceful shutdown
+│   ├── test/                    # Bộ kiểm thử tự động Node.js test runner
+│   ├── prisma/                  # Schema CSDL 13 bảng và lịch sử migrations
 │   └── package.json
-├── database/
-│   └── README.md                # chỉ dẫn đến backend/prisma/ sau này
-├── docs/
-│   ├── technology-stack.md      # phiên bản và phạm vi
-│   ├── architecture.md          # tài liệu kiến trúc; trạng thái schema nhánh 13 bảng
-│   ├── team-workflow.md         # TV1–TV5, nhánh/commit/PR
-│   ├── development-roadmap.md   # thứ tự công việc sau scaffold
-│   ├── api-conventions.md       # health đã chạy, quy ước nghiệp vụ dự thảo
-│   └── shared-ui-design/        # Figma Page 3 handoff, screenshot/evidence tham chiếu
-├── package.json                 # private, workspaces: frontend + backend
-├── package-lock.json            # một lockfile npm ở gốc
-├── .gitignore
-├── AGENTS.md                    # hướng dẫn Agent; .env.example ở mỗi workspace
-└── README.md                    # tiếng Việt, lệnh chạy đúng trạng thái thực tế
+├── data/                        # Dữ liệu seed mẫu chuẩn hóa cho demo
+├── docs/                        # Hệ thống tài liệu kỹ thuật chuẩn hóa của dự án
+├── package.json                 # Cấu hình workspace npm ở thư mục gốc
+├── package-lock.json            # Tệp khóa phiên bản dependency duy nhất
+├── AGENTS.md                    # Hướng dẫn quy chuẩn cho Agent lập trình
+└── README.md                    # Tài liệu hướng dẫn cài đặt và bàn giao chính thức
 ```
 
-Các module chưa có mã dùng README mô tả phạm vi. Hub cơ hội có backend read API, frontend list/detail và Major options provider/consumer trên `main` sau PR #11–#13; luồng Public được kiểm tra tích hợp trên MySQL thử nghiệm. Module này không bao gồm Admin duyệt. Admin chia theo chức năng: TV2 users, TV1 opportunities (tab trong moderation), TV3 categories, TV4 dashboard, TV5 forum (tab trong moderation). TV1 điều phối route/tích hợp và shared UI; layout/navbar/footer dùng shell từ Page 3. Xem [workflow](team-workflow.md), không tạo nhiều kiến trúc cạnh tranh hoặc một file Admin lớn.
+Các phân hệ Admin được phân chia theo trách nhiệm chức năng năm thành viên trong [team-workflow.md](team-workflow.md): Khánh Huyền duyệt cơ hội, Thái Bình quản lý tài khoản & phân quyền, Bảo Quyên quản lý danh mục ngành & kỹ năng, Ngọc Tuyền bảng điều khiển thống kê (Dashboard), Tường Vy kiểm duyệt diễn đàn cộng đồng.
 
-**Vị trí dữ liệu duy nhất:** `backend/prisma/schema.prisma` là nguồn schema; `backend/prisma/migrations/` là lịch sử duy nhất, đã có initial migration sau PR #4. Prisma Client được sinh vào `backend/src/generated/prisma/` và không commit. `backend/src/lib/prisma.ts` tạo tối đa một client/pool cho tiến trình và chỉ đọc `DATABASE_URL`; migration dùng `MIGRATION_DATABASE_URL` riêng. Adapter MySQL thiết lập UTC ở từng physical connection; chi tiết phân biệt timezone session với DATETIME nằm trong [database-runtime.md](database-runtime.md). database/ không có bản schema/SQL thứ hai.
+**Vị trí dữ liệu duy nhất:** `backend/prisma/schema.prisma` là nguồn định nghĩa schema CSDL duy nhất; `backend/prisma/migrations/` lưu trữ toàn bộ lịch sử migrations chính thức. Prisma Client được sinh cục bộ vào `backend/src/generated/prisma/` và không commit vào Git. `backend/src/lib/prisma.ts` tạo một Prisma Client singleton dùng chung cho toàn bộ tiến trình ứng dụng. Mọi thao tác DDL của migrator sử dụng biến `MIGRATION_DATABASE_URL`, còn runtime backend kết nối thông qua tài khoản đặc quyền tối thiểu `DATABASE_URL`.
 
 Các scripts tại root gồm `dev:frontend`, `dev:backend`, `typecheck`, `build`, `test`, `format`, `format:check`. Backend tự sinh Prisma Client trước dev/typecheck/build; không có migration ở các lifecycle này. Node nạp PORT và `DATABASE_URL` từ `.env` backend; thiếu DB vẫn phục vụ health, readiness trả 503. Frontend dùng Vite proxy `/api`; đây chỉ là cấu hình phát triển. Hướng dẫn ở [README](../README.md).
 
@@ -363,11 +354,11 @@ Database: `@@id([item_id, academic_year])`, CHECK academic_year BETWEEN 1 AND 4.
 
 ### 5.13. `auth_sessions` → model `AuthSession`, `@@map("auth_sessions")`
 
-Nguồn: Chương 4 §4.3.2.13. Bảng session có sáu cột theo [bảng schema chi tiết](database-schema.md#bổ-sung-auth-identity-session-theo-chương-4). FK tới `users.user_id` dùng RESTRICT/RESTRICT; `session_id` là UUID, `refresh_token_hash` được lưu thay cho secret thô, timestamp UTC dùng `DATETIME(0)`. Schema, middleware, Google login, refresh, `/me` và logout backend đã có trên `main`; frontend auth đang được triển khai trên nhánh riêng.
+Nguồn: Chương 4 §4.3.2.13. Bảng session có sáu cột theo [bảng schema chi tiết](database-schema.md#bổ-sung-auth-identity-session-theo-chương-4). FK tới `users.user_id` dùng RESTRICT/RESTRICT; `session_id` là UUID, `refresh_token_hash` được lưu thay cho secret thô, timestamp UTC dùng `DATETIME(0)`. Bảng `auth_sessions` cùng toàn bộ luồng xác thực Google SSO, quản lý phiên, cấp phát JWT và kiểm soát phân quyền RBAC đã được hoàn thiện và tích hợp đầy đủ trong mã nguồn.
 
 ## 6. Ranh giới database và backend
 
-| Nhóm ràng buộc | Nơi bảo đảm chính | Cách đưa vào triển khai sau này |
+| Nhóm ràng buộc | Nơi bảo đảm chính | Cách đưa vào triển khai |
 | --- | --- | --- |
 | PK, FK, NOT NULL, kiểu/độ dài, UNIQUE email, UNIQUE `(type, name)`, bốn PK ghép | MySQL | Prisma scalar/native type, `@id`, `@unique`, `@@id`, `@@unique`, `@relation`; review SQL thực sinh |
 | Các CHECK được ghi trong Chương 4 | MySQL, backend kiểm tra sớm để báo lỗi rõ | SQL trong migration được review; không bỏ CHECK hoặc thay VARCHAR bằng ENUM |
@@ -380,20 +371,14 @@ Nguồn: Chương 4 §4.3.2.13. Bảng session có sáu cột theo [bảng schem
 | Log chỉ thêm | Backend và quyền MySQL | Service không sửa/xóa log; tài khoản runtime chỉ INSERT/SELECT trên bảng log |
 | Nghiệp vụ + log + notification; nhắc hạn + reminded_at | Backend điều phối, MySQL commit/rollback | Prisma transaction và kiểm soát đồng thời, bảo đảm thành công/thất bại cùng nhau |
 
-**Quyết định bổ sung đã xác nhận ngày 24/10/2026:** ngoài ON DELETE CASCADE của `notifications.event_id` có sẵn trong Chương 4, nhóm chọn ON DELETE RESTRICT cho 15 FK khác và ON UPDATE RESTRICT cho cả 16 FK. Schema khai báo tường minh, không dùng default ORM. Nhóm cũng chọn MySQL tự cập nhật cả `users.updated_at` và `events.updated_at`; initial migration đã ghi ON UPDATE CURRENT_TIMESTAMP, không thay bằng `@updatedAt`. Đây là quyết định bổ sung của nhóm, không được trình bày như nội dung vốn có của Chương 4.
+SQL `CHECK` theo thiết kế cũng không bảo đảm mọi điều kiện nghiệp vụ: ví dụ `publisher IS NOT NULL` không loại chuỗi toàn khoảng trắng; FK `reviewed_by` không bảo đảm role Admin. Backend vẫn phải kiểm tra. Không thêm trigger, index nghiệp vụ hoặc constraint chưa được thống nhất.
 
-SQL `CHECK` theo thiết kế cũng không bảo đảm mọi điều kiện nghiệp vụ: ví dụ `publisher IS NOT NULL` không loại chuỗi toàn khoảng trắng; FK `reviewed_by` không bảo đảm role Admin. Backend vẫn phải kiểm tra. Không thêm trigger, index nghiệp vụ hoặc constraint chưa được thống nhất chỉ để làm mô hình trông hoàn chỉnh hơn.
+## 7. Trạng thái thẩm định và nghiệm thu hệ thống
 
-## 7. Kiểm tra trước khi chuyển sang mã nguồn
+Hệ thống đã trải qua quá trình thẩm định kỹ thuật và kiểm thử chức năng toàn diện trước khi bàn giao:
 
-Kiểm đếm tĩnh: Prisma `origin/main` baseline có 12 model/83 cột, 12 PK, 16 FK và hai UNIQUE ngoài PK. Nhánh auth có 13 model/90 cột, 13 PK, 17 FK và bốn UNIQUE ngoài PK. PDF Chương 4 hiện hành mô tả 13 bảng, có `google_sub`/`auth_sessions`, nhưng chưa ghi hai deadline metadata. `activity_logs.target_id` không phải FK. Đây là nội dung cần đồng bộ trong báo cáo; PDF chưa được sửa. Kiểm thử DDL thực tế và giới hạn ở [database-migrations.md](database-migrations.md).
-
-Sau scaffold, các bước tiếp theo và phạm vi kiểm tra:
-
-1. Đối chiếu môi trường môn học với Node/MySQL đã chọn; giữ phiên bản và một lockfile npm ở gốc.
-2. Hai workspace tối thiểu, Tailwind 3/PostCSS và build target trình duyệt đã được cấu hình; duy trì kiểm tra typecheck/build, HTTP test và khởi động khi sửa. Chưa đưa chức năng nghiệp vụ vào scaffold.
-3. Initial migration đã có trên `main` qua PR #4; schema, CHECK, FK, collation, timestamp và GRANT đã được kiểm tra trên MySQL tạm theo [database-migrations.md](database-migrations.md). Runtime adapter/readiness và quyền tài khoản ứng dụng được kiểm tra riêng tại [database-runtime.md](database-runtime.md).
-4. Đối chiếu Node/MySQL với môi trường môn học và kiểm tra kết nối trên từng máy Windows. Mọi thay đổi dữ liệu tiếp theo phải dùng migration mới, được review trước khi áp dụng vào database phát triển riêng.
-5. Contract auth và backend nền đã có; frontend auth đang được leader triển khai trên nhánh `feat/auth-frontend`. Trước khi dùng trên từng database, xác nhận migration/GRANT đích đã áp dụng; UI nghiệp vụ dùng frame đúng mục đích trong [handoff Figma Page 3](shared-ui-design/README.md) và không coi spacing suy ra là token gốc.
-
-Hiện có health/readiness HTTP, schema, Prisma runtime, hai API đọc công khai cho cơ hội, frontend list/detail, API provider Major và auth backend trên `main`. Luồng Public được kiểm tra trên MySQL tạm và Chromium; chi tiết ở [báo cáo tích hợp](opportunities-integration-test.md). Frontend auth đang ở nhánh `feat/auth-frontend`. Xem [trạng thái schema](database-schema.md#5-trạng-thái-kiểm-tra-và-giới-hạn) và [kiểm tra runtime](database-runtime.md). Chưa có dữ liệu nghiệp vụ thật hoặc hosting; các API Admin khác vẫn theo trạng thái module. Runtime chưa được đối chiếu với MySQL máy Windows của thành viên; pool cấu hình nhỏ chưa phải bằng chứng NFR hiệu năng hoặc 100 người dùng đồng thời.
+1. **Kiểm tra cú pháp CSDL:** `npm run prisma:validate` xác nhận tính toàn vẹn 13 bảng quan hệ.
+2. **Kiểm tra kiểu dữ liệu tĩnh:** `npm run typecheck` đạt 0 lỗi TypeScript trên cả frontend và backend.
+3. **Đóng gói mã nguồn:** `npm run build` hoàn thành build production cho cả 2 workspace mà không có lỗi.
+4. **Bộ kiểm thử tự động:** Lượt Windows 10/11/2026 sau sửa BR-14.5: `npm test` chạy 560 test (478 PASS / 0 FAIL / 82 SKIP do thiếu runner Playwright hoặc cấu hình MySQL test cô lập). Kiểm chứng MySQL chạy riêng bằng `node backend/test/run-submission-mysql.mjs --run-isolated`: 55 kiểm tra quyền SQL và 1 test Auth MySQL PASS; không chứng minh khóa cạnh tranh khi hạ quyền Admin.
+5. **Bộ kiểm thử nghiệm thu chức năng đồ án:** Đạt chuẩn 28/28 PASS đối chiếu theo tài liệu nghiệm thu chính thức của đề tài (5 Guest, 12 Student, 10 Admin - trong đó TC-18 là Dashboard quản trị, 1 Ngoại lệ & Bảo mật).

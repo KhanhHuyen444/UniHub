@@ -4,7 +4,7 @@
 
 Calendar, Notifications API/Bell và Reminder scheduler đã được mount trong source hiện tại. Reminder tạo thông báo trong ứng dụng; Email Reminder đã được loại bỏ. Phần review và số test ngày 31/10 bên dưới là bằng chứng lịch sử, không phải kết quả kiểm thử mới. Cài đặt theo [README gốc](../../../../README.md).
 
-## Review lịch sử Reminders 31/10/2026 — PR #26
+## Rà soát lịch sử Reminders 31/10/2026 — PR #26
 
 Đã cập nhật nhánh bằng `origin/main=df6a277` (merge sạch, không conflict thực tế); không đưa Calendar, Notifications hoặc Dashboard đang mở vào PR này. Không phát hiện regression cần sửa trong Reminder service tại head `006f810`; giữ nguyên logic production.
 
@@ -14,7 +14,7 @@ Root typecheck/build đạt. Root tests: frontend 78 pass / 31 skip, backend 164
 
 Đã triển khai: **Backend CRUD Calendar Events (FR-04.1)** theo [hợp đồng API](../../../../docs/events-notifications-api-contract.md).
 
-Phụ trách: **TV4**.
+Phụ trách: **Ngọc Tuyền**.
 
 ## Các endpoint đã triển khai
 
@@ -38,7 +38,7 @@ Phụ trách: **TV4**.
 
 - `GET /api/notifications` và `PATCH /api/notifications/:id/read` (FR-04.2 / Notification routes).
 
-## Deadline Reminders (Task 2)
+## Nhắc hạn (Task 2)
 
 Nhánh `feat/event-reminders` thêm scheduler chạy ngay sau khi HTTP server bắt đầu
 nghe, sau đó mỗi 60 giây. Mỗi tiến trình chỉ chạy một lượt tại một thời điểm;
@@ -71,7 +71,7 @@ ghi thông báo chung, không log exception có dữ liệu nhạy cảm.
 Không có shared Notification writer hỗ trợ transaction hiện tại, nên Reminder
 được ghi trực tiếp bằng `tx.notification.create`. Tuyen phụ trách Notifications API
 (list/read) và bell UI; Vy điều phối chức năng thông báo Violation. Task 2 phụ trách
-Reminder Service và scheduler 60 giây. Review phần server lifecycle với TV1
+Reminder Service và scheduler 60 giây. Review phần server lifecycle với Khánh Huyền
 và transaction liên module với Tuyen và Vy trước khi tích hợp.
 
 Kiểm thử unit: `backend/test/reminders.test.mjs`. Kiểm thử MySQL:

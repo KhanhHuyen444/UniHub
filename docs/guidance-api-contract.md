@@ -4,7 +4,7 @@
 
 ## Quyền và chọn Major
 
-GET routes public: Guest và Student đều đọc; Admin cũng chỉ nhận nội dung public. Không cần token. Nếu có Bearer token hợp lệ Student, list có thể dùng đúng users.major_id; không đọc year, skills, careerGoal hoặc lịch sử. Token tùy chọn sai/hết hạn trên các public guidance routes được xử lý như Guest và không dùng hồ sơ. Quy tắc này không áp dụng protected routes; route protected với token sai/hết hạn trả 401.
+Các route GET là public: Guest và Student đều đọc được; Admin cũng chỉ nhận nội dung public. Không cần token. Nếu có Bearer token Student hợp lệ, list có thể dùng users.major_id tương ứng; không đọc year, skills, careerGoal hoặc lịch sử. Token tùy chọn sai/hết hạn trên route guidance public được xử lý như Guest và không dùng hồ sơ. Quy tắc này không áp dụng cho protected route; token sai/hết hạn trên route được bảo vệ trả 401.
 
 Chọn Major:
 
@@ -39,7 +39,7 @@ Response 200:
 }
 ```
 
-No selected Major response is exactly {"selectedMajor":null,"stages":[]}. Stage sort academic_year ASC; items item_id ASC. A Major with no approved article returns selectedMajor and stages:[] (not a service error).
+Khi không có Major được chọn, response chính xác là {"selectedMajor":null,"stages":[]}. Stage được sắp xếp theo academic_year ASC; item theo item_id ASC. Major không có bài đã duyệt trả về selectedMajor và stages:[] (không phải lỗi dịch vụ).
 
 ## GET /api/guidance/:id
 
@@ -61,10 +61,10 @@ Path id positive integer; no query/body. Response 200:
 }
 ```
 
-Description fields are nullable plain text, never HTML. Major/Skill labels include already-linked Closed values and retain API relation order; chooser options remain Active only. academicYears is always an array; empty means no year target. Response excludes reviewed_by, reviewer identity, internal logs and account/session fields. Missing, non-Approved, or non-guidance item all return the same 404 NOT_FOUND.
+Các field mô tả là plain text có thể null, không bao giờ là HTML. Nhãn Major/Skill bao gồm cả giá trị Closed đã liên kết và giữ thứ tự quan hệ từ API; danh sách lựa chọn chỉ gồm Active. academicYears luôn là mảng; mảng rỗng nghĩa là không nhắm tới năm học nào. Response không gồm reviewed_by, danh tính reviewer, log nội bộ hoặc field tài khoản/session. Mục không tồn tại, chưa Approved hoặc không phải guidance đều trả cùng lỗi 404 NOT_FOUND.
 
 ## Errors, data and tests
 
-Path `:id` sai định dạng/ngoài giới hạn → 400 `INVALID_ID`; list query lạ/lặp/ID sai định dạng → 400 `INVALID_QUERY`; `majorId` hợp lệ nhưng không trỏ tới Major Active → 400 `INVALID_FILTER`; nonpublic detail → 404 NOT_FOUND; DB unavailable → 503 SERVICE_UNAVAILABLE; unexpected → 500 INTERNAL_ERROR. Error envelope is shared. No writes; list reads categories, opportunities, opportunity_majors, opportunity_years, opportunity_skills and optionally users.major_id for valid Student; detail reads public item and relations. Database/service errors never become Guest fallback or an empty successful response.
+`:id` sai định dạng/vượt giới hạn → 400 `INVALID_ID`; list query lạ/bị lặp/ID sai định dạng → 400 `INVALID_QUERY`; `majorId` hợp lệ nhưng không trỏ tới Major Active → 400 `INVALID_FILTER`; detail không public → 404 NOT_FOUND; DB không khả dụng → 503 SERVICE_UNAVAILABLE; lỗi ngoài dự kiến → 500 INTERNAL_ERROR. Dùng error envelope chung. Không ghi dữ liệu; list đọc categories, opportunities, opportunity_majors, opportunity_years, opportunity_skills và có thể đọc users.major_id nếu Student hợp lệ; detail đọc item public và quan hệ. Lỗi database/dịch vụ không được biến thành fallback Guest hoặc response thành công rỗng.
 
-Tests: Guest/default; valid Student profile Major; missing/Closed Student Major fallback; Admin public fallback; invalid/Closed explicit major; no active Major exact empty response; no-year article omitted from stages but direct detail public; no approved article empty stage; invalid token behaves Guest only on public route; DB error 503/500; approved/type filter, stable stage/item order, closed linked names, plain text and no reviewer fields. **Contract đã duyệt; API đã được mount trong `backend/src/app.ts`. Ma trận trên không phải kết quả chạy test của lượt đối chiếu tài liệu.**
+Test bao gồm: Guest/default; Major trong profile Student hợp lệ; fallback khi Major Student thiếu/Closed; fallback public cho Admin; Major chỉ định không hợp lệ/Closed; response rỗng chính xác khi không có Major Active; bài không gắn năm bị bỏ khỏi stages nhưng detail trực tiếp vẫn public; stage rỗng khi không có bài đã duyệt; token sai được xử lý như Guest chỉ trên route public; lỗi DB 503/500; lọc Approved/type, thứ tự stage/item ổn định, tên liên kết Closed, plain text và không có field reviewer.

@@ -1,5 +1,7 @@
 # Migration MySQL của UniHub
 
+**SQL dành cho cài mới:** dùng [tạo schema/user](LOCAL-SETUP-UNIHUB-DEMO.md#2-tạo-schema-và-hai-tài-khoản) và [GRANT runtime sau migration](LOCAL-SETUP-UNIHUB-DEMO.md#4-chạy-migrations-rồi-cấp-quyền-runtime-theo-từng-bảng) cho `unihub_demo`. Ví dụ phát triển cũ bên dưới chỉ phục vụ lịch sử. Kết quả cài mới cần được ghi theo [checklist](fresh-install-acceptance.md), không suy ra từ các kiểm thử MySQL cũ.
+
 > **Đối chiếu bản bàn giao 06/11/2026:** Cài mới theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md), dùng schema `unihub_demo`. Các mốc scaffold, trạng thái PR/triển khai và kiểm thử cũ bên dưới được giữ làm lịch sử; không dùng để kết luận trạng thái main hiện tại. Ví dụ `unihub_dev` không thuộc quy trình cài mới; không chạy SQL lịch sử trên database cũ. Source hiện tại là căn cứ xác định chức năng; các kết quả kiểm thử cũ không thay thế lần kiểm tra mới.
 
 Initial migration **25/10/2026** đã merge vào `main` qua PR #4 tại `d7c2cefc79754728a6731498a33f4d3ebfe40c48`. Migration deadline ngày **26/10/2026** đã merge qua PR #8. Auth migration bổ sung `users.google_sub`, `auth_sessions` và quyền runtime đã merge vào `main`; leader xác nhận database phát triển trên máy mình đã áp dụng auth migration, còn trạng thái máy thành viên khác chưa xác nhận. Theo xác nhận của nhóm ngày 26/10/2026, database phát triển trên máy leader có hai cột `deadline_source_date` và `deadline_source_timezone`; chưa xác nhận database của các thành viên khác. Đây là ghi nhận từ nhóm, Codex không tự kết nối để kiểm chứng. Kiểm thử trong tài liệu chỉ dùng MySQL 8.4 tạm ở Codex; không mở hoặc thay đổi database nào của nhóm.
@@ -13,7 +15,7 @@ Chương 4 PDF hiện hành mô tả `users.google_sub` và bảng `auth_session
 - Lưu thời gian theo UTC, giữ nguyên `DATETIME(0)`; request/response API dùng ISO 8601 có timezone, ưu tiên UTC (`Z`); giao diện hiển thị `Asia/Ho_Chi_Minh`. DATETIME không lưu thông tin timezone. `CURRENT_TIMESTAMP` và `ON UPDATE CURRENT_TIMESTAMP` lấy giờ theo session MySQL, vì vậy từng session ứng dụng và migration phải chạy `SET time_zone = '+00:00'`. Initial migration đặt timezone cho session đang thi hành.
 - Quản trị viên database tạo schema và tài khoản. Tài khoản migration riêng có ALL PRIVILEGES chỉ trên database UniHub đang di trú, không có quyền ở mức máy chủ và không được đưa vào backend runtime. Tài khoản ứng dụng là tài khoản riêng, cấp quyền từng bảng bên dưới. Chưa có credentials thật.
 
-## Initial migration tạo gì
+## Migration ban đầu tạo gì
 
 `backend/prisma/migrations/20261025000000_initial_schema/migration.sql` bắt nguồn từ SQL diff `--from-empty --to-schema` của Prisma 7.10.1. Phần Prisma sinh tạo 12 bảng nghiệp vụ nền, 81 cột, 12 PK, 16 FK, 2 UNIQUE, native types, NULL và defaults theo schema. Sau đó SQL migration được bổ sung:
 
@@ -24,7 +26,7 @@ Chương 4 PDF hiện hành mô tả `users.google_sub` và bảng `auth_session
 
 Initial migration không có enum, trigger, bảng identity/session, tài khoản, seed data hoặc chức năng nghiệp vụ. Prisma tạo thêm bảng kỹ thuật `_prisma_migrations` khi áp dụng migration; đây không phải bảng nghiệp vụ.
 
-## Migration auth identity/session trên nhánh hiện tại
+## Migration danh tính/phiên auth trên nhánh hiện tại
 
 `backend/prisma/migrations/20261028170000_add_auth_identity_sessions/migration.sql` chỉ thêm `users.google_sub` và bảng `auth_sessions`. Nó không sửa byte nội dung của initial migration hay deadline migration và không cập nhật dữ liệu cũ. Mọi `google_sub` cũ/new nullable row để `NULL`; không có backfill từ email hoặc thay đổi `user_id`.
 
@@ -119,7 +121,7 @@ npm.cmd run db:migrate:status
 
 `status` chỉ kiểm tra lịch sử database được chỉ bởi `MIGRATION_DATABASE_URL`. `deploy` áp dụng các migration đã commit còn thiếu; không tạo migration mới và không reset database. Trong quyền đã chốt, migrator chỉ có grants trên schema đang tồn tại nên quản trị viên phải tạo database/tài khoản trước. Prisma CLI có thể thử tạo database khi thiếu nếu caller có quyền cấp máy chủ; tài khoản migration trong hướng dẫn không có quyền đó. Hãy xác nhận URL trỏ tới database phát triển riêng của bạn trước khi chạy `deploy`.
 
-### Áp dụng migration hiện có trên Windows sau khi PR auth được review và merge
+### Áp dụng migration hiện có trên Windows sau khi PR auth được rà soát và merge
 
 ## Migration loại bỏ email reminder (20261105000000_remove_event_reminder_emails)
 
@@ -177,7 +179,7 @@ Không chỉnh migration sau khi đã chia sẻ/áp dụng. Mọi thay đổi ti
 - Chạy `migrate deploy` lần thứ hai trên database upgrade báo không có migration chờ; `_prisma_migrations` vẫn có đúng hai migration hoàn tất. Migration initial không bị thay đổi. Chưa có backend nghiệp vụ để kiểm tra timezone input, xác thực zone hợp lệ hoặc phép tính cutoff trong service.
 - **Auth migration trên MySQL 8.4.13 tạm:** dùng container không gắn volume, port chỉ bind `127.0.0.1`, credentials ngẫu nhiên và không đọc `.env`; container/credentials đã được xóa sau kiểm thử. Database trống chạy cả ba migration thành công; database upgrade có initial + deadline và dữ liệu cũ được áp dụng auth migration, giữ nguyên user/email/role/deadline, `google_sub` cũ là NULL và deadline metadata cũ không đổi. Trong cả hai schema, `google_sub` cho phép nhiều NULL, từ chối giá trị lặp đúng case và cho phép hai giá trị khác case; `auth_sessions` kiểm tra PK/hash UNIQUE, các cột NOT NULL/NULL/default, FK sai, ON DELETE/UPDATE RESTRICT và round-trip UTC. Runtime user có thể SELECT/INSERT/UPDATE `auth_sessions`, không thể DELETE session hoặc DDL; `activity_logs` chỉ SELECT/INSERT và UPDATE/DELETE bị từ chối. Tài khoản migration không có quyền CREATE DATABASE/global ngoài USAGE. `migrate deploy` lần hai không chạy lại; `_prisma_migrations` có ba migration hoàn tất trên mỗi schema. Tất cả ca MySQL trong harness này đạt. Đây là kiểm tra cấu trúc, migration và quyền SQL, **không phải kiểm thử login, Google verification, refresh/logout API hoặc RBAC**.
 - SHA-256 của initial migration vẫn là `b63bbb51b5837ca28a1dd1d5e9a7b7e8365f1f22f35bbc81f76dc3aff56888a4`; deadline migration vẫn là `9e256f9c0ad9c7836b883433f142738509454e81f492cbbc5c34b375b526f14b`. Migration auth mới là `20261028170000_add_auth_identity_sessions`; hai migration cũ không bị sửa.
-- Prisma validate/generate, typecheck, build, test, format check và audit được chạy lại sau các thay đổi theo từng nhiệm vụ; số test HTTP hiện được ghi trong [README](../README.md). Giữ nguyên Tailwind 3.4.19/Prisma 7.10.1 và override parser đã chốt; `npm ls` còn cảnh báo peer range đã biết về `^6` so với parser 7.1.6, xem [dependency-security.md](dependency-security.md).
+- Prisma validate/generate, typecheck, build, test, format check và audit được chạy lại sau các thay đổi theo từng nhiệm vụ; số test hiện được ghi trong [README](../README.md). Giữ nguyên Tailwind 3.4.19/Prisma 7.10.1 và override parser đã chốt (`postcss-selector-parser` 7.1.6).
 
 Kiểm tra này xác nhận migration trên đúng MySQL 8.4.13 trong Codex/Linux. Nó không chứng minh MySQL phòng học, host/collation khác hoặc máy Windows của thành viên đã sẵn sàng. Prisma runtime hiện dùng adapter/pool cấu hình UTC cho từng physical connection; xem [database-runtime.md](database-runtime.md) để biết kiểm tra tích hợp và hướng dẫn Windows.
 

@@ -81,12 +81,12 @@ Newest-first sort created_at DESC, notification_id DESC; unreadCount là tổng 
 
 GET đọc notifications theo owner và count trong cùng thời điểm truy vấn; PATCH chỉ update is_read=true, không cần transaction liên module. Event update/delete và Notification row deletion theo các ranh giới giao dịch nêu trên. Không ghi activity log cho thao tác đọc notification theo Chương 3.
 
-## Ma trận test và trạng thái
+## Ma trận kiểm thử và trạng thái
 
-- Permission: Guest 401, Student owner-only, Admin 403; cross-owner event/notification cùng 404.
+- Phân quyền: Guest nhận 401, chỉ Student sở hữu được truy cập, Admin nhận 403; event/notification thuộc người khác cùng trả 404.
 - Calendar: from inclusive/to exclusive; 42 ngày nhận; 43 ngày, range ngược, biên lệch nửa đêm, query thiếu/lặp/lạ bị từ chối; UTC↔VN ngày không lệch; sort tie theo ID.
-- Event: field lengths, date future, content-only edit past, due/reminder change reset + delete Reminder atomically, Completed preserved, update past sets Overdue, status endpoint only Completed, event delete cascades Reminder and leaves unrelated notifications.
-- Scheduler: threshold boundary, no duplicate under concurrency, rollback+retry, every-minute execution cadence is tested as configuration only; no exact-second SLA; no Reminder for Completed/Overdue.
+- Event: độ dài field, ngày tương lai, chỉ sửa content khi hạn đã qua, đổi due/reminder thì reset và xóa Reminder nguyên tử, giữ Completed, cập nhật hạn đã qua thành Overdue, endpoint status chỉ chuyển sang Completed, xóa event thì xóa Reminder liên quan theo cascade và giữ notification không liên quan.
+- Scheduler: biên threshold, không tạo trùng khi concurrency, rollback+retry; nhịp chạy mỗi phút chỉ được kiểm tra như một cấu hình, không có SLA chính xác từng giây; không tạo Reminder cho Completed/Overdue.
 - Notifications: pagination, stable newest order, total unread across pages, idempotent read, error vs empty; no purge after age; Violation eventId:null and /forum.
 - DB unavailable → 503 and not empty; unexpected → 500 without internals.
 
