@@ -566,7 +566,7 @@ Hệ thống tài liệu kỹ thuật chi tiết của dự án UniHub được 
 1. **Kiến trúc & Phân tích thiết kế:**
    - [docs/architecture.md](docs/architecture.md) – Tài liệu thiết kế kiến trúc hệ thống tổng thể.
    - [docs/technology-stack.md](docs/technology-stack.md) – Đặc tả chi tiết từng công nghệ và thư viện.
-   - [docs/team-workflow.md](docs/team-workflow.md) – Quy trình phối hợp nhóm và phân chia trách nhiệm thành viên (TV1 – TV5).
+   - [docs/team-workflow.md](docs/team-workflow.md) – Quy trình phối hợp nhóm và phân chia trách nhiệm thành viên (Khánh Huyền – Tường Vy).
 2. **Cơ sở dữ liệu & Vận hành:**
    - [docs/database-schema.md](docs/database-schema.md) – Thiết kế chi tiết 13 bảng quan hệ CSDL và lược đồ liên kết.
    - [docs/database-migrations.md](docs/database-migrations.md) – Hướng dẫn quản trị migration và phân quyền người dùng MySQL.

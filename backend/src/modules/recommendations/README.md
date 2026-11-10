@@ -1,4 +1,4 @@
-# Personalized Recommendations — TV3
+# Personalized Recommendations — Bảo Quyên
 
 Implements the approved [contract](../../../../docs/recommendations-api-contract.md)
 as `GET /api/recommendations`. Backend only; no UI, writes, audit, schema changes,
@@ -15,7 +15,7 @@ Only the authenticated user ID is read. Required profile fields are `major_id`,
 `academic_year` 1–4 and at least one existing `user_skills` link. Missing data or
 user returns 409 `PROFILE_INCOMPLETE`, distinct from a successful empty result.
 No email, Google claims, token, role, career goal, profile DTO or reviewer data
-is exposed. The Profile API/UI is owned by TV2; no Profile endpoint is added here.
+is exposed. The Profile API/UI is owned by Thái Bình; no Profile endpoint is added here.
 
 Profile and candidates are read in one RepeatableRead transaction through the
 shared Prisma Client, using one UTC `evaluatedAt` per response. Candidate queries

@@ -12,7 +12,7 @@ Các tài liệu thực sự đã đối chiếu:
 | --- | --- |
 | `CHƯƠNG 3.pdf` | Chức năng, use case, quy tắc nghiệp vụ; NFR về xác thực, trình duyệt và desktop |
 | `CHƯƠNG 4.pdf` | Sitemap, quan hệ và đặc tả 13 bảng CSDL; luồng auth_sessions và google_sub |
-| `PCCV-UNIHUB - Trang tính4.pdf` | Phân công vai trò thành viên TV1–TV5 trong nhóm đồ án |
+| `PCCV-UNIHUB - Trang tính4.pdf` | Phân công vai trò thành viên năm thành viên trong nhóm đồ án |
 
 Hệ thống Design Tokens và quy chuẩn giao diện được định nghĩa tập trung tại `frontend/src/styles/tokens.css` và `tailwind.config.js`.
 

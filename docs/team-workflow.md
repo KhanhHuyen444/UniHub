@@ -2,25 +2,25 @@
 
 ## Phân công đã chốt cho 5 thành viên
 
-Bảng dưới theo yêu cầu phân công mới nhất của nhóm và thay thế các mô tả cũ trong PCCV. TV1 là người điều phối; mã TV1–TV5 chưa gắn tên người hoặc deadline. Mỗi người làm frontend/backend của phần mình, viết/kiểm tra test phù hợp và cập nhật tài liệu liên quan.
+Bảng dưới theo yêu cầu phân công mới nhất của nhóm và thay thế các mô tả cũ trong PCCV. Khánh Huyền là người điều phối; mã năm thành viên chưa gắn tên người hoặc deadline. Mỗi người làm frontend/backend của phần mình, viết/kiểm tra test phù hợp và cập nhật tài liệu liên quan.
 
 | Thành viên | Phạm vi                                                                                                      | Thư mục chính                                                                                                                    | Admin do thành viên phụ trách                                                  |
 | ---------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| TV1        | Điều phối toàn bộ hợp đồng; nền auth backend/frontend dùng chung; Hub cơ hội và Admin duyệt cơ hội; tích hợp | frontend: app, lib, features/auth, features/opportunities; backend: config, middleware, lib, modules/auth, modules/opportunities | tab cơ hội trong frontend/features/admin và backend/modules/opportunities      |
-| TV2        | Dùng auth chung; hồ sơ Student và quản lý tài khoản                                                          | frontend: features/profile; backend: modules/users; dùng features/auth và phối hợp middleware                                    | frontend/features/admin/users; backend/modules/users                           |
-| TV3        | Lộ trình kỹ năng, cơ hội dành cho bạn, danh mục/chuyên ngành/kỹ năng                                         | frontend: features/guidance, features/recommendations; backend: modules/guidance, modules/recommendations, modules/categories    | frontend/features/admin/categories; backend/modules/categories                 |
-| TV4        | Lịch, deadline, nhắc hạn, thông báo, dashboard                                                               | frontend: features/calendar, features/notifications; backend: modules/events, modules/notifications, modules/dashboard           | frontend/features/admin/dashboard; TV khác cung cấp dữ liệu thống kê phần mình |
-| TV5        | Diễn đàn, bình luận, kiểm duyệt; xóa mềm, activity log và thông báo vi phạm                                  | frontend: features/forum; backend: modules/forum, modules/activity-logs                                                          | tab forum trong frontend/features/admin và backend/modules/forum               |
+| Khánh Huyền        | Điều phối toàn bộ hợp đồng; nền auth backend/frontend dùng chung; Hub cơ hội và Admin duyệt cơ hội; tích hợp | frontend: app, lib, features/auth, features/opportunities; backend: config, middleware, lib, modules/auth, modules/opportunities | tab cơ hội trong frontend/features/admin và backend/modules/opportunities      |
+| Thái Bình        | Dùng auth chung; hồ sơ Student và quản lý tài khoản                                                          | frontend: features/profile; backend: modules/users; dùng features/auth và phối hợp middleware                                    | frontend/features/admin/users; backend/modules/users                           |
+| Bảo Quyên        | Lộ trình kỹ năng, cơ hội dành cho bạn, danh mục/chuyên ngành/kỹ năng                                         | frontend: features/guidance, features/recommendations; backend: modules/guidance, modules/recommendations, modules/categories    | frontend/features/admin/categories; backend/modules/categories                 |
+| Ngọc Tuyền        | Lịch, deadline, nhắc hạn, thông báo, dashboard                                                               | frontend: features/calendar, features/notifications; backend: modules/events, modules/notifications, modules/dashboard           | frontend/features/admin/dashboard; TV khác cung cấp dữ liệu thống kê phần mình |
+| Tường Vy        | Diễn đàn, bình luận, kiểm duyệt; xóa mềm, activity log và thông báo vi phạm                                  | frontend: features/forum; backend: modules/forum, modules/activity-logs                                                          | tab forum trong frontend/features/admin và backend/modules/forum               |
 
-Các thư mục Admin con là ranh giới sở hữu **khi triển khai**, chưa cần tạo một loạt file trống. Sitemap `/admin/moderation` có hai tab: TV1 phụ trách duyệt cơ hội, TV5 phụ trách kiểm duyệt diễn đàn. TV1 điều phối route, shell dùng chung và tích hợp. Shell có thể xem trong `/_dev/ui?area=admin`; route preview không xác thực và không thay Admin nghiệp vụ. Tránh cả nhóm chỉnh một `AdminPage.tsx` lớn. Quyền trên server nằm trong module nghiệp vụ tương ứng.
+Các thư mục Admin con là ranh giới sở hữu **khi triển khai**, chưa cần tạo một loạt file trống. Sitemap `/admin/moderation` có hai tab: Khánh Huyền phụ trách duyệt cơ hội, Tường Vy phụ trách kiểm duyệt diễn đàn. Khánh Huyền điều phối route, shell dùng chung và tích hợp. Shell có thể xem trong `/_dev/ui?area=admin`; route preview không xác thực và không thay Admin nghiệp vụ. Tránh cả nhóm chỉnh một `AdminPage.tsx` lớn. Quyền trên server nằm trong module nghiệp vụ tương ứng.
 
 ### Điều phối hợp đồng API
 
-Theo phân công mới nhất, TV1 soạn/duy trì toàn bộ hợp đồng API, quy ước response/lỗi/quyền và bảng phụ thuộc; leader là người duyệt cuối cùng mọi hợp đồng. TV2–TV5 có thể gửi bằng chứng và góp ý module, nhưng không tự review để đóng/duyệt contract. Thành viên chỉ triển khai theo hợp đồng sau khi leader duyệt. Trạng thái “implemented” chỉ khi code/test/commit thực tế chứng minh.
+Theo phân công mới nhất, Khánh Huyền soạn/duy trì toàn bộ hợp đồng API, quy ước response/lỗi/quyền và bảng phụ thuộc; leader là người duyệt cuối cùng mọi hợp đồng. Thái Bình–Tường Vy có thể gửi bằng chứng và góp ý module, nhưng không tự review để đóng/duyệt contract. Thành viên chỉ triển khai theo hợp đồng sau khi leader duyệt. Trạng thái “implemented” chỉ khi code/test/commit thực tế chứng minh.
 
-Mục lục endpoint/role matrix, dependency map, handoff checklist và PR sequence ở [api-contracts.md](api-contracts.md). Người sở hữu module chịu trách nhiệm code/test; TV1 giữ các file phối hợp dùng chung (`docs/api-conventions.md`, contract auth nền tảng, app/router mount và tích hợp). Nếu đề xuất ảnh hưởng dữ liệu, quyền hoặc Chương 3–4, dừng phần phụ thuộc và xin quyết định; có thể tiếp tục phần độc lập.
+Mục lục endpoint/role matrix, dependency map, handoff checklist và PR sequence ở [api-contracts.md](api-contracts.md). Người sở hữu module chịu trách nhiệm code/test; Khánh Huyền giữ các file phối hợp dùng chung (`docs/api-conventions.md`, contract auth nền tảng, app/router mount và tích hợp). Nếu đề xuất ảnh hưởng dữ liệu, quyền hoặc Chương 3–4, dừng phần phụ thuộc và xin quyết định; có thể tiếp tục phần độc lập.
 
-`activity-logs` là cơ chế chung: TV5 điều phối helper/contract dùng chung; TV1, TV2, TV3 gọi nó trong transaction của thao tác quản trị riêng. TV4 phụ trách notifications; TV5 phối hợp để Violation, soft delete, log và notification dùng cùng transaction, không gọi API nội bộ HTTP khiến thao tác mất tính nguyên tử. Cả nhóm dùng cùng một auth module/middleware; leader triển khai nền frontend auth trên backend đã có, TV2 và các module khác dùng lại, không tạo cơ chế JWT thứ hai.
+`activity-logs` là cơ chế chung: Tường Vy điều phối helper/contract dùng chung; Khánh Huyền, Thái Bình, Bảo Quyên gọi nó trong transaction của thao tác quản trị riêng. Ngọc Tuyền phụ trách notifications; Tường Vy phối hợp để Violation, soft delete, log và notification dùng cùng transaction, không gọi API nội bộ HTTP khiến thao tác mất tính nguyên tử. Cả nhóm dùng cùng một auth module/middleware; leader triển khai nền frontend auth trên backend đã có, Thái Bình và các module khác dùng lại, không tạo cơ chế JWT thứ hai.
 
 ## Nhánh nền và pull request
 
@@ -56,7 +56,7 @@ git status
 
 Chỉ cần `npm ci` khi mới clone hoặc lockfile đã thay đổi. Kiểm tra riêng chức năng/UI mình sửa ngoài các kiểm tra chung. Test hiện tại bao phủ API client và scaffold HTTP/config; không dùng nó để khẳng định nghiệp vụ mới đã đúng.
 
-Thêm đúng đường dẫn thực sự đã sửa vào staging, xem lại rồi commit. Ví dụ minh họa cho TV2 (chỉ dùng khi đã có thay đổi tại các đường dẫn đó):
+Thêm đúng đường dẫn thực sự đã sửa vào staging, xem lại rồi commit. Ví dụ minh họa cho Thái Bình (chỉ dùng khi đã có thay đổi tại các đường dẫn đó):
 
 ```powershell
 git add frontend/src/features/opportunities backend/src/modules/opportunities
@@ -71,11 +71,11 @@ Commit dùng tiền tố `feat`, `fix`, `docs`, `chore`, `test`, `refactor`; sco
 
 ## Quy tắc chạm phần dùng chung
 
-- **Route/app config:** trao đổi TV1 trước khi thay route chung; khai báo route tại `frontend/src/app/router.tsx`. Chưa tạo route giả hoặc feature page rỗng. Người làm feature tự chịu trách nhiệm code/test; TV1 hỗ trợ điều phối, không làm thay toàn bộ.
-- **Layout/design tokens:** hệ thống token/layout desktop chuẩn hóa tại `frontend/src/` (Tailwind config, UI components và AppShell). Thay đổi shell/token dùng chung cần TV1 review.
+- **Route/app config:** trao đổi Khánh Huyền trước khi thay route chung; khai báo route tại `frontend/src/app/router.tsx`. Chưa tạo route giả hoặc feature page rỗng. Người làm feature tự chịu trách nhiệm code/test; Khánh Huyền hỗ trợ điều phối, không làm thay toàn bộ.
+- **Layout/design tokens:** hệ thống token/layout desktop chuẩn hóa tại `frontend/src/` (Tailwind config, UI components và AppShell). Thay đổi shell/token dùng chung cần Khánh Huyền review.
 - **Dependency:** chỉ thêm khi có nhu cầu hiện tại, kiểm tra phiên bản; tại gốc dùng `npm.cmd install ten-goi@phien-ban --workspace @unihub/frontend` hoặc backend phù hợp. Đây là mẫu cú pháp, thay tên/phiên bản thật đã thống nhất. Commit manifest workspace và lockfile gốc cùng nhau. Không tạo lockfile con, không sửa lockfile bằng tay.
-- **Root scripts/TypeScript/Tailwind/PORT:** giải thích tác động đến máy của cả nhóm, có TV1 review. Mã mới phải chạy trên Windows, không dùng `rm`, `cp`, `PORT=... command` hoặc shell Unix trong npm scripts dùng chung.
-- **Schema/migration:** nguồn schema duy nhất là `backend/prisma/schema.prisma`, lịch sử duy nhất là `backend/prisma/migrations/`. Auth structures và migration riêng đã có trên `main`; từng thành viên phải xác nhận trạng thái migration/GRANT trên DB riêng trước khi chạy auth. TV1 điều phối thứ tự; không chạy `prisma db push`, reset database chung hoặc sửa migration đã áp dụng.
+- **Root scripts/TypeScript/Tailwind/PORT:** giải thích tác động đến máy của cả nhóm, có Khánh Huyền review. Mã mới phải chạy trên Windows, không dùng `rm`, `cp`, `PORT=... command` hoặc shell Unix trong npm scripts dùng chung.
+- **Schema/migration:** nguồn schema duy nhất là `backend/prisma/schema.prisma`, lịch sử duy nhất là `backend/prisma/migrations/`. Auth structures và migration riêng đã có trên `main`; từng thành viên phải xác nhận trạng thái migration/GRANT trên DB riêng trước khi chạy auth. Khánh Huyền điều phối thứ tự; không chạy `prisma db push`, reset database chung hoặc sửa migration đã áp dụng.
 - **Cấu hình cá nhân:** `.env` thật chỉ nằm trên máy người dùng, không qua Git/PR. Chia sẻ tên biến và mẫu an toàn bằng `.env.example`; frontend không nhận bí mật backend.
 - **Nghiệp vụ:** Chương 3–4 là nguồn chính; giữ stack và phạm vi desktop. Tài liệu nhóm khác chỉ tham khảo. Nếu mâu thuẫn ảnh hưởng dữ liệu/quyền, ghi lại để nhóm quyết định, không âm thầm đổi.
 
@@ -83,4 +83,4 @@ Commit dùng tiền tố `feat`, `fix`, `docs`, `chore`, `test`, `refactor`; sco
 
 Thống nhất payload, kiểu ngày giờ, phân trang, quyền và lỗi trước khi nối frontend/backend; ghi rõ endpoint dự kiến và endpoint đã chạy. Khi cần dữ liệu từ TV khác, mô tả dữ liệu cần, thống nhất contract rồi làm nhánh nhỏ. Chưa có API thì ghi trạng thái chờ; không đưa endpoint giả hoặc thông tin cá nhân vào scaffold.
 
-TV1 cung cấp thống kê cơ hội cho TV4; TV5 cung cấp thống kê diễn đàn; TV2 cung cấp thống kê người dùng; TV3 cung cấp danh mục dùng trong hồ sơ/tìm kiếm/gợi ý với TV1/TV2. Các transaction liên quan log/notification phải có reviewer của những phần bị tác động. Quyết định về schema Chương 4 mới so với Prisma/migrations trên `main` được theo dõi trong [api-contracts.md](api-contracts.md); không suy ra rằng PDF đã đồng bộ với migration.
+Khánh Huyền cung cấp thống kê cơ hội cho Ngọc Tuyền; Tường Vy cung cấp thống kê diễn đàn; Thái Bình cung cấp thống kê người dùng; Bảo Quyên cung cấp danh mục dùng trong hồ sơ/tìm kiếm/gợi ý với Khánh Huyền/Thái Bình. Các transaction liên quan log/notification phải có reviewer của những phần bị tác động. Quyết định về schema Chương 4 mới so với Prisma/migrations trên `main` được theo dõi trong [api-contracts.md](api-contracts.md); không suy ra rằng PDF đã đồng bộ với migration.

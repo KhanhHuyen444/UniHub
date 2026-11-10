@@ -17,7 +17,7 @@ Ngày rà soát: **07/11/2026**. Nhánh `docs/unihub-fresh-install-handoff`, n�
 | Bootstrap cần Google sub thật và từ chối khi đã có Admin                                                                                   | Hướng dẫn Client ID/origin, login, SQL SELECT đúng user, PROMOTE, điều kiện từ chối và login lại; không UPDATE role bằng SQL                          |
 | Chưa có checklist ghi nhận riêng chức năng thực tế/Activity Log                                                                            | Tạo checklist Guest/Student/Admin với NOT RUN mặc định và truy vấn log chỉ đọc; không thêm API/UI log                                                 |
 
-Phần tài liệu vận hành chung ảnh hưởng cách cài máy của cả nhóm; đề nghị TV1 review chuỗi cấu hình/import/auth, TV3 review catalog/Guidance, TV5 review Forum/Activity Log, TV4 review lịch/notification/checklist. Đây là yêu cầu review trong PR, không khẳng định đã được các thành viên review.
+Phần tài liệu vận hành chung ảnh hưởng cách cài máy của cả nhóm; đề nghị Khánh Huyền review chuỗi cấu hình/import/auth, Bảo Quyên review catalog/Guidance, Tường Vy review Forum/Activity Log, Ngọc Tuyền review lịch/notification/checklist. Đây là yêu cầu review trong PR, không khẳng định đã được các thành viên review.
 
 ## 2. Kiểm tra thực tế
 

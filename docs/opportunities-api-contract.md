@@ -128,9 +128,9 @@ Ví dụ nguồn có giờ cụ thể `05/11/2026 12:00 Asia/Ho_Chi_Minh`: respo
 
 API cơ hội hiện vẫn trả envelope `error.code`/`error.message`. Contract `fieldErrors` tùy chọn đã được duyệt như phần mở rộng cộng thêm; khi PR code riêng triển khai, giữ nguyên `code/message` và không thay đổi các quyết định hoặc response thành công đã có của Public opportunities.
 
-### Phụ thuộc danh mục bộ lọc — TV1 đã triển khai, TV3 tiếp quản
+### Phụ thuộc danh mục bộ lọc — Khánh Huyền đã triển khai, Bảo Quyên tiếp quản
 
-BR-02.3 yêu cầu bộ chọn chuyên ngành chỉ gồm Major Active. TV1 đã triển khai và merge phần Major của API đọc dùng chung qua PR #13; TV3 tiếp quản để tái sử dụng/duy trì `GET /api/categories?type=Major`. Endpoint không nhận query `status`, response `{ "items": [{ "id": 12, "name": "Kỹ thuật phần mềm", "type": "Major" }] }`. Frontend consumer có trên `main` sau PR #12; kiểm thử tích hợp xác nhận consumer nhận danh sách Active và xử lý riêng response rỗng/lỗi tải. API cơ hội tự kiểm tra `majorId` trực tiếp qua bảng `categories`; API này không gọi endpoint categories và không phụ thuộc frontend đã tải options hay chưa. Skill options và hồ sơ Closed policy đã được leader duyệt và đã có implementation trên main; xem [categories-api-contract.md](categories-api-contract.md). Không dùng endpoint danh mục cho `type`/`workFormat` của cơ hội vì miền giá trị đó cố định trong Chương 4.
+BR-02.3 yêu cầu bộ chọn chuyên ngành chỉ gồm Major Active. Khánh Huyền đã triển khai và merge phần Major của API đọc dùng chung qua PR #13; Bảo Quyên tiếp quản để tái sử dụng/duy trì `GET /api/categories?type=Major`. Endpoint không nhận query `status`, response `{ "items": [{ "id": 12, "name": "Kỹ thuật phần mềm", "type": "Major" }] }`. Frontend consumer có trên `main` sau PR #12; kiểm thử tích hợp xác nhận consumer nhận danh sách Active và xử lý riêng response rỗng/lỗi tải. API cơ hội tự kiểm tra `majorId` trực tiếp qua bảng `categories`; API này không gọi endpoint categories và không phụ thuộc frontend đã tải options hay chưa. Skill options và hồ sơ Closed policy đã được leader duyệt và đã có implementation trên main; xem [categories-api-contract.md](categories-api-contract.md). Không dùng endpoint danh mục cho `type`/`workFormat` của cơ hội vì miền giá trị đó cố định trong Chương 4.
 
 ### URL có `majorId` đã đóng — quyết định đã duyệt
 
@@ -333,7 +333,7 @@ API công khai chỉ có dữ liệu Approved sau quy trình duyệt. Không see
 
 ## 9. Phụ thuộc triển khai
 
-- Backend thuộc `backend/src/modules/opportunities`; frontend thuộc `frontend/src/features/opportunities`, cùng làm bởi TV1 theo [team-workflow](team-workflow.md).
+- Backend thuộc `backend/src/modules/opportunities`; frontend thuộc `frontend/src/features/opportunities`, cùng làm bởi Khánh Huyền theo [team-workflow](team-workflow.md).
 - Endpoint Major Active thuộc provider dùng chung. Frontend consumer tích hợp hoàn chỉnh; API cơ hội tự kiểm tra Major Active trong database và không gọi endpoint options. Skill options và hồ sơ Closed policy đã có implementation hoàn chỉnh.
 - `opportunities` có 17 cột trong schema/migration đã merge vào `main`; Chương 4 hiện mô tả 15 cột và cần cập nhật §4.3.2.3. Xem [schema Prisma và migration](database-schema.md).
 - Hai endpoint đọc cơ hội đã triển khai; API Admin duyệt đã có; không có API tạo/sửa/xóa nội dung cơ hội. Trang chi tiết Public dùng chung có trên `main` sau PR #12. Theo nhóm, database phát triển leader đã có hai cột metadata deadline; thành viên khác cần xác minh database của mình. Runtime chỉ backend kết nối MySQL.

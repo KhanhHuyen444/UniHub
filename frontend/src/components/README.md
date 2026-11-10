@@ -25,12 +25,12 @@ import {
 
 `Button` có primary/outline/text/neutral/danger, disabled và loading. Mọi nút có `type="button"` mặc định; form submit phải đặt `type="submit"` rõ ràng. `Select` dùng control native để hỗ trợ bàn phím. `Badge` hỗ trợ info/success/warning/neutral/error. `Card` là section bề mặt dùng chung.
 
-## Hướng dẫn cho TV1–TV5
+## Hướng dẫn cho năm thành viên
 
-- **TV1:** duy trì tokens, primitive, `/_dev/ui` và ba layout; review thay đổi dùng chung. Không đưa nghiệp vụ cơ hội vào showcase.
-- **TV2:** dùng `FormField`, `Input`, `Button`, `ErrorState` cho auth/profile; chốt label/validation/error với TV1 trước khi thay shared component. Preview Student không có auth.
-- **TV3:** dùng `Badge`, `Card`, `LoadingState`, `EmptyState` và `ErrorState` cho guidance/recommendations; không giả dữ liệu từ component preview.
-- **TV4:** dùng field/control cho event forms; các state reminder/notification phải gắn API feature thật, không dùng nút preview.
-- **TV5:** dùng cùng FormField/button/state cho forum/moderation; destructive action phải do feature xác nhận, shared component chỉ cung cấp biến thể `danger`.
+- **Khánh Huyền:** duy trì tokens, primitive, `/_dev/ui` và ba layout; review thay đổi dùng chung. Không đưa nghiệp vụ cơ hội vào showcase.
+- **Thái Bình:** dùng `FormField`, `Input`, `Button`, `ErrorState` cho auth/profile; chốt label/validation/error với Khánh Huyền trước khi thay shared component. Preview Student không có auth.
+- **Bảo Quyên:** dùng `Badge`, `Card`, `LoadingState`, `EmptyState` và `ErrorState` cho guidance/recommendations; không giả dữ liệu từ component preview.
+- **Ngọc Tuyền:** dùng field/control cho event forms; các state reminder/notification phải gắn API feature thật, không dùng nút preview.
+- **Tường Vy:** dùng cùng FormField/button/state cho forum/moderation; destructive action phải do feature xác nhận, shared component chỉ cung cấp biến thể `danger`.
 
 Khi gọi API, dùng `frontend/src/lib/api.ts`; component UI không được fetch, lưu JWT hoặc quyết định quyền. Route guard cũng không thay kiểm tra backend. Hệ thống Design Tokens và quy chuẩn giao diện được định nghĩa tập trung tại `frontend/src/styles/tokens.css` và `tailwind.config.js`.

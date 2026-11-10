@@ -1,4 +1,4 @@
-# Student Skill Options — TV3
+# Student Skill Options — Bảo Quyên
 
 Backend GET /api/categories?type=Skill is Student-only and returns Active Skills.
 Profile uses SkillOptionsField with controlled selectedIds. No Backend, Profile,
@@ -106,7 +106,7 @@ Only three URL assertions in frontend/test/profile-flow.test.mjs change to /.
 The tests still require incomplete-profile routing, no PUT on deferral, no Profile
 loop on public navigation, default home navigation, exactly one successful PUT
 and the saved confirmation. No Profile/Auth/router production logic is changed.
-The Profile owner (TV2) should review this three-line test-only adjustment alongside
+The Profile owner (Thái Bình) should review this three-line test-only adjustment alongside
 the Skill fix; no external review request or PR has been sent by this task.
 
 Real Google login, cookies and MySQL end-to-end acceptance are not claimed.

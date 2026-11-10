@@ -1,4 +1,4 @@
-# Personalized Recommendations — TV3 / PR #27
+# Personalized Recommendations — Bảo Quyên / PR #27
 
 Backend `GET /api/recommendations` is implemented on this branch under the
 approved [contract](../../../../docs/recommendations-api-contract.md). This

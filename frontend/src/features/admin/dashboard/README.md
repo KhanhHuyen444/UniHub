@@ -1,4 +1,4 @@
-# Admin Dashboard — TV4
+# Admin Dashboard — Ngọc Tuyền
 
 `/admin/dashboard` is mounted under the shared `RequireRole('Admin')` and
 `AdminLayout` with `activeKey="dashboard"`. It displays exactly the three metrics
@@ -23,5 +23,5 @@ parallel calls, zero/error rendering, retry isolation, response validation,
 refresh, cancellation and account/role changes. Interactive browser accessibility,
 visual QA, real FR–BK–MySQL integration and NFR timings remain unverified.
 
-Shared router changes require TV1 integration review. No backend, schema or
+Shared router changes require Khánh Huyền integration review. No backend, schema or
 migration changes belong to this frontend implementation.

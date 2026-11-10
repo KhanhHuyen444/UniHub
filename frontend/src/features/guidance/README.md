@@ -1,4 +1,4 @@
-# Guidance — nền tảng tích hợp API (TV3)
+# Guidance — nền tảng tích hợp API (Bảo Quyên)
 
 Hợp đồng [guidance-api-contract.md](../../../../docs/guidance-api-contract.md) đã
 được duyệt. Phần này triển khai types, runtime response parsers và API functions;

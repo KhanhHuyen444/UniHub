@@ -1,6 +1,6 @@
 # Categories
 
-TV3 owns `backend/src/modules/categories` for shared categories, guidance and
+Bảo Quyên owns `backend/src/modules/categories` for shared categories, guidance and
 category administration. The public Major read endpoint is implemented
 on `main` after PR #13.
 
@@ -23,7 +23,7 @@ Implementation:
 - `backend/test/categories.test.mjs` covers request validation, response
   shape, safe errors and an opt-in MySQL integration case.
 
-The TV1 Hub consumer sends `type=Major` and parses `{ items: [...] }` with
+The Khánh Huyền Hub consumer sends `type=Major` and parses `{ items: [...] }` with
 `id`, `name` and `type`. The Public Hub consumer and endpoint are verified
 end-to-end; see [categories-api-contract.md](../../../../docs/categories-api-contract.md).
 

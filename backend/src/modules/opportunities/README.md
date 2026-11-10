@@ -5,7 +5,7 @@
 - `GET /api/opportunities` — tìm kiếm, lọc, phân trang và sắp xếp theo contract.
 - `GET /api/opportunities/:id` — chi tiết Approved thuộc ba loại cơ hội công khai.
 
-Hợp đồng, trường trả về, deadline, query và mã lỗi được ghi trong [opportunities-api-contract.md](../../../../docs/opportunities-api-contract.md). API đọc tự kiểm tra `majorId` qua bảng `categories`; endpoint Major thuộc module TV3 `backend/src/modules/categories`. Module không gọi endpoint categories để xác thực filter và không tạo Prisma Client/pool mới theo request; nó dùng client dùng chung trong `backend/src/lib/prisma.ts`. Luồng Hub, Major, Express và MySQL đã được kiểm thử tích hợp đầy đủ.
+Hợp đồng, trường trả về, deadline, query và mã lỗi được ghi trong [opportunities-api-contract.md](../../../../docs/opportunities-api-contract.md). API đọc tự kiểm tra `majorId` qua bảng `categories`; endpoint Major thuộc module Bảo Quyên `backend/src/modules/categories`. Module không gọi endpoint categories để xác thực filter và không tạo Prisma Client/pool mới theo request; nó dùng client dùng chung trong `backend/src/lib/prisma.ts`. Luồng Hub, Major, Express và MySQL đã được kiểm thử tích hợp đầy đủ.
 
 Các chức năng thẩm định duyệt/từ chối của Admin được triển khai độc lập trong module `admin-opportunities`, gợi ý cơ hội cá nhân hóa trong module `recommendations`, và giao diện người dùng tương ứng tại `frontend/src/features/opportunities`. Database development cần có các migration hiện hành; nếu chưa có cơ hội Approved thuộc ba loại được công khai, danh sách rỗng HTTP 200 là kết quả đúng. Không cần sửa dữ liệu thật để demo.
 
@@ -22,4 +22,4 @@ Test nghiệp vụ cần MySQL tạm cô lập: đặt `TEST_DATABASE_URL` tới
 
 Để chạy các kiểm tra repository trên Windows, dùng `npm.cmd run typecheck`, `npm.cmd run build`, `npm.cmd test` và `npm.cmd run format:check` tại gốc. `npm.cmd test` chạy cả test frontend/backend; test MySQL cơ hội chỉ chạy khi có `TEST_DATABASE_URL` trỏ tới database thử nghiệm loopback riêng đã migrate.
 
-Phụ trách nhóm theo kế hoạch: **TV2**. Tài liệu cộng tác: [quy trình nhóm](../../../../docs/team-workflow.md) và [quy ước API](../../../../docs/api-conventions.md).
+Phụ trách nhóm theo kế hoạch: **Thái Bình**. Tài liệu cộng tác: [quy trình nhóm](../../../../docs/team-workflow.md) và [quy ước API](../../../../docs/api-conventions.md).

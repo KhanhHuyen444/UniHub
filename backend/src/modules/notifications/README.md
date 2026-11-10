@@ -15,6 +15,6 @@ Runtime nhánh `e3fbb3a`: Google Student thật do người dùng đăng nhập,
 - In-app Scheduler quét deadline và tạo thông báo nhắc nhở tự động đã được triển khai trong module `events/reminders.scheduler.ts`.
 - Giao diện chuông thông báo (NotificationBell popover) và đánh dấu đã đọc đã được tích hợp đầy đủ phía frontend.
 
-Phụ trách: **TV4**. Chưa gán tên người hoặc deadline.
+Phụ trách: **Ngọc Tuyền**. Chưa gán tên người hoặc deadline.
 
 Router/service nằm trong module này. Chỉ backend truy cập MySQL. Theo [quy trình nhóm](../../../../docs/team-workflow.md) và [quy ước API](../../../../docs/api-conventions.md).

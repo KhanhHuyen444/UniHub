@@ -1,6 +1,6 @@
 # Guidance public read API
 
-TV3 owns this module. The implementation follows the approved
+Bảo Quyên owns this module. The implementation follows the approved
 [Guidance contract](../../../../docs/guidance-api-contract.md), using existing
 opportunities/category relations without schema changes or writes.
 

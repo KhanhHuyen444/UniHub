@@ -10,7 +10,7 @@
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chương 3      | PDF đính kèm lượt hiện tại; SHA-256 686be3ac739574f51123d8b271268f49fc52f84ab52a23219d51748bc9868c5e                               | Đối chiếu FR, UC, BR, NFR. UC-04 quy định update full_name/avatar_url khi đăng nhập cùng Google sub; UC-11 BR-11.7 loại khóa tài khoản.                                    |
 | Chương 4      | PDF đính kèm lượt hiện tại; SHA-256 a3bc5fd958411c129e0895eba1412f63e848abda0de3d3eefcd3f1a765225bb5                               | Đọc ERD và bảng. Có google_sub/auth_sessions nhưng hai cấu trúc chưa có trong schema/migrations main; thiếu deadline metadata đã merge. Không lấy Figma làm căn cứ schema. |
-| PCCV          | PCCV-UNIHUB - Trang tính4 (1).pdf đính kèm lượt hiện tại; SHA-256 880eeb35ddbc04900611d0d71c24d47eb3007fcffc57079f1d35350362c7615a | Đọc phân công cũ; yêu cầu leader hiện tại TV1–TV5 ưu tiên nếu khác.                                                                                                        |
+| PCCV          | PCCV-UNIHUB - Trang tính4 (1).pdf đính kèm lượt hiện tại; SHA-256 880eeb35ddbc04900611d0d71c24d47eb3007fcffc57079f1d35350362c7615a | Đọc phân công cũ; yêu cầu leader hiện tại năm thành viên ưu tiên nếu khác.                                                                                                        |
 | Figma handoff | Thiết kế Figma Page 3 (node `24:2`), Design Tokens tại `frontend/src/styles/tokens.css`                                            | Chỉ căn cứ UI. Không quyết định API/quyền/schema.                                                                                                                          |
 | Repository    | origin/main 01ce742ce0fee5d6bb53397c36409211cda6587b và code/docs ở main                                                           | Auth contract được đối chiếu cùng Chương 3/4; Major/opportunities đã đối chiếu code và test.                                                                               |
 
@@ -20,7 +20,7 @@
 | ---------------------------------- | ------------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | Health/readiness và error envelope | api-conventions.md                   | Approved: envelope hiện có và mở rộng fieldErrors cộng thêm | Health/ready, error envelope và fieldErrors parser/client/server đã có trên main.                                    |
 | Public Hub opportunities           | opportunities-api-contract.md        | Approved                                                    | GET /api/opportunities, GET /api/opportunities/:id và frontend list/detail đã có; PR #11/#12, tích hợp #14.          |
-| Categories Major                   | categories-api-contract.md           | Approved                                                    | GET /api/categories?type=Major có; PR #13; TV3 tiếp quản provider.                                                   |
+| Categories Major                   | categories-api-contract.md           | Approved                                                    | GET /api/categories?type=Major có; PR #13; Bảo Quyên tiếp quản provider.                                                   |
 | Auth/RBAC/session                  | auth-api-contract.md                 | Approved                                                    | Google login, access middleware, refresh, `/me`, logout, frontend auth và command `admin:bootstrap` có trên main.    |
 | Student profile                    | profile-api-contract.md              | Approved                                                    | GET/PUT profile và frontend /profile đã có trên main, dùng auth/RBAC chung.                                          |
 | Admin users/roles                  | admin-users-api-contract.md          | Approved                                                    | List/role update API và frontend /admin/users đã có trên main.                                                       |
@@ -93,13 +93,13 @@ Server middleware enforces all protected roles and ownership. UI route guards on
 
 | TV  | Provider/module                                                                                       | Consumers                                                                   |
 | --- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| TV1 | Shared auth foundation/RBAC including frontend session UI, Hub, Admin opportunity review, integration | TV2–TV5 reuse same auth; TV4 opportunity metrics; TV3 reuses Major provider |
-| TV2 | Profile, Admin users                                                                                  | Shared auth, categories Skill, activity log helper                          |
-| TV3 | Categories, guidance, recommendations                                                                 | Profile, opportunities, shared auth                                         |
-| TV4 | Events, scheduler, notifications, dashboard                                                           | Shared auth; TV5 sends Violation notification through shared service        |
-| TV5 | Forum, moderation, activity-log helper coordination                                                   | Shared auth, TV4 notification service                                       |
+| Khánh Huyền | Shared auth foundation/RBAC including frontend session UI, Hub, Admin opportunity review, integration | Thái Bình–Tường Vy reuse same auth; Ngọc Tuyền opportunity metrics; Bảo Quyên reuses Major provider |
+| Thái Bình | Profile, Admin users                                                                                  | Shared auth, categories Skill, activity log helper                          |
+| Bảo Quyên | Categories, guidance, recommendations                                                                 | Profile, opportunities, shared auth                                         |
+| Ngọc Tuyền | Events, scheduler, notifications, dashboard                                                           | Shared auth; Tường Vy sends Violation notification through shared service        |
+| Tường Vy | Forum, moderation, activity-log helper coordination                                                   | Shared auth, Ngọc Tuyền notification service                                       |
 
-TV1 has implemented and merged Major provider; TV3 takes over/reuses backend/src/modules/categories. Modules share Prisma Client/services; do not call own backend through localhost HTTP. Cross-module mutations (role/category/opportunity + audit; forum removal + audit + notification; Reminder reset/delete + event update) use one DB transaction as documented.
+Khánh Huyền has implemented and merged Major provider; Bảo Quyên takes over/reuses backend/src/modules/categories. Modules share Prisma Client/services; do not call own backend through localhost HTTP. Cross-module mutations (role/category/opportunity + audit; forum removal + audit + notification; Reminder reset/delete + event update) use one DB transaction as documented.
 
 ## 5. PR sequencing — kế hoạch lịch sử
 
@@ -108,11 +108,11 @@ Historical implementation sequence retained below; the listed auth/bootstrap and
 1. Auth schema/migration/GRANT is already on `main`; each target database must independently confirm migration/GRANT readiness before running auth. This is an implementation dependency, not contract review.
 2. Shared error fieldErrors parser/client/server extension; backward compatible with error.code/message.
 3. Review/merge `feat/admin-bootstrap` for the operator-only first-Admin command; Google verification, shared auth/RBAC, refresh, `/me` and logout are already on `main`.
-4. Leader shared auth frontend integration; TV2 profile API/UI and Admin users/roles reuse it.
-5. TV3 Skill options, Admin category management, guidance and Recommendations under their approved contracts. Recommendations implementation depends on shared auth/RBAC readiness, not on an open scoring decision.
-6. TV1 Admin opportunity review.
-7. TV4 events, Reminder scheduler, notifications and dashboard.
-8. TV5 forum and moderation; integrate Activity Logs + Violation notifications with TV4.
+4. Leader shared auth frontend integration; Thái Bình profile API/UI and Admin users/roles reuse it.
+5. Bảo Quyên Skill options, Admin category management, guidance and Recommendations under their approved contracts. Recommendations implementation depends on shared auth/RBAC readiness, not on an open scoring decision.
+6. Khánh Huyền Admin opportunity review.
+7. Ngọc Tuyền events, Reminder scheduler, notifications and dashboard.
+8. Tường Vy forum and moderation; integrate Activity Logs + Violation notifications with TV4.
 9. Integration PR/test for cross-module ownership, transactions, role matrix and UI.
 10. Report-only Chương 3/4 update/release is separate; no PDF was edited by this documentation PR.
 
@@ -120,7 +120,7 @@ No PR in this list authorizes changing schema in module code without a separate 
 
 ## 6. Handoff and review
 
-Before code: verify main/schema/migration state; use isolated DB; implement paths, permission, fields, status, errors, transactions and tests from the module contract; never infer Admin permission from UI; never turn DB errors into empty success. Leader approves contracts. TV2–TV5 can provide evidence and comments, not close/approve on leader's behalf. “Approved” refers to agreed contract; “implemented” requires code and checks on main.
+Before code: verify main/schema/migration state; use isolated DB; implement paths, permission, fields, status, errors, transactions and tests from the module contract; never infer Admin permission from UI; never turn DB errors into empty success. Leader approves contracts. Thái Bình–Tường Vy can provide evidence and comments, not close/approve on leader's behalf. “Approved” refers to agreed contract; “implemented” requires code and checks on main.
 
 ## 7. Decisions
 
@@ -165,7 +165,7 @@ The approval status is summarized in section 2; each complete request/response c
 - Guidance default Major follows UC-03; no Active Major yields selectedMajor:null, stages:[]; optional invalid token on public guidance is Guest, while DB failure remains error.
 - Event Overdue can be set by scheduler or UC-07 edit flow; Student only chooses Completed.
 - No account lock, no public Admin bootstrap, no auto-link by email, no management-of-sessions API.
-- Major API PR #13 is implemented/merged; TV3 reuses it. Public opportunities array order/source behavior is implemented and not reopened.
+- Major API PR #13 is implemented/merged; Bảo Quyên reuses it. Public opportunities array order/source behavior is implemented and not reopened.
 
 Cross-review found no remaining leader choices in the current contract set after the recommendation Closed-category scoring decision was approved. Future conflicts discovered during implementation still require leader review; they must not silently change an approved contract.
 

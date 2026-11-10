@@ -1,4 +1,4 @@
-# Admin Categories frontend — TV3
+# Admin Categories frontend — Bảo Quyên
 
 `AdminCategoriesPage` is reusable content for the existing Admin Categories API.
 Admin responses include creation dates; no Auth/schema/migration changes are

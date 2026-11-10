@@ -6,11 +6,11 @@
 
 | Action                                                            | target_type | Module / sự kiện |
 | ----------------------------------------------------------------- | ----------- | ---------------- |
-| APPROVE_OPPORTUNITY, REJECT_OPPORTUNITY                           | Opportunity | TV1 UC-10        |
-| DELETE_POST                                                       | ForumPost   | TV5 UC-11        |
-| DELETE_COMMENT                                                    | Comment     | TV5 UC-11        |
-| CREATE_CATEGORY, RENAME_CATEGORY, CLOSE_CATEGORY, REOPEN_CATEGORY | Category    | TV3 UC-13        |
-| CHANGE_ROLE                                                       | User        | TV2 UC-14        |
+| APPROVE_OPPORTUNITY, REJECT_OPPORTUNITY                           | Opportunity | Khánh Huyền UC-10        |
+| DELETE_POST                                                       | ForumPost   | Tường Vy UC-11        |
+| DELETE_COMMENT                                                    | Comment     | Tường Vy UC-11        |
+| CREATE_CATEGORY, RENAME_CATEGORY, CLOSE_CATEGORY, REOPEN_CATEGORY | Category    | Bảo Quyên UC-13        |
+| CHANGE_ROLE                                                       | User        | Thái Bình UC-14        |
 
 `admin_id` lấy từ middleware identity, không từ request. `target_id` là scalar logical target; schema không tạo FK theo target_type. Các thao tác cần log là Admin-only. `activity_logs` append-only: backend không sửa/xóa log; runtime GRANT hiện chỉ SELECT/INSERT. `old_value`, `new_value` và `reason` là `VARCHAR(500)` trong Prisma schema và initial migration (`schema.prisma` `ActivityLog`, migration `activity_logs`).
 

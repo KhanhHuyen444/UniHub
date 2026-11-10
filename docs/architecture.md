@@ -31,30 +31,30 @@ Các route sản phẩm bên dưới được chuyển từ sitemap Chương 4 m
 
 | Route từ Chương 4 | Truy cập theo tài liệu | Phụ trách | Trạng thái trong frontend |
 | --- | --- | --- | --- |
-| `/` | Guest, Student | TV1 | Đã hoàn thành; Trang chủ HomePage |
-| `/opportunities` | Guest, Student | TV1 | Đã hoàn thành; Hub cơ hội (OpportunityHubPage) |
-| `/opportunities/:id` | Guest, Student | TV1 | Đã hoàn thành; Chi tiết cơ hội (OpportunityDetailPage) |
-| `/roadmaps` | Guest, Student | TV3 | Đã hoàn thành; Danh sách lộ trình kỹ năng (GuidanceRoadmapPage) |
-| `/roadmaps/:id` | Guest, Student | TV3 | Đã hoàn thành; Chi tiết bài viết định hướng (GuidanceDetailPage) |
-| `/login` | Guest | TV2 | Đã hoàn thành; Trang đăng nhập Google (LoginPage) |
-| `/profile` | Student | TV2 | Đã hoàn thành; Hồ sơ học tập chuyên ngành và kỹ năng (ProfilePage) |
-| `/recommendations` | Student | TV3 | Đã hoàn thành; Gợi ý cơ hội cá nhân hóa Heuristic (RecommendationsPage) |
-| `/calendar` | Student | TV4 | Đã hoàn thành; Lịch sự kiện & Deadline cá nhân (CalendarPage) |
-| `/forum` | Guest đọc, Student | TV5 | Đã hoàn thành; Diễn đàn sinh viên (ForumHubPage) |
-| `/forum/:id` | Guest đọc, Student | TV5 | Đã hoàn thành; Chi tiết bài viết & bình luận (ForumPostDetailPage) |
-| `/admin` → `/admin/dashboard` | Admin | TV4 | Đã hoàn thành; Tự động chuyển hướng sang /admin/dashboard |
-| `/admin/dashboard` | Admin | TV4 | Đã hoàn thành; Admin Dashboard thống kê thời gian thực |
-| `/admin/moderation` | Admin | TV1: tab cơ hội; TV5: tab forum | Đã hoàn thành; Thẩm định cơ hội (Tab 1) & Kiểm duyệt diễn đàn (Tab 2) |
-| `/admin/categories` | Admin | TV3 | Đã hoàn thành; Quản trị danh mục ngành học & kỹ năng |
-| `/admin/users` | Admin | TV2 | Đã hoàn thành; Quản trị tài khoản & phân quyền RBAC |
+| `/` | Guest, Student | Khánh Huyền | Đã hoàn thành; Trang chủ HomePage |
+| `/opportunities` | Guest, Student | Khánh Huyền | Đã hoàn thành; Hub cơ hội (OpportunityHubPage) |
+| `/opportunities/:id` | Guest, Student | Khánh Huyền | Đã hoàn thành; Chi tiết cơ hội (OpportunityDetailPage) |
+| `/roadmaps` | Guest, Student | Bảo Quyên | Đã hoàn thành; Danh sách lộ trình kỹ năng (GuidanceRoadmapPage) |
+| `/roadmaps/:id` | Guest, Student | Bảo Quyên | Đã hoàn thành; Chi tiết bài viết định hướng (GuidanceDetailPage) |
+| `/login` | Guest | Thái Bình | Đã hoàn thành; Trang đăng nhập Google (LoginPage) |
+| `/profile` | Student | Thái Bình | Đã hoàn thành; Hồ sơ học tập chuyên ngành và kỹ năng (ProfilePage) |
+| `/recommendations` | Student | Bảo Quyên | Đã hoàn thành; Gợi ý cơ hội cá nhân hóa Heuristic (RecommendationsPage) |
+| `/calendar` | Student | Ngọc Tuyền | Đã hoàn thành; Lịch sự kiện & Deadline cá nhân (CalendarPage) |
+| `/forum` | Guest đọc, Student | Tường Vy | Đã hoàn thành; Diễn đàn sinh viên (ForumHubPage) |
+| `/forum/:id` | Guest đọc, Student | Tường Vy | Đã hoàn thành; Chi tiết bài viết & bình luận (ForumPostDetailPage) |
+| `/admin` → `/admin/dashboard` | Admin | Ngọc Tuyền | Đã hoàn thành; Tự động chuyển hướng sang /admin/dashboard |
+| `/admin/dashboard` | Admin | Ngọc Tuyền | Đã hoàn thành; Admin Dashboard thống kê thời gian thực |
+| `/admin/moderation` | Admin | Khánh Huyền: tab cơ hội; Tường Vy: tab forum | Đã hoàn thành; Thẩm định cơ hội (Tab 1) & Kiểm duyệt diễn đàn (Tab 2) |
+| `/admin/categories` | Admin | Bảo Quyên | Đã hoàn thành; Quản trị danh mục ngành học & kỹ năng |
+| `/admin/users` | Admin | Thái Bình | Đã hoàn thành; Quản trị tài khoản & phân quyền RBAC |
 | `/terms` | Mọi người | Chưa phân công | Nhãn văn bản tĩnh hỗ trợ chân trang |
 | `/privacy` | Mọi người | Chưa phân công | Nhãn văn bản tĩnh hỗ trợ chân trang |
 | `/403` | Mọi người | Điều phối chung | Đã hoàn thành; Trang từ chối truy cập (ForbiddenPage) |
 | `/404` | Mọi người | Điều phối chung | Đã hoàn thành; Trang không tìm thấy tài nguyên (NotFoundPage) |
-| `/_dev/health` | Kỹ thuật | TV1 | Đã mount; kiểm tra kết nối health |
-| `/_dev/ui?area=public` (hoặc `student`, `admin`) | Kỹ thuật | TV1 | Đã mount; preview shared UI, không gọi API nghiệp vụ |
+| `/_dev/health` | Kỹ thuật | Khánh Huyền | Đã mount; kiểm tra kết nối health |
+| `/_dev/ui?area=public` (hoặc `student`, `admin`) | Kỹ thuật | Khánh Huyền | Đã mount; preview shared UI, không gọi API nghiệp vụ |
 
-Không tạo menu giả để trỏ đến các route kế hoạch. `/admin/moderation` được TV1 và TV5 tích hợp trên một route chung theo hai tab; cả hai phối hợp đồng bộ cấu trúc và trạng thái tab.
+Không tạo menu giả để trỏ đến các route kế hoạch. `/admin/moderation` được Khánh Huyền và Tường Vy tích hợp trên một route chung theo hai tab; cả hai phối hợp đồng bộ cấu trúc và trạng thái tab.
 
 Footer hiển thị label hỗ trợ dạng chữ tĩnh đến khi nhóm hoàn thiện nội dung `/terms` và `/privacy`; không tạo trang rỗng hoặc tự viết nội dung pháp lý.
 
@@ -118,7 +118,7 @@ UniHub/
 └── README.md                    # Tài liệu hướng dẫn cài đặt và bàn giao chính thức
 ```
 
-Các phân hệ Admin được phân chia theo trách nhiệm chức năng TV1–TV5 trong [team-workflow.md](team-workflow.md): TV1 duyệt cơ hội, TV2 quản lý tài khoản & phân quyền, TV3 quản lý danh mục ngành & kỹ năng, TV4 bảng điều khiển thống kê (Dashboard), TV5 kiểm duyệt diễn đàn cộng đồng.
+Các phân hệ Admin được phân chia theo trách nhiệm chức năng năm thành viên trong [team-workflow.md](team-workflow.md): Khánh Huyền duyệt cơ hội, Thái Bình quản lý tài khoản & phân quyền, Bảo Quyên quản lý danh mục ngành & kỹ năng, Ngọc Tuyền bảng điều khiển thống kê (Dashboard), Tường Vy kiểm duyệt diễn đàn cộng đồng.
 
 **Vị trí dữ liệu duy nhất:** `backend/prisma/schema.prisma` là nguồn định nghĩa schema CSDL duy nhất; `backend/prisma/migrations/` lưu trữ toàn bộ lịch sử migrations chính thức. Prisma Client được sinh cục bộ vào `backend/src/generated/prisma/` và không commit vào Git. `backend/src/lib/prisma.ts` tạo một Prisma Client singleton dùng chung cho toàn bộ tiến trình ứng dụng. Mọi thao tác DDL của migrator sử dụng biến `MIGRATION_DATABASE_URL`, còn runtime backend kết nối thông qua tài khoản đặc quyền tối thiểu `DATABASE_URL`.
 

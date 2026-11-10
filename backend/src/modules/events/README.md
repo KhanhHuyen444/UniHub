@@ -14,7 +14,7 @@ Root typecheck/build đạt. Root tests: frontend 78 pass / 31 skip, backend 164
 
 Đã triển khai: **Backend CRUD Calendar Events (FR-04.1)** theo [hợp đồng API](../../../../docs/events-notifications-api-contract.md).
 
-Phụ trách: **TV4**.
+Phụ trách: **Ngọc Tuyền**.
 
 ## Các endpoint đã triển khai
 
@@ -71,7 +71,7 @@ ghi thông báo chung, không log exception có dữ liệu nhạy cảm.
 Không có shared Notification writer hỗ trợ transaction hiện tại, nên Reminder
 được ghi trực tiếp bằng `tx.notification.create`. Tuyen phụ trách Notifications API
 (list/read) và bell UI; Vy điều phối chức năng thông báo Violation. Task 2 phụ trách
-Reminder Service và scheduler 60 giây. Review phần server lifecycle với TV1
+Reminder Service và scheduler 60 giây. Review phần server lifecycle với Khánh Huyền
 và transaction liên module với Tuyen và Vy trước khi tích hợp.
 
 Kiểm thử unit: `backend/test/reminders.test.mjs`. Kiểm thử MySQL:

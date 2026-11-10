@@ -1,4 +1,4 @@
-# Student Calendar — TV4
+# Student Calendar — Ngọc Tuyền
 
 `/calendar` uses the existing Student guard, StudentLayout, bundled Inter font,
 shared controls and `protectedApiRequest`, including refresh. All six Events
@@ -33,7 +33,7 @@ field errors; server failures remain form-level errors with the draft retained.
 The shared API client does not preserve optional `fieldErrors`; it is unchanged.
 
 Shared-file changes mount `/calendar` in `app/router.tsx` and add its existing
-navigation link in `PublicLayout` for authenticated Students only; TV1 should
+navigation link in `PublicLayout` for authenticated Students only; Khánh Huyền should
 review both at integration. Guests and other roles retain public navigation.
 Pending detail requests disable conflicting actions and are ignored after a
 calendar context change. Day button accessible names include loaded event counts.
