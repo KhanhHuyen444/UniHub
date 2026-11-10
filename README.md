@@ -139,7 +139,7 @@ flowchart TD
 
 1. **Frontend Layer (React 19 SPA):** Đảm nhiệm việc kết xuất giao diện, bắt các sự kiện người dùng và bảo vệ route client-side thông qua `<RequireRole>`. Access Token được lưu trữ trong bộ nhớ RAM (`auth-state.ts`), không lưu trữ ở `localStorage` nhằm phòng ngừa nguy cơ tấn công XSS đánh cắp token.
 2. **Reverse Proxy & Routing:** Giúp đồng nhất origin giữa client và server. Môi trường local sử dụng proxy tích hợp của Vite; môi trường Cloud sử dụng cơ chế rewrite của Vercel nhằm đảm bảo cookie Refresh Token được trao đổi an toàn dưới dạng cùng nguồn gốc (same-origin).
-3. **Backend Layer (Express 5):** Thực thi toàn bộ quy tắc nghiệp vụ. Mọi request cần xác thực đều trải qua Middleware kiểm tra tính hợp lệ của chữ ký số JWT và đối chiếu phiên thực tế trong bảng `auth_sessions` (ngăn chặn tình trạng token cũ bị lạm dụng sau khi bị hạ quyền Admin).
+3. **Backend Layer (Express 5):** Thực thi toàn bộ quy tắc nghiệp vụ. Mọi request cần xác thực đều qua Middleware xác minh chữ ký, thời hạn JWT và đối chiếu `sid` với session còn hiệu lực trong `auth_sessions` (chưa bị thu hồi hoặc hết hạn). Role trong JWT là snapshot tại thời điểm cấp token: khi đổi quyền Student/Admin thành công, database cập nhật role nhưng session không tự bị thu hồi và access token hiện tại không mất hiệu lực ngay. Token mới được cấp qua login hoặc refresh sẽ nhận role hiện tại từ database theo BR-14.5, nên người dùng không nhất thiết phải đăng xuất rồi đăng nhập lại. Nếu token hết hạn hoặc session bị thu hồi/hết hạn, middleware từ chối token theo cơ chế xác thực tương ứng.
 4. **Data Layer (Prisma ORM & MySQL 8.4):** Áp dụng mô hình CSDL chuẩn hóa 13 bảng quan hệ. Các tác vụ nhạy cảm (như hạ quyền Admin, cập nhật vai trò, xử lý kiểm duyệt) được bọc trong Prisma Transaction với cơ chế khóa dòng (`SELECT ... FOR UPDATE`) để hạn chế rủi ro tương tranh (Race Condition) và bảo vệ an toàn cho Admin cuối cùng.
 
 ---
@@ -423,7 +423,7 @@ Hệ thống UniHub tích hợp script bootstrap độc lập và an toàn nhằ
    - Xác minh người dùng có tồn tại trong CSDL hay không.
    - Xác minh hệ thống hiện tại **chưa có bất kỳ Quản trị viên (Admin) nào**.
    - Nếu đủ điều kiện, hệ thống sẽ nâng quyền tài khoản lên **`Admin`**; bootstrap đầu tiên không ghi `activity_logs` vì chưa có Admin thực hiện thao tác.
-4. Trên trình duyệt, bấm **Đăng xuất** và thực hiện **Đăng nhập lại với Google** để hệ thống cấp Access Token và Refresh Token mang vai trò Admin mới.
+4. Access Token đang dùng vẫn giữ role snapshot cũ. Khi Frontend refresh phiên thành công hoặc người dùng đăng nhập lại với Google, token mới sẽ mang role Admin hiện tại. Không cần đăng xuất trước; chỉ đăng nhập lại nếu không thể refresh phiên.
 5. Kiểm tra truy cập vào thanh điều hướng Admin hoặc truy cập trực tiếp `http://127.0.0.1:5173/admin/dashboard`.
 
 > [!WARNING]
