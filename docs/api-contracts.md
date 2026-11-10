@@ -1,20 +1,10 @@
 # Mục lục và điều phối hợp đồng API UniHub
 
-> **Đối chiếu bản bàn giao 06/11/2026:** Cài mới theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md), dùng lược đồ `unihub_demo`. Bảng triển khai §2 đã đối chiếu với `main` cục bộ `3a3877416cae0a0a935aa4c2f29516fa61ed8995` và nhánh tài liệu `c008534f2f54d0c8d6484600e177977b7ac0df82`: mã thực thi giống nhau; các tuyến/backend/frontend được xác nhận từ mã nguồn, không phải kết quả kiểm thử thực tế mới. Nguồn khảo sát §1, kế hoạch PR §5 và các kết quả kiểm thử cũ được giữ làm lịch sử. Ví dụ `unihub_dev` không thuộc quy trình cài mới; không chạy SQL lịch sử trên cơ sở dữ liệu cũ.
+> **Đối chiếu bản bàn giao 06/11/2026:** Cài mới theo [README](../README.md) và [LOCAL-SETUP-UNIHUB-DEMO.md](LOCAL-SETUP-UNIHUB-DEMO.md), dùng lược đồ `unihub_demo`. Bảng triển khai §1 đã đối chiếu với `main` cục bộ `3a3877416cae0a0a935aa4c2f29516fa61ed8995` và nhánh tài liệu `c008534f2f54d0c8d6484600e177977b7ac0df82`: mã thực thi giống nhau; các tuyến/backend/frontend được xác nhận từ mã nguồn, không phải kết quả kiểm thử thực tế mới. Kế hoạch PR §4 và các kết quả kiểm thử cũ được giữ làm lịch sử. Ví dụ `unihub_dev` không thuộc quy trình cài mới; không chạy SQL lịch sử trên cơ sở dữ liệu cũ.
 
-> Trưởng nhóm duyệt hợp đồng. Phê duyệt hợp đồng và trạng thái triển khai là hai trạng thái riêng. Các hợp đồng được ghi Đã duyệt bên dưới đã được hoàn thiện theo quyết định trưởng nhóm; trạng thái này tự nó không khẳng định điểm cuối/mô-đun có mã trên main. Bảng §2 ghi riêng trạng thái mã nguồn đã đối chiếu. Lược đồ/API/middleware xác thực đã có trên `main`; lệnh vận hành `admin:bootstrap` và xác thực ở frontend cũng đã có trên `main`.
+> Trưởng nhóm duyệt hợp đồng. Phê duyệt hợp đồng và trạng thái triển khai là hai trạng thái riêng. Các hợp đồng được ghi Đã duyệt bên dưới đã được hoàn thiện theo quyết định trưởng nhóm; trạng thái này tự nó không khẳng định điểm cuối/mô-đun có mã trên main. Bảng §1 ghi riêng trạng thái mã nguồn đã đối chiếu. Lược đồ/API/middleware xác thực đã có trên `main`; lệnh vận hành `admin:bootstrap` và xác thực ở frontend cũng đã có trên `main`.
 
-## 1. Nguồn đã kiểm tra khi soạn hợp đồng — lịch sử
-
-| Nguồn          | Bản đã đọc                                                                                                                         | Cách dùng/giới hạn                                                                                                                                                                     |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chương 3       | PDF đính kèm lượt hiện tại; SHA-256 686be3ac739574f51123d8b271268f49fc52f84ab52a23219d51748bc9868c5e                               | Đối chiếu FR, UC, BR, NFR. UC-04 quy định cập nhật full_name/avatar_url khi đăng nhập cùng Google sub; UC-11 BR-11.7 loại bỏ khóa tài khoản.                                           |
-| Chương 4       | PDF đính kèm lượt hiện tại; SHA-256 a3bc5fd958411c129e0895eba1412f63e848abda0de3d3eefcd3f1a765225bb5                               | Đọc ERD và bảng. Có google_sub/auth_sessions nhưng hai cấu trúc chưa có trong lược đồ/migration của main; thiếu siêu dữ liệu hạn chót đã hợp nhất. Không lấy Figma làm căn cứ lược đồ. |
-| PCCV           | PCCV-UNIHUB - Trang tính4 (1).pdf đính kèm lượt hiện tại; SHA-256 880eeb35ddbc04900611d0d71c24d47eb3007fcffc57079f1d35350362c7615a | Đọc phân công cũ; ưu tiên yêu cầu hiện tại của trưởng nhóm về Khánh Huyền–Tường Vy nếu khác.                                                                                           |
-| Bàn giao Figma | Thiết kế Figma Page 3 (nút `24:2`), bộ giá trị thiết kế tại `frontend/src/styles/tokens.css`                                       | Chỉ làm căn cứ giao diện. Không quyết định API/quyền/lược đồ.                                                                                                                          |
-| Kho mã         | origin/main 01ce742ce0fee5d6bb53397c36409211cda6587b và mã nguồn/tài liệu ở main                                                   | Hợp đồng xác thực được đối chiếu cùng Chương 3/4; Major/opportunities đã đối chiếu mã nguồn và kiểm thử.                                                                               |
-
-## 2. Trạng thái hợp đồng và triển khai
+## 1. Trạng thái hợp đồng và triển khai
 
 | Nhóm                                           | Tài liệu                             | Trạng thái hợp đồng                                                | Trạng thái triển khai trên main                                                                                                |
 | ---------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
@@ -35,7 +25,7 @@
 
 Không dùng README/thư mục mô-đun làm bằng chứng điểm cuối đã tồn tại. Hợp đồng được duyệt không đồng nghĩa kiểm thử/triển khai/NFR đã đạt.
 
-## 3. Danh mục điểm cuối × vai trò và yêu cầu
+## 2. Danh mục điểm cuối × vai trò và yêu cầu
 
 Guest là yêu cầu không có phiên UniHub hợp lệ; Guest không phải `users.role`. Mỗi dòng là một phương thức/đường dẫn HTTP riêng; cột yêu cầu nêu chính xác truy vấn/phần thân hoặc ghi rõ không có. Quy tắc kiểm tra dữ liệu, phản hồi JSON đầy đủ, lỗi và giao dịch nằm trong hợp đồng được liên kết ở cột cuối. Không gộp nhiều phương thức thành một tuyến.
 
@@ -89,7 +79,7 @@ Guest là yêu cầu không có phiên UniHub hợp lệ; Guest không phải `u
 
 Middleware máy chủ thực thi toàn bộ quy tắc vai trò và quyền sở hữu được bảo vệ. Bộ bảo vệ tuyến ở giao diện chỉ tác động đến điều hướng. Phần thân yêu cầu, cấu trúc phản hồi, mã lỗi và ranh giới giao dịch được quy định trong từng hợp đồng điểm cuối được liên kết; mọi đoạn JSON đều là ví dụ hư cấu, an toàn để đưa vào tài liệu.
 
-## 4. Phân công phụ trách và phụ thuộc giữa các mô-đun
+## 3. Phân công phụ trách và phụ thuộc giữa các mô-đun
 
 | TV          | Bộ cung cấp/mô-đun                                                                                      | Bên sử dụng                                                                                                                  |
 | ----------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -101,9 +91,9 @@ Middleware máy chủ thực thi toàn bộ quy tắc vai trò và quyền sở 
 
 Khánh Huyền đã triển khai và hợp nhất bộ cung cấp Major; Bảo Quyên tiếp quản/tái sử dụng backend/src/modules/categories. Các mô-đun dùng chung Prisma Client/dịch vụ; không gọi chính backend qua HTTP localhost. Các thay đổi xuyên mô-đun (vai trò/danh mục/cơ hội + nhật ký kiểm toán; gỡ nội dung diễn đàn + nhật ký kiểm toán + thông báo; đặt lại/xóa Reminder + cập nhật sự kiện) dùng một giao dịch cơ sở dữ liệu như tài liệu quy định.
 
-## 5. Thứ tự PR — kế hoạch lịch sử
+## 4. Thứ tự PR — kế hoạch lịch sử
 
-Dưới đây giữ lại thứ tự triển khai lịch sử; phần xác thực/khởi tạo Admin và các chức năng được liệt kê hiện đã tích hợp. Dùng bảng trạng thái hiện tại ở §2 để đánh giá công việc còn lại. Mỗi PR triển khai chỉ dựa trên hợp đồng đã được trưởng nhóm duyệt, cập nhật trạng thái triển khai kèm bằng chứng và không tác động cơ sở dữ liệu/checkout của thành viên khác.
+Dưới đây giữ lại thứ tự triển khai lịch sử; phần xác thực/khởi tạo Admin và các chức năng được liệt kê hiện đã tích hợp. Dùng bảng trạng thái hiện tại ở §1 để đánh giá công việc còn lại. Mỗi PR triển khai chỉ dựa trên hợp đồng đã được trưởng nhóm duyệt, cập nhật trạng thái triển khai kèm bằng chứng và không tác động cơ sở dữ liệu/checkout của thành viên khác.
 
 1. Lược đồ/migration/GRANT xác thực đã có trên `main`; từng cơ sở dữ liệu đích phải xác nhận riêng trạng thái sẵn sàng của migration/GRANT trước khi chạy xác thực. Đây là phụ thuộc triển khai, không phải rà soát hợp đồng.
 2. Mở rộng bộ phân tích/mã máy khách/máy chủ cho fieldErrors trong lỗi dùng chung; tương thích ngược với error.code/message.
@@ -118,11 +108,11 @@ Dưới đây giữ lại thứ tự triển khai lịch sử; phần xác thự
 
 Không PR nào trong danh sách này cho phép thay đổi lược đồ trong mã mô-đun khi chưa có migration riêng được rà soát.
 
-## 6. Bàn giao và rà soát
+## 5. Bàn giao và rà soát
 
 Trước khi viết mã: xác minh trạng thái main/lược đồ/migration; dùng cơ sở dữ liệu tách biệt; triển khai đường dẫn, quyền, trường dữ liệu, trạng thái, lỗi, giao dịch và kiểm thử theo hợp đồng mô-đun; không bao giờ suy ra quyền Admin từ giao diện; không bao giờ biến lỗi cơ sở dữ liệu thành phản hồi thành công rỗng. Trưởng nhóm phê duyệt hợp đồng. Thái Bình–Tường Vy có thể cung cấp bằng chứng và nhận xét, không thể chốt/phê duyệt thay trưởng nhóm. “Đã duyệt” chỉ hợp đồng đã thống nhất; “đã triển khai” cần có mã và các kiểm tra trên main.
 
-## 7. Các quyết định
+## 6. Các quyết định
 
 ### A. Quyết định nghiệp vụ — trưởng nhóm đã chốt
 
@@ -153,7 +143,7 @@ Không còn lựa chọn nghiệp vụ chưa giải quyết trong bảng A này.
 | Diễn đàn/kiểm duyệt      | Đọc có phân trang/thứ tự; văn bản thuần; tác giả công khai chỉ có fullName/avatarUrl; lý do kiểm duyệt và xóa mềm + nhật ký kiểm toán + Violation trong một giao dịch; đích đến chung /forum.                                                                                                                                                                                                                                                                                                                                       | forum/activity/notifications |
 | Bảng điều khiển          | Ba điểm cuối thẻ chỉ dành cho Admin, lỗi/thử lại độc lập; không thêm KPI.                                                                                                                                                                                                                                                                                                                                                                                                                                                           | dashboard                    |
 
-Trạng thái phê duyệt được tóm tắt ở mục 2; từng hợp đồng yêu cầu/phản hồi đầy đủ được liên kết trong danh mục điểm cuối phía trên. Cả 13 dòng trên đã chốt; không còn mục nào để người phụ trách quyết định.
+Trạng thái phê duyệt được tóm tắt ở mục 1; từng hợp đồng yêu cầu/phản hồi đầy đủ được liên kết trong danh mục điểm cuối phía trên. Cả 13 dòng trên đã chốt; không còn mục nào để người phụ trách quyết định.
 
 ### C. Các quyết định khác được giữ nguyên
 
@@ -169,7 +159,7 @@ Trạng thái phê duyệt được tóm tắt ở mục 2; từng hợp đồng
 
 Rà soát chéo không tìm thấy lựa chọn nào còn cần trưởng nhóm quyết định trong bộ hợp đồng hiện tại sau khi quyết định tính điểm gợi ý với danh mục Closed được duyệt. Các mâu thuẫn phát hiện sau này trong quá trình triển khai vẫn cần trưởng nhóm rà soát; không được âm thầm thay đổi hợp đồng đã duyệt.
 
-## 8. Các phụ thuộc không cản trở phê duyệt
+## 7. Các phụ thuộc không cản trở phê duyệt
 
 | Phụ thuộc                                | Trạng thái                                                                                                                                                                                                                          | Tác động                                                                                                                                         |
 | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -177,7 +167,7 @@ Rà soát chéo không tìm thấy lựa chọn nào còn cần trưởng nhóm 
 | Cột hạn chót cơ hội trong Ch4            | main có deadline_source_date, deadline_source_timezone và CHECK tương ứng; PDF Chương 4 mới nhất thiếu các mục này.                                                                                                                 | Hợp đồng vẫn hợp lệ; báo cáo Chương 4 cần đồng bộ. Không thay đổi lược đồ tại đây.                                                               |
 | Bản cài MySQL của thành viên/trưởng nhóm | Trưởng nhóm xác nhận có các cột hạn chót trên cơ sở dữ liệu phát triển của mình; chưa xác nhận các thành viên khác.                                                                                                                 | Kiểm tra trạng thái migration trên từng cơ sở dữ liệu phát triển trước khi tích hợp; không dùng cơ sở dữ liệu nhóm để kiểm thử.                  |
 
-## 9. Bảng chỉnh sửa báo cáo Chương 3–4
+## 8. Bảng chỉnh sửa báo cáo Chương 3–4
 
 Đây là danh sách chính xác các chỉnh sửa báo cáo được đề xuất; các PDF chưa được sửa.
 
@@ -202,8 +192,8 @@ Rà soát chéo không tìm thấy lựa chọn nào còn cần trưởng nhóm 
 | Ch4 §4.3.2.3 opportunities                            | Bổ sung deadline_source_date DATE NULL, deadline_source_timezone VARCHAR(64) NULL và CHECK cho bộ siêu dữ liệu đã hợp nhất trên main; giải thích backend vẫn kiểm tra múi giờ/mốc chốt.                                                                                                                                                                 | Chỉ đồng bộ báo cáo; không sửa migration/lược đồ đã áp dụng.                                                                                         |
 | Ch4 §4.3.2.8 notifications                            | Nêu rõ không tự động xóa theo tuổi; việc xóa nhắc nhở/xóa dây chuyền theo UC-07.                                                                                                                                                                                                                                                                        | Làm rõ báo cáo; không có lược đồ mới.                                                                                                                |
 
-## 10. Trạng thái phê duyệt và triển khai tiếp theo
+## 9. Trạng thái phê duyệt và triển khai tiếp theo
 
-Không còn quyết định chưa giải quyết của trưởng nhóm trong bộ hợp đồng API dùng chung hiện tại. Bốn quyết định nghiệp vụ ở §7.A, 13 nhóm thiết kế kỹ thuật ở §7.B và quy tắc tính điểm gợi ý được duyệt riêng đều đã chốt. Mọi hợp đồng liệt kê ở §2 đã được duyệt; trạng thái này ghi nhận hành vi đã thống nhất và không khẳng định đã hoàn tất triển khai hay kiểm thử. Trạng thái triển khai mô-đun vẫn được ghi riêng ở §2.
+Không còn quyết định chưa giải quyết của trưởng nhóm trong bộ hợp đồng API dùng chung hiện tại. Bốn quyết định nghiệp vụ ở §6.A, 13 nhóm thiết kế kỹ thuật ở §6.B và quy tắc tính điểm gợi ý được duyệt riêng đều đã chốt. Mọi hợp đồng liệt kê ở §1 đã được duyệt; trạng thái này ghi nhận hành vi đã thống nhất và không khẳng định đã hoàn tất triển khai hay kiểm thử. Trạng thái triển khai mô-đun vẫn được ghi riêng ở §1.
 
-Các phụ thuộc ở §8 là điều kiện triển khai, không cản trở phê duyệt hợp đồng. Lược đồ/migration/GRANT xác thực đã có trên `main`; xác minh từng cơ sở dữ liệu đích trước khi dùng. Điểm cuối xác thực, middleware, xác thực ở frontend và lệnh khởi tạo Admin đã tích hợp trên main và nhánh tài liệu hiện tại. Mục 5 giữ thứ tự PR ban đầu làm lịch sử, không phải công việc chờ hợp nhất. Lần cập nhật tài liệu này không sửa PDF Chương 3/4, khởi tạo Admin hay áp dụng thay đổi cơ sở dữ liệu; tích hợp mã nguồn không chứng minh đã kiểm chứng Google/MySQL thực tế.
+Các phụ thuộc ở §7 là điều kiện triển khai, không cản trở phê duyệt hợp đồng. Lược đồ/migration/GRANT xác thực đã có trên `main`; xác minh từng cơ sở dữ liệu đích trước khi dùng. Điểm cuối xác thực, middleware, xác thực ở frontend và lệnh khởi tạo Admin đã tích hợp trên main và nhánh tài liệu hiện tại. Mục 4 giữ thứ tự PR ban đầu làm lịch sử, không phải công việc chờ hợp nhất. Lần cập nhật tài liệu này không sửa PDF Chương 3/4, khởi tạo Admin hay áp dụng thay đổi cơ sở dữ liệu; tích hợp mã nguồn không chứng minh đã kiểm chứng Google/MySQL thực tế.

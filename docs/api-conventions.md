@@ -59,7 +59,7 @@ Phản hồi JSON được trả nguyên dạng cho caller. HTTP lỗi hiện đ
 
 ### Endpoint × role và request inventory
 
-Danh sách canonical gồm từng HTTP method/path, query/body, vai trò và liên kết tới response/error/transaction contract nằm tại [api-contracts.md §3](api-contracts.md). Không duy trì bảng route rút gọn thứ hai ở đây để tránh path hoặc method sai lệch. Các contract riêng ghi trạng thái implementation độc lập; “Approved” không khẳng định đã có code.
+Danh sách canonical gồm từng HTTP method/path, query/body, vai trò và liên kết tới response/error/transaction contract nằm tại [api-contracts.md §2](api-contracts.md). Không duy trì bảng route rút gọn thứ hai ở đây để tránh path hoặc method sai lệch. Các contract riêng ghi trạng thái implementation độc lập; “Approved” không khẳng định đã có code.
 
 Guest không phải giá trị `users.role`. Backend kiểm tra role và ownership cho mọi route được bảo vệ; frontend route guard chỉ phục vụ điều hướng.
 
