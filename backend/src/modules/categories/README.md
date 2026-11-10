@@ -1,185 +1,185 @@
-# Categories
+# Danh mục
 
-Bảo Quyên owns `backend/src/modules/categories` for shared categories, guidance and
-category administration. The public Major read endpoint is implemented
-on `main` after PR #13.
+Bảo Quyên phụ trách `backend/src/modules/categories` cho danh mục dùng chung, lộ trình kỹ năng và
+quản trị danh mục. Endpoint đọc chuyên ngành công khai đã được triển khai
+trên `main` sau PR #13.
 
-## Major options endpoint
+## Endpoint tùy chọn chuyên ngành
 
-`GET /api/categories?type=Major` is public and requires no login. It returns
-only Active Major rows, ordered by the MySQL `name` collation and then by
-`category_id`. The response contains only `id`, `name` and `type`. An empty
-result is HTTP 200 with `{ "items": [] }`; unsupported, missing or repeated
-query parameters return 400/`INVALID_QUERY`. Database unavailability returns
-503/`SERVICE_UNAVAILABLE` through the shared error mapping.
+`GET /api/categories?type=Major` là endpoint công khai, không yêu cầu đăng nhập. Endpoint chỉ trả về
+các bản ghi Major có trạng thái Active, sắp xếp theo quy tắc đối chiếu MySQL của `name`, sau đó theo
+`category_id`. Phản hồi chỉ chứa `id`, `name` và `type`. Kết quả rỗng
+là HTTP 200 với `{ "items": [] }`; tham số truy vấn không được hỗ trợ, bị thiếu hoặc lặp
+trả về 400/`INVALID_QUERY`. Khi cơ sở dữ liệu không khả dụng, endpoint trả về
+503/`SERVICE_UNAVAILABLE` qua cơ chế ánh xạ lỗi dùng chung.
 
-Implementation:
+Triển khai:
 
-- `categories.routes.ts` validates the exact supported query and mounts the
-  public read route.
-- `categories.service.ts` selects and orders fields in MySQL through the
-  shared Prisma Client. It does not create a client or connection pool per
-  request.
-- `backend/test/categories.test.mjs` covers request validation, response
-  shape, safe errors and an opt-in MySQL integration case.
+- `categories.routes.ts` kiểm tra chính xác truy vấn được hỗ trợ và gắn
+  route đọc công khai.
+- `categories.service.ts` chọn và sắp xếp các trường trong MySQL thông qua
+  Prisma Client dùng chung. Không tạo client hay pool kết nối riêng cho mỗi
+  yêu cầu.
+- `backend/test/categories.test.mjs` bao phủ kiểm tra yêu cầu, cấu trúc
+  phản hồi, lỗi an toàn và một ca kiểm thử tích hợp MySQL cần bật riêng.
 
-The Khánh Huyền Hub consumer sends `type=Major` and parses `{ items: [...] }` with
-`id`, `name` and `type`. The Public Hub consumer and endpoint are verified
-end-to-end; see [categories-api-contract.md](../../../../docs/categories-api-contract.md).
+Phần Hub của Khánh Huyền gửi `type=Major` và phân tích `{ items: [...] }` với
+`id`, `name` và `type`. Phần sử dụng API trong Hub công khai và endpoint đã được kiểm chứng
+từ đầu đến cuối; xem [categories-api-contract.md](../../../../docs/categories-api-contract.md).
 
 ## Windows PowerShell
 
-Run these commands from the repository root. Configure `backend/.env` with a
-runtime account and a development database that already has the repository
-migrations applied. Do not use a migration or root account for the app, and do
-not share the local `.env` file.
+Chạy các lệnh sau từ thư mục gốc repository. Cấu hình `backend/.env` với
+tài khoản chạy ứng dụng và cơ sở dữ liệu phát triển đã áp dụng các
+migration của repository. Không dùng tài khoản migration hay root cho ứng dụng và
+không chia sẻ tệp `.env` cục bộ.
 
 ```powershell
 npm.cmd ci
 npm.cmd run dev:backend
 ```
 
-Then, in another PowerShell window, request the endpoint:
+Sau đó, trong một cửa sổ PowerShell khác, gửi yêu cầu tới endpoint:
 
 ```powershell
 Invoke-RestMethod -Method Get -Uri "http://127.0.0.1:3001/api/categories?type=Major"
 ```
 
-An empty category table correctly returns an empty `items` array. A database
-connection/configuration issue returns a safe 503 response. Stop the server
-with `Ctrl+C`.
+Bảng danh mục rỗng trả về mảng `items` rỗng là đúng. Sự cố kết nối/cấu hình
+cơ sở dữ liệu trả về phản hồi 503 an toàn. Dừng máy chủ
+bằng `Ctrl+C`.
 
-Run repository checks from the root with `npm.cmd run typecheck`,
-`npm.cmd run build`, `npm.cmd test` and `npm.cmd run format:check`. The optional
-MySQL integration test uses `TEST_CATEGORIES_DATABASE_URL` only when it points
-to a loopback-only database named `unihub_categories_test*` with no categories
-already present. The test refuses a populated categories table and never
-clears pre-existing rows. Use a disposable database with the current
-migrations; never point it at a group database.
+Chạy các kiểm tra repository từ thư mục gốc bằng `npm.cmd run typecheck`,
+`npm.cmd run build`, `npm.cmd test` và `npm.cmd run format:check`. Kiểm thử
+tích hợp MySQL tùy chọn chỉ dùng `TEST_CATEGORIES_DATABASE_URL` khi biến này trỏ
+đến cơ sở dữ liệu chỉ truy cập qua loopback, có tên `unihub_categories_test*` và chưa có
+danh mục. Kiểm thử từ chối bảng danh mục đã có dữ liệu và không bao giờ
+xóa các bản ghi có sẵn. Dùng cơ sở dữ liệu dùng một lần với các
+migration hiện tại; tuyệt đối không trỏ đến cơ sở dữ liệu của nhóm.
 
-## Skill options endpoint
+## Endpoint tùy chọn kỹ năng
 
-`GET /api/categories?type=Skill` requires a valid UniHub access JWT and a live
-session through the shared `requireAuth`, followed by `requireRole('Student')`.
-Guest or invalid/expired tokens receive 401 `UNAUTHORIZED`; Admin receives 403
-`FORBIDDEN`. Major remains public, including when an Authorization header exists.
-Query validation runs before authentication: exactly one `type=Major` or
-`type=Skill` is accepted; unsupported, repeated or missing query fields return
-400 `INVALID_QUERY` before any database access. Skill requests with a body return
-400 `INVALID_REQUEST` before authentication or any Prisma access. Search and
-pagination are not part of the options contract.
+`GET /api/categories?type=Skill` yêu cầu access JWT UniHub hợp lệ và phiên
+đang hoạt động thông qua `requireAuth` dùng chung, sau đó là `requireRole('Student')`.
+Guest hoặc token không hợp lệ/hết hạn nhận 401 `UNAUTHORIZED`; Admin nhận 403
+`FORBIDDEN`. Major vẫn công khai, kể cả khi có header Authorization.
+Kiểm tra truy vấn diễn ra trước xác thực: chỉ chấp nhận đúng một `type=Major` hoặc
+`type=Skill`; trường truy vấn không được hỗ trợ, bị lặp hoặc thiếu trả về
+400 `INVALID_QUERY` trước mọi truy cập cơ sở dữ liệu. Yêu cầu Skill có body trả về
+400 `INVALID_REQUEST` trước xác thực hoặc mọi truy cập Prisma. Tìm kiếm và
+phân trang không thuộc hợp đồng API tùy chọn.
 
-Both types reuse the same Prisma query/serializer: Active only, ordered by
-`name ASC, category_id ASC`, selecting only `id`, `name`, `type` for the response.
-An empty Skill list returns 200 with `{ "items": [] }`. Database failures return
-503 `SERVICE_UNAVAILABLE`; unexpected failures return 500 `INTERNAL_ERROR`.
-Closed links on existing profiles are outside this endpoint's scope.
+Cả hai loại dùng lại cùng truy vấn/bộ tuần tự hóa Prisma: chỉ lấy Active, sắp xếp theo
+`name ASC, category_id ASC`, chỉ chọn `id`, `name`, `type` cho phản hồi.
+Danh sách Skill rỗng trả về 200 với `{ "items": [] }`. Lỗi cơ sở dữ liệu trả về
+503 `SERVICE_UNAVAILABLE`; lỗi ngoài dự kiến trả về 500 `INTERNAL_ERROR`.
+Các liên kết Closed trên hồ sơ hiện có nằm ngoài phạm vi endpoint này.
 
-### Try Skill locally (PowerShell, repository root)
+### Thử Skill cục bộ (PowerShell, thư mục gốc repository)
 
-Use Node 24.19.0 and npm 11.9.0. Run `npm.cmd ci`. Configure the existing backend
-local environment according to the auth module README (JWT signing configuration,
-Google client ID and allowed origins) and a private development MySQL database
-with the current migrations and runtime grants. Preserve existing `.env` files;
-never share credentials or use the group database for tests.
+Dùng Node 24.19.0 và npm 11.9.0. Chạy `npm.cmd ci`. Cấu hình môi trường
+cục bộ backend hiện có theo README của module auth (cấu hình ký JWT,
+Google client ID và các origin được phép) cùng cơ sở dữ liệu MySQL phát triển riêng
+có các migration hiện tại và quyền chạy ứng dụng. Giữ nguyên các tệp `.env` hiện có;
+không bao giờ chia sẻ thông tin xác thực hoặc dùng cơ sở dữ liệu của nhóm để kiểm thử.
 
 ```powershell
 npm.cmd run dev:backend
 ```
 
-In a second terminal, obtain a valid Student access token through the existing
-Google login flow, with a live session in that same development database. Keep it
-in the local `$studentAccessToken` variable; do not paste it into logs or commits.
+Trong terminal thứ hai, lấy access token Student hợp lệ qua luồng đăng nhập
+Google hiện có, với phiên đang hoạt động trong chính cơ sở dữ liệu phát triển đó. Giữ token
+trong biến cục bộ `$studentAccessToken`; không dán vào log hoặc commit.
 
 ```powershell
 Invoke-RestMethod -Method Get -Uri "http://127.0.0.1:3001/api/categories?type=Skill" -Headers @{ Authorization = "Bearer $studentAccessToken" }
 Invoke-RestMethod -Method Get -Uri "http://127.0.0.1:3001/api/categories?type=Major"
 ```
 
-Without the header, Skill must return 401. Repeat with a valid Admin token for 403. PowerShell reports non-2xx responses as errors. An empty development category
-table produces `items: []`, not an authentication error.
+Không có header, Skill phải trả về 401. Lặp lại với token Admin hợp lệ để nhận 403. PowerShell báo các phản hồi ngoài 2xx là lỗi. Bảng danh mục phát triển
+rỗng tạo ra `items: []`, không phải lỗi xác thực.
 
-### Tests and limits
+### Kiểm thử và giới hạn
 
-After `npm.cmd run build`, run
+Sau `npm.cmd run build`, chạy
 `node --test backend/test/categories.test.mjs backend/test/auth-middleware.test.mjs`.
-Categories HTTP tests use real signed JWTs and the shared auth middleware with
-Prisma/session doubles. They verify query predicates, select/order, authorization,
-safe errors and public Major regression. The opt-in MySQL case checks real category
-filtering, type isolation, sorting and empty results for both types; its Skill auth
-session is a test double. Without `TEST_CATEGORIES_DATABASE_URL`, that case is
-skipped. Mock query assertions do not establish actual MySQL collation behavior.
+Các kiểm thử HTTP Categories dùng JWT được ký thực sự và middleware xác thực dùng chung với
+các đối tượng thay thế Prisma/phiên. Chúng kiểm chứng điều kiện truy vấn, trường chọn/thứ tự, phân quyền,
+lỗi an toàn và hồi quy Major công khai. Ca MySQL cần bật riêng kiểm tra việc lọc danh mục
+thực tế, tách biệt loại, sắp xếp và kết quả rỗng cho cả hai loại; phiên xác thực Skill
+của ca này là đối tượng thay thế trong kiểm thử. Không có `TEST_CATEGORIES_DATABASE_URL`, ca đó
+bị bỏ qua. Các xác nhận truy vấn mô phỏng không chứng minh hành vi đối chiếu thực tế của MySQL.
 
-## Outside this endpoint
+## Ngoài phạm vi endpoint này
 
-Skill Options is implemented as the Student-only read endpoint described above.
-Admin management is implemented separately below. Profile rules for retaining
-existing Closed category links remain outside this module; approved contracts are in
+Tùy chọn Skill được triển khai dưới dạng endpoint đọc chỉ dành cho Student như mô tả trên.
+Quản lý Admin được triển khai riêng bên dưới. Quy tắc hồ sơ về giữ lại
+các liên kết danh mục Closed hiện có vẫn nằm ngoài module này; hợp đồng đã duyệt nằm trong
 [categories-api-contract.md](../../../../docs/categories-api-contract.md).
-The options endpoint reuses the existing Auth middleware and live sessions.
-It does not implement Google login, profile editing or a frontend profile
-consumer; those integrations depend on the Auth/Profile modules. Admin must use
-the separate category management API, not Skill Options.
+Endpoint tùy chọn dùng lại middleware Auth và các phiên đang hoạt động hiện có.
+Endpoint không triển khai đăng nhập Google, chỉnh sửa hồ sơ hoặc phần frontend
+sử dụng API hồ sơ; các tích hợp đó phụ thuộc vào module Auth/Profile. Admin phải dùng
+API quản lý danh mục riêng, không dùng tùy chọn Skill.
 
-## Admin Categories management
+## Quản lý danh mục cho Admin
 
-Implemented under `/api/admin/categories`, using the existing shared
-`requireAuth` then `requireRole('Admin')`. Guest/invalid credentials return 401;
-Student returns 403. Public Major and Student Skill Options routes are unchanged.
+Được triển khai dưới `/api/admin/categories`, dùng `requireAuth`
+rồi `requireRole('Admin')` dùng chung hiện có. Guest/thông tin xác thực không hợp lệ trả về 401;
+Student trả về 403. Các route tùy chọn Major công khai và Skill dành cho Student không thay đổi.
 
-- `GET ?type=Major|Skill`: exact, required query; returns Active and Closed rows
-  sorted by `name ASC, category_id ASC`, with `id/name/type/status/createdAt`.
-- `POST /`: `{type,name,reason?}` creates an Active category (201).
-- `PATCH /:id`: `{name,reason?}` renames either Active or Closed categories.
-- `PATCH /:id/status`: `{status,reason?}` closes/reopens a category.
-- No DELETE route, type change, reference replacement, search or pagination.
-  Existing IDs and all profile/opportunity/skill references are preserved.
+- `GET ?type=Major|Skill`: truy vấn chính xác, bắt buộc; trả về các bản ghi Active và Closed
+  sắp xếp theo `name ASC, category_id ASC`, với `id/name/type/status/createdAt`.
+- `POST /`: `{type,name,reason?}` tạo danh mục Active (201).
+- `PATCH /:id`: `{name,reason?}` đổi tên danh mục Active hoặc Closed.
+- `PATCH /:id/status`: `{status,reason?}` đóng/mở lại danh mục.
+- Không có route DELETE, đổi loại, thay thế tham chiếu, tìm kiếm hoặc phân trang.
+  ID hiện có và mọi tham chiếu hồ sơ/cơ hội/kỹ năng được giữ nguyên.
 
-Every Admin category response (list, create, rename, status and no-op) includes
-`createdAt`, serialized from `created_at` using `Date.toISOString()` in UTC.
-Rename/status operations preserve the original timestamp. This read-only field
-is not accepted in requests and is not added to Public Major/Student Skill Options.
-The Admin frontend displays `dd/MM/yyyy` in `Asia/Ho_Chi_Minh`; invalid or missing
-date metadata falls back to `—` without discarding the list.
+Mọi phản hồi danh mục Admin (danh sách, tạo, đổi tên, trạng thái và thao tác không làm thay đổi dữ liệu) đều có
+`createdAt`, được tuần tự hóa từ `created_at` bằng `Date.toISOString()` theo UTC.
+Thao tác đổi tên/trạng thái giữ nguyên dấu thời gian ban đầu. Trường chỉ đọc này
+không được chấp nhận trong yêu cầu và không được thêm vào tùy chọn Major công khai/Skill dành cho Student.
+Frontend Admin hiển thị `dd/MM/yyyy` theo `Asia/Ho_Chi_Minh`; siêu dữ liệu ngày
+không hợp lệ hoặc bị thiếu hiển thị dự phòng `—` mà không loại bỏ danh sách.
 
-Names are trimmed, nonempty and at most 100 Unicode code points. Reasons are
-optional/null or strings of at most 500 code points and are stored separately.
-Unknown/duplicate JSON fields, unsupported/repeated query fields, GET bodies and
-invalid IDs are rejected. The router uses its own JSON parser before the shared
-app parser to detect duplicate keys; size/encoding/syntax errors still use the
-shared error handler. Database UNIQUE `(type,name)` enforces the existing MySQL
-collation, including case-insensitive, accent-sensitive name uniqueness; P2002
-maps to 409 `DUPLICATE_CATEGORY`. No schema or migration is changed.
+Tên được cắt khoảng trắng ở hai đầu, không được rỗng và tối đa 100 điểm mã Unicode. Lý do
+là tùy chọn/null hoặc chuỗi tối đa 500 điểm mã, được lưu riêng.
+Trường JSON không xác định/trùng lặp, trường truy vấn không được hỗ trợ/bị lặp, body GET và
+ID không hợp lệ đều bị từ chối. Router dùng bộ phân tích JSON riêng trước bộ phân tích
+dùng chung của ứng dụng để phát hiện khóa trùng lặp; lỗi kích thước/mã hóa/cú pháp vẫn dùng
+trình xử lý lỗi chung. Ràng buộc UNIQUE `(type,name)` của cơ sở dữ liệu áp dụng quy tắc đối chiếu MySQL
+hiện có, bao gồm tính duy nhất của tên không phân biệt hoa thường nhưng phân biệt dấu; P2002
+được ánh xạ thành 409 `DUPLICATE_CATEGORY`. Không thay đổi schema hay migration.
 
-Each mutation uses an interactive RepeatableRead transaction with an ordered
-`SELECT ... FOR UPDATE` over category rows before reading lifecycle state. All
-Admin category mutations take these same locks, serializing status changes and
-rechecking that at least one Active remains for the target type. This deliberately
-serializes writes across both types for the small unpaginated category set.
-InnoDB deadlocks retry the whole rolled-back transaction up to three attempts;
-exhaustion returns safe 503. The last Active close returns 409
-`LAST_ACTIVE_CATEGORY`. A missing target returns 404 `NOT_FOUND`.
+Mỗi thao tác thay đổi dùng transaction tương tác RepeatableRead với
+`SELECT ... FOR UPDATE` có thứ tự trên các bản ghi danh mục trước khi đọc trạng thái vòng đời. Mọi
+thao tác thay đổi danh mục Admin đều lấy cùng các khóa này, tuần tự hóa thay đổi trạng thái và
+kiểm tra lại rằng loại đích còn ít nhất một Active. Cách này chủ đích
+tuần tự hóa thao tác ghi trên cả hai loại cho tập danh mục nhỏ không phân trang.
+Deadlock InnoDB khiến toàn bộ transaction đã rollback được thử lại, tối đa ba lần thử;
+hết số lần thử trả về 503 an toàn. Đóng Active cuối cùng trả về 409
+`LAST_ACTIVE_CATEGORY`. Không tìm thấy đối tượng đích trả về 404 `NOT_FOUND`.
 
-Shared `writeActivityLog` records exactly one CREATE/RENAME/CLOSE/REOPEN_CATEGORY
-entry with the authenticated actor and compact old/new fields in that same
-transaction. Log insertion/validation failure rolls back the category mutation;
-serialized values are never truncated. Shared writer validation failures return
-400 `VALIDATION_ERROR`. Exact no-op rename/status returns `changed:false` and
-writes no log. Other errors use the common safe 503/500 mapping.
+`writeActivityLog` dùng chung ghi đúng một mục CREATE/RENAME/CLOSE/REOPEN_CATEGORY
+với người thực hiện đã xác thực và các trường cũ/mới cô đọng trong cùng
+transaction đó. Lỗi chèn/kiểm tra log khiến thao tác thay đổi danh mục được rollback;
+giá trị đã tuần tự hóa không bao giờ bị cắt ngắn. Lỗi kiểm tra từ bộ ghi dùng chung trả về
+400 `VALIDATION_ERROR`. Thao tác đổi tên/trạng thái giữ nguyên chính xác giá trị hiện có trả về `changed:false` và
+không ghi log. Các lỗi khác dùng cơ chế ánh xạ 503/500 an toàn dùng chung.
 
-After building, run from the repository root:
+Sau khi build, chạy từ thư mục gốc repository:
 
 ```powershell
 node --test backend/test/admin-categories.test.mjs backend/test/categories.test.mjs backend/test/auth-middleware.test.mjs backend/test/activity-log-writer.test.mjs
 node --test backend/test/admin-categories-mysql.test.mjs
 ```
 
-HTTP tests use real signed JWTs/shared Auth and audit writer with transactional
-Prisma doubles. They do not prove MySQL locking or collation. The MySQL test is
-opt-in via `TEST_ADMIN_CATEGORIES_DATABASE_URL`: only a disposable loopback
-`unihub_admin_categories_test*` database with existing migrations applied and
-empty users/categories/activity_logs is accepted. It tests real uniqueness,
-concurrent final-Active closes, preserved references and audit rollback. It never
-clears pre-existing data or deletes audit entries; fixtures remain in this private
-test database, which its owner must dispose of after the run. Never use a shared
-or group database. Without that variable the MySQL test reports SKIP.
+Các kiểm thử HTTP dùng JWT được ký thực sự/Auth dùng chung và bộ ghi nhật ký kiểm toán với
+các đối tượng thay thế Prisma hỗ trợ transaction. Chúng không chứng minh cơ chế khóa hay đối chiếu MySQL. Kiểm thử MySQL
+cần bật riêng qua `TEST_ADMIN_CATEGORIES_DATABASE_URL`: chỉ chấp nhận cơ sở dữ liệu
+`unihub_admin_categories_test*` dùng một lần, truy cập qua loopback, đã áp dụng các migration hiện có và
+có users/categories/activity_logs rỗng. Kiểm thử kiểm tra tính duy nhất thực tế,
+các thao tác đóng Active cuối cùng đồng thời, bảo toàn tham chiếu và rollback nhật ký kiểm toán. Kiểm thử không bao giờ
+xóa dữ liệu có sẵn hoặc xóa mục nhật ký kiểm toán; dữ liệu kiểm thử vẫn nằm trong cơ sở dữ liệu
+kiểm thử riêng này, chủ sở hữu phải hủy cơ sở dữ liệu sau khi chạy. Không bao giờ dùng cơ sở dữ liệu chung
+hoặc của nhóm. Không có biến đó, kiểm thử MySQL báo SKIP.

@@ -1,49 +1,49 @@
-# Student Skill Options — Bảo Quyên
+# Danh sách kỹ năng cho Student — Bảo Quyên
 
-Backend GET /api/categories?type=Skill is Student-only and returns Active Skills.
-Profile uses SkillOptionsField with controlled selectedIds. No Backend, Profile,
-shared Auth, router, schema or database changes are required for this fix.
+GET /api/categories?type=Skill ở backend chỉ dành cho Student và trả về các Skill có trạng thái Active.
+Profile dùng SkillOptionsField với selectedIds do thành phần cha kiểm soát. Bản sửa này không
+cần thay đổi backend, Profile, Auth dùng chung, bộ định tuyến, lược đồ hay cơ sở dữ liệu.
 
-## Shared Auth and request lifecycle
+## Auth dùng chung và vòng đời yêu cầu
 
-- getSkillOptions(accessToken, signal?) keeps its existing signature for Profile.
-  The token argument is only an availability hint; it is never sent as a header.
-  The authenticated Student in the shared Auth store is required. Guest/Admin
-  are rejected locally without fetching; Backend Auth/RBAC remains authoritative.
-- protectedApiRequest supplies the current Auth token. After 401, shared Auth
-  refreshes the session, verifies /me and retries once. Invalid refresh or a
-  terminal retry 401 clears Auth; refresh outages set Auth unavailable. No token
-  storage, JWT decoding, refresh manager or additional Auth mechanism is added.
-- The query remains exactly type=Skill, without a body. AbortSignal is forwarded
-  through initial request/retry; pre-abort and late success after abort are rejected.
-  Shared refresh belongs to Auth and may complete even if this consumer aborts.
-  The cancelled consumer never publishes its late result.
-- useSkillOptions subscribes to the same trusted store as AuthProvider. Request
-  ownership uses user ID, role and a scope revision, rather than token text.
-  Same-user token rotation preserves pending work/results without another load.
-  Explicit retry uses the current Auth token. Logout, account/role changes,
-  restoration/unavailability and unmount invalidate/abort prior work. Batched
-  logout/login of the same user cannot revive results from the previous scope.
-- Guest shows sign-in feedback, Admin denied access, restoration loading and
-  Auth service outage an error distinct from an invalid session. The real Profile
-  route guard owns session recovery/sign-in UI. No global Auth behavior is changed.
+- getSkillOptions(accessToken, signal?) giữ nguyên chữ ký hiện có cho Profile.
+  Tham số token chỉ báo khả năng sẵn sàng; không bao giờ được gửi trong header.
+  Bắt buộc phải có Student đã xác thực trong kho trạng thái Auth dùng chung. Guest/Admin
+  bị từ chối ngay phía máy khách mà không gửi yêu cầu; Auth/RBAC ở backend vẫn quyết định quyền truy cập.
+- protectedApiRequest cung cấp token Auth hiện tại. Sau 401, Auth dùng chung
+  làm mới phiên, xác minh /me và thử lại một lần. Làm mới không hợp lệ hoặc
+  lần thử lại cuối cùng trả 401 sẽ xóa trạng thái Auth; gián đoạn dịch vụ làm mới khiến Auth không khả dụng.
+  Không bổ sung lưu trữ token, giải mã JWT, bộ quản lý làm mới hay cơ chế Auth nào khác.
+- Chuỗi truy vấn giữ nguyên chính xác type=Skill, không có phần thân. AbortSignal được chuyển tiếp
+  qua yêu cầu đầu tiên/lần thử lại; từ chối yêu cầu đã hủy trước đó và kết quả thành công đến sau khi hủy.
+  Việc làm mới dùng chung thuộc Auth và có thể hoàn tất ngay cả khi bên sử dụng này hủy yêu cầu.
+  Bên sử dụng đã hủy không bao giờ công bố kết quả đến muộn.
+- useSkillOptions đăng ký theo dõi cùng kho trạng thái đáng tin cậy với AuthProvider. Phạm vi sở hữu
+  yêu cầu dựa trên ID người dùng, vai trò và phiên bản phạm vi, thay vì nội dung token.
+  Luân chuyển token của cùng người dùng giữ lại tác vụ đang chờ/kết quả mà không tải lại.
+  Thao tác thử lại chủ động dùng token Auth hiện tại. Đăng xuất, đổi tài khoản/vai trò,
+  khôi phục/không khả dụng và gỡ thành phần làm mất hiệu lực/hủy tác vụ trước đó. Đăng xuất/đăng nhập
+  cùng người dùng trong một đợt cập nhật không thể khôi phục kết quả từ phạm vi trước.
+- Guest được hiển thị thông báo đăng nhập, Admin bị từ chối truy cập, quá trình khôi phục hiển thị trạng thái tải,
+  còn gián đoạn dịch vụ Auth hiển thị lỗi khác với phiên không hợp lệ. Bộ bảo vệ tuyến Profile thực tế
+  phụ trách giao diện khôi phục phiên/đăng nhập. Không thay đổi hành vi Auth toàn cục.
 
-## Controlled Profile selection and contract
+## Lựa chọn do Profile kiểm soát và hợp đồng
 
-The existing field props remain accessToken, role, selectedIds, onChange and
-optional disabled. Loading, Auth errors and temporary request failures never call
-onChange or clear selectedIds. Active choices preserve unlisted existing IDs;
-Profile still owns Closed-link labels/removal, account-specific form reset and
-saving. There is no cross-user options cache.
+Các thuộc tính hiện có của trường vẫn là accessToken, role, selectedIds, onChange và
+disabled tùy chọn. Trạng thái tải, lỗi Auth và lỗi yêu cầu tạm thời không bao giờ gọi
+onChange hay xóa selectedIds. Các lựa chọn Active vẫn giữ những ID hiện có ngoài danh sách;
+Profile tiếp tục phụ trách nhãn/xóa liên kết Closed, đặt lại biểu mẫu theo tài khoản và
+lưu dữ liệu. Không có bộ nhớ đệm danh sách lựa chọn dùng chéo giữa người dùng.
 
-The parser requires unique positive MySQL INT IDs, nonempty names up to 100 code
-points and exact Skill type. It preserves backend order and projects id/name/type.
-Status-bearing rows are invalid; the Backend owns Active filtering. Empty success
-is distinct from errors. No search/chip UI changes are included in this fix.
+Bộ phân tích yêu cầu ID MySQL INT dương, duy nhất, tên không rỗng dài tối đa 100 điểm mã
+và kiểu chính xác là Skill. Bộ phân tích giữ thứ tự từ backend và chỉ lấy id/name/type.
+Các dòng có trường trạng thái là không hợp lệ; backend phụ trách lọc Active. Phản hồi thành công
+rỗng được phân biệt với lỗi. Bản sửa này không thay đổi giao diện tìm kiếm/thẻ lựa chọn.
 
-## Verification
+## Kiểm chứng
 
-From the repository root on Node 24:
+Chạy từ thư mục gốc kho mã với Node 24:
 
 ```powershell
 node --import tsx --test frontend/test/skill-options-api.test.mjs frontend/test/auth.test.mjs
@@ -54,59 +54,59 @@ npm.cmd run build
 npm.cmd run format:check
 ```
 
-API tests use fetch doubles and actual shared Auth modules. They cover refresh
-success, denial, service outage, bounded retries, abort during refresh/retry,
-concurrent token rotation, role gates and existing response validation.
-Browser tests mount the actual field and shared Auth store with intercepted HTTP:
-refresh retry count, terminal Auth states, selected Active/Closed IDs through
-failure/retry, same-user rotation, account switching, logout during refresh,
-batched same-user logout/login, abort/late results and unmount.
-Playwright/Chromium comes from the test environment; no app dependency is added.
-Missing browser runner reports SKIP.
+Kiểm thử API dùng đối tượng thay thế fetch và các mô-đun Auth dùng chung thực tế. Phạm vi gồm
+làm mới thành công, bị từ chối, gián đoạn dịch vụ, giới hạn số lần thử lại, hủy trong khi làm mới/thử lại,
+luân chuyển token đồng thời, kiểm soát vai trò và kiểm tra phản hồi hiện có.
+Kiểm thử trình duyệt gắn trường thực tế và kho trạng thái Auth dùng chung với HTTP được chặn:
+số lần thử lại sau làm mới, trạng thái Auth kết thúc, các ID Active/Closed đã chọn qua
+lỗi/thử lại, luân chuyển token cùng người dùng, đổi tài khoản, đăng xuất trong khi làm mới,
+đăng xuất/đăng nhập cùng người dùng trong một đợt cập nhật, hủy/kết quả đến muộn và gỡ thành phần.
+Playwright/Chromium do môi trường kiểm thử cung cấp; không thêm phụ thuộc cho ứng dụng.
+Thiếu trình chạy kiểm thử trình duyệt sẽ báo SKIP.
 
-The opt-in integration requires TEST_SKILL_OPTIONS_DATABASE_URL on a disposable
-loopback unihub_skill_options_test\* database with current migrations and empty
-users/categories. Category HTTP/Auth/MySQL uses real fixtures in a rollback-only
-transaction; only refresh denial for the invalid-token UI scenario is intercepted
-because that harness has no login cookie. Never use a group database. Missing
-configuration reports SKIP. This task does not provision or access a database.
-Google login, real refresh cookies, full Profile routing, production grants/data,
-performance and deployment remain outside these mock/browser checks.
+Kiểm thử tích hợp tùy chọn yêu cầu TEST_SKILL_OPTIONS_DATABASE_URL trỏ đến cơ sở dữ liệu
+unihub_skill_options_test\* tạm thời trên địa chỉ loopback, có các migration hiện hành và
+users/categories rỗng. HTTP/Auth/MySQL của danh mục dùng dữ liệu kiểm thử thực trong giao dịch
+chỉ hoàn tác; chỉ chặn phản hồi từ chối làm mới cho tình huống giao diện token không hợp lệ
+vì bộ kiểm thử đó không có cookie đăng nhập. Không bao giờ dùng cơ sở dữ liệu của nhóm. Thiếu
+cấu hình sẽ báo SKIP. Tác vụ này không cấp phát hay truy cập cơ sở dữ liệu.
+Đăng nhập Google, cookie làm mới thực, toàn bộ định tuyến Profile, quyền/dữ liệu production,
+hiệu năng và triển khai vẫn nằm ngoài phạm vi các kiểm thử mô phỏng/trình duyệt này.
 
-## Local verification on base 49fc07a
+## Kiểm chứng cục bộ trên bản gốc 49fc07a
 
-Windows, Node 24.19.0 / npm 11.17.0: Skill API 13 PASS, browser 10 PASS,
-shared Auth 12 PASS, Auth navigation 9 PASS, Profile unit/API 7 PASS,
-Profile browser flow 9 PASS, Profile page browser 1 PASS and Profile navigation
-3 PASS: 64 PASS / 0 FAIL. The MySQL opt-in is 1 SKIP; no database was accessed.
-Root typecheck/build and format check PASS using normal Prisma client generation.
-Vite reports a bundle-size warning; browser harnesses warn about empty Tailwind
-content. Neither warning fails these checks or explains the old URL failures.
+Windows, Node 24.19.0 / npm 11.17.0: API Skill 13 PASS, trình duyệt 10 PASS,
+Auth dùng chung 12 PASS, điều hướng Auth 9 PASS, đơn vị/API Profile 7 PASS,
+luồng Profile trên trình duyệt 9 PASS, trang Profile trên trình duyệt 1 PASS và điều hướng Profile
+3 PASS: 64 PASS / 0 FAIL. Kiểm thử MySQL tùy chọn là 1 SKIP; không truy cập cơ sở dữ liệu.
+Kiểm tra kiểu, dựng ứng dụng và kiểm tra định dạng ở gốc đều PASS với quy trình sinh Prisma client thông thường.
+Vite báo cảnh báo kích thước gói; bộ kiểm thử trình duyệt cảnh báo cấu hình content của Tailwind rỗng.
+Cả hai cảnh báo đều không làm các kiểm tra này thất bại hay giải thích các lỗi URL cũ.
 
-### Profile home assertion comparison
+### So sánh điều kiện kiểm tra chuyển về trang chủ của Profile
 
-A clean baseline was extracted from git archive 49fc07a into a disposable directory
-without local source or environment files. Baseline and this branch used the same
-Node/Chromium, installed dependencies, test flags and HTTP mock harness. No other
-checkout/worktree was modified. The three original tests each failed at
-page.waitForURL(base + '/\_dev/health') on both baseline and branch:
+Bản gốc sạch được trích từ git archive 49fc07a vào thư mục tạm,
+không chứa mã nguồn cục bộ hay tệp môi trường. Bản gốc và nhánh này dùng cùng
+Node/Chromium, các phụ thuộc đã cài, cờ kiểm thử và bộ mô phỏng HTTP. Không sửa
+checkout/worktree nào khác. Cả ba kiểm thử ban đầu đều thất bại tại
+page.waitForURL(base + '/\_dev/health') trên cả bản gốc và nhánh:
 
-| Existing test                                                                                      | Original main | Skills fix, original assertions | Main, corrected assertions | Skills fix, corrected assertions |
-| -------------------------------------------------------------------------------------------------- | ------------- | ------------------------------- | -------------------------- | -------------------------------- |
-| Google Login: incomplete Student overrides returnTo; defer goes home without PUT or a Profile loop | FAIL          | FAIL                            | PASS                       | PASS                             |
-| Google Login: complete Student goes home by default                                                | FAIL          | FAIL                            | PASS                       | PASS                             |
-| successful Profile PUT goes home and shows confirmation despite returnTo                           | FAIL          | FAIL                            | PASS                       | PASS                             |
+| Kiểm thử hiện có                                                                                                      | main ban đầu | Bản sửa Skill, điều kiện ban đầu | main, điều kiện đã sửa | Bản sửa Skill, điều kiện đã sửa |
+| --------------------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------- | ---------------------- | ------------------------------- |
+| Đăng nhập Google: Student chưa hoàn tất hồ sơ ghi đè returnTo; hoãn thiết lập về trang chủ, không PUT hay lặp Profile | FAIL         | FAIL                             | PASS                   | PASS                            |
+| Đăng nhập Google: Student đã hoàn tất hồ sơ mặc định về trang chủ                                                     | FAIL         | FAIL                             | PASS                   | PASS                            |
+| PUT Profile thành công về trang chủ và hiển thị xác nhận bất kể returnTo                                              | FAIL         | FAIL                             | PASS                   | PASS                            |
 
-All three are pre-existing stale test assertions, not a Skill regression or
-machine-specific harness failure. Main mounts HomePage at /; Profile deferral,
-successful save and default complete-Student login navigate there, matching the
-current Profile README/UC-05 behavior. The development health URL is separate.
+Cả ba đều là điều kiện kiểm tra đã lỗi thời từ trước, không phải lỗi hồi quy Skill hay
+lỗi bộ kiểm thử riêng của máy. main gắn HomePage tại /; hoãn thiết lập Profile,
+lưu thành công và đăng nhập mặc định của Student đã hoàn tất hồ sơ đều chuyển đến đó, phù hợp
+với hành vi hiện tại trong README của Profile/UC-05. URL kiểm tra sức khỏe khi phát triển là tuyến riêng.
 
-Only three URL assertions in frontend/test/profile-flow.test.mjs change to /.
-The tests still require incomplete-profile routing, no PUT on deferral, no Profile
-loop on public navigation, default home navigation, exactly one successful PUT
-and the saved confirmation. No Profile/Auth/router production logic is changed.
-The Profile owner (Thái Bình) should review this three-line test-only adjustment alongside
-the Skill fix; no external review request or PR has been sent by this task.
+Chỉ ba điều kiện kiểm tra URL trong frontend/test/profile-flow.test.mjs đổi thành /.
+Các kiểm thử vẫn yêu cầu điều hướng hồ sơ chưa hoàn tất, không PUT khi hoãn thiết lập, không lặp Profile
+khi điều hướng công khai, mặc định về trang chủ, đúng một PUT thành công
+và thông báo xác nhận đã lưu. Không thay đổi logic production của Profile/Auth/bộ định tuyến.
+Người phụ trách Profile (Thái Bình) cần rà soát điều chỉnh chỉ gồm ba dòng kiểm thử này cùng
+bản sửa Skill; tác vụ này chưa gửi yêu cầu rà soát bên ngoài hay PR.
 
-Real Google login, cookies and MySQL end-to-end acceptance are not claimed.
+Không khẳng định đã nghiệm thu đầu cuối với đăng nhập Google, cookie và MySQL thực.

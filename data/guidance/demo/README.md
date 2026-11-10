@@ -1,4 +1,4 @@
-# UniHub Skill Roadmap Demo Seed
+# Nạp dữ liệu demo lộ trình Skill UniHub
 
 Luồng cài mới và các giới hạn reuse/verify sau commit: [seed workflow](../../../docs/demo-seed-workflow.md#5-guidance). Lệnh trong trang này dùng `backend/.env` theo Quick Start. `generate-guidance-demo.mjs` hiện chỉ validate offline; các ví dụ test live bên dưới cần môi trường kiểm thử được phép, không cần chạy để seed fixture đã commit.
 
@@ -104,6 +104,6 @@ node --test data/guidance/demo/guidance-demo.test.mjs
 # Kiểm thử an toàn DB guard & rollback
 node --env-file=backend/.env --test data/guidance/demo/safety-and-api-scenarios.test.mjs
 
-# Kiểm thử API integration live
+# Kiểm thử tích hợp API trực tiếp
 node --env-file=backend/.env --test data/guidance/demo/guidance-api-integration.test.mjs
 ```

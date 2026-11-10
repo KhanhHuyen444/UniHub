@@ -15,7 +15,7 @@ Chương 4 PDF hiện hành mô tả `users.google_sub` và bảng `auth_session
 - Lưu thời gian theo UTC, giữ nguyên `DATETIME(0)`; request/response API dùng ISO 8601 có timezone, ưu tiên UTC (`Z`); giao diện hiển thị `Asia/Ho_Chi_Minh`. DATETIME không lưu thông tin timezone. `CURRENT_TIMESTAMP` và `ON UPDATE CURRENT_TIMESTAMP` lấy giờ theo session MySQL, vì vậy từng session ứng dụng và migration phải chạy `SET time_zone = '+00:00'`. Initial migration đặt timezone cho session đang thi hành.
 - Quản trị viên database tạo schema và tài khoản. Tài khoản migration riêng có ALL PRIVILEGES chỉ trên database UniHub đang di trú, không có quyền ở mức máy chủ và không được đưa vào backend runtime. Tài khoản ứng dụng là tài khoản riêng, cấp quyền từng bảng bên dưới. Chưa có credentials thật.
 
-## Initial migration tạo gì
+## Migration ban đầu tạo gì
 
 `backend/prisma/migrations/20261025000000_initial_schema/migration.sql` bắt nguồn từ SQL diff `--from-empty --to-schema` của Prisma 7.10.1. Phần Prisma sinh tạo 12 bảng nghiệp vụ nền, 81 cột, 12 PK, 16 FK, 2 UNIQUE, native types, NULL và defaults theo schema. Sau đó SQL migration được bổ sung:
 
@@ -26,7 +26,7 @@ Chương 4 PDF hiện hành mô tả `users.google_sub` và bảng `auth_session
 
 Initial migration không có enum, trigger, bảng identity/session, tài khoản, seed data hoặc chức năng nghiệp vụ. Prisma tạo thêm bảng kỹ thuật `_prisma_migrations` khi áp dụng migration; đây không phải bảng nghiệp vụ.
 
-## Migration auth identity/session trên nhánh hiện tại
+## Migration danh tính/phiên auth trên nhánh hiện tại
 
 `backend/prisma/migrations/20261028170000_add_auth_identity_sessions/migration.sql` chỉ thêm `users.google_sub` và bảng `auth_sessions`. Nó không sửa byte nội dung của initial migration hay deadline migration và không cập nhật dữ liệu cũ. Mọi `google_sub` cũ/new nullable row để `NULL`; không có backfill từ email hoặc thay đổi `user_id`.
 
@@ -121,7 +121,7 @@ npm.cmd run db:migrate:status
 
 `status` chỉ kiểm tra lịch sử database được chỉ bởi `MIGRATION_DATABASE_URL`. `deploy` áp dụng các migration đã commit còn thiếu; không tạo migration mới và không reset database. Trong quyền đã chốt, migrator chỉ có grants trên schema đang tồn tại nên quản trị viên phải tạo database/tài khoản trước. Prisma CLI có thể thử tạo database khi thiếu nếu caller có quyền cấp máy chủ; tài khoản migration trong hướng dẫn không có quyền đó. Hãy xác nhận URL trỏ tới database phát triển riêng của bạn trước khi chạy `deploy`.
 
-### Áp dụng migration hiện có trên Windows sau khi PR auth được review và merge
+### Áp dụng migration hiện có trên Windows sau khi PR auth được rà soát và merge
 
 ## Migration loại bỏ email reminder (20261105000000_remove_event_reminder_emails)
 

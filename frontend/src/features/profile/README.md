@@ -1,4 +1,4 @@
-# Student Profile — PR #36
+# Hồ sơ Student — PR #36
 
 `/profile` chỉ dành cho Student qua `RequireRole`. GET/PUT dùng [Profile contract](../../../../docs/profile-api-contract.md) và `protectedApiRequest` chung. Profile giữ state riêng, không mở rộng AuthProvider.
 

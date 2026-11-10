@@ -4,7 +4,7 @@
 
 Calendar, Notifications API/Bell và Reminder scheduler đã được mount trong source hiện tại. Reminder tạo thông báo trong ứng dụng; Email Reminder đã được loại bỏ. Phần review và số test ngày 31/10 bên dưới là bằng chứng lịch sử, không phải kết quả kiểm thử mới. Cài đặt theo [README gốc](../../../../README.md).
 
-## Review lịch sử Reminders 31/10/2026 — PR #26
+## Rà soát lịch sử Reminders 31/10/2026 — PR #26
 
 Đã cập nhật nhánh bằng `origin/main=df6a277` (merge sạch, không conflict thực tế); không đưa Calendar, Notifications hoặc Dashboard đang mở vào PR này. Không phát hiện regression cần sửa trong Reminder service tại head `006f810`; giữ nguyên logic production.
 
@@ -38,7 +38,7 @@ Phụ trách: **Ngọc Tuyền**.
 
 - `GET /api/notifications` và `PATCH /api/notifications/:id/read` (FR-04.2 / Notification routes).
 
-## Deadline Reminders (Task 2)
+## Nhắc hạn (Task 2)
 
 Nhánh `feat/event-reminders` thêm scheduler chạy ngay sau khi HTTP server bắt đầu
 nghe, sau đó mỗi 60 giây. Mỗi tiến trình chỉ chạy một lượt tại một thời điểm;

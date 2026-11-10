@@ -1,6 +1,6 @@
 > Báo cáo lịch sử trước khi sửa mapping. Kết quả cập nhật: [mapping-fix-review.md](mapping-fix-review.md). Hash và số liệu bên dưới thuộc phiên bản cũ.
 
-# Final review — 100 DEMO Opportunities — 02/11/2026
+# Rà soát cuối — 100 cơ hội DEMO — 02/11/2026
 
 **NOT READY để phê duyệt import.** Chỉ đọc dữ liệu và chạy focused tests; không sửa
 batch, scenarios, generator, trạng thái phê duyệt, Recommendations, schema hay UI.
@@ -27,7 +27,7 @@ Báo cáo này là file mới duy nhất của lượt review.
 Kiểm tra Active bằng dữ liệu MySQL thật, không chỉ dùng snapshot catalog trong repo.
 Không truy vấn hồ sơ cá nhân hoặc in mật khẩu/connection string.
 
-## Nguồn gốc mapping sai
+## Nguồn gốc ánh xạ sai
 
 [build-demo.mjs:39](build-demo.mjs#L39) lấy 100 Major đầu làm vị trí chính rồi thêm
 17 Major còn lại vào tin có cùng nhóm ngành bằng `target.majors.push` ở dòng 44.
@@ -67,7 +67,7 @@ chấp nhận coverage. “Có thể hợp lý” chỉ là hướng xây dựng
 | DEMO-075 | Nghiên cứu triết học → Quản lý thông tin                      | Không hợp lý trong mô tả hiện tại; SQL/Quản trị dữ liệu không có liên hệ nhiệm vụ nghiên cứu triết học được giải thích                |
 | DEMO-084 | Tham vấn tâm lý → Du lịch học                                 | Không hợp lý trong mô tả hiện tại; Thuyết minh du lịch không phù hợp chủ đề học bổng tham vấn tâm lý                                  |
 
-## Các bộ Skill chính cần sửa/review ngoài các liên kết phụ
+## Các bộ Skill chính cần sửa/rà soát ngoài các liên kết phụ
 
 | Tin      | Vấn đề cần xử lý                                                                                                                                                      |
 | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -82,7 +82,7 @@ Các tin còn lại đã được đọc ở mức title/Major/Skill và kiểm 
 requirements theo template generator; không phát hiện thêm xung đột rõ ở lượt này.
 Không coi việc không có finding là xác minh JD thực tế. Toàn bộ vẫn là synthetic.
 
-## Scenarios và database
+## Tình huống và database
 
 [scenarios.json:43](scenarios.json#L43) là case nhiều Major DEMO-003: expectedScore=1
 đúng vì profile giả lập được gán toàn bộ Skill đã ghép. Đây là tính toán vòng khép

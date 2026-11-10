@@ -1,4 +1,4 @@
-# UniHub Forum Demo Seed
+# Nạp dữ liệu demo Forum UniHub
 
 Luồng cài mới và các giới hạn collision danh tính/soft-delete/verify sau commit: [seed workflow](../../../docs/demo-seed-workflow.md#6-forum). Lệnh dùng `backend/.env` theo Quick Start. Không chạy test safety/live trên database đang có dữ liệu cần giữ.
 
@@ -33,7 +33,7 @@ Thư mục này chứa bộ dữ liệu Forum demo chất lượng cao và kịc
 
 ## 3. Hướng dẫn chạy
 
-### Chạy kiểm tra dữ liệu mẫu (Unit Tests)
+### Chạy kiểm thử dữ liệu mẫu
 
 ```powershell
 node --test data/forum/demo/forum-demo.test.mjs
@@ -45,7 +45,7 @@ node --test data/forum/demo/forum-demo.test.mjs
 node --env-file=backend/.env --test data/forum/demo/safety-and-homepage-scenarios.test.mjs
 ```
 
-### Chạy thử nghiệm an toàn (Dry Run - không ghi database)
+### Chạy thử không ghi database (Dry Run)
 
 ```powershell
 node --env-file=backend/.env data/forum/demo/seed-forum-demo.mjs

@@ -47,7 +47,7 @@ Hệ thống phân quyền Role-Based Access Control (RBAC) chặt chẽ với 3
 
 ---
 
-## 2. Website Demo
+## 2. Bản demo Website
 
 Hệ thống đã được đóng gói và triển khai trực tuyến trên hạ tầng đám mây:
 
@@ -215,7 +215,7 @@ UniHub/
 
 Trước khi tiến hành cài đặt, máy tính cần đáp ứng các tiêu chuẩn sau:
 
-### 6.1. Điều kiện bắt buộc (Mandatory)
+### 6.1. Điều kiện bắt buộc
 
 - **Hệ điều hành:** Windows 10 hoặc Windows 11 (khuyến nghị sử dụng PowerShell).
 - **Node.js:** Phiên bản `>=24.19.0 <25` (Node.js 24 LTS).
@@ -225,7 +225,7 @@ Trước khi tiến hành cài đặt, máy tính cần đáp ứng các tiêu c
 - **Trình duyệt web:** Google Chrome, Microsoft Edge hoặc Mozilla Firefox phiên bản mới.
 - **Google Cloud OAuth Client ID:** Cần một **OAuth 2.0 Web Client ID** hợp lệ được tạo từ Google Cloud Console có khai báo Authorized JavaScript origin là `http://127.0.0.1:5173`.
 
-### 6.2. Điều kiện khuyến nghị (Recommended)
+### 6.2. Điều kiện khuyến nghị
 
 - Công cụ trực quan hóa CSDL: **MySQL Workbench** hoặc **DBeaver** để kiểm tra dữ liệu và xem bảng `activity_logs`.
 - Kết nối Internet ổn định trong quá trình chạy ứng dụng để backend xác thực Google ID Token với máy chủ của Google.
@@ -375,7 +375,7 @@ Mở **2 cửa sổ PowerShell riêng biệt** tại thư mục gốc `UniHub`:
   ```
   _(Frontend Vite sẽ mở tại: `http://127.0.0.1:5173/`)_.
 
-### Bước 10 — Kiểm tra tính sẵn sàng (Health & Readiness Check)
+### Bước 10 — Kiểm tra Health và Readiness
 
 Mở cửa sổ PowerShell thứ 3 và kiểm tra kết nối API:
 
@@ -389,7 +389,7 @@ Invoke-RestMethod http://127.0.0.1:3001/api/ready
 
 ---
 
-## 8. Google Login và Admin Bootstrap
+## 8. Google Login và khởi tạo Admin
 
 ### 8.1. Cấu hình Google Cloud Console
 
@@ -407,7 +407,7 @@ Invoke-RestMethod http://127.0.0.1:3001/api/ready
 3. Khi đăng nhập thành công, Backend sẽ tự động tạo một bản ghi tài khoản mới trong bảng `users` với vai trò mặc định là **`Student`**.
 4. Sinh viên có thể cập nhật thông tin hồ sơ học thuật (Chuyên ngành, Năm học, Mục tiêu, Kỹ năng) tại trang `/profile`.
 
-### 8.3. Khởi tạo tài khoản Quản trị viên đầu tiên (Admin Bootstrap)
+### 8.3. Khởi tạo tài khoản Quản trị viên đầu tiên
 
 Hệ thống UniHub tích hợp script bootstrap độc lập và an toàn nhằm chỉ cấp quyền cho tài khoản Admin đầu tiên của hệ thống:
 
@@ -431,7 +431,7 @@ Hệ thống UniHub tích hợp script bootstrap độc lập và an toàn nhằ
 
 ---
 
-## 9. Dữ liệu mẫu (Demo Seed Workflow)
+## 9. Quy trình nạp dữ liệu mẫu
 
 > [!IMPORTANT]
 > Quá trình chạy Prisma migration chỉ khởi tạo cấu trúc 13 bảng trắng rỗng, **không tự động nạp dữ liệu mẫu**. Để có dữ liệu đầy đủ phục vụ chấm thi và demo, người vận hành cần thực hiện nạp dữ liệu theo đúng thứ tự 4 bước dưới đây.
@@ -460,7 +460,7 @@ node --env-file=backend/.env backend/dist/scripts/opportunities-import.js --cata
 # 3. Bộ kỹ năng mở rộng
 node --env-file=backend/.env backend/dist/scripts/opportunities-import.js --catalog-only --file data/catalog/expanded-skills.json --apply
 
-# 4. Snapshot danh mục đầy đủ (bổ sung ngành Kinh doanh số & AI)
+# 4. Bản chụp danh mục đầy đủ (bổ sung ngành Kinh doanh số & AI)
 node --env-file=backend/.env backend/dist/scripts/opportunities-import.js --catalog-only --file data/opportunities/demo/catalog.json --apply
 ```
 
@@ -493,7 +493,7 @@ _(Kết quả kỳ vọng: Nạp **12 tác giả mẫu**, **24 bài thảo luậ
 
 ---
 
-## 10. Chạy kiểm thử (Quality Assurance)
+## 10. Chạy kiểm thử
 
 Dự án thiết lập quy trình kiểm thử đa tầng nghiêm ngặt nhằm đảm bảo độ tin cậy của mã nguồn trước khi bàn giao:
 
@@ -507,7 +507,7 @@ npm.cmd run typecheck
 # 3. Biên dịch bản sản xuất hoàn chỉnh
 npm.cmd run build
 
-# 4. Thực thi toàn bộ bộ kiểm thử tự động (Unit & Integration Tests)
+# 4. Chạy toàn bộ kiểm thử đơn vị và tích hợp
 npm.cmd test
 
 # 5. Kiểm tra định dạng mã nguồn chuẩn Prettier
