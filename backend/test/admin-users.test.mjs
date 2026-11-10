@@ -83,6 +83,7 @@ async function fixture({
   let state = structuredClone(customUsers ?? initialUsers);
   let logs = [];
   let transactions = 0;
+  // This fixture serializes in JavaScript; it does not verify MySQL locking.
   let queue = Promise.resolve();
 
   const client = {
@@ -711,7 +712,7 @@ test('PATCH /api/admin/users/:id/role: rollback when activity log fails', async 
   });
 });
 
-test('PATCH /api/admin/users/:id/role: concurrent requests serialize safely and avoid duplicate audit log', async () => {
+test('PATCH /api/admin/users/:id/role: serialized transaction fixture avoids duplicate audit log', async () => {
   const f = await fixture();
   await withServer(f.app, async (base) => {
     // Both Admin requests try to promote user 2 (currently Student) to Admin concurrently
@@ -742,114 +743,26 @@ test('PATCH /api/admin/users/:id/role: concurrent requests serialize safely and 
   });
 });
 
-test('PATCH /api/admin/users/:id/role: LAST_ADMIN_PROTECTED (409) khi Admin cố gắng hạ quyền Admin duy nhất còn lại', async () => {
-  // Khởi tạo hệ thống có 3 user: Admin 1, Admin 2, và Admin 99 (người thực hiện thao tác)
-  const threeUsers = [
-    {
-      user_id: 1,
-      full_name: 'Admin One',
-      email: 'admin1@unihub.invalid',
-      google_sub: 'sub-admin-1',
-      avatar_url: null,
-      academic_year: null,
-      role: 'Admin',
-      major_id: null,
-      major: null,
-    },
-    {
-      user_id: 2,
-      full_name: 'Admin Two',
-      email: 'admin2@unihub.invalid',
-      google_sub: 'sub-admin-2',
-      avatar_url: null,
-      academic_year: null,
-      role: 'Admin',
-      major_id: null,
-      major: null,
-    },
-    {
-      user_id: 99,
-      full_name: 'Super Admin',
-      email: 'super@unihub.invalid',
-      google_sub: 'sub-super-admin',
-      avatar_url: null,
-      academic_year: null,
-      role: 'Admin',
-      major_id: null,
-      major: null,
-    },
-  ];
-
-  const f = await fixture({ customUsers: threeUsers });
-  const superAdminToken = await f.signToken({
-    userId: 99,
+test('PATCH role: stale Admin token reaches LAST_ADMIN_PROTECTED (409) without changing user or audit', async () => {
+  const f = await fixture();
+  // BR-14.5: user 2 was Admin at issuance, but is Student in the current DB.
+  // Their unexpired token still authorizes the request; user 1 is the last Admin.
+  const oldAdminToken = await f.signToken({
+    ...studentIdentity,
     role: 'Admin',
-    sessionId: 'd7f55cee-2d7c-4df9-aece-36b6eb446db9',
   });
-
   await withServer(f.app, async (base) => {
-    // Bước 1: Super Admin hạ quyền Admin 2 về Student -> Thành công vì lúc này có 3 Admin (adminCount > 1)
-    const res1 = await send(base, superAdminToken, 'PATCH', '/2/role', {
+    const response = await send(base, oldAdminToken, 'PATCH', '/1/role', {
       role: 'Student',
     });
-    assert.equal(res1.status, 200);
-    assert.equal((await res1.json()).changed, true);
-
-    // Bước 2: Super Admin hạ tiếp Admin 1 về Student -> Thành công vì vẫn còn Super Admin (adminCount = 2 > 1)
-    const res2 = await send(base, superAdminToken, 'PATCH', '/1/role', {
-      role: 'Student',
-    });
-    assert.equal(res2.status, 200);
-    assert.equal((await res2.json()).changed, true);
-
-    // Xác nhận hiện tại hệ thống chỉ còn đúng 1 Admin duy nhất trong DB (User 99)
-    const adminCount = f.getState().filter((u) => u.role === 'Admin').length;
-    assert.equal(adminCount, 1);
-
-    // Bước 3: Cố gắng hạ quyền Admin cuối cùng (User 99):
-    // 3.1. Nếu User 99 tự hạ quyền -> Chặn 403 SELF_DEMOTION_FORBIDDEN
-    const resSelf = await send(base, superAdminToken, 'PATCH', '/99/role', {
-      role: 'Student',
-    });
-    assert.equal(resSelf.status, 403);
-    assert.equal((await resSelf.json()).error.code, 'SELF_DEMOTION_FORBIDDEN');
-
-    // 3.2. Nếu một Admin khác cố tình hạ quyền Admin 99 khi adminCount <= 1:
-    // Tạo giả lập Admin 88 gọi hạ quyền Admin 99 khi Admin 99 là Admin duy nhất trong DB
-    f.getState().push({
-      user_id: 88,
-      full_name: 'Caller Admin',
-      email: 'caller88@unihub.invalid',
-      google_sub: 'sub-88',
-      avatar_url: null,
-      academic_year: null,
-      role: 'Admin',
-      major_id: null,
-      major: null,
-    });
-    // Bây giờ có 88 và 99. Nhưng nếu 99 là Admin duy nhất được nhắm tới khi adminCount = 1:
-    // Để kiểm tra điều kiện adminCount <= 1 trong changeUserRole, ta tạm thời đặt target là 88:
-    const callerToken = await f.signToken({
-      userId: 88,
-      role: 'Admin',
-      sessionId: 'd7f55cee-2d7c-4df9-aece-36b6eb446db8',
-    });
-    // 88 hạ 99 -> còn 88 nên hợp lệ. Sau đó 88 là admin duy nhất.
-    // Nếu một request khác cố hạ quyền 88 mà adminCount <= 1 trong transaction:
-    // Xóa 99 khỏi admin trong DB:
-    f.getState().find((u) => u.user_id === 99).role = 'Student';
-    // Lúc này duy nhất User 88 là Admin trong DB (adminCount = 1).
-    // Giả sử có một token Admin khác (đã xác thực) cố gắng hạ quyền User 88:
-    // Thêm User 77 có session hợp lệ nhưng chỉ để test hàm service:
-    const resLast = await send(base, superAdminToken, 'PATCH', '/88/role', {
-      role: 'Student',
-    });
-    // Vì User 99 (superAdminToken) đã bị hạ về Student ở trên, auth middleware chặn 403 tức thì (TC-31)!
-    assert.equal(resLast.status, 403);
+    assert.equal(response.status, 409);
+    assert.equal((await response.json()).error.code, 'LAST_ADMIN_PROTECTED');
+    assert.equal(f.getState().find((user) => user.user_id === 1).role, 'Admin');
+    assert.equal(f.getLogs().length, 0);
   });
 });
 
-test('PATCH /api/admin/users/:id/role: TC-32 Concurrency & Last Admin guard ngăn chặn triệt để nguy cơ mất toàn bộ Admin', async () => {
+test('PATCH /api/admin/users/:id/role: two demotions preserve last Admin in serialized transaction fixture', async () => {
   // Khởi tạo hệ thống có chính xác 2 Admin: User 1 và User 2
   const twoAdmins = [
     {
@@ -899,11 +812,7 @@ test('PATCH /api/admin/users/:id/role: TC-32 Concurrency & Last Admin guard ngă
       statuses.includes(200),
       'Một request hạ quyền thành công (200 OK)',
     );
-    // Request còn lại bị từ chối an toàn (403 hoặc 409) do thu hồi quyền tức thì hoặc bảo vệ Admin cuối cùng
-    assert.ok(
-      statuses.includes(403) || statuses.includes(409),
-      'Request còn lại bị chặn (403 do thu hồi quyền hoặc 409 do bảo vệ Admin cuối cùng)',
-    );
+    assert.deepEqual(statuses.sort(), [200, 409]);
 
     // BẤT BIẾN HỆ THỐNG ĐƯỢC BẢO TOÀN TUYỆT ĐỐI:
     // Số lượng Admin còn lại trong DB luôn là ĐÚNG 1, KHÔNG BAO GIỜ VỀ 0!

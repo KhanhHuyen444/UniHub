@@ -210,7 +210,7 @@ test('thiếu/malformed token, thiếu/revoked/hết hạn/sai chủ session tr�
   }
 });
 
-test('Student bị chặn bởi quyền Admin; role đồng bộ từ DB users.role thời gian thực', async () => {
+test('Student bị chặn bởi quyền Admin; role lấy từ JWT snapshot theo BR-14.5', async () => {
   const token = await service.sign(identity);
   let query;
   const middleware = createRequireAuth({
@@ -239,47 +239,34 @@ test('Student bị chặn bởi quyền Admin; role đồng bộ từ DB users.r
       user_id: true,
       expires_at: true,
       revoked_at: true,
-      user: {
-        select: {
-          role: true,
-        },
-      },
     },
   });
 });
 
-test('TC-31: Token cũ mang role Admin nhưng DB đã hạ về Student bị chặn 403 tức thì trên Admin API', async () => {
-  // Token được phát hành khi user còn là Admin
-  const adminToken = await service.sign({ ...identity, role: 'Admin' });
-
-  // Tuy nhiên trong DB (session.user.role), user đã bị hạ xuống Student
-  const demotedSession = sessionRecord({
-    user: {
-      role: 'Student',
-    },
+for (const [oldRole, currentRole, oldStatus, newStatus] of [
+  ['Student', 'Admin', 403, 200],
+  ['Admin', 'Student', 200, 403],
+]) {
+  test(`BR-14.5: ${oldRole} to ${currentRole} keeps old access role until new token issuance`, async () => {
+    const oldToken = await service.sign({ ...identity, role: oldRole });
+    const session = sessionRecord({ user: { role: currentRole } });
+    const oldResponse = await requestWithToken(
+      oldToken,
+      authenticated(session),
+      createRequireRole('Admin'),
+    );
+    assert.equal(oldResponse.status, oldStatus);
+    const newToken = await service.sign({ ...identity, role: currentRole });
+    const newResponse = await requestWithToken(
+      newToken,
+      authenticated(session),
+      createRequireRole('Admin'),
+    );
+    assert.equal(newResponse.status, newStatus);
   });
+}
 
-  const middleware = createRequireAuth({
-    verifyToken: service.verify,
-    getPrismaClient: () => ({
-      authSession: {
-        findUnique: async () => demotedSession,
-      },
-    }),
-    now: () => now,
-  });
-
-  const response = await requestWithToken(
-    adminToken,
-    middleware,
-    createRequireRole('Admin'),
-  );
-  assert.equal(response.status, 403);
-  const body = await response.json();
-  assert.equal(body.error.code, 'FORBIDDEN');
-});
-
-test('Admin được requireRole(Admin) theo vai trò Admin trong DB', async () => {
+test('Admin được requireRole(Admin) theo claim Admin đã ký', async () => {
   const token = await service.sign({ ...identity, role: 'Admin' });
   const adminSession = sessionRecord({
     user: {
