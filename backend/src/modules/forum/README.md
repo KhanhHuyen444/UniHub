@@ -24,3 +24,5 @@ Mỗi thao tác remove soft-delete, ghi Activity Log và tạo Violation notific
 Contract: [forum-api-contract.md](../../../../docs/forum-api-contract.md).
 
 Phụ trách: **TV5**. Theo [quy trình nhóm](../../../../docs/team-workflow.md) và [quy ước API](../../../../docs/api-conventions.md).
+
+Nếu topic lưu trong dữ liệu legacy nằm ngoài ba topic hợp lệ, API danh sách không tự ẩn bài và API chi tiết không đổi nhãn. Khi serialize gặp bản ghi này, cả hai trả lỗi dữ liệu chung `500 INTERNAL_ERROR`; không ghi lại dữ liệu hoặc lộ topic lỗi. Cần kiểm tra và sửa dữ liệu bằng quy trình riêng đã được duyệt.

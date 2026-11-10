@@ -20,7 +20,7 @@ flowchart LR
 ```
 
 - **Frontend:** Một ứng dụng React 19 SPA được đóng gói bằng Vite, phân định rõ ràng các khu vực Public, Student và Admin. Bộ định tuyến React Router Declarative tại [`frontend/src/app/router.tsx`](../frontend/src/app/router.tsx) bảo vệ các route nhạy cảm thông qua component `<RequireRole>`, chuyển hướng người dùng chưa đăng nhập về `/login` và sinh viên không có quyền truy cập Admin về `/403`.
-- **Backend:** Một REST API Express 5 độc lập. Middleware kiểm tra phiên CSDL thực tế trong bảng `auth_sessions`, thu hồi quyền tức thì khi tài khoản bị hạ vai trò Admin, và kiểm soát quyền sở hữu tài nguyên cho từng sinh viên. Các thao tác nhạy cảm (như duyệt bài, hạ quyền Admin, thay đổi vai trò) đều được bọc trong Prisma Transaction với cơ chế khóa dòng (`SELECT ... FOR UPDATE`) nhằm hạn chế rủi ro tương tranh và bảo vệ Admin cuối cùng.
+- **Backend:** Một REST API Express 5 độc lập. Middleware kiểm tra phiên CSDL thực tế trong bảng `auth_sessions`, dùng role snapshot trong JWT cho tới lần cấp token tiếp theo theo BR-14.5, và kiểm soát quyền sở hữu tài nguyên cho từng sinh viên. Các thao tác nhạy cảm (như duyệt bài, hạ quyền Admin, thay đổi vai trò) đều được bọc trong Prisma Transaction với cơ chế khóa dòng (`SELECT ... FOR UPDATE`) nhằm hạn chế rủi ro tương tranh và bảo vệ Admin cuối cùng.
 - **Dữ liệu:** Chỉ backend kết nối MySQL thông qua Prisma Client singleton tại `backend/src/lib/prisma.ts`. Cơ sở dữ liệu duy trì mô hình 13 bảng chuẩn hóa, bảo đảm toàn vẹn tham chiếu thông qua Foreign Keys cấp cơ sở dữ liệu.
 - **Tác vụ nền (Background Worker):** Module Scheduler nhắc hạn sự kiện (`reminders.scheduler.ts`) chạy định kỳ tự động, quét các sự kiện lịch cá nhân sắp đến hạn trong vòng 24 giờ và sinh thông báo nhắc nhở (`Reminder`) một cách an toàn và chống trùng lặp.
 - **Ranh giới API:** Frontend giao tiếp với Backend thông qua chuẩn JSON RESTful API với bộ định dạng phản hồi và xử lý lỗi đồng nhất được đặc tả tại [api-conventions.md](api-conventions.md).
@@ -68,7 +68,7 @@ Luồng đã được nhóm triển khai đầy đủ và kiểm nghiệm:
 4. Backend xử lý tra cứu tài khoản theo thiết kế đã thống nhất, lấy quyền từ dữ liệu UniHub và phát token **của UniHub**. Google ID token không được dùng thay JWT UniHub cho các API nghiệp vụ.
 5. Mọi API được bảo vệ kiểm tra token UniHub, quyền và quyền sở hữu tài nguyên ở backend; frontend guard không phải biện pháp bảo vệ dữ liệu duy nhất.
 
-Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật (`HttpOnly; Secure; SameSite=Strict`). Cơ chế phân quyền RBAC, bảng `auth_sessions`, thu hồi phiên tức thì khi hạ quyền và bảo vệ Quản trị viên cuối cùng (Last Admin Protection) đã được triển khai hoàn chỉnh và kiểm thử toàn diện. Contract tại [auth-api-contract.md](auth-api-contract.md).
+Chương 3 UC-04/NFR-02.4 quy định access tối đa 15 phút và refresh tối đa 7 ngày trong cookie bảo mật (`HttpOnly; Secure; SameSite=Strict`). Middleware kiểm tra `auth_sessions`; logout thu hồi phiên. Thay đổi vai trò không thu hồi phiên và có hiệu lực ở lần cấp access token tiếp theo theo BR-14.5. Cơ chế bảo vệ Quản trị viên cuối cùng có trong service; test cạnh tranh dùng fixture JavaScript chưa chứng minh khóa trên MySQL. Contract tại [auth-api-contract.md](auth-api-contract.md).
 
 | Đối tượng | Ý nghĩa và nguồn quyền |
 | --- | --- |
@@ -380,5 +380,5 @@ Hệ thống đã trải qua quá trình thẩm định kỹ thuật và kiểm 
 1. **Kiểm tra cú pháp CSDL:** `npm run prisma:validate` xác nhận tính toàn vẹn 13 bảng quan hệ.
 2. **Kiểm tra kiểu dữ liệu tĩnh:** `npm run typecheck` đạt 0 lỗi TypeScript trên cả frontend và backend.
 3. **Đóng gói mã nguồn:** `npm run build` hoàn thành build production cho cả 2 workspace mà không có lỗi.
-4. **Bộ kiểm thử tự động:** `npm test` vượt qua 555 bài kiểm thử mã nguồn (473 PASS / 0 FAIL / 82 SKIP Playwright).
+4. **Bộ kiểm thử tự động:** Lượt Windows 10/11/2026 sau sửa BR-14.5: `npm test` chạy 560 test (478 PASS / 0 FAIL / 82 SKIP do thiếu runner Playwright hoặc cấu hình MySQL test cô lập). Kiểm chứng MySQL chạy riêng bằng `node backend/test/run-submission-mysql.mjs --run-isolated`: 55 kiểm tra quyền SQL và 1 test Auth MySQL PASS; không chứng minh khóa cạnh tranh khi hạ quyền Admin.
 5. **Bộ kiểm thử nghiệm thu chức năng đồ án:** Đạt chuẩn 28/28 PASS đối chiếu theo tài liệu nghiệm thu chính thức của đề tài (5 Guest, 12 Student, 10 Admin - trong đó TC-18 là Dashboard quản trị, 1 Ngoại lệ & Bảo mật).

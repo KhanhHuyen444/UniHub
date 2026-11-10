@@ -195,11 +195,13 @@ interface CommentRow {
 }
 
 function toPostDto(row: PostRow) {
-  const normalizedTopic = ALLOWED_TOPICS.has(row.topic) ? row.topic : 'Học tập';
+  if (!ALLOWED_TOPICS.has(row.topic)) {
+    throw new Error('Invalid stored forum topic.');
+  }
   return {
     id: row.post_id,
     title: row.title,
-    topic: normalizedTopic,
+    topic: row.topic,
     content: row.content,
     author: {
       fullName: row.author.full_name,
@@ -246,7 +248,7 @@ export async function listPublicPosts(
 
   const where = {
     is_deleted: false,
-    ...(topic ? { topic } : { topic: { in: Array.from(ALLOWED_TOPICS) } }),
+    ...(topic ? { topic } : {}),
   } as const;
 
   const [total, rows] = await (client as PrismaClient).$transaction([
