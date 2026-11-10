@@ -204,7 +204,7 @@ UniHub/
 │   ├── LOCAL-SETUP-UNIHUB-DEMO.md # Hướng dẫn cài đặt CSDL MySQL cục bộ
 │   ├── demo-seed-workflow.md     # Quy trình nạp dữ liệu demo chuẩn
 │   ├── fresh-install-acceptance.md # Checklist nghiệm thu máy sạch
-│   └── testing/                  # Báo cáo kết quả kiểm thử và ảnh minh chứng 28 test case nghiệm thu
+│   └── fresh-install-operations.md # Quy trình kiểm tra vận hành hệ thống
 ├── package.json                  # Cấu hình npm workspaces gốc và scripts vận hành toàn dự án
 └── package-lock.json             # Khóa phiên bản dependency đồng bộ toàn bộ dự án
 ```
